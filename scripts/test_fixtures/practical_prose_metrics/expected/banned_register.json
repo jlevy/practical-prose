@@ -1,0 +1,41 @@
+[
+  {
+    "file": "scripts/test_fixtures/practical_prose_metrics/banned_register.md",
+    "headings": {
+      "h1": 1,
+      "h2": 0,
+      "h3": 0,
+      "h4": 0,
+      "h5": 0,
+      "h6": 0
+    },
+    "headings_total": 1,
+    "links_external": 0,
+    "links_internal": 0,
+    "links_total": 0,
+    "links_inline": 0,
+    "links_autolink": 0,
+    "links_reference_use": 0,
+    "links_reference_definitions": 0,
+    "images": 0,
+    "footnote_references": 0,
+    "footnote_definitions": 0,
+    "bracket_tags": 0,
+    "bracket_tag_examples": [],
+    "bare_urls": 0,
+    "tables": 0,
+    "code_blocks": 1,
+    "banned_register_hits": 4,
+    "banned_register_examples": [
+      "crushing it",
+      "incontrovertibly",
+      "monumental",
+      "paradigm-shifting"
+    ],
+    "words": 43,
+    "sentences": 7,
+    "paragraphs": 4,
+    "lines": 10,
+    "pages": 0.2
+  }
+]

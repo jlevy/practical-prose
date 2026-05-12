@@ -216,3 +216,18 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+# OS / filesystem metadata
+.DS_Store
+Thumbs.db
+
+# Editor and IDE local state
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# Agent / assistant local state
+.claude/
+.aider*

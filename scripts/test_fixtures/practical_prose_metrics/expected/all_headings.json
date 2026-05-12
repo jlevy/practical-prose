@@ -1,0 +1,36 @@
+[
+  {
+    "file": "scripts/test_fixtures/practical_prose_metrics/all_headings.md",
+    "headings": {
+      "h1": 2,
+      "h2": 2,
+      "h3": 1,
+      "h4": 1,
+      "h5": 1,
+      "h6": 1
+    },
+    "headings_total": 8,
+    "links_external": 0,
+    "links_internal": 0,
+    "links_total": 0,
+    "links_inline": 0,
+    "links_autolink": 0,
+    "links_reference_use": 0,
+    "links_reference_definitions": 0,
+    "images": 0,
+    "footnote_references": 0,
+    "footnote_definitions": 0,
+    "bracket_tags": 0,
+    "bracket_tag_examples": [],
+    "bare_urls": 0,
+    "tables": 0,
+    "code_blocks": 0,
+    "banned_register_hits": 0,
+    "banned_register_examples": [],
+    "words": 36,
+    "sentences": 9,
+    "paragraphs": 9,
+    "lines": 17,
+    "pages": 0.1
+  }
+]
