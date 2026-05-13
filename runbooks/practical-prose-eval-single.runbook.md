@@ -27,18 +27,38 @@ For comparing N evaluated artifacts, see `practical-prose-eval-compare.runbook.m
 - **Input:** one Markdown artifact + the rubric (`practical-prose-rubric.md`) + the
   prescriptive guidelines (`practical-prose-guidelines.md`).
 - **Output:** one `<artifact-name>.eval.yaml` validated against the schema in
-  `../scripts/eval_report.py` (`EvalReport`).
+  `eval-report` (`EvalReport`).
+
+## Setup
+
+The eval tooling lives as an installable Python package at
+[../tools/prose-eval/](../tools/prose-eval/). Install once:
+
+```bash
+cd tools/prose-eval && make install
+```
+
+This puts four console scripts on PATH inside the package’s `.venv`: `eval-report`,
+`eval-score`, `eval-compare`, `prose-metrics`. Activate the venv (or use `uv run <cmd>`
+from inside `tools/prose-eval/`) before running the commands below.
+
+For batch eval audits, the convention is to store the `*.eval.yaml` outputs under
+`evals/<round-name>/` at the repo root (e.g. `evals/self-eval-v0.1/`).
+
+`eval-score` reads `ANTHROPIC_API_KEY` from the environment.
+The entry point auto-loads `.env` / `.env.local` from the current directory and `$HOME`,
+so the typical setup is:
+
+```bash
+echo 'ANTHROPIC_API_KEY=sk-ant-...' > .env   # gitignored
+```
 
 ## Steps
-
-Commands below assume the working directory is this runbook’s directory (`runbooks/`),
-so `../scripts/...` resolves into the bundle.
-Run from elsewhere by substituting the full bundle path.
 
 ### 1. Generate the YAML stub
 
 ```bash
-../scripts/eval_report.py from-metrics path/to/artifact.md --label NAME \
+eval-report from-metrics path/to/artifact.md --label NAME \
   --scope-class deep_research > artifact.eval.yaml
 ```
 
@@ -80,7 +100,7 @@ These signals feed the qualitative scoring; they don’t substitute for it.
 For one-off raw metrics inspection without producing a YAML:
 
 ```bash
-../scripts/practical_prose_metrics.py path/to/artifact.md --json
+prose-metrics path/to/artifact.md --json
 ```
 
 ### 2. Score the 18 qualitative dimensions
@@ -92,17 +112,23 @@ when calibrating the rubric.
 **Model-scoring path (default):**
 
 ```bash
-../scripts/eval_score.py path/to/artifact.eval.yaml
+eval-score path/to/artifact.eval.yaml
 ```
 
-This calls the local `claude` CLI with the rubric, guidelines, and artifact, parses the
+This calls the Anthropic SDK with the rubric, guidelines, and artifact, parses the
 structured JSON response, and fills the `qual` + `violations` blocks of the YAML in
-place. Useful flags:
+place. The rubric + guidelines block is sent with prompt-caching enabled, so subsequent
+calls (and `--batch` runs) reuse the cache and cost ~10× less than the first call.
+Useful flags:
 
 - `--dry-run` — print the prompt to stdout without invoking the model.
 - `--out path` — write the filled YAML to a different file.
-- `--model <name>` — passed through to `claude --model`. Accepts the same aliases
-  (`sonnet`, `haiku`, `opus`) or an exact model ID. Omit to use the claude CLI default.
+- `--model <name>` — passed to the Anthropic SDK. Accepts aliases (`sonnet`, `haiku`,
+  `opus`) or an exact model ID. Defaults to the SDK’s default model.
+- `--batch` — score multiple YAMLs in one invocation:
+  `eval-score a.eval.yaml b.eval.yaml ... --batch [--max-concurrent 8 --max-rps 4]`. See
+  [practical-prose-eval-compare.runbook.md](practical-prose-eval-compare.runbook.md) for
+  the typical batch workflow.
 
 **Manual path:**
 
@@ -142,7 +168,7 @@ by hand. The schema validator recomputes `derived` from `quant` + `qual`.
 ### 4. Validate
 
 ```bash
-../scripts/eval_report.py validate path/to/artifact.eval.yaml
+eval-report validate path/to/artifact.eval.yaml
 ```
 
 Expected: `OK: path/to/artifact.eval.yaml`. Common failures:
@@ -159,13 +185,13 @@ violation, and every score-5 (or score-0 = “cannot assess”) needs none.
 For the publish gate before feeding into a multi-doc comparison, add `--complete`:
 
 ```bash
-../scripts/eval_report.py validate path/to/artifact.eval.yaml --complete
+eval-report validate path/to/artifact.eval.yaml --complete
 ```
 
 `--complete` additionally requires `metadata.status='complete'`, evaluator set (not
 `TODO`), `rubric_version` present, no all-zero stubs, and a reason in `qual_reasons` for
 every dimension scored 1-5. The model-scoring path (step 2) sets these automatically.
-`eval_compare.py` rejects draft / alignment-invalid inputs by default so the gate
+`eval-compare` rejects draft / alignment-invalid inputs by default so the gate
 effectively runs there too.
 
 ### 5. Optionally: render the per-artifact section
@@ -174,7 +200,7 @@ To preview the artifact’s section of the comparison Markdown (mostly useful fo
 eyeballing the derived rollups before adding to a multi-doc comparison):
 
 ```bash
-../scripts/eval_compare.py path/to/artifact.eval.yaml --format unified
+eval-compare path/to/artifact.eval.yaml --format unified
 ```
 
 This produces a 1-column “comparison” against just the one artifact.
@@ -190,9 +216,9 @@ If the audit fails, revise scores or violations until consistent.
 
 ## Calibration set
 
-`../scripts/fixtures/` ships a small calibration set with **agreed scores and violations
-under `18-dim-v1`** so future agent or human evaluators can be tested for drift and
-self-eval overrating against a fixed reference:
+`../tools/prose-eval/tests/fixtures/` ships a small calibration set with **agreed scores
+and violations under `18-dim-v1`** so future agent or human evaluators can be tested for
+drift and self-eval overrating against a fixed reference:
 
 | Fixture | Artifact | Type | Overall mean | NA dims |
 | --- | --- | --- | ---: | ---: |
@@ -203,7 +229,7 @@ self-eval overrating against a fixed reference:
 Use this set to calibrate model-scoring runs:
 
 ```bash
-../scripts/eval_score.py path/to/your-artifact.eval.yaml --model sonnet
+eval-score path/to/your-artifact.eval.yaml --model sonnet
 # then run eval_score against the calibration artifacts and compare overall_mean +
 # per-dimension scores to the pinned values above; gap >0.5 on overall or >1 on any
 # dimension flags a calibration drift to investigate.
@@ -227,12 +253,10 @@ change.
   rules cited by `violations`.
 - [practical-prose-eval-compare.runbook.md](practical-prose-eval-compare.runbook.md):
   runbook for comparing N evals.
-- [eval_report.py](../scripts/eval_report.py): schema, validator, `from-metrics` stub
-  generator.
-- [eval_score.py](../scripts/eval_score.py): model-scoring runner (calls `claude` CLI)
-  that fills `qual` + `violations`.
-- [practical_prose_metrics.py](../scripts/practical_prose_metrics.py): quantitative
-  metrics tool.
+- [eval_report.py](eval-report): schema, validator, `from-metrics` stub generator.
+- [eval_score.py](eval-score): model-scoring runner (calls `claude` CLI) that fills
+  `qual` + `violations`.
+- [practical_prose_metrics.py](prose-metrics): quantitative metrics tool.
 
 <!-- This document follows std-doc-guidelines.md.
 Review guidelines before editing.

@@ -16,14 +16,13 @@ usefulness.
 Good prose serves human needs and reflects human qualities.
 Usefulness is not in opposition to style, beauty, or human expression.
 The best practical writing joins the classic virtues of structure, precision, evidence,
-and method with the romantic virtues of voice, proportion, rhythm, image, and felt
-meaning.
+and method with the romantic virtues of voice, proportion, rhythm, and felt meaning.
 
 ## Practical Writing in the Age of AI
 
 The rise of AI makes the need to focus on quality more urgent than ever.
-Language is now drafted, transformed, summarized, and evaluated by machines more often
-than by humans.
+Language is now drafted, transformed, summarized, and evaluated by LLMs in greater
+volume than by humans.
 
 Fluency is cheap. Judgment remains precious.
 
@@ -154,19 +153,33 @@ system gets used in practice.
 - **Understanding why a rule exists:** the corresponding principle in
   [practical-prose-principles.md](docs/practical-prose-principles.md), and the source
   tradition in [practical-prose-bibliography.md](docs/practical-prose-bibliography.md).
-- **Looking at the tooling:** [scripts/](scripts/) holds the metrics, scoring, and
-  report generators.
+- **Looking at the tooling:** [tools/prose-eval/](tools/prose-eval/) is the installable
+  Python package with the metrics, scoring, and report generators.
 
 ## Tooling
 
-[scripts/](scripts/) contains the operational tooling:
+[tools/prose-eval/](tools/prose-eval/) is a standalone modern-Python package
+(bootstrapped from [`simple-modern-uv`](https://github.com/jlevy/simple-modern-uv)) that
+installs four console-script entry points:
 
-- `practical_prose_metrics.py` — deterministic metrics over a document (banned-register
-  hits, vague-word counts, link validity, frontmatter presence, etc.)
-- `eval_score.py` — score a document against the rubric using an LLM scorer
-- `eval_report.py` — combine metrics and scores into an eval report
-- `eval_compare.py` — compare N eval reports across versions or variants
-- `rubric_schema.json` / `rubric_schema.py` — canonical schema for eval YAMLs
+- `prose-metrics` — deterministic metrics over a document (banned-register hits,
+  vague-word counts, link validity, frontmatter presence, etc.).
+- `eval-score` — score a document against the rubric via the Anthropic SDK with prompt
+  caching; supports `--batch` for parallel runs over N artifacts.
+- `eval-report` — combine metrics and scores into an eval-report YAML; validate /
+  compute-derived / from-metrics subcommands.
+- `eval-compare` — compare N eval reports across versions or variants.
+
+Quick start:
+
+```bash
+cd tools/prose-eval
+make install
+# Set ANTHROPIC_API_KEY in .env (loaded automatically by the entry points).
+eval-report from-metrics path/to/doc.md --label my-doc --scope-class brief --out my-doc.eval.yaml
+eval-score my-doc.eval.yaml
+eval-report validate my-doc.eval.yaml
+```
 
 See the runbooks for end-to-end operation.
 
