@@ -16,11 +16,11 @@ Companion to:
     dimensions, version, and rule counts; everything in this file derives from it)
 
 Usage:
-  eval-report validate path/to/artifact.eval.yaml
-  eval-report compute-derived path/to/artifact.eval.yaml
-  eval-report compute-derived path/to/artifact.eval.yaml --in-place
-  eval-report from-metrics path/to/artifact.md > artifact.eval.yaml
-  eval-report from-metrics path/to/artifact.md --label NAME --out artifact.eval.yaml
+  eval-report validate path/to/artifact.eval.md
+  eval-report compute-derived path/to/artifact.eval.md
+  eval-report compute-derived path/to/artifact.eval.md --in-place
+  eval-report from-metrics path/to/artifact.md > artifact.eval.md
+  eval-report from-metrics path/to/artifact.md --label NAME --out artifact.eval.md
 """
 
 from __future__ import annotations
@@ -36,6 +36,7 @@ from pydantic import BaseModel, ConfigDict, Field, field_validator, model_valida
 
 from prose_eval import metrics as pwm
 from prose_eval import rubric_schema as rs
+from prose_eval.eval_render import render_single_doc_rollup
 
 # Score = integer 0-5 or the literal "NA" (not applicable to this artifact).
 # 0 means "applicable but unassessable" (content missing); "NA" means the dimension
@@ -474,6 +475,37 @@ class EvalReport(BaseModel):
             allow_unicode=True,
         )
 
+    @classmethod
+    def from_eval_md(cls, source: str | Path) -> EvalReport:
+        """Load an `.eval.md` file: YAML frontmatter (delimited by ---) + body."""
+        text = source.read_text(encoding="utf-8") if isinstance(source, Path) else source
+        data = _parse_frontmatter(text)
+        return cls.model_validate(data)
+
+    def to_eval_md(self, body: str) -> str:
+        """Serialize as `.eval.md`: YAML frontmatter + caller-rendered body.
+
+        The frontmatter is canonical structured data; the body is the human-
+        readable rendering, regenerated whenever the frontmatter changes.
+        """
+        frontmatter = self.to_yaml()
+        return f"---\n{frontmatter}---\n\n{body.rstrip()}\n"
+
+
+def _parse_frontmatter(text: str) -> dict:
+    """Extract the YAML object delimited by leading and trailing '---' lines."""
+    lines = text.splitlines()
+    if not lines or lines[0].strip() != "---":
+        raise ValueError("missing YAML frontmatter (expected '---' on first line)")
+    end = -1
+    for i in range(1, len(lines)):
+        if lines[i].strip() == "---":
+            end = i
+            break
+    if end < 0:
+        raise ValueError("unterminated YAML frontmatter (no closing '---')")
+    return yaml.safe_load("\n".join(lines[1:end])) or {}
+
 
 def _round(value: float, digits: int = 4) -> float:
     return round(value, digits)
@@ -745,7 +777,7 @@ def completeness_errors(report: EvalReport) -> list[str]:
 def cmd_validate(args: argparse.Namespace) -> int:
     path = Path(args.path)
     try:
-        report = EvalReport.from_yaml(path)
+        report = EvalReport.from_eval_md(path)
     except Exception as exc:
         print(f"INVALID: {path}\n  {exc}", file=sys.stderr)
         return 1
@@ -773,10 +805,11 @@ def cmd_validate(args: argparse.Namespace) -> int:
 
 def cmd_compute_derived(args: argparse.Namespace) -> int:
     path = Path(args.path)
-    raw = yaml.safe_load(path.read_text(encoding="utf-8"))
+    raw = _parse_frontmatter(path.read_text(encoding="utf-8"))
     raw.pop("derived", None)
     report = EvalReport.model_validate(raw)
-    output = report.to_yaml()
+    body = render_single_doc_rollup(report, heading_level=1)
+    output = report.to_eval_md(body)
     if args.in_place:
         path.write_text(output, encoding="utf-8")
         print(f"OK: rewrote {path}")
@@ -820,7 +853,8 @@ def cmd_from_metrics(args: argparse.Namespace) -> int:
         ),
     )
 
-    output = report.to_yaml()
+    body = render_single_doc_rollup(report, heading_level=1)
+    output = report.to_eval_md(body)
     if args.out:
         Path(args.out).write_text(output, encoding="utf-8")
         print(f"OK: wrote {args.out}", file=sys.stderr)

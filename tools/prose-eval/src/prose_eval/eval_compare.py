@@ -16,11 +16,11 @@ Output shape (unified mode):
     materially different scores between columns.
 
 The shape is exercised by the renderer regression test in
-scripts/test_eval_compare.py, which renders the six `figma-*.eval.yaml` fixtures
+scripts/test_eval_compare.py, which renders the six `figma-*.eval.md` fixtures
 and asserts byte-for-byte equality with `scripts/fixtures/expected-comparison.md`.
 
 Usage:
-  eval-compare a.eval.yaml b.eval.yaml [c.eval.yaml ...]
+  eval-compare a.eval.md b.eval.md [c.eval.md ...]
   eval-compare --format unified a.yaml b.yaml > unified.md
   eval-compare --format sections a.yaml b.yaml > sections.md
   eval-compare --bold-rule materially-different a.yaml b.yaml
@@ -35,6 +35,14 @@ from pathlib import Path
 from typing import Literal
 
 from prose_eval import rubric_schema as rs
+from prose_eval.eval_render import (
+    fmt_float_1,
+    fmt_float_2,
+    fmt_int,
+    fmt_int_comma,
+    fmt_score,
+    render_per_doc_rollup,
+)
 from prose_eval.eval_report import EvalReport
 
 BoldRule = Literal["max", "min", "none"]
@@ -52,29 +60,6 @@ class Row:
     bold_rule: BoldRule = "max"
 
 
-def _fmt_int_comma(v: float | int) -> str:
-    return f"{int(v):,}"
-
-
-def _fmt_int(v: float | int) -> str:
-    return str(int(v))
-
-
-def _fmt_score(v: int | str) -> str:
-    """Format a rubric score that may be the sentinel string "NA"."""
-    if v == "NA":
-        return "NA"
-    return str(int(v))
-
-
-def _fmt_float_1(v: float) -> str:
-    return f"{v:.1f}"
-
-
-def _fmt_float_2(v: float) -> str:
-    return f"{v:.2f}"
-
-
 def _qual_rows(reports: list[EvalReport]) -> list[Row]:
     rows: list[Row] = []
     for group in rs.GROUPS:
@@ -86,7 +71,7 @@ def _qual_rows(reports: list[EvalReport]) -> list[Row]:
                     group.label,
                     dim.label,
                     vals,
-                    [_fmt_score(v) for v in vals],
+                    [fmt_score(v) for v in vals],
                 )
             )
         mean_attr = f"{group.key}_mean"
@@ -97,7 +82,7 @@ def _qual_rows(reports: list[EvalReport]) -> list[Row]:
                 group.label,
                 "*Mean*",
                 means,
-                [_fmt_float_2(v) for v in means],
+                [fmt_float_2(v) for v in means],
             )
         )
 
@@ -108,7 +93,7 @@ def _qual_rows(reports: list[EvalReport]) -> list[Row]:
             "Overall",
             f"*Mean ({rs.dimension_count()} dims)*",
             overall_means,
-            [_fmt_float_2(v) for v in overall_means],
+            [fmt_float_2(v) for v in overall_means],
         )
     )
 
@@ -122,11 +107,11 @@ def _quant_rows(reports: list[EvalReport]) -> list[Row]:
     # automatically better. Use bold_rule="none" so the reader doesn't read row-maxima
     # as wins.
     size_metrics = [
-        ("Words", lambda r: r.quant.size.words, _fmt_int_comma),
-        ("Sentences", lambda r: r.quant.size.sentences, _fmt_int_comma),
-        ("Paragraphs", lambda r: r.quant.size.paragraphs, _fmt_int_comma),
-        ("Lines", lambda r: r.quant.size.lines, _fmt_int_comma),
-        ("Pages (275 wpp)", lambda r: r.quant.size.pages_275wpp, _fmt_float_1),
+        ("Words", lambda r: r.quant.size.words, fmt_int_comma),
+        ("Sentences", lambda r: r.quant.size.sentences, fmt_int_comma),
+        ("Paragraphs", lambda r: r.quant.size.paragraphs, fmt_int_comma),
+        ("Lines", lambda r: r.quant.size.lines, fmt_int_comma),
+        ("Pages (275 wpp)", lambda r: r.quant.size.pages_275wpp, fmt_float_1),
     ]
     for name, getter, fmt in size_metrics:
         vals = [getter(r) for r in reports]
@@ -148,7 +133,7 @@ def _quant_rows(reports: list[EvalReport]) -> list[Row]:
                 "Size",
                 "Bytes (KB)",
                 vals_bytes,
-                [_fmt_float_1(v) if v is not None else "n/a" for v in vals_bytes],
+                [fmt_float_1(v) if v is not None else "n/a" for v in vals_bytes],
                 bold_rule="none",
             )
         )
@@ -183,7 +168,7 @@ def _quant_rows(reports: list[EvalReport]) -> list[Row]:
                 "Structural",
                 name,
                 vals_s,
-                [_fmt_int(v) for v in vals_s],
+                [fmt_int(v) for v in vals_s],
                 bold_rule="none",
             )
         )
@@ -224,7 +209,7 @@ def _quant_rows(reports: list[EvalReport]) -> list[Row]:
             "Links",
             "Bare URLs",
             bare_vals,
-            [_fmt_int(v) for v in bare_vals],
+            [fmt_int(v) for v in bare_vals],
             bold_rule="min",
         )
     )
@@ -236,7 +221,7 @@ def _quant_rows(reports: list[EvalReport]) -> list[Row]:
             "Provenance",
             "Bracket tags",
             tag_vals,
-            [_fmt_int(v) for v in tag_vals],
+            [fmt_int(v) for v in tag_vals],
             bold_rule="none",
         )
     )
@@ -261,7 +246,7 @@ def _quant_rows(reports: list[EvalReport]) -> list[Row]:
             "Lint",
             "Banned-register hits",
             lint_vals,
-            [_fmt_int(v) for v in lint_vals],
+            [fmt_int(v) for v in lint_vals],
             bold_rule="min",
         )
     )
@@ -293,7 +278,7 @@ def _derived_rows(reports: list[EvalReport]) -> list[Row]:
                 "Density",
                 name,
                 vals,
-                [_fmt_float_2(v) for v in vals],
+                [fmt_float_2(v) for v in vals],
                 bold_rule="none",
             )
         )
@@ -305,7 +290,7 @@ def _derived_rows(reports: list[EvalReport]) -> list[Row]:
             "Heading shape",
             "H4 share of headings",
             h4_vals,
-            [_fmt_float_2(v) for v in h4_vals],
+            [fmt_float_2(v) for v in h4_vals],
             bold_rule="none",
         )
     )
@@ -560,9 +545,13 @@ def main(argv: list[str] | None = None) -> int:
     )
     parser.add_argument(
         "--format",
-        choices=["unified", "sections", "both"],
+        choices=["unified", "sections", "by-doc", "both"],
         default="unified",
-        help="Output shape: unified table, per-section drilldowns, or both.",
+        help=(
+            "Output shape: unified comparison table, per-section drilldowns "
+            "across docs, per-doc rollups (one self-contained section per doc), "
+            "or both unified+sections."
+        ),
     )
     parser.add_argument(
         "--bold-rule",
@@ -599,7 +588,7 @@ def main(argv: list[str] | None = None) -> int:
     blocking_errors: list[str] = []
     for p in args.yamls:
         try:
-            r = EvalReport.from_yaml(Path(p))
+            r = EvalReport.from_eval_md(Path(p))
         except Exception as exc:
             blocking_errors.append(f"{p}: schema-invalid: {exc}")
             continue
@@ -679,6 +668,8 @@ def main(argv: list[str] | None = None) -> int:
         chunks.append(render_unified_table(reports, bold_mode))
     if args.format in ("sections", "both"):
         chunks.append(render_section_drilldown(reports, bold_mode))
+    if args.format == "by-doc":
+        chunks.append(render_per_doc_rollup(reports, density_concerns))
 
     if args.pairs:
         pairs: list[tuple[str, str]] = []
