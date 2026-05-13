@@ -825,7 +825,7 @@ Bump the version on substantive changes:
 
 - New dimension added or removed: bump the dim count (e.g., `18-dim-v1` → `19-dim-v1`).
 - Anchor language changed in a way that could shift scores: bump the rev (`18-dim-v1` →
-  `18-dim-v2`). The rubric schema in `../scripts/rubric_schema.json` is the canonical
+  `18-dim-v2`). The rubric schema in `../scripts/rubric_schema.yaml` is the canonical
   source for the current version string; bumping the rubric here means bumping `version`
   there too.
 

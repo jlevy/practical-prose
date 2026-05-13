@@ -3,7 +3,7 @@ Pydantic schema for practical-writing eval reports.
 
 Defines the canonical YAML shape for a single-document eval report that combines:
   - quantitative metrics (mirrors prose-metrics Metrics)
-  - qualitative rubric scores (one per dimension defined in rubric_schema.json, 0-5 scale)
+  - qualitative rubric scores (one per dimension defined in rubric_schema.yaml, 0-5 scale)
   - cited guideline-rule violations
   - derived rollups (density ratios, category means, overall mean)
   - eval metadata (date, evaluator, method)
@@ -12,7 +12,7 @@ Companion to:
   - tools/docs/practical-prose-rubric.md (the rubric)
   - runbooks/practical-prose-eval-single.runbook.md (single-doc workflow)
   - eval-compare (consumes N validated reports → comparison Markdown)
-  - prose_eval.rubric_schema / rubric_schema.json (single source of truth for groups,
+  - prose_eval.rubric_schema / rubric_schema.yaml (single source of truth for groups,
     dimensions, version, and rule counts; everything in this file derives from it)
 
 Usage:
@@ -47,7 +47,7 @@ Score = Annotated[int, Field(ge=0, le=5)] | Literal["NA"]
 NA: Literal["NA"] = "NA"
 
 # Re-export from the canonical schema. Bumping the rubric (renaming a dimension,
-# adding one, reordering groups) happens in rubric_schema.json — never here.
+# adding one, reordering groups) happens in rubric_schema.yaml — never here.
 CURRENT_RUBRIC_VERSION = rs.RUBRIC_VERSION
 
 ScopeClass = Literal["status", "brief", "memo", "deep_research", "design_doc"]
@@ -145,10 +145,10 @@ class QuantMetrics(BaseModel):
     bracket_tag_examples: list[str] = []
 
 
-# Score group models. Field names match dimension keys in rubric_schema.json; group
+# Score group models. Field names match dimension keys in rubric_schema.yaml; group
 # class names match the group keys ({key.title()}Scores). Models are still explicit
 # (Pydantic needs static field types) but `verify_models_match_schema()` confirms the
-# alignment with the schema, so adding a new dimension means: update the JSON, add
+# alignment with the schema, so adding a new dimension means: update the YAML, add
 # the field here, done.
 class PurposeScores(BaseModel):
     model_config = ConfigDict(extra="forbid")

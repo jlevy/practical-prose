@@ -1,11 +1,11 @@
 """Single source of truth for the practical-prose rubric structure.
 
-Loads `rubric_schema.json` from this directory and exposes the canonical groups,
+Loads `rubric_schema.yaml` from this directory and exposes the canonical groups,
 dimensions, version string, and rule counts as immutable Python objects.
 Everything else (Pydantic models in `eval_report.py`, dimension lists in the
 runtime, the comparison-table renderers, the prompts, the docs) derives from
 this schema. Bumping a dimension, renaming one, or reordering groups happens in
-the JSON file; the Python code reads counts via `dimension_count()` and the
+the YAML file; the Python code reads counts via `dimension_count()` and the
 like rather than hardcoding them.
 
 The Pydantic score/reason models in `eval_report.py` are still defined as
@@ -16,11 +16,12 @@ asserts the alignment at module-import time of the test suite.
 
 from __future__ import annotations
 
-import json
 from dataclasses import dataclass
 from pathlib import Path
 
-_SCHEMA_PATH = Path(__file__).resolve().parent / "rubric_schema.json"
+import yaml
+
+_SCHEMA_PATH = Path(__file__).resolve().parent / "rubric_schema.yaml"
 
 
 @dataclass(frozen=True)
@@ -41,7 +42,7 @@ class Group:
 
 
 def _load() -> tuple[str, tuple[Group, ...], dict[str, int], frozenset[str]]:
-    data = json.loads(_SCHEMA_PATH.read_text(encoding="utf-8"))
+    data = yaml.safe_load(_SCHEMA_PATH.read_text(encoding="utf-8"))
     groups: list[Group] = []
     for g in data["groups"]:
         dims = tuple(

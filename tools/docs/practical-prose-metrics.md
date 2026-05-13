@@ -77,7 +77,7 @@ fair.
   a single eval report.
 - [scripts/eval_compare.py](../scripts/eval_compare.py): compare N eval reports across
   versions or variants.
-- [scripts/rubric_schema.json](../scripts/rubric_schema.json): canonical
+- [scripts/rubric_schema.yaml](../scripts/rubric_schema.yaml): canonical
   machine-readable schema for the 18 dimensions, the five groups, allowed score values,
   and `NA`-eligible dimensions.
 
