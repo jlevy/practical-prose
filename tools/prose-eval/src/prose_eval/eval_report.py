@@ -9,7 +9,7 @@ Defines the canonical YAML shape for a single-document eval report that combines
   - eval metadata (date, evaluator, method)
 
 Companion to:
-  - tools/docs/practical-prose-rubric.md (the rubric)
+  - docs/practical-prose-rubric.md (the rubric)
   - runbooks/practical-prose-eval-single.runbook.md (single-doc workflow)
   - eval-compare (consumes N validated reports → comparison Markdown)
   - prose_eval.rubric_schema / rubric_schema.yaml (single source of truth for groups,

@@ -2,8 +2,8 @@
 Quantitative metrics for analytical-writing artifacts.
 
 Companion to:
-  - tools/docs/practical-prose-rubric.md (qualitative 0-5 scoring)
-  - tools/docs/practical-prose-guidelines.md (prescriptive rules)
+  - docs/practical-prose-rubric.md (qualitative 0-5 scoring)
+  - docs/practical-prose-guidelines.md (prescriptive rules)
 
 Counts (all per-document):
   - Headings by depth (h1-h6) and total — ATX (# Heading) and setext (underline) styles
@@ -172,7 +172,7 @@ GENERIC_HEADING_RE = re.compile(
 EXTERNAL_SCHEMES = ("http://", "https://", "ftp://", "ftps://", "mailto:", "tel:")
 
 # Default banned-register words. Canonical source:
-#   tools/docs/common-doc-guidelines.md §4.2
+#   docs/common-doc-guidelines.md §4.2
 # Referenced from practical-prose-guidelines.md §5 Clarity rule 4 and applied by the
 # `banned-register hits` metric below.
 #

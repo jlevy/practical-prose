@@ -68,8 +68,8 @@ def _find_repo_root(start: Path) -> Path:
 
 REPO_ROOT = _find_repo_root(PACKAGE_ROOT)
 PROMPT_TEMPLATE_PATH = PACKAGE_ROOT / "prompts" / "eval-rubric-score.md"
-RUBRIC_PATH = REPO_ROOT / "tools" / "docs" / "practical-prose-rubric.md"
-GUIDELINES_PATH = REPO_ROOT / "tools" / "docs" / "practical-prose-guidelines.md"
+RUBRIC_PATH = REPO_ROOT / "docs" / "practical-prose-rubric.md"
+GUIDELINES_PATH = REPO_ROOT / "docs" / "practical-prose-guidelines.md"
 
 JSON_FENCE_RE = re.compile(r"```json\s*\n(.+?)\n```", re.DOTALL)
 

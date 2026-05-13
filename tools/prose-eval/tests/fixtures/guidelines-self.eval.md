@@ -1,7 +1,7 @@
 ---
 artifact:
   label: guidelines-self
-  path: tools/docs/practical-prose-guidelines.md
+  path: docs/practical-prose-guidelines.md
   scope_class: memo
 derived:
   density:
@@ -224,7 +224,7 @@ violations:
 
 # guidelines-self
 
-**Source:** `tools/docs/practical-prose-guidelines.md`  **Scope:** `memo`  **Overall mean (18 dims):** 4.14  **Rubric:** `18-dim-v1`  **Model:** `—`  **Eval date:** 2026-05-10
+**Source:** `docs/practical-prose-guidelines.md`  **Scope:** `memo`  **Overall mean (18 dims):** 4.14  **Rubric:** `18-dim-v1`  **Model:** `—`  **Eval date:** 2026-05-10
 
 ## Qualitative
 

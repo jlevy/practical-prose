@@ -247,9 +247,9 @@ change.
 
 ## Related docs
 
-- [practical-prose-rubric.md](../tools/docs/practical-prose-rubric.md): per-dimension
+- [practical-prose-rubric.md](../docs/practical-prose-rubric.md): per-dimension
   0-5 anchors and scoring rules.
-- [practical-prose-guidelines.md](../tools/docs/practical-prose-guidelines.md):
+- [practical-prose-guidelines.md](../docs/practical-prose-guidelines.md):
   prescriptive rules cited by `violations`.
 - [practical-prose-eval-compare.runbook.md](practical-prose-eval-compare.runbook.md):
   runbook for comparing N evals.

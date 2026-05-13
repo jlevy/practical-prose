@@ -115,10 +115,10 @@ looking at specific qualities or dimensions.
 |  | Robustness | Do key claims survive plausible alternative interpretations? |
 
 Each dimension maps back to one or more principles in
-[practical-prose-principles.md](tools/docs/practical-prose-principles.md); prescriptive
-rules live in [practical-prose-guidelines.md](tools/docs/practical-prose-guidelines.md)
+[practical-prose-principles.md](docs/practical-prose-principles.md); prescriptive
+rules live in [practical-prose-guidelines.md](docs/practical-prose-guidelines.md)
 and 0-5 scoring anchors in
-[practical-prose-rubric.md](tools/docs/practical-prose-rubric.md).
+[practical-prose-rubric.md](docs/practical-prose-rubric.md).
 
 ## Layers
 
@@ -127,12 +127,12 @@ Each layer answers a different question.
 
 | Layer | Doc | Answers |
 | --- | --- | --- |
-| Common | [tools/docs/common-doc-guidelines.md](tools/docs/common-doc-guidelines.md) | What general document standards do all docs (practical or otherwise) follow? |
-| Principles | [tools/docs/practical-prose-principles.md](tools/docs/practical-prose-principles.md) | Why these rules — what seven principles do they descend from? |
-| Guidelines | [tools/docs/practical-prose-guidelines.md](tools/docs/practical-prose-guidelines.md) | What should the writer do — prescriptive rules for the 18 dimensions? |
-| Rubric | [tools/docs/practical-prose-rubric.md](tools/docs/practical-prose-rubric.md) | How is a document scored — descriptive 0-5 anchors for the same 18 dimensions? |
-| Bibliography | [tools/docs/practical-prose-bibliography.md](tools/docs/practical-prose-bibliography.md) | Where do these ideas come from — what works ground each tradition? |
-| Metrics | [tools/docs/practical-prose-metrics.md](tools/docs/practical-prose-metrics.md) | Which quantitative metrics and qualitative checks map to which dimensions; recommended frontmatter schema. |
+| Common | [docs/common-doc-guidelines.md](docs/common-doc-guidelines.md) | What general document standards do all docs (practical or otherwise) follow? |
+| Principles | [docs/practical-prose-principles.md](docs/practical-prose-principles.md) | Why these rules — what seven principles do they descend from? |
+| Guidelines | [docs/practical-prose-guidelines.md](docs/practical-prose-guidelines.md) | What should the writer do — prescriptive rules for the 18 dimensions? |
+| Rubric | [docs/practical-prose-rubric.md](docs/practical-prose-rubric.md) | How is a document scored — descriptive 0-5 anchors for the same 18 dimensions? |
+| Bibliography | [docs/practical-prose-bibliography.md](docs/practical-prose-bibliography.md) | Where do these ideas come from — what works ground each tradition? |
+| Metrics | [docs/practical-prose-metrics.md](docs/practical-prose-metrics.md) | Which quantitative metrics and qualitative checks map to which dimensions; recommended frontmatter schema. |
 | Shortcut | [shortcuts/practical-prose-quick-checklist.md](shortcuts/practical-prose-quick-checklist.md) | One-page pre-publish self-audit across the 18 dimensions. |
 | Runbook | [runbooks/](runbooks/) | Operational steps for single-document evals and N-way comparisons. |
 
@@ -150,16 +150,16 @@ system gets used in practice.
 ## Where to Start
 
 - **Writing a document and want the rules:**
-  [practical-prose-guidelines.md](tools/docs/practical-prose-guidelines.md).
+  [practical-prose-guidelines.md](docs/practical-prose-guidelines.md).
 - **Scoring a document and want the anchors:**
-  [practical-prose-rubric.md](tools/docs/practical-prose-rubric.md).
+  [practical-prose-rubric.md](docs/practical-prose-rubric.md).
 - **Running a pre-publish self-audit:**
   [practical-prose-quick-checklist.md](shortcuts/practical-prose-quick-checklist.md).
 - **Running a formal eval:** the [runbooks/](runbooks/) directory.
 - **Understanding why a rule exists:** the corresponding principle in
-  [practical-prose-principles.md](tools/docs/practical-prose-principles.md), and the
+  [practical-prose-principles.md](docs/practical-prose-principles.md), and the
   source tradition in
-  [practical-prose-bibliography.md](tools/docs/practical-prose-bibliography.md).
+  [practical-prose-bibliography.md](docs/practical-prose-bibliography.md).
 - **Looking at the tooling:** [tools/prose-eval/](tools/prose-eval/) is the installable
   Python package with the metrics, scoring, and report generators.
 
