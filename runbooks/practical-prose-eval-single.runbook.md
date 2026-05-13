@@ -247,10 +247,10 @@ change.
 
 ## Related docs
 
-- [practical-prose-rubric.md](../docs/practical-prose-rubric.md): per-dimension 0-5
-  anchors and scoring rules.
-- [practical-prose-guidelines.md](../docs/practical-prose-guidelines.md): prescriptive
-  rules cited by `violations`.
+- [practical-prose-rubric.md](../tools/docs/practical-prose-rubric.md): per-dimension
+  0-5 anchors and scoring rules.
+- [practical-prose-guidelines.md](../tools/docs/practical-prose-guidelines.md):
+  prescriptive rules cited by `violations`.
 - [practical-prose-eval-compare.runbook.md](practical-prose-eval-compare.runbook.md):
   runbook for comparing N evals.
 - [eval_report.py](eval-report): schema, validator, `from-metrics` stub generator.
@@ -258,6 +258,6 @@ change.
   `qual` + `violations`.
 - [practical_prose_metrics.py](prose-metrics): quantitative metrics tool.
 
-<!-- This document follows std-doc-guidelines.md.
+<!-- This document follows common-doc-guidelines.md.
 Review guidelines before editing.
 -->

@@ -320,7 +320,7 @@ validity is scored under §10 Formatting.
   occasional banned-register hits, parallel-structure padding ("It’s not X, it’s Y"
   without a real contrast), or sentences that are unnecessarily dense.
 - **5:** Publication-ready grammar and clarity, with no material defects.
-  Words chosen for precision; banned-register words (the canonical std-doc-guidelines
+  Words chosen for precision; banned-register words (the canonical common-doc-guidelines
   §4.2 list) and parallel-structure padding absent or earned (per §5 rules 4 and 5); no
   pedantic, pedagogical, or self-referential prose — no canonicality declarations,
   word-choice justifications, or reading-order instructions (per rule 6). Suitable for
@@ -723,7 +723,8 @@ dimension because it invites subjective evaluation:
 
 This is a check, not a score.
 The general standard guideline’s “Be engaging and warm” rule in
-[std-doc-guidelines.md](std-doc-guidelines.md) is the canonical home for tone guidance.
+[common-doc-guidelines.md](common-doc-guidelines.md) is the canonical home for tone
+guidance.
 Cite a Tone / Reader Respect concern in an eval’s qualitative section, not as a
 dimension score.
 
@@ -847,6 +848,6 @@ and must be re-scored before they can be reused under `18-dim-v1`.
 - [practical-prose-eval-compare.runbook.md](../runbooks/practical-prose-eval-compare.runbook.md):
   operational steps for comparing N evals.
 
-<!-- This document follows std-doc-guidelines.md.
+<!-- This document follows common-doc-guidelines.md.
 Review guidelines before editing.
 -->

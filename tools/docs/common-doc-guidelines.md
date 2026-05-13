@@ -1,4 +1,4 @@
-# Standard Documentation Guidelines
+# Common Documentation Guidelines
 
 Version: v0.1 (last update 2026-05-11)\
 Joshua Levy (github.com/jlevy)
@@ -207,7 +207,7 @@ Stylistically, emphasize **clarity**, **depth**, **rigor**, and **warmth**.
 ## Guideline Footer
 
 Documents governed by these guidelines should include a footer that says “This document
-follows std-doc-guidelines.md.
+follows common-doc-guidelines.md.
 Review guidelines before editing.”
 Rules:
 
@@ -225,6 +225,6 @@ Rules:
   When moving or splitting docs, make sure every resulting file ends with the footer and
   no file has more than one.
 
-<!-- This document follows std-doc-guidelines.md.
+<!-- This document follows common-doc-guidelines.md.
 Review guidelines before editing.
 -->

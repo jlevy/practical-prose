@@ -69,7 +69,7 @@ When following a rule would hurt the reader’s ability to understand, decide, d
 or maintain the work, document the deviation (the rule set aside, the reader outcome
 served, the risk introduced) and proceed.
 See the **Justified Deviations** section in
-[practical-prose-rubric.md](../docs/practical-prose-rubric.md).
+[practical-prose-rubric.md](../tools/docs/practical-prose-rubric.md).
 
 Local rule compliance is in service of reader outcome, not the other way around.
 
@@ -77,14 +77,14 @@ Local rule compliance is in service of reader outcome, not the other way around.
 
 - [practical-prose-quick-checklist.md](practical-prose-quick-checklist.md): pre-publish
   self-audit for the 18 dimensions.
-- [practical-prose-guidelines.md](../docs/practical-prose-guidelines.md): prescriptive
-  rules, full version (~800 lines).
-- [practical-prose-rubric.md](../docs/practical-prose-rubric.md): scoring anchors,
+- [practical-prose-guidelines.md](../tools/docs/practical-prose-guidelines.md):
+  prescriptive rules, full version (~800 lines).
+- [practical-prose-rubric.md](../tools/docs/practical-prose-rubric.md): scoring anchors,
   Justified Deviations, applicability profiles, audit passes, and the Failure-Mode
   Questions table.
-- [practical-prose-metrics.md](../docs/practical-prose-metrics.md): operational metrics
-  \+ applicability profiles by `risk_level`.
+- [practical-prose-metrics.md](../tools/docs/practical-prose-metrics.md): operational
+  metrics \+ applicability profiles by `risk_level`.
 
-<!-- This document follows std-doc-guidelines.md.
+<!-- This document follows common-doc-guidelines.md.
 Review guidelines before editing.
 -->

@@ -160,13 +160,13 @@ Aim for falsifiable claims grounded in specific table cells, not generic.
 
 - [practical-prose-eval-single.runbook.md](practical-prose-eval-single.runbook.md):
   produces the YAML inputs this runbook consumes.
-- [practical-prose-rubric.md](../docs/practical-prose-rubric.md): per-dimension 0-5
-  anchors and scoring rules.
-- [practical-prose-guidelines.md](../docs/practical-prose-guidelines.md): prescriptive
-  rules cited by violations.
+- [practical-prose-rubric.md](../tools/docs/practical-prose-rubric.md): per-dimension
+  0-5 anchors and scoring rules.
+- [practical-prose-guidelines.md](../tools/docs/practical-prose-guidelines.md):
+  prescriptive rules cited by violations.
 - [eval_compare.py](eval-compare): the deterministic generator.
 - [eval_report.py](eval-report): schema and validator.
 
-<!-- This document follows std-doc-guidelines.md.
+<!-- This document follows common-doc-guidelines.md.
 Review guidelines before editing.
 -->

@@ -2,8 +2,8 @@
 Quantitative metrics for analytical-writing artifacts.
 
 Companion to:
-  - docs/practical-prose-rubric.md (qualitative 0-5 scoring)
-  - docs/practical-prose-guidelines.md (prescriptive rules)
+  - tools/docs/practical-prose-rubric.md (qualitative 0-5 scoring)
+  - tools/docs/practical-prose-guidelines.md (prescriptive rules)
 
 Counts (all per-document):
   - Headings by depth (h1-h6) and total — ATX (# Heading) and setext (underline) styles
@@ -18,7 +18,7 @@ Counts (all per-document):
   - Tables: count of markdown tables (detected via separator rows)
   - Code blocks: count of fenced code blocks in the raw document
   - Banned-register hits: prose occurrences of strong-register / advocacy-register
-    words from the canonical std-doc-guidelines §4.2 list referenced by
+    words from the canonical common-doc-guidelines §4.2 list referenced by
     practical-prose-guidelines.md §5 Clarity rule 4 (e.g. incontrovertibly, monumental,
     paradigm-shifting). Override the default list with --banned-words-file.
   - Em-dash discipline: count of spaced em dashes (" — " — a common agent failure
@@ -59,10 +59,10 @@ Known limitations:
     use these patterns; the reviewer judges genre exception.
 
 Usage:
-  scripts/practical_prose_metrics.py path/to/document.md
-  scripts/practical_prose_metrics.py path/to/document.md --json
-  scripts/practical_prose_metrics.py *.md            # multiple files, summary table
-  scripts/practical_prose_metrics.py doc.md --words-per-page 250
+  prose-metrics path/to/document.md
+  prose-metrics path/to/document.md --json
+  prose-metrics *.md            # multiple files, summary table
+  prose-metrics doc.md --words-per-page 250
 """
 
 from __future__ import annotations
@@ -171,12 +171,12 @@ GENERIC_HEADING_RE = re.compile(
 EXTERNAL_SCHEMES = ("http://", "https://", "ftp://", "ftps://", "mailto:", "tel:")
 
 # Default banned-register words. Canonical source:
-#   docs/std-doc-guidelines.md §4.2
+#   tools/docs/common-doc-guidelines.md §4.2
 # Referenced from practical-prose-guidelines.md §5 Clarity rule 4 and applied by the
 # `banned-register hits` metric below.
 #
 # The list combines:
-#   - The std-doc-guidelines §4.2 strong-register / advocacy-register set
+#   - The common-doc-guidelines §4.2 strong-register / advocacy-register set
 #     (incontrovertibly, emphatically, definitively, unequivocally, massive,
 #     profound, monumental, transformational, paradigm-shifting, etc.).
 #   - `dominant` as an advocacy-register extension that recurs in earnings /
@@ -423,7 +423,7 @@ Other:
   tables          {m.tables:>4}
   code blocks     {m.code_blocks:>4}
 
-Lint (§5 Clarity rule 4 — banned register from std-doc-guidelines §4.2; may be earned with a citation):
+Lint (§5 Clarity rule 4 — banned register from common-doc-guidelines §4.2; may be earned with a citation):
   banned hits     {m.banned_register_hits:>4}
   examples        {banned_examples}
 

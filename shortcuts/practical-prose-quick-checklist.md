@@ -7,7 +7,7 @@ author: Joshua Levy (github.com/jlevy) with agent assistance
 # Practical Prose Quick Checklist
 
 A one-page pre-publish self-audit for documents written under
-[practical-prose-guidelines.md](../docs/practical-prose-guidelines.md).
+[practical-prose-guidelines.md](../tools/docs/practical-prose-guidelines.md).
 Walk the five groups in order.
 For each line: yes / no / NA. If a question is unclear, jump to its dimension in the
 full guidelines (the §-number points there directly).
@@ -94,7 +94,7 @@ broad pass:
 
 1. **Lint pass** — Cosmetic / deterministic: §8 Organization, §9 Style Consistency, §10
    Formatting, §5 banned-register and vague-word checks.
-   Use `scripts/practical_prose_metrics.py`.
+   Use `prose-metrics`.
 2. **Claim audit** — Every quantitative claim against its cited source.
    §11 Verifiability, §12 Factuality.
    Re-run calculations.
@@ -119,9 +119,9 @@ same agent in the same context loses the cognitive separation the structure depe
 - As the Lint-pass anchor for high-stakes evaluations.
 
 This checklist stays in sync with the full
-[practical-prose-guidelines.md](../docs/practical-prose-guidelines.md); when the
+[practical-prose-guidelines.md](../tools/docs/practical-prose-guidelines.md); when the
 guidelines change, update this checklist in the same edit.
 
-<!-- This document follows std-doc-guidelines.md.
+<!-- This document follows common-doc-guidelines.md.
 Review guidelines before editing.
 -->

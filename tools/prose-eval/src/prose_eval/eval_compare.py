@@ -1,7 +1,7 @@
 """
 Comparison-table generator for practical-writing eval reports.
 
-Reads N validated EvalReport YAMLs (see scripts/eval_report.py) and emits a
+Reads N validated EvalReport YAMLs (see eval-report) and emits a
 unified Markdown comparison table with per-section drilldowns.
 
 Output shape (unified mode):
@@ -20,10 +20,10 @@ scripts/test_eval_compare.py, which renders the six `figma-*.eval.yaml` fixtures
 and asserts byte-for-byte equality with `scripts/fixtures/expected-comparison.md`.
 
 Usage:
-  scripts/eval_compare.py a.eval.yaml b.eval.yaml [c.eval.yaml ...]
-  scripts/eval_compare.py --format unified a.yaml b.yaml > unified.md
-  scripts/eval_compare.py --format sections a.yaml b.yaml > sections.md
-  scripts/eval_compare.py --bold-rule materially-different a.yaml b.yaml
+  eval-compare a.eval.yaml b.eval.yaml [c.eval.yaml ...]
+  eval-compare --format unified a.yaml b.yaml > unified.md
+  eval-compare --format sections a.yaml b.yaml > sections.md
+  eval-compare --bold-rule materially-different a.yaml b.yaml
 """
 
 from __future__ import annotations

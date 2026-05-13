@@ -69,11 +69,12 @@ leximetry codebase (`leximetry/utils/aio_limited.py`).
 
 ### Today’s path
 
-`scripts/eval_score.py` builds a ~110K-token prompt (instructions + rubric + guidelines
-\+ artifact), spawns `claude -p <prompt> --model sonnet` as a subprocess, reads stdout,
-extracts a ```json fence, parses against the rubric schema, and writes the filled YAML.
-Each call is independent and re-pays the full input-token cost for the ~99K invariant
-portion (rubric + guidelines + instructions).
+`tools/prose-eval/src/prose_eval/eval_score.py` builds a ~110K-token prompt
+(instructions + rubric + guidelines \+ artifact), spawns
+`claude -p <prompt> --model sonnet` as a subprocess, reads stdout, extracts a ```json
+fence, parses against the rubric schema, and writes the filled YAML. Each call is
+independent and re-pays the full input-token cost for the ~99K invariant portion (rubric
+\+ guidelines + instructions).
 
 ### Friction observed in self-eval-v0.1
 
@@ -124,7 +125,7 @@ one lockfile, one `pytest` invocation, one set of CLI entry points, ruff + based
 
 ### Approach
 
-In `scripts/eval_score.py`:
+In `tools/prose-eval/src/prose_eval/eval_score.py`:
 
 1. Replace `call_claude` (currently `subprocess.run(["claude", "-p", prompt], ...)`)
    with a function that uses the Anthropic SDK directly.
@@ -152,7 +153,7 @@ tools/prose-eval/
 ├── devtools/lint.py                  # ruff + codespell + basedpyright runner
 ├── src/prose_eval/
 │   ├── __init__.py
-│   ├── eval_score.py                 # SDK scorer (was scripts/eval_score.py)
+│   ├── eval_score.py                 # SDK scorer (was tools/prose-eval/src/prose_eval/eval_score.py)
 │   ├── eval_report.py                # schema + validators (unchanged logic)
 │   ├── eval_compare.py               # N-way comparison renderer
 │   ├── metrics.py                    # deterministic doc metrics
@@ -280,7 +281,8 @@ self-eval run; it’ll be deleted once the running background scorer completes.*
 - [ ] Update runbooks
   ([practical-prose-eval-single.runbook.md](../../../../runbooks/practical-prose-eval-single.runbook.md),
   [practical-prose-eval-compare.runbook.md](../../../../runbooks/practical-prose-eval-compare.runbook.md))
-  to call the new entry points (`eval-score …` instead of `../scripts/eval_score.py …`).
+  to call the new entry points (`eval-score …` instead of
+  `../tools/prose-eval/src/prose_eval/eval_score.py …`).
 - [ ] Update root `README.md` Tooling section to point at `tools/prose-eval/`.
 - [ ] Optional: enable the template’s `.github/workflows/ci.yml` for the
   `tools/prose-eval/` subdir.
@@ -431,9 +433,9 @@ Our equivalent: a small `_load_env_files()` helper that walks `cwd` and home for
   used by Phase 0.
 - [evals/self-eval-v0.1/findings.md](../../../../evals/self-eval-v0.1/findings.md) —
   F1–F6 friction log.
-- [scripts/eval_score.py](../../../../scripts/eval_score.py) — the file being relocated
-  and rewritten.
-- [scripts/prompts/eval-rubric-score.md](../../../../scripts/prompts/eval-rubric-score.md)
+- [tools/prose-eval/src/prose_eval/eval_score.py](../../../../tools/prose-eval/src/prose_eval/eval_score.py)
+  — the file being relocated and rewritten.
+- [tools/prose-eval/src/prose_eval/prompts/eval-rubric-score.md](../../../../tools/prose-eval/src/prose_eval/prompts/eval-rubric-score.md)
   — the prompt template that becomes the cached block.
 - [runbooks/practical-prose-eval-single.runbook.md](../../../../runbooks/practical-prose-eval-single.runbook.md)
   — the runbook to update.

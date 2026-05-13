@@ -1,6 +1,6 @@
 artifact:
   label: guidelines-self
-  path: docs/practical-prose-guidelines.md
+  path: tools/docs/practical-prose-guidelines.md
   scope_class: memo
 metadata:
   eval_date: '2026-05-10'

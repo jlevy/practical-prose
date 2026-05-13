@@ -1,6 +1,6 @@
 ---
 title: Copy Edit Document
-description: Copy-edit and proofread a document against std-doc-guidelines; track and fix all issues
+description: Copy-edit and proofread a document against common-doc-guidelines; track and fix all issues
 category: documentation
 author: Joshua Levy (github.com/jlevy) with agent assistance
 ---
@@ -10,7 +10,7 @@ author: Joshua Levy (github.com/jlevy) with agent assistance
 
 Apply the standard documentation guidelines to a document:
 
-1. Read `std-doc-guidelines.md` fully.
+1. Read `common-doc-guidelines.md` fully.
 
 2. Audit the target against every rule.
    Be thorough; small issues count.

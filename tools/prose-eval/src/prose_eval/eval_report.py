@@ -2,25 +2,25 @@
 Pydantic schema for practical-writing eval reports.
 
 Defines the canonical YAML shape for a single-document eval report that combines:
-  - quantitative metrics (mirrors scripts/practical_prose_metrics.py Metrics)
+  - quantitative metrics (mirrors prose-metrics Metrics)
   - qualitative rubric scores (one per dimension defined in rubric_schema.json, 0-5 scale)
   - cited guideline-rule violations
   - derived rollups (density ratios, category means, overall mean)
   - eval metadata (date, evaluator, method)
 
 Companion to:
-  - docs/practical-prose-rubric.md (the rubric)
+  - tools/docs/practical-prose-rubric.md (the rubric)
   - runbooks/practical-prose-eval-single.runbook.md (single-doc workflow)
-  - scripts/eval_compare.py (consumes N validated reports → comparison Markdown)
-  - scripts/rubric_schema.py / rubric_schema.json (single source of truth for groups,
+  - eval-compare (consumes N validated reports → comparison Markdown)
+  - prose_eval.rubric_schema / rubric_schema.json (single source of truth for groups,
     dimensions, version, and rule counts; everything in this file derives from it)
 
 Usage:
-  scripts/eval_report.py validate path/to/artifact.eval.yaml
-  scripts/eval_report.py compute-derived path/to/artifact.eval.yaml
-  scripts/eval_report.py compute-derived path/to/artifact.eval.yaml --in-place
-  scripts/eval_report.py from-metrics path/to/artifact.md > artifact.eval.yaml
-  scripts/eval_report.py from-metrics path/to/artifact.md --label NAME --out artifact.eval.yaml
+  eval-report validate path/to/artifact.eval.yaml
+  eval-report compute-derived path/to/artifact.eval.yaml
+  eval-report compute-derived path/to/artifact.eval.yaml --in-place
+  eval-report from-metrics path/to/artifact.md > artifact.eval.yaml
+  eval-report from-metrics path/to/artifact.md --label NAME --out artifact.eval.yaml
 """
 
 from __future__ import annotations

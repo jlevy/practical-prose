@@ -162,9 +162,9 @@ headings. Each maps to one or more principles.
   anchors that operationalize the dimensions.
 - [practical-prose-bibliography.md](practical-prose-bibliography.md): curated reading
   list for the traditions above.
-- [std-doc-guidelines.md](std-doc-guidelines.md): general style, organization, and
+- [common-doc-guidelines.md](common-doc-guidelines.md): general style, organization, and
   formatting.
 
-<!-- This document follows std-doc-guidelines.md.
+<!-- This document follows common-doc-guidelines.md.
 Review guidelines before editing.
 -->

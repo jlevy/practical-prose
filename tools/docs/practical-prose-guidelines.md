@@ -14,7 +14,7 @@ should be reviewable by a human or agent.
 
 ## Principles
 
-These guidelines extend [std-doc-guidelines.md](std-doc-guidelines.md) and
+These guidelines extend [common-doc-guidelines.md](common-doc-guidelines.md) and
 operationalize the seven practical-prose principles defined in
 [practical-prose-principles.md](practical-prose-principles.md): **Purposeful**,
 **Truthful**, **Essential**, **Lucid**, **Verifiable**, **Maintainable**, and
@@ -69,19 +69,19 @@ A good practical document does these things; the prescriptive rules below say ho
    positions argued proportionally; key claims tested against alternative interpretive
    lenses (§16–§18).
 7. **Is easy to maintain.** Owner, status, dates, dependencies, and open questions per
-   [std-doc-guidelines.md](std-doc-guidelines.md).
+   [common-doc-guidelines.md](common-doc-guidelines.md).
 
 The 18 sections below give the prescriptive rules; the companion
 [practical-prose-rubric.md](practical-prose-rubric.md) provides the descriptive 0-5
 scoring anchors. A review-time checklist organized the same way appears at the end of
 this document under *Pre-Publish Self-Audit*.
 
-### Relationship to std-doc-guidelines.md
+### Relationship to common-doc-guidelines.md
 
-`std-doc-guidelines.md` is the cross-document substrate.
+`common-doc-guidelines.md` is the cross-document substrate.
 The table below shows how its clauses relate to this layer:
 
-| std-doc-guidelines clause | Where it applies |
+| common-doc-guidelines clause | Where it applies |
 | --- | --- |
 | §1 Organizing Documentation (rapid orientation, filenames, ownership/audience/cadence) | Cross-document only; not scored by this rubric |
 | §2.1 Explain motivations and background | Absorbed under §1 Suitability and the Humane principle |
@@ -94,7 +94,7 @@ The table below shows how its clauses relate to this layer:
 | §3.3 Headings cleave to subject contours | Absorbed into §8 Organization rule 9 |
 | §3.4 Be engaging and warm | Referenced as Tone / Reader Respect contextual modifier in the rubric |
 | §4.1 Respect reader’s intelligence | Absorbed under the Humane principle and §1 Suitability / §4 Depth |
-| §4.2 Banned extravagant words list | Canonical list lives in std-doc-guidelines; referenced from §5 Clarity rule 4 |
+| §4.2 Banned extravagant words list | Canonical list lives in common-doc-guidelines; referenced from §5 Clarity rule 4 |
 | §4.3 Cut pompousness, meta-commentary, pedantry | Absorbed into §5 Clarity rules 3 and 6 |
 | §5 Em-dash discipline | Absorbed into §9 Style Consistency rule 7 |
 | §6 Guideline Footer | Operational marker; not scored by this rubric |
@@ -145,7 +145,8 @@ can’t extract the needed output, or if the purpose wasn’t named in the first
    when the depth is excellent.
    The shape is summary → link, not chapter → conclusion: the reader who stops after the
    summary should still leave with the document’s main output.
-   (Cross-references std-doc-guidelines §2.2 “Give context gradually and efficiently.”)
+   (Cross-references common-doc-guidelines §2.2 “Give context gradually and
+   efficiently.”)
 
 ### 2. Scope
 
@@ -270,7 +271,7 @@ correct spelling and grammar?
    pass) when that commentary is what the document is *for*.
 
 4. **Earn extravagant register; don’t deploy it as emphasis.** The canonical
-   banned-register list lives in std-doc-guidelines §4.2 (“incontrovertibly,”
+   banned-register list lives in common-doc-guidelines §4.2 (“incontrovertibly,”
    “emphatically,” “definitively,” “unequivocally,” “massive,” “monumental,” “profound,”
    “transformational,” “seismic,” “paradigm-shifting,” “will revolutionize,”
    “structurally outmaneuvered,” “successfully executing,” “crushing it”). These words
@@ -363,7 +364,7 @@ clear and the document coheres.
    sections, and one-line predecessor pointers where a future reader needs to find a
    predecessor (“see commit `abc123` for the prior shape”). The test is whether the
    history serves the reader’s task or merely records the author’s path.
-   (Cross-references std-doc-guidelines §2.5.)
+   (Cross-references common-doc-guidelines §2.5.)
 
 ### 8. Organization
 
@@ -426,7 +427,7 @@ But when these elements are present, they should be well-arranged.
    eviction trade-offs” over “Notes.”
    Templates that prescribe generic headings should be filled in with subject-specific
    subheadings, not left as-is.
-   (Cross-references std-doc-guidelines §3.3.)
+   (Cross-references common-doc-guidelines §3.3.)
 
 ### 9. Style Consistency
 
@@ -471,7 +472,7 @@ Style Consistency isolates the editorial-polish question from the readability qu
    (“context—like this”), not spaced (“context — like this”). Spaced em-dash overuse
    marks unedited agent prose; the convention applies even when the author finds the
    spaced variant readable.
-   (Cross-references std-doc-guidelines §5.)
+   (Cross-references common-doc-guidelines §5.)
 
 ### 10. Formatting
 
@@ -499,7 +500,7 @@ Formatting is the most deterministic of the three — most rules here are lintab
    No nested bold-italic for decoration.
 
 5. **Required headers, metadata, and footers are present and correctly placed.** The
-   `std-doc-guidelines.md` footer placement (bottom-of-file, HTML-comment-wrapped) is
+   `common-doc-guidelines.md` footer placement (bottom-of-file, HTML-comment-wrapped) is
    honored; frontmatter sits at the top above any other content.
 
 6. **The rendered document has no obvious production defects.** No raw HTML escape
@@ -958,11 +959,11 @@ structure depends on.
   works referenced in these guidelines, with publication details and stable URLs.
 - [practical-prose-metrics.md](practical-prose-metrics.md): quantitative metrics and
   recommended frontmatter schema that operationalize these rules.
-- [std-doc-guidelines.md](std-doc-guidelines.md): general style, organization, and
+- [common-doc-guidelines.md](common-doc-guidelines.md): general style, organization, and
   formatting (the substrate these guidelines extend).
 - Domain-specific `conventions.md` files extend these guidelines with domain-specific
   banned-word lists, confidence-tag conventions, and citation-format requirements.
 
-<!-- This document follows std-doc-guidelines.md.
+<!-- This document follows common-doc-guidelines.md.
 Review guidelines before editing.
 -->

@@ -473,7 +473,7 @@ legal-domain anchors specifically.
   derived from the principles.
 - [practical-prose-rubric.md](practical-prose-rubric.md): descriptive 0-5 scoring
   anchors for the 18 dimensions.
-- [std-doc-guidelines.md](std-doc-guidelines.md): general style, organization, and
+- [common-doc-guidelines.md](common-doc-guidelines.md): general style, organization, and
   formatting.
 
 [^aristotle-rhetoric]: Aristotle. *Rhetoric*. Translated by W. Rhys Roberts.
@@ -862,6 +862,6 @@ legal-domain anchors specifically.
     *Minimalism Beyond the Nurnberg Funnel*, MIT Press, 1998.
     <https://mitpress.mit.edu/9780262031639/the-nurnberg-funnel/>.
 
-<!-- This document follows std-doc-guidelines.md.
+<!-- This document follows common-doc-guidelines.md.
 Review guidelines before editing.
 -->
