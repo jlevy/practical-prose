@@ -100,7 +100,7 @@ These signals feed the qualitative scoring; they don’t substitute for it.
 For one-off raw metrics inspection without producing a YAML:
 
 ```bash
-prose-metrics path/to/artifact.md --json
+prose-metrics path/to/artifact.md --format=yaml
 ```
 
 ### 2. Score the 18 qualitative dimensions
