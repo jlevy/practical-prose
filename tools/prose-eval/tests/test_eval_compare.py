@@ -1,13 +1,3 @@
-#!/usr/bin/env -S uv run --script
-# /// script
-# requires-python = ">=3.11"
-# dependencies = [
-#   "chopdiff>=0.1.0",
-#   "pydantic>=2.0",
-#   "pyyaml>=6.0",
-#   "pytest>=8.0",
-# ]
-# ///
 """Tests for scripts/eval_compare.py — Markdown comparison generator.
 
 Run:
@@ -21,9 +11,7 @@ from pathlib import Path
 
 import pytest
 
-sys.path.insert(0, str(Path(__file__).resolve().parent))
-
-from eval_compare import (  # noqa: E402
+from prose_eval.eval_compare import (  # noqa: E402
     _bold_indices,
     check_rubric_versions,
     check_scope_classes,
@@ -32,7 +20,7 @@ from eval_compare import (  # noqa: E402
     render_per_pair_deltas,
     render_unified_table,
 )
-from eval_report import EvalReport  # noqa: E402
+from prose_eval.eval_report import EvalReport  # noqa: E402
 
 FIXTURE_DIR = Path(__file__).parent / "fixtures"
 GOLDEN = FIXTURE_DIR / "expected-comparison.md"
@@ -124,8 +112,7 @@ def test_cell_coalescing_blanks_repeated_approach_aspect():
     # First Qualitative row should have **Qualitative...** in approach column.
     # The second row within the same group should have empty approach + aspect cells.
     qual_rows = [
-        line for line in text.splitlines()
-        if "| Suitability |" in line or "| Scope |" in line
+        line for line in text.splitlines() if "| Suitability |" in line or "| Scope |" in line
     ]
     assert "**Qualitative" in qual_rows[0]
     assert qual_rows[1].startswith("|  |  |")  # both approach + aspect coalesced
@@ -162,9 +149,7 @@ def test_invalid_pair_spec_raises(capsys: pytest.CaptureFixture[str]):
 
 
 def test_format_sections_emits_per_aspect_tables(capsys: pytest.CaptureFixture[str]):
-    rc = main(
-        [str(p) for p in ALL_FIXTURES[:2]] + ["--allow-misalignment", "--format", "sections"]
-    )
+    rc = main([str(p) for p in ALL_FIXTURES[:2]] + ["--allow-misalignment", "--format", "sections"])
     assert rc == 0
     out = capsys.readouterr().out
     assert "### Qualitative — Expression" in out
@@ -202,15 +187,36 @@ def _make_report(label: str, rubric_version: str | None) -> EvalReport:
     data = {
         "artifact": {"label": label, "path": f"{label}.md"},
         "quant": {
-            "size": {"words": 1000, "sentences": 50, "paragraphs": 25, "lines": 200, "pages_275wpp": 3.6},
+            "size": {
+                "words": 1000,
+                "sentences": 50,
+                "paragraphs": 25,
+                "lines": 200,
+                "pages_275wpp": 3.6,
+            },
             "headings": {"h1": 1, "h2": 4, "h3": 10, "h4": 5, "total": 20},
             "structural": {"tables": 4, "code_blocks": 0, "images": 0},
-            "links": {"total": 10, "external": 6, "internal": 4, "inline": 10, "reference": 0, "autolink": 0, "bare_urls": 0},
+            "links": {
+                "total": 10,
+                "external": 6,
+                "internal": 4,
+                "inline": 10,
+                "reference": 0,
+                "autolink": 0,
+                "bare_urls": 0,
+            },
             "provenance": {"bracket_tags": 8, "footnote_refs": 0, "footnote_defs": 0},
             "lint": {"banned_register_hits": 0},
         },
         "qual": {
-            "expression": {"clarity": 4, "coherence": 5, "concision": 4, "organization": 5, "style_consistency": 0, "formatting": 0},
+            "expression": {
+                "clarity": 4,
+                "coherence": 5,
+                "concision": 4,
+                "organization": 5,
+                "style_consistency": 0,
+                "formatting": 0,
+            },
             "purpose": {"suitability": 4, "breadth": 4, "depth": 4},
             "grounding": {"verifiability": 5, "factuality": 4},
             "reasoning": {"inference_discipline": 4, "soundness": 5, "precision": 4},
@@ -261,6 +267,7 @@ def test_check_rubric_versions_mixed_tagged_and_untagged_warns():
 def test_unified_table_emits_warning_block_on_mismatch(capsys):
     """When versions mismatch, the rendered output begins with a warning block."""
     import tempfile
+
     import yaml
 
     with tempfile.TemporaryDirectory() as td:
@@ -297,15 +304,36 @@ def _make_report_with_scope(label: str, scope_class: str | None) -> EvalReport:
     data = {
         "artifact": {"label": label, "path": f"{label}.md"},
         "quant": {
-            "size": {"words": 1000, "sentences": 50, "paragraphs": 25, "lines": 200, "pages_275wpp": 3.6},
+            "size": {
+                "words": 1000,
+                "sentences": 50,
+                "paragraphs": 25,
+                "lines": 200,
+                "pages_275wpp": 3.6,
+            },
             "headings": {"h1": 1, "h2": 4, "h3": 10, "h4": 5, "total": 20},
             "structural": {"tables": 4, "code_blocks": 0, "images": 0},
-            "links": {"total": 10, "external": 6, "internal": 4, "inline": 10, "reference": 0, "autolink": 0, "bare_urls": 0},
+            "links": {
+                "total": 10,
+                "external": 6,
+                "internal": 4,
+                "inline": 10,
+                "reference": 0,
+                "autolink": 0,
+                "bare_urls": 0,
+            },
             "provenance": {"bracket_tags": 8, "footnote_refs": 0, "footnote_defs": 0},
             "lint": {"banned_register_hits": 0},
         },
         "qual": {
-            "expression": {"clarity": 4, "coherence": 5, "concision": 4, "organization": 5, "style_consistency": 0, "formatting": 0},
+            "expression": {
+                "clarity": 4,
+                "coherence": 5,
+                "concision": 4,
+                "organization": 5,
+                "style_consistency": 0,
+                "formatting": 0,
+            },
             "purpose": {"suitability": 4, "breadth": 4, "depth": 4},
             "grounding": {"verifiability": 5, "factuality": 4},
             "reasoning": {"inference_discipline": 4, "soundness": 5, "precision": 4},
@@ -359,15 +387,36 @@ def test_collect_density_concerns_returns_only_flagged():
     unhealthy_data = {
         "artifact": {"label": "lownet", "path": "lownet.md", "scope_class": "deep_research"},
         "quant": {
-            "size": {"words": 5000, "sentences": 250, "paragraphs": 125, "lines": 800, "pages_275wpp": 18.2},
+            "size": {
+                "words": 5000,
+                "sentences": 250,
+                "paragraphs": 125,
+                "lines": 800,
+                "pages_275wpp": 18.2,
+            },
             "headings": {"h1": 1, "h2": 5, "h3": 10, "h4": 4, "total": 20},
             "structural": {"tables": 4, "code_blocks": 0, "images": 0},
-            "links": {"total": 0, "external": 0, "internal": 0, "inline": 0, "reference": 0, "autolink": 0, "bare_urls": 0},
+            "links": {
+                "total": 0,
+                "external": 0,
+                "internal": 0,
+                "inline": 0,
+                "reference": 0,
+                "autolink": 0,
+                "bare_urls": 0,
+            },
             "provenance": {"bracket_tags": 0, "footnote_refs": 0, "footnote_defs": 0},
             "lint": {"banned_register_hits": 0},
         },
         "qual": {
-            "expression": {"clarity": 4, "coherence": 5, "concision": 4, "organization": 5, "style_consistency": 0, "formatting": 0},
+            "expression": {
+                "clarity": 4,
+                "coherence": 5,
+                "concision": 4,
+                "organization": 5,
+                "style_consistency": 0,
+                "formatting": 0,
+            },
             "purpose": {"suitability": 4, "breadth": 4, "depth": 4},
             "grounding": {"verifiability": 5, "factuality": 4},
             "reasoning": {"inference_discipline": 4, "soundness": 5, "precision": 4},
@@ -384,6 +433,7 @@ def test_collect_density_concerns_returns_only_flagged():
 
 def test_unified_emits_scope_warning_block(capsys):
     import tempfile
+
     import yaml
 
     with tempfile.TemporaryDirectory() as td:

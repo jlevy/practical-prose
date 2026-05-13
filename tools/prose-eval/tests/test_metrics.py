@@ -1,11 +1,3 @@
-#!/usr/bin/env -S uv run --script
-# /// script
-# requires-python = ">=3.11"
-# dependencies = [
-#   "chopdiff>=0.1.0",
-#   "pytest>=8.0",
-# ]
-# ///
 """
 Tests for scripts/practical_prose_metrics.py.
 
@@ -21,12 +13,12 @@ from __future__ import annotations
 import sys
 from pathlib import Path
 
-# Make the scripts directory importable so we can import practical_prose_metrics.
+# Make the scripts directory importable so we can from prose_eval import metrics as practical_prose_metrics.
 SCRIPTS_DIR = Path(__file__).resolve().parent
-sys.path.insert(0, str(SCRIPTS_DIR))
 
-import practical_prose_metrics as pwm  # noqa: E402
 import pytest  # noqa: E402
+
+from prose_eval import metrics as pwm
 
 FIXTURES = SCRIPTS_DIR / "test_fixtures" / "practical_prose_metrics"
 
@@ -48,7 +40,7 @@ class TestP0_1_ProseExclusion:
         assert m.words < 50, f"Code block inflated word count: {m.words}"
 
     def test_frontmatter_excluded_from_word_count(self):
-        m = _measure("frontmatter_and_code.md")
+        _measure("frontmatter_and_code.md")
         # Frontmatter has 'title', 'description', etc. — those words must not count.
         # The word "frontmatter" appears only in the YAML block.
         stripped = pwm.strip_code_and_frontmatter(
@@ -314,9 +306,7 @@ class TestB1_BannedRegister:
         # "dominant" is on the banned list. Make sure "predominantly" doesn't match.
         import tempfile
 
-        with tempfile.NamedTemporaryFile(
-            "w", suffix=".md", delete=False, encoding="utf-8"
-        ) as f:
+        with tempfile.NamedTemporaryFile("w", suffix=".md", delete=False, encoding="utf-8") as f:
             f.write("Predominantly cloudy weather. Domination is not the goal.\n")
             tmp_path = Path(f.name)
         try:

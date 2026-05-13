@@ -1,12 +1,3 @@
-#!/usr/bin/env -S uv run --script
-# /// script
-# requires-python = ">=3.11"
-# dependencies = [
-#   "chopdiff>=0.1.0",
-#   "pydantic>=2.0",
-#   "pyyaml>=6.0",
-# ]
-# ///
 """
 Comparison-table generator for practical-writing eval reports.
 
@@ -39,14 +30,12 @@ from __future__ import annotations
 
 import argparse
 import sys
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from pathlib import Path
 from typing import Literal
 
-sys.path.insert(0, str(Path(__file__).parent))
-
-import rubric_schema as rs  # noqa: E402
-from eval_report import EvalReport  # noqa: E402
+from prose_eval import rubric_schema as rs
+from prose_eval.eval_report import EvalReport
 
 BoldRule = Literal["max", "min", "none"]
 BoldMode = Literal["max", "materially-different"]
@@ -90,9 +79,7 @@ def _qual_rows(reports: list[EvalReport]) -> list[Row]:
     rows: list[Row] = []
     for group in rs.GROUPS:
         for dim in group.dimensions:
-            vals = [
-                getattr(getattr(r.qual, group.key), dim.key) for r in reports
-            ]
+            vals = [getattr(getattr(r.qual, group.key), dim.key) for r in reports]
             rows.append(
                 Row(
                     "Qualitative (rubric 0-5 or NA)",
@@ -254,8 +241,7 @@ def _quant_rows(reports: list[EvalReport]) -> list[Row]:
         )
     )
     fn_disp = [
-        f"{r.quant.provenance.footnote_refs}/{r.quant.provenance.footnote_defs}"
-        for r in reports
+        f"{r.quant.provenance.footnote_refs}/{r.quant.provenance.footnote_defs}" for r in reports
     ]
     rows.append(
         Row(
@@ -326,10 +312,7 @@ def _derived_rows(reports: list[EvalReport]) -> list[Row]:
 
     tally_present = any(r.derived.tally is not None for r in reports)
     if tally_present:
-        tally_disp = [
-            r.derived.tally.compact() if r.derived.tally else "n/a"
-            for r in reports
-        ]
+        tally_disp = [r.derived.tally.compact() if r.derived.tally else "n/a" for r in reports]
         rows.append(
             Row(
                 "Derived",
@@ -355,11 +338,7 @@ def _bold_indices(
 
     # Treat both None and "NA" as missing for bolding purposes — there is no
     # numeric comparison to make for a not-applicable dimension.
-    valid = [
-        (i, v)
-        for i, v in enumerate(raw)
-        if v is not None and v != "NA"
-    ]
+    valid = [(i, v) for i, v in enumerate(raw) if v is not None and v != "NA"]
     if not valid:
         return set()
     values = [v for _, v in valid]
@@ -659,9 +638,7 @@ def main(argv: list[str] | None = None) -> int:
         for c in concerns:
             print(f"warning: {label}: {c}", file=sys.stderr)
 
-    misaligned_inputs = [
-        (r.artifact.label, r.alignment_errors()) for r in reports
-    ]
+    misaligned_inputs = [(r.artifact.label, r.alignment_errors()) for r in reports]
     misaligned_inputs = [(label, errs) for label, errs in misaligned_inputs if errs]
     if misaligned_inputs and args.allow_misalignment:
         print(

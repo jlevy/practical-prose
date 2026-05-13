@@ -259,7 +259,7 @@ violations:
   dimension: Factuality
   location: §1.8 AI adoption table
   rule_number: 5
-- description: '''GM at peak, op margin at trough — typical Q1 seasonality with year-start
+- description: '''GM at peak, op margin at through — typical Q1 seasonality with year-start
     S&M reset'' fuses observed values with interpretive judgment'
   dimension: Inference Discipline
   location: §2.1 Q1 2024, L1107

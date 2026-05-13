@@ -1,13 +1,3 @@
-#!/usr/bin/env -S uv run --script
-# /// script
-# requires-python = ">=3.11"
-# dependencies = [
-#   "chopdiff>=0.1.0",
-#   "pydantic>=2.0",
-#   "pyyaml>=6.0",
-#   "pytest>=8.0",
-# ]
-# ///
 """Tests for scripts/eval_score.py — subagent runner for qualitative scoring.
 
 Run:
@@ -16,23 +6,12 @@ Run:
 
 from __future__ import annotations
 
-import json
 import sys
 from pathlib import Path
 
 import pytest
-import yaml
 
-sys.path.insert(0, str(Path(__file__).resolve().parent))
-
-from eval_score import (  # noqa: E402
-    build_prompt,
-    extract_json_block,
-    main,
-    merge_into_report,
-    parse_response,
-)
-from eval_report import (  # noqa: E402
+from prose_eval.eval_report import (  # noqa: E402
     EvalReport,
     ExpressionScores,
     GroundingScores,
@@ -42,6 +21,13 @@ from eval_report import (  # noqa: E402
     ReasoningScores,
     Violation,
 )
+from prose_eval.eval_score import (  # noqa: E402
+    build_prompt,
+    extract_json_block,
+    main,
+    merge_into_report,
+    parse_response,
+)
 
 SCRIPTS_DIR = Path(__file__).resolve().parent
 FIXTURES = SCRIPTS_DIR / "test_fixtures" / "practical_prose_metrics"
@@ -49,11 +35,10 @@ FIXTURES = SCRIPTS_DIR / "test_fixtures" / "practical_prose_metrics"
 
 def _full_payload(score: int = 4, with_violation: bool = True) -> dict:
     """Build a JSON payload covering every rubric dimension at a uniform score."""
-    import rubric_schema as rs
+    from prose_eval import rubric_schema as rs
+
     payload = {
-        "scores": {
-            d.key: {"score": score, "reason": "test"} for d in rs.DIMENSIONS
-        },
+        "scores": {d.key: {"score": score, "reason": "test"} for d in rs.DIMENSIONS},
         "violations": [],
     }
     if with_violation:
@@ -182,13 +167,17 @@ def test_parse_response_no_scores_object_raises():
 
 
 def _stub_report(tmp_path: Path) -> EvalReport:
-    from eval_report import main as report_main
+    from prose_eval.eval_report import main as report_main
+
     out = tmp_path / "stub.eval.yaml"
-    rc = report_main([
-        "from-metrics",
-        str(FIXTURES / "all_headings.md"),
-        "--out", str(out),
-    ])
+    rc = report_main(
+        [
+            "from-metrics",
+            str(FIXTURES / "all_headings.md"),
+            "--out",
+            str(out),
+        ]
+    )
     assert rc == 0
     return EvalReport.from_yaml(out)
 
@@ -196,13 +185,15 @@ def _stub_report(tmp_path: Path) -> EvalReport:
 def test_merge_replaces_qual_and_violations(tmp_path: Path):
     stub = _stub_report(tmp_path)
     qual = QualScores(
-        expression=ExpressionScores(clarity=5, coherence=5, concision=5, organization=5, style_consistency=0, formatting=0),
+        expression=ExpressionScores(
+            clarity=5, coherence=5, concision=5, organization=5, style_consistency=0, formatting=0
+        ),
         purpose=PurposeScores(suitability=5, breadth=5, depth=5),
         grounding=GroundingScores(verifiability=5, factuality=5),
         reasoning=ReasoningScores(inference_discipline=5, soundness=5, precision=5),
         judgment=JudgmentScores(calibration=5, fairness=5, robustness=5),
     )
-    from eval_score import ScoredResult
+    from prose_eval.eval_score import ScoredResult
 
     scored = ScoredResult(qual=qual, violations=[])
     merged = merge_into_report(stub, scored, evaluator="test-eval")
@@ -224,13 +215,15 @@ def test_merge_preserves_existing_method(tmp_path: Path):
     stub = EvalReport.model_validate(data)
 
     qual = QualScores(
-        expression=ExpressionScores(clarity=5, coherence=5, concision=5, organization=5, style_consistency=0, formatting=0),
+        expression=ExpressionScores(
+            clarity=5, coherence=5, concision=5, organization=5, style_consistency=0, formatting=0
+        ),
         purpose=PurposeScores(suitability=5, breadth=5, depth=5),
         grounding=GroundingScores(verifiability=5, factuality=5),
         reasoning=ReasoningScores(inference_discipline=5, soundness=5, precision=5),
         judgment=JudgmentScores(calibration=5, fairness=5, robustness=5),
     )
-    from eval_score import ScoredResult
+    from prose_eval.eval_score import ScoredResult
 
     merged = merge_into_report(stub, ScoredResult(qual=qual, violations=[]), evaluator="x")
     assert merged.metadata.method == "12-dim re-baseline"
@@ -240,13 +233,15 @@ def test_merge_alignment_clean_passes_strict_validate(tmp_path: Path):
     """Merging score-5-everywhere with no violations produces an alignment-clean report."""
     stub = _stub_report(tmp_path)
     qual = QualScores(
-        expression=ExpressionScores(clarity=5, coherence=5, concision=5, organization=5, style_consistency=0, formatting=0),
+        expression=ExpressionScores(
+            clarity=5, coherence=5, concision=5, organization=5, style_consistency=0, formatting=0
+        ),
         purpose=PurposeScores(suitability=5, breadth=5, depth=5),
         grounding=GroundingScores(verifiability=5, factuality=5),
         reasoning=ReasoningScores(inference_discipline=5, soundness=5, precision=5),
         judgment=JudgmentScores(calibration=5, fairness=5, robustness=5),
     )
-    from eval_score import ScoredResult
+    from prose_eval.eval_score import ScoredResult
 
     merged = merge_into_report(stub, ScoredResult(qual=qual, violations=[]), evaluator="x")
     assert merged.alignment_errors() == []
@@ -256,13 +251,15 @@ def test_merge_with_proper_violations_passes_alignment(tmp_path: Path):
     """A sub-5 score with a matching violation is alignment-valid after merge."""
     stub = _stub_report(tmp_path)
     qual = QualScores(
-        expression=ExpressionScores(clarity=4, coherence=5, concision=5, organization=5, style_consistency=0, formatting=0),
+        expression=ExpressionScores(
+            clarity=4, coherence=5, concision=5, organization=5, style_consistency=0, formatting=0
+        ),
         purpose=PurposeScores(suitability=5, breadth=5, depth=5),
         grounding=GroundingScores(verifiability=5, factuality=5),
         reasoning=ReasoningScores(inference_discipline=5, soundness=5, precision=5),
         judgment=JudgmentScores(calibration=5, fairness=5, robustness=5),
     )
-    from eval_score import ScoredResult
+    from prose_eval.eval_score import ScoredResult
 
     violations = [Violation(dimension="Clarity", rule_number=4, description="x", location="L1")]
     merged = merge_into_report(stub, ScoredResult(qual=qual, violations=violations), evaluator="x")
@@ -297,14 +294,17 @@ def test_build_prompt_missing_artifact_raises(tmp_path: Path):
 
 
 def test_main_dry_run_writes_prompt_to_stdout(tmp_path: Path, capsys):
-    from eval_report import main as report_main
+    from prose_eval.eval_report import main as report_main
 
     stub = tmp_path / "stub.eval.yaml"
-    rc = report_main([
-        "from-metrics",
-        str(FIXTURES / "all_headings.md"),
-        "--out", str(stub),
-    ])
+    rc = report_main(
+        [
+            "from-metrics",
+            str(FIXTURES / "all_headings.md"),
+            "--out",
+            str(stub),
+        ]
+    )
     assert rc == 0
 
     rc = main([str(stub), "--dry-run"])
@@ -327,22 +327,34 @@ def test_main_missing_yaml_returns_error(tmp_path: Path):
 def test_round_trip_merge_then_load(tmp_path: Path):
     stub = _stub_report(tmp_path)
     qual = QualScores(
-        expression=ExpressionScores(clarity=4, coherence=5, concision=4, organization=5, style_consistency=4, formatting=5),
+        expression=ExpressionScores(
+            clarity=4, coherence=5, concision=4, organization=5, style_consistency=4, formatting=5
+        ),
         purpose=PurposeScores(suitability=4, breadth=4, depth=4),
         grounding=GroundingScores(verifiability=5, factuality=4),
         reasoning=ReasoningScores(inference_discipline=4, soundness=5, precision=4),
         judgment=JudgmentScores(calibration=5, fairness=5, robustness=4),
     )
     sub5_dims = [
-        "Clarity", "Concision", "Style Consistency", "Suitability", "Breadth", "Depth",
-        "Factuality", "Inference Discipline", "Precision", "Robustness",
+        "Clarity",
+        "Concision",
+        "Style Consistency",
+        "Suitability",
+        "Breadth",
+        "Depth",
+        "Factuality",
+        "Inference Discipline",
+        "Precision",
+        "Robustness",
     ]
     violations = [
         Violation(dimension=d, rule_number=1, description="x", location="L1") for d in sub5_dims
     ]
-    from eval_score import ScoredResult
+    from prose_eval.eval_score import ScoredResult
 
-    merged = merge_into_report(stub, ScoredResult(qual=qual, violations=violations), evaluator="round-trip")
+    merged = merge_into_report(
+        stub, ScoredResult(qual=qual, violations=violations), evaluator="round-trip"
+    )
 
     out_path = tmp_path / "merged.eval.yaml"
     out_path.write_text(merged.to_yaml(), encoding="utf-8")
@@ -358,11 +370,13 @@ def test_round_trip_merge_then_load(tmp_path: Path):
 
 def test_merge_populates_reproducibility_metadata(tmp_path: Path):
     """A ReproContext flows through merge_into_report into metadata.*"""
-    from eval_score import ReproContext, ScoredResult
+    from prose_eval.eval_score import ReproContext, ScoredResult
 
     stub = _stub_report(tmp_path)
     qual = QualScores(
-        expression=ExpressionScores(clarity=5, coherence=5, concision=5, organization=5, style_consistency=0, formatting=0),
+        expression=ExpressionScores(
+            clarity=5, coherence=5, concision=5, organization=5, style_consistency=0, formatting=0
+        ),
         purpose=PurposeScores(suitability=5, breadth=5, depth=5),
         grounding=GroundingScores(verifiability=5, factuality=5),
         reasoning=ReasoningScores(inference_discipline=5, soundness=5, precision=5),
@@ -387,6 +401,201 @@ def test_merge_populates_reproducibility_metadata(tmp_path: Path):
     assert merged.metadata.rubric_sha256 == "b" * 64
     assert merged.metadata.guidelines_sha256 == "c" * 64
     assert merged.metadata.artifact_sha256 == "d" * 64
+
+
+# ---------------------------------------------------------------------------
+# SDK message shape (Phase 1)
+# ---------------------------------------------------------------------------
+
+
+def test_build_messages_has_cached_invariant_and_uncached_artifact():
+    """The Anthropic message list must mark the rubric+guidelines block as cached."""
+    from prose_eval.eval_score import _build_messages
+
+    messages = _build_messages(FIXTURES / "all_headings.md")
+    assert len(messages) == 1
+    blocks = messages[0]["content"]
+    assert len(blocks) == 2, "expected exactly two content blocks: cached + artifact"
+    # Block 1: invariant, marked ephemeral.
+    assert blocks[0]["type"] == "text"
+    assert blocks[0]["cache_control"] == {"type": "ephemeral"}
+    assert "practical-prose-rubric.md" in blocks[0]["text"]
+    assert "Prescriptive guidelines" in blocks[0]["text"]
+    # Block 2: artifact, NOT cached (every doc varies).
+    assert blocks[1]["type"] == "text"
+    assert "cache_control" not in blocks[1]
+    assert "Artifact under review" in blocks[1]["text"]
+
+
+def test_resolve_model_handles_aliases_and_full_ids():
+    from prose_eval.eval_score import DEFAULT_MODEL, _resolve_model
+
+    assert _resolve_model(None) == DEFAULT_MODEL
+    assert _resolve_model("") == DEFAULT_MODEL
+    assert _resolve_model("sonnet") == "claude-sonnet-4-5"
+    assert _resolve_model("opus") == "claude-opus-4-1"
+    assert _resolve_model("haiku") == "claude-haiku-4-5"
+    # Full IDs pass through unchanged.
+    assert _resolve_model("claude-sonnet-4-6") == "claude-sonnet-4-6"
+    assert _resolve_model("claude-opus-4-7-20251015") == "claude-opus-4-7-20251015"
+
+
+def test_repro_context_persists_sdk_fields(tmp_path: Path):
+    """sdk_version + model_id + cache_stats flow through merge_into_report."""
+    from prose_eval.eval_score import ReproContext, ScoredResult
+
+    stub = _stub_report(tmp_path)
+    qual = QualScores(
+        expression=ExpressionScores(
+            clarity=5, coherence=5, concision=5, organization=5, style_consistency=5, formatting=5
+        ),
+        purpose=PurposeScores(suitability=5, breadth=5, depth=5),
+        grounding=GroundingScores(verifiability=5, factuality=5),
+        reasoning=ReasoningScores(inference_discipline=5, soundness=5, precision=5),
+        judgment=JudgmentScores(calibration=5, fairness=5, robustness=5),
+    )
+    repro = ReproContext(
+        model="sonnet",
+        model_id="claude-sonnet-4-5-20250929",
+        sdk_version="0.39.0",
+        cache_stats={
+            "creation_input_tokens": 99000,
+            "read_input_tokens": 0,
+            "input_tokens": 1200,
+            "output_tokens": 1800,
+        },
+    )
+    merged = merge_into_report(
+        stub, ScoredResult(qual=qual, violations=[]), evaluator="test", repro=repro
+    )
+    assert merged.metadata.model == "sonnet"
+    assert merged.metadata.model_id == "claude-sonnet-4-5-20250929"
+    assert merged.metadata.sdk_version == "0.39.0"
+    assert merged.metadata.cache_stats == {
+        "creation_input_tokens": 99000,
+        "read_input_tokens": 0,
+        "input_tokens": 1200,
+        "output_tokens": 1800,
+    }
+
+
+class _FakeBlock:
+    def __init__(self, text: str, type_: str = "text"):
+        self.text = text
+        self.type = type_
+
+
+class _FakeUsage:
+    def __init__(
+        self,
+        cache_creation_input_tokens: int = 99000,
+        cache_read_input_tokens: int = 0,
+        input_tokens: int = 1200,
+        output_tokens: int = 1800,
+    ):
+        self.cache_creation_input_tokens = cache_creation_input_tokens
+        self.cache_read_input_tokens = cache_read_input_tokens
+        self.input_tokens = input_tokens
+        self.output_tokens = output_tokens
+
+
+class _FakeResponse:
+    def __init__(self, text: str, model_id: str, usage: _FakeUsage | None = None):
+        self.content = [_FakeBlock(text)]
+        self.model = model_id
+        self.usage = usage or _FakeUsage()
+
+
+class _FakeMessages:
+    def __init__(self, response: _FakeResponse, capture: dict):
+        self._response = response
+        self._capture = capture
+
+    def create(self, **kwargs):
+        self._capture.update(kwargs)
+        return self._response
+
+
+class _FakeAnthropic:
+    """Drop-in replacement for anthropic.Anthropic for tests."""
+
+    last_capture: dict = {}
+
+    def __init__(self, *args, **kwargs):
+        _FakeAnthropic.last_capture = {"client_kwargs": kwargs}
+        self.messages = _FakeMessages(
+            _FakeAnthropic.next_response,
+            _FakeAnthropic.last_capture,
+        )
+
+    @classmethod
+    def stub(cls, text: str, model_id: str = "claude-sonnet-4-5-fake"):
+        cls.next_response = _FakeResponse(text, model_id)
+
+
+def test_call_anthropic_extracts_text_and_usage(monkeypatch):
+    """call_anthropic returns text + cache usage from the SDK response."""
+    import anthropic
+
+    from prose_eval.eval_score import call_anthropic
+
+    _FakeAnthropic.stub("hello world", model_id="claude-sonnet-4-5-fake")
+    monkeypatch.setattr(anthropic, "Anthropic", _FakeAnthropic)
+
+    result = call_anthropic([{"role": "user", "content": "x"}], model="sonnet")
+    assert result.text == "hello world"
+    assert result.model_id == "claude-sonnet-4-5-fake"
+    assert result.cache_creation_input_tokens == 99000
+    assert result.cache_read_input_tokens == 0
+    # The SDK invocation gets the resolved model and our default max_tokens.
+    captured = _FakeAnthropic.last_capture
+    assert captured["model"] == "claude-sonnet-4-5"
+    assert captured["max_tokens"] == 8192
+
+
+def test_main_end_to_end_calls_sdk_and_persists_cache_stats(tmp_path: Path, monkeypatch):
+    """Full main() path: SDK mocked, YAML written, cache_stats recorded."""
+    import anthropic
+
+    from prose_eval.eval_report import main as report_main
+    from prose_eval.eval_score import main as score_main
+
+    # Stub: a model response that scores every dimension at 5 (no violations needed).
+    payload = _full_payload(score=5, with_violation=False)
+    response_text = "Looks good.\n\n```json\n" + __import__("json").dumps(payload) + "\n```\n"
+    _FakeAnthropic.stub(response_text, model_id="claude-sonnet-4-5-fake")
+    monkeypatch.setattr(anthropic, "Anthropic", _FakeAnthropic)
+    monkeypatch.setenv("ANTHROPIC_API_KEY", "sk-test-fake")
+
+    stub = tmp_path / "stub.eval.yaml"
+    rc = report_main(
+        [
+            "from-metrics",
+            str(FIXTURES / "all_headings.md"),
+            "--out",
+            str(stub),
+        ]
+    )
+    assert rc == 0
+
+    rc = score_main([str(stub), "--model", "sonnet"])
+    assert rc == 0
+
+    report = EvalReport.from_yaml(stub)
+    assert report.metadata.status == "complete"
+    assert report.metadata.model == "sonnet"
+    assert report.metadata.model_id == "claude-sonnet-4-5-fake"
+    assert report.metadata.cache_stats == {
+        "creation_input_tokens": 99000,
+        "read_input_tokens": 0,
+        "input_tokens": 1200,
+        "output_tokens": 1800,
+    }
+    assert report.metadata.sdk_version  # something non-empty
+    # Raw response was saved next to the YAML.
+    raw_path = stub.parent / "stub.eval.raw.txt"
+    assert raw_path.is_file()
+    assert "hello" not in raw_path.read_text() and "```json" in raw_path.read_text()
 
 
 if __name__ == "__main__":

@@ -1,12 +1,3 @@
-#!/usr/bin/env -S uv run --script
-# /// script
-# requires-python = ">=3.11"
-# dependencies = [
-#   "chopdiff>=0.1.0",
-#   "pydantic>=2.0",
-#   "pyyaml>=6.0",
-# ]
-# ///
 """
 Pydantic schema for practical-writing eval reports.
 
@@ -43,9 +34,8 @@ from typing import Annotated, Literal
 import yaml
 from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 
-sys.path.insert(0, str(Path(__file__).resolve().parent))
-import practical_prose_metrics as pwm  # noqa: E402
-import rubric_schema as rs  # noqa: E402
+from prose_eval import metrics as pwm
+from prose_eval import rubric_schema as rs
 
 # Score = integer 0-5 or the literal "NA" (not applicable to this artifact).
 # 0 means "applicable but unassessable" (content missing); "NA" means the dimension
@@ -106,12 +96,10 @@ class HeadingsCounts(BaseModel):
     total: int
 
     @model_validator(mode="after")
-    def check_total(self) -> "HeadingsCounts":
+    def check_total(self) -> HeadingsCounts:
         computed = self.h1 + self.h2 + self.h3 + self.h4 + self.h5 + self.h6
         if self.total != computed:
-            raise ValueError(
-                f"headings.total={self.total} does not equal sum of h1..h6={computed}"
-            )
+            raise ValueError(f"headings.total={self.total} does not equal sum of h1..h6={computed}")
         return self
 
 
@@ -221,9 +209,7 @@ class QualScores(BaseModel):
     judgment: JudgmentScores
 
     def all_scores(self) -> list[int | str]:
-        return [
-            getattr(getattr(self, d.group_key), d.key) for d in rs.DIMENSIONS
-        ]
+        return [getattr(getattr(self, d.group_key), d.key) for d in rs.DIMENSIONS]
 
 
 # Parallel reason strings for each qual dimension. Optional so existing fixtures and
@@ -276,9 +262,7 @@ class QualReasons(BaseModel):
     judgment: JudgmentReasons = JudgmentReasons()
 
     def all_reasons(self) -> list[str | None]:
-        return [
-            getattr(getattr(self, d.group_key), d.key) for d in rs.DIMENSIONS
-        ]
+        return [getattr(getattr(self, d.group_key), d.key) for d in rs.DIMENSIONS]
 
 
 class Violation(BaseModel):
@@ -297,7 +281,7 @@ class Violation(BaseModel):
         return v
 
     @model_validator(mode="after")
-    def check_rule_number(self) -> "Violation":
+    def check_rule_number(self) -> Violation:
         max_rule = rs.rule_count(self.dimension)
         # rule_count == 0 means the dimension has no numbered rules yet; allow any
         # rule_number (the violation will be cited under that dimension generically).
@@ -387,12 +371,20 @@ class EvalMetadata(BaseModel):
     # YAMLs with the same `method` string can still be told apart when any input
     # (prompt, rubric, guidelines, artifact, model) differs.
     model: str | None = None
+    # `model_id` is the exact ID the SDK reported back (may include a date suffix
+    # like "claude-sonnet-4-5-20250929" even when `model` was the alias "sonnet").
+    model_id: str | None = None
     command: str | None = None
     raw_response_path: str | None = None
     prompt_sha256: str | None = None
     rubric_sha256: str | None = None
     guidelines_sha256: str | None = None
     artifact_sha256: str | None = None
+    # Anthropic SDK metadata captured per call (Phase 1).
+    sdk_version: str | None = None
+    # cache_stats: {"creation_input_tokens": N, "read_input_tokens": M, "input_tokens": K, "output_tokens": L}
+    # Lets a batch run show that docs 2..N hit the cache instead of paying full input cost.
+    cache_stats: dict | None = None
 
 
 class EvalReport(BaseModel):
@@ -406,7 +398,7 @@ class EvalReport(BaseModel):
     metadata: EvalMetadata
 
     @model_validator(mode="after")
-    def populate_derived(self) -> "EvalReport":
+    def populate_derived(self) -> EvalReport:
         computed = compute_derived(self.quant, self.qual)
         if self.derived is None:
             self.derived = computed
@@ -458,9 +450,7 @@ class EvalReport(BaseModel):
             if score == 0 or score == "NA":
                 continue  # cannot-assess or not-applicable; outside alignment scope
             if 1 <= score <= 4 and not cited:
-                errors.append(
-                    f"{dim.label}: score={score} but no violation cites this dimension"
-                )
+                errors.append(f"{dim.label}: score={score} but no violation cites this dimension")
             elif score == 5 and cited:
                 rules = ", ".join(f"rule {v.rule_number}" for v in cited)
                 errors.append(
@@ -469,12 +459,8 @@ class EvalReport(BaseModel):
         return errors
 
     @classmethod
-    def from_yaml(cls, source: str | Path) -> "EvalReport":
-        text = (
-            source.read_text(encoding="utf-8")
-            if isinstance(source, Path)
-            else source
-        )
+    def from_yaml(cls, source: str | Path) -> EvalReport:
+        text = source.read_text(encoding="utf-8") if isinstance(source, Path) else source
         data = yaml.safe_load(text)
         return cls.model_validate(data)
 
@@ -569,28 +555,86 @@ def check_derived_consistency(
     provided: DerivedRollups, computed: DerivedRollups, tol: float = 0.01
 ) -> None:
     pairs = [
-        ("density.words_per_sentence", provided.density.words_per_sentence, computed.density.words_per_sentence),
-        ("density.words_per_paragraph", provided.density.words_per_paragraph, computed.density.words_per_paragraph),
-        ("density.sentences_per_paragraph", provided.density.sentences_per_paragraph, computed.density.sentences_per_paragraph),
-        ("density.tables_per_1k_words", provided.density.tables_per_1k_words, computed.density.tables_per_1k_words),
-        ("density.tables_per_page", provided.density.tables_per_page, computed.density.tables_per_page),
-        ("density.tags_per_1k_words", provided.density.tags_per_1k_words, computed.density.tags_per_1k_words),
+        (
+            "density.words_per_sentence",
+            provided.density.words_per_sentence,
+            computed.density.words_per_sentence,
+        ),
+        (
+            "density.words_per_paragraph",
+            provided.density.words_per_paragraph,
+            computed.density.words_per_paragraph,
+        ),
+        (
+            "density.sentences_per_paragraph",
+            provided.density.sentences_per_paragraph,
+            computed.density.sentences_per_paragraph,
+        ),
+        (
+            "density.tables_per_1k_words",
+            provided.density.tables_per_1k_words,
+            computed.density.tables_per_1k_words,
+        ),
+        (
+            "density.tables_per_page",
+            provided.density.tables_per_page,
+            computed.density.tables_per_page,
+        ),
+        (
+            "density.tags_per_1k_words",
+            provided.density.tags_per_1k_words,
+            computed.density.tags_per_1k_words,
+        ),
         ("density.tags_per_page", provided.density.tags_per_page, computed.density.tags_per_page),
-        ("density.links_per_1k_words", provided.density.links_per_1k_words, computed.density.links_per_1k_words),
-        ("density.links_per_page", provided.density.links_per_page, computed.density.links_per_page),
-        ("structure.h4_share_of_headings", provided.structure.h4_share_of_headings, computed.structure.h4_share_of_headings),
-        ("rubric_rollup.purpose_mean", provided.rubric_rollup.purpose_mean, computed.rubric_rollup.purpose_mean),
-        ("rubric_rollup.expression_mean", provided.rubric_rollup.expression_mean, computed.rubric_rollup.expression_mean),
-        ("rubric_rollup.grounding_mean", provided.rubric_rollup.grounding_mean, computed.rubric_rollup.grounding_mean),
-        ("rubric_rollup.reasoning_mean", provided.rubric_rollup.reasoning_mean, computed.rubric_rollup.reasoning_mean),
-        ("rubric_rollup.judgment_mean", provided.rubric_rollup.judgment_mean, computed.rubric_rollup.judgment_mean),
-        ("rubric_rollup.overall_mean", provided.rubric_rollup.overall_mean, computed.rubric_rollup.overall_mean),
+        (
+            "density.links_per_1k_words",
+            provided.density.links_per_1k_words,
+            computed.density.links_per_1k_words,
+        ),
+        (
+            "density.links_per_page",
+            provided.density.links_per_page,
+            computed.density.links_per_page,
+        ),
+        (
+            "structure.h4_share_of_headings",
+            provided.structure.h4_share_of_headings,
+            computed.structure.h4_share_of_headings,
+        ),
+        (
+            "rubric_rollup.purpose_mean",
+            provided.rubric_rollup.purpose_mean,
+            computed.rubric_rollup.purpose_mean,
+        ),
+        (
+            "rubric_rollup.expression_mean",
+            provided.rubric_rollup.expression_mean,
+            computed.rubric_rollup.expression_mean,
+        ),
+        (
+            "rubric_rollup.grounding_mean",
+            provided.rubric_rollup.grounding_mean,
+            computed.rubric_rollup.grounding_mean,
+        ),
+        (
+            "rubric_rollup.reasoning_mean",
+            provided.rubric_rollup.reasoning_mean,
+            computed.rubric_rollup.reasoning_mean,
+        ),
+        (
+            "rubric_rollup.judgment_mean",
+            provided.rubric_rollup.judgment_mean,
+            computed.rubric_rollup.judgment_mean,
+        ),
+        (
+            "rubric_rollup.overall_mean",
+            provided.rubric_rollup.overall_mean,
+            computed.rubric_rollup.overall_mean,
+        ),
     ]
     mismatches = [(k, p, c) for k, p, c in pairs if abs(p - c) > tol]
     if mismatches:
-        lines = "\n".join(
-            f"  {k}: provided={p} computed={c}" for k, p, c in mismatches
-        )
+        lines = "\n".join(f"  {k}: provided={p} computed={c}" for k, p, c in mismatches)
         raise ValueError(f"derived rollups are inconsistent with quant+qual:\n{lines}")
 
 
@@ -686,7 +730,7 @@ def completeness_errors(report: EvalReport) -> list[str]:
     scores = report.qual.all_scores()
     reasons = report.qual_reasons.all_reasons()
     canonical_names = [d.label for d in rs.DIMENSIONS]
-    for name, score, reason in zip(canonical_names, scores, reasons):
+    for name, score, reason in zip(canonical_names, scores, reasons, strict=True):
         if isinstance(score, int) and 1 <= score <= 5 and reason is None:
             errors.append(
                 f"qual_reasons.{name} missing (every score 1-5 needs a reason on complete evals)"
@@ -750,10 +794,16 @@ def cmd_from_metrics(args: argparse.Namespace) -> int:
     metrics = pwm.measure(artifact_path)
     bytes_kb = round(artifact_path.stat().st_size / 1024, 1)
 
+    # Resolve the artifact path to absolute so the stored `path` is unambiguous
+    # regardless of the user's cwd when running `from-metrics`. Downstream tools
+    # (`eval_score.py`) then don't have to guess what a relative path is
+    # relative to.
+    abs_artifact_path = artifact_path.resolve()
+
     report = EvalReport(
         artifact=ArtifactMeta(
             label=args.label or artifact_path.stem,
-            path=str(artifact_path),
+            path=str(abs_artifact_path),
             commit_sha=args.commit_sha,
             scope_class=args.scope_class,
         ),
@@ -788,11 +838,13 @@ def main(argv: list[str] | None = None) -> int:
     p_validate = sub.add_parser("validate", help="Load + validate a single eval-report YAML.")
     p_validate.add_argument("path", help="Path to YAML file.")
     p_validate.add_argument(
-        "--allow-misalignment", action="store_true",
+        "--allow-misalignment",
+        action="store_true",
         help="Skip the alignment-property check (use only for in-progress drafts).",
     )
     p_validate.add_argument(
-        "--complete", action="store_true",
+        "--complete",
+        action="store_true",
         help=(
             "Additionally require the report to be complete (status=complete, "
             "evaluator set, rubric_version present, all dimensions scored, "
@@ -821,11 +873,13 @@ def main(argv: list[str] | None = None) -> int:
     p_from.add_argument("--evaluator", default=None, help="Evaluator identity (default: TODO).")
     p_from.add_argument("--method", default=None, help="Eval method (e.g. subagent / human).")
     p_from.add_argument(
-        "--rubric-version", default=None,
+        "--rubric-version",
+        default=None,
         help=f"Rubric version tag (default: {CURRENT_RUBRIC_VERSION}).",
     )
     p_from.add_argument(
-        "--scope-class", default=None,
+        "--scope-class",
+        default=None,
         choices=["status", "brief", "memo", "deep_research", "design_doc"],
         help="Artifact scope class; enables density-threshold flagging in eval_compare.py.",
     )

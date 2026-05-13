@@ -1,6 +1,6 @@
 [
   {
-    "file": "scripts/test_fixtures/practical_prose_metrics/all_headings.md",
+    "file": "tests/test_fixtures/practical_prose_metrics/all_headings.md",
     "headings": {
       "h1": 2,
       "h2": 2,
@@ -27,6 +27,15 @@
     "code_blocks": 0,
     "banned_register_hits": 0,
     "banned_register_examples": [],
+    "spaced_em_dash_count": 0,
+    "em_dashes_total": 0,
+    "em_dash_density_per_1000_words": 0.0,
+    "replacement_history_hits": 0,
+    "replacement_history_examples": [],
+    "pedantic_marker_hits": 0,
+    "pedantic_marker_examples": [],
+    "generic_heading_hits": 0,
+    "generic_heading_examples": [],
     "words": 36,
     "sentences": 9,
     "paragraphs": 9,

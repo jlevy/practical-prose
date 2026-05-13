@@ -1,10 +1,3 @@
-#!/usr/bin/env -S uv run --script
-# /// script
-# requires-python = ">=3.11"
-# dependencies = [
-#   "chopdiff>=0.1.0",
-# ]
-# ///
 """
 Quantitative metrics for analytical-writing artifacts.
 
@@ -403,8 +396,8 @@ Size:
   Pages (275 wpm) {m.pages:>8.1f}
 
 Headings:
-  h1  {h['h1']:>4}    h2  {h['h2']:>4}    h3  {h['h3']:>4}
-  h4  {h['h4']:>4}    h5  {h['h5']:>4}    h6  {h['h6']:>4}
+  h1  {h["h1"]:>4}    h2  {h["h2"]:>4}    h3  {h["h3"]:>4}
+  h4  {h["h4"]:>4}    h5  {h["h5"]:>4}    h6  {h["h6"]:>4}
   total {m.headings_total:>4}
 
 Links:

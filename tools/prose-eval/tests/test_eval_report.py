@@ -1,13 +1,3 @@
-#!/usr/bin/env -S uv run --script
-# /// script
-# requires-python = ">=3.11"
-# dependencies = [
-#   "chopdiff>=0.1.0",
-#   "pydantic>=2.0",
-#   "pyyaml>=6.0",
-#   "pytest>=8.0",
-# ]
-# ///
 """Tests for scripts/eval_report.py — Pydantic eval-report schema.
 
 Run:
@@ -23,9 +13,7 @@ import pytest
 import yaml
 from pydantic import ValidationError
 
-sys.path.insert(0, str(Path(__file__).resolve().parent))
-
-from eval_report import (  # noqa: E402
+from prose_eval.eval_report import (  # noqa: E402
     EvalReport,
     QualScores,
     QuantMetrics,
@@ -77,7 +65,8 @@ def _minimal_qual() -> dict:
         "purpose": {
             "suitability": 4,
             "scope": 4,
-            "breadth": 4, "depth": 4,
+            "breadth": 4,
+            "depth": 4,
         },
         "grounding": {
             "verifiability": 5,
@@ -275,7 +264,7 @@ def test_load_from_yaml_path(tmp_path: Path):
 
 
 def test_validate_cli(tmp_path: Path):
-    from eval_report import main
+    from prose_eval.eval_report import main
 
     data = _minimal_report_dict()
     path = tmp_path / "test.eval.yaml"
@@ -287,7 +276,7 @@ def test_validate_cli(tmp_path: Path):
 
 
 def test_validate_cli_failure(tmp_path: Path):
-    from eval_report import main
+    from prose_eval.eval_report import main
 
     path = tmp_path / "bad.eval.yaml"
     path.write_text("artifact:\n  label: X\n", encoding="utf-8")
@@ -296,7 +285,7 @@ def test_validate_cli_failure(tmp_path: Path):
 
 
 def test_compute_derived_cli_in_place(tmp_path: Path):
-    from eval_report import main
+    from prose_eval.eval_report import main
 
     data = _minimal_report_dict()
     path = tmp_path / "test.eval.yaml"
@@ -320,15 +309,19 @@ FIXTURES = SCRIPTS_DIR / "test_fixtures" / "practical_prose_metrics"
 
 def test_from_metrics_round_trip(tmp_path: Path):
     """from-metrics output validates and round-trips through the schema."""
-    from eval_report import EvalReport, main
+    from prose_eval.eval_report import EvalReport, main
 
     out_path = tmp_path / "fixture.eval.yaml"
-    rc = main([
-        "from-metrics",
-        str(FIXTURES / "all_headings.md"),
-        "--label", "all-headings",
-        "--out", str(out_path),
-    ])
+    rc = main(
+        [
+            "from-metrics",
+            str(FIXTURES / "all_headings.md"),
+            "--label",
+            "all-headings",
+            "--out",
+            str(out_path),
+        ]
+    )
     assert rc == 0
     assert out_path.exists()
 
@@ -345,8 +338,8 @@ def test_from_metrics_round_trip(tmp_path: Path):
 
 def test_from_metrics_quant_mapping_matches_metrics_script(tmp_path: Path):
     """Verify the rename/regroup in quant_from_metrics is correct end-to-end."""
-    import practical_prose_metrics as pwm
-    from eval_report import quant_from_metrics
+    from prose_eval import metrics as pwm
+    from prose_eval.eval_report import quant_from_metrics
 
     metrics = pwm.measure(FIXTURES / "links_mixed.md")
     quant = quant_from_metrics(metrics)
@@ -366,31 +359,40 @@ def test_from_metrics_quant_mapping_matches_metrics_script(tmp_path: Path):
 
 
 def test_from_metrics_default_label_is_file_stem(tmp_path: Path):
-    from eval_report import EvalReport, main
+    from prose_eval.eval_report import EvalReport, main
 
     out_path = tmp_path / "out.eval.yaml"
-    rc = main([
-        "from-metrics",
-        str(FIXTURES / "links_mixed.md"),
-        "--out", str(out_path),
-    ])
+    rc = main(
+        [
+            "from-metrics",
+            str(FIXTURES / "links_mixed.md"),
+            "--out",
+            str(out_path),
+        ]
+    )
     assert rc == 0
     report = EvalReport.from_yaml(out_path)
     assert report.artifact.label == "links_mixed"
 
 
 def test_from_metrics_records_optional_fields(tmp_path: Path):
-    from eval_report import EvalReport, main
+    from prose_eval.eval_report import EvalReport, main
 
     out_path = tmp_path / "out.eval.yaml"
-    rc = main([
-        "from-metrics",
-        str(FIXTURES / "all_headings.md"),
-        "--evaluator", "test-runner",
-        "--method", "subagent",
-        "--commit-sha", "abc123",
-        "--out", str(out_path),
-    ])
+    rc = main(
+        [
+            "from-metrics",
+            str(FIXTURES / "all_headings.md"),
+            "--evaluator",
+            "test-runner",
+            "--method",
+            "subagent",
+            "--commit-sha",
+            "abc123",
+            "--out",
+            str(out_path),
+        ]
+    )
     assert rc == 0
     report = EvalReport.from_yaml(out_path)
     assert report.metadata.evaluator == "test-runner"
@@ -399,7 +401,7 @@ def test_from_metrics_records_optional_fields(tmp_path: Path):
 
 
 def test_from_metrics_missing_file_returns_error(tmp_path: Path):
-    from eval_report import main
+    from prose_eval.eval_report import main
 
     rc = main(["from-metrics", str(tmp_path / "does-not-exist.md")])
     assert rc == 1
@@ -432,15 +434,19 @@ def test_scope_class_rejects_unknown():
 
 
 def test_from_metrics_records_scope_class(tmp_path: Path):
-    from eval_report import EvalReport, main
+    from prose_eval.eval_report import EvalReport, main
 
     out_path = tmp_path / "out.eval.yaml"
-    rc = main([
-        "from-metrics",
-        str(FIXTURES / "all_headings.md"),
-        "--scope-class", "deep_research",
-        "--out", str(out_path),
-    ])
+    rc = main(
+        [
+            "from-metrics",
+            str(FIXTURES / "all_headings.md"),
+            "--scope-class",
+            "deep_research",
+            "--out",
+            str(out_path),
+        ]
+    )
     assert rc == 0
     report = EvalReport.from_yaml(out_path)
     assert report.artifact.scope_class == "deep_research"
@@ -520,29 +526,36 @@ def test_rubric_version_preserved_when_set():
 
 
 def test_from_metrics_writes_current_rubric_version(tmp_path: Path):
-    from eval_report import CURRENT_RUBRIC_VERSION, EvalReport, main
+    from prose_eval.eval_report import CURRENT_RUBRIC_VERSION, EvalReport, main
 
     out_path = tmp_path / "out.eval.yaml"
-    rc = main([
-        "from-metrics",
-        str(FIXTURES / "all_headings.md"),
-        "--out", str(out_path),
-    ])
+    rc = main(
+        [
+            "from-metrics",
+            str(FIXTURES / "all_headings.md"),
+            "--out",
+            str(out_path),
+        ]
+    )
     assert rc == 0
     report = EvalReport.from_yaml(out_path)
     assert report.metadata.rubric_version == CURRENT_RUBRIC_VERSION
 
 
 def test_from_metrics_custom_rubric_version(tmp_path: Path):
-    from eval_report import EvalReport, main
+    from prose_eval.eval_report import EvalReport, main
 
     out_path = tmp_path / "out.eval.yaml"
-    rc = main([
-        "from-metrics",
-        str(FIXTURES / "all_headings.md"),
-        "--rubric-version", "15-dim-v2",
-        "--out", str(out_path),
-    ])
+    rc = main(
+        [
+            "from-metrics",
+            str(FIXTURES / "all_headings.md"),
+            "--rubric-version",
+            "15-dim-v2",
+            "--out",
+            str(out_path),
+        ]
+    )
     assert rc == 0
     report = EvalReport.from_yaml(out_path)
     assert report.metadata.rubric_version == "15-dim-v2"
@@ -570,9 +583,17 @@ class TestB10_AlignmentProperty:
         # verifiability=5, factuality=4, inference_discipline=4, soundness=5,
         # precision=4, calibration=5, fairness=5, robustness=4. Add a violation per <5 dim.
         sub5_dims = [
-            "Clarity", "Concision", "Style Consistency", "Suitability", "Scope",
-            "Breadth", "Depth", "Factuality",
-            "Inference Discipline", "Precision", "Robustness",
+            "Clarity",
+            "Concision",
+            "Style Consistency",
+            "Suitability",
+            "Scope",
+            "Breadth",
+            "Depth",
+            "Factuality",
+            "Inference Discipline",
+            "Precision",
+            "Robustness",
         ]
         data["violations"] = [
             {"dimension": d, "rule_number": 1, "description": "x"} for d in sub5_dims
@@ -583,9 +604,7 @@ class TestB10_AlignmentProperty:
     def test_score_5_with_violation_is_misaligned(self):
         data = _minimal_report_dict()
         # Add a violation citing Coherence (which is scored 5)
-        data["violations"] = [
-            {"dimension": "Coherence", "rule_number": 1, "description": "x"}
-        ]
+        data["violations"] = [{"dimension": "Coherence", "rule_number": 1, "description": "x"}]
         report = EvalReport.model_validate(data)
         errors = report.alignment_errors()
         assert any("Coherence" in e and "score=5" in e for e in errors)
@@ -662,7 +681,7 @@ class TestB10_AlignmentProperty:
             EvalReport.model_validate(data)
 
     def test_validate_cli_strict_by_default_rejects_misaligned(self, tmp_path: Path):
-        from eval_report import main
+        from prose_eval.eval_report import main
 
         data = _minimal_report_dict()  # clarity=4 with no violations
         path = tmp_path / "test.eval.yaml"
@@ -671,7 +690,7 @@ class TestB10_AlignmentProperty:
         assert rc != 0
 
     def test_validate_cli_allow_misalignment_passes(self, tmp_path: Path):
-        from eval_report import main
+        from prose_eval.eval_report import main
 
         data = _minimal_report_dict()
         path = tmp_path / "test.eval.yaml"
@@ -681,21 +700,24 @@ class TestB10_AlignmentProperty:
 
     def test_validate_complete_rejects_all_zero_stub(self, tmp_path: Path):
         """validate --complete should reject the from-metrics all-zero stub."""
-        from eval_report import main
+        from prose_eval.eval_report import main
 
         out_path = tmp_path / "stub.eval.yaml"
-        rc = main([
-            "from-metrics",
-            str(FIXTURES / "all_headings.md"),
-            "--out", str(out_path),
-        ])
+        rc = main(
+            [
+                "from-metrics",
+                str(FIXTURES / "all_headings.md"),
+                "--out",
+                str(out_path),
+            ]
+        )
         assert rc == 0
         rc = main(["validate", str(out_path), "--complete"])
         assert rc != 0
 
     def test_validate_complete_rejects_evaluator_todo(self, tmp_path: Path):
         """validate --complete should reject evaluator='TODO'."""
-        from eval_report import main
+        from prose_eval.eval_report import main
 
         data = _minimal_report_dict()
         data["metadata"]["evaluator"] = "TODO"
@@ -707,7 +729,7 @@ class TestB10_AlignmentProperty:
 
     def test_validate_complete_rejects_draft_status(self, tmp_path: Path):
         """validate --complete should reject status='draft'."""
-        from eval_report import main
+        from prose_eval.eval_report import main
 
         data = _minimal_report_dict()
         # _minimal_report_dict yields clarity=4 etc.; status defaults to draft.
@@ -718,7 +740,7 @@ class TestB10_AlignmentProperty:
 
     def test_validate_complete_accepts_filled_report(self, tmp_path: Path):
         """A filled, status=complete, with-reasons report passes --complete."""
-        from eval_report import main
+        from prose_eval.eval_report import main
 
         data = _minimal_report_dict()
         data["metadata"]["status"] = "complete"
@@ -730,11 +752,19 @@ class TestB10_AlignmentProperty:
                 group[dim] = 5
         data["qual_reasons"] = {
             "expression": {
-                "clarity": "clean", "coherence": "clean",
-                "concision": "clean", "organization": "clean",
-                "style_consistency": "clean", "formatting": "clean",
+                "clarity": "clean",
+                "coherence": "clean",
+                "concision": "clean",
+                "organization": "clean",
+                "style_consistency": "clean",
+                "formatting": "clean",
             },
-            "purpose": {"suitability": "clean", "scope": "clean", "breadth": "clean", "depth": "clean"},
+            "purpose": {
+                "suitability": "clean",
+                "scope": "clean",
+                "breadth": "clean",
+                "depth": "clean",
+            },
             "grounding": {"verifiability": "clean", "factuality": "clean"},
             "reasoning": {
                 "inference_discipline": "clean",
@@ -754,14 +784,17 @@ class TestB10_AlignmentProperty:
 
     def test_from_metrics_stub_passes_strict_validate(self, tmp_path: Path):
         """The from-metrics stub is all-zero qual; alignment should not flag it."""
-        from eval_report import main
+        from prose_eval.eval_report import main
 
         out_path = tmp_path / "stub.eval.yaml"
-        rc = main([
-            "from-metrics",
-            str(FIXTURES / "all_headings.md"),
-            "--out", str(out_path),
-        ])
+        rc = main(
+            [
+                "from-metrics",
+                str(FIXTURES / "all_headings.md"),
+                "--out",
+                str(out_path),
+            ]
+        )
         assert rc == 0
         # Now strict validate (no --allow-misalignment)
         rc = main(["validate", str(out_path)])
@@ -776,10 +809,10 @@ def test_from_metrics_stub_qual_is_consistent_with_alignment_principle():
     means the artifact cannot be assessed (e.g. content missing) rather than 'failing
     the rubric without citing a rule'.
     """
-    from eval_report import stub_qual
+    from prose_eval.eval_report import stub_qual
 
     qual = stub_qual()
-    import rubric_schema as rs
+    from prose_eval import rubric_schema as rs
 
     assert qual.all_scores() == [0] * rs.dimension_count()
 
