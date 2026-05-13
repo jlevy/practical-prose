@@ -158,7 +158,7 @@ tools/prose-eval/
 │   ├── eval_compare.py               # N-way comparison renderer
 │   ├── metrics.py                    # deterministic doc metrics
 │   ├── rubric_schema.py              # rubric loader
-│   ├── rubric_schema.json            # packaged data
+│   ├── rubric_schema.yaml            # packaged data
 │   ├── _concurrency.py               # gather_limited helper (Phase 2)
 │   └── prompts/
 │       └── eval-rubric-score.md      # packaged data
@@ -242,7 +242,7 @@ self-eval run; it’ll be deleted once the running background scorer completes.*
   updates: `cd tools/prose-eval && uvx copier update`.
 - [x] Copied source files into the new package’s `src/prose_eval/`: `eval_score.py`,
   `eval_report.py`, `eval_compare.py`, `practical_prose_metrics.py` → `metrics.py`,
-  `rubric_schema.py`, `rubric_schema.json`, `prompts/eval-rubric-score.md`.
+  `rubric_schema.py`, `rubric_schema.yaml`, `prompts/eval-rubric-score.md`.
 - [x] Copied test files into `tools/prose-eval/tests/`: `test_*.py`, `test_fixtures/`,
   `fixtures/`.
 - [x] Stripped PEP 723 inline-script headers from each migrated file.
@@ -260,7 +260,7 @@ self-eval run; it’ll be deleted once the running background scorer completes.*
 - [x] Wired up entry points in `pyproject.toml`:
   `toml [project.scripts] eval-score = "prose_eval.eval_score:main" eval-report = "prose_eval.eval_report:main" eval-compare = "prose_eval.eval_compare:main" prose-metrics = "prose_eval.metrics:main" `
 - [x] Included packaged data in the wheel
-  (`[tool.hatch.build.targets.wheel].include = ["src/prose_eval/rubric_schema.json", "src/prose_eval/prompts/*.md"]`).
+  (`[tool.hatch.build.targets.wheel].include = ["src/prose_eval/rubric_schema.yaml", "src/prose_eval/prompts/*.md"]`).
 - [x] Restricted pytest discovery to `tests/` (was `["src", "tests"]` per the template
   default, which caused collection of the source modules).
 - [x] Relaxed basedpyright for the migrated legacy code — turned off the strict-type

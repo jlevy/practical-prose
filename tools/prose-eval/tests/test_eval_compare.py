@@ -10,6 +10,7 @@ import sys
 from pathlib import Path
 
 import pytest
+import yaml  # noqa: E402
 
 from prose_eval.eval_compare import (  # noqa: E402
     _bold_indices,
@@ -22,20 +23,32 @@ from prose_eval.eval_compare import (  # noqa: E402
 )
 from prose_eval.eval_report import EvalReport  # noqa: E402
 
+
+def _write_eval_md(path: Path, report: EvalReport) -> None:
+    """Write a report to `path` as a minimal .eval.md (frontmatter, empty body).
+
+    Tests that construct in-memory reports and write them to disk for the CLI
+    to read back use this helper to produce a valid .eval.md without going
+    through the renderer (which is exercised separately by render-shape tests).
+    """
+    data = report.model_dump(mode="json", exclude_none=True)
+    path.write_text(f"---\n{yaml.safe_dump(data)}---\n", encoding="utf-8")
+
+
 FIXTURE_DIR = Path(__file__).parent / "fixtures"
 GOLDEN = FIXTURE_DIR / "expected-comparison.md"
 ALL_FIXTURES = [
-    FIXTURE_DIR / "figma-ddog-r1.eval.yaml",
-    FIXTURE_DIR / "figma-ddog-r2.eval.yaml",
-    FIXTURE_DIR / "figma-ddog-r4.eval.yaml",
-    FIXTURE_DIR / "figma-net-r1.eval.yaml",
-    FIXTURE_DIR / "figma-net-r2.eval.yaml",
-    FIXTURE_DIR / "figma-net-r4.eval.yaml",
+    FIXTURE_DIR / "figma-ddog-r1.eval.md",
+    FIXTURE_DIR / "figma-ddog-r2.eval.md",
+    FIXTURE_DIR / "figma-ddog-r4.eval.md",
+    FIXTURE_DIR / "figma-net-r1.eval.md",
+    FIXTURE_DIR / "figma-net-r2.eval.md",
+    FIXTURE_DIR / "figma-net-r4.eval.md",
 ]
 
 
 def _load(paths: list[Path]) -> list[EvalReport]:
-    return [EvalReport.from_yaml(p) for p in paths]
+    return [EvalReport.from_eval_md(p) for p in paths]
 
 
 def test_golden_six_way_unified_with_pairs(capsys: pytest.CaptureFixture[str]):
@@ -268,16 +281,14 @@ def test_unified_table_emits_warning_block_on_mismatch(capsys):
     """When versions mismatch, the rendered output begins with a warning block."""
     import tempfile
 
-    import yaml
-
     with tempfile.TemporaryDirectory() as td:
         td_path = Path(td)
         a = _make_report("A", "12-dim-v1")
         b = _make_report("B", "15-dim-v1")
-        a_path = td_path / "a.eval.yaml"
-        b_path = td_path / "b.eval.yaml"
-        a_path.write_text(yaml.safe_dump(a.model_dump(mode="json", exclude_none=True)))
-        b_path.write_text(yaml.safe_dump(b.model_dump(mode="json", exclude_none=True)))
+        a_path = td_path / "a.eval.md"
+        b_path = td_path / "b.eval.md"
+        _write_eval_md(a_path, a)
+        _write_eval_md(b_path, b)
 
         rc = main(
             [
@@ -434,16 +445,14 @@ def test_collect_density_concerns_returns_only_flagged():
 def test_unified_emits_scope_warning_block(capsys):
     import tempfile
 
-    import yaml
-
     with tempfile.TemporaryDirectory() as td:
         td_path = Path(td)
         a = _make_report_with_scope("A", "status")
         b = _make_report_with_scope("B", "deep_research")
-        a_path = td_path / "a.eval.yaml"
-        b_path = td_path / "b.eval.yaml"
-        a_path.write_text(yaml.safe_dump(a.model_dump(mode="json", exclude_none=True)))
-        b_path.write_text(yaml.safe_dump(b.model_dump(mode="json", exclude_none=True)))
+        a_path = td_path / "a.eval.md"
+        b_path = td_path / "b.eval.md"
+        _write_eval_md(a_path, a)
+        _write_eval_md(b_path, b)
 
         rc = main(
             [

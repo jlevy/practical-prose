@@ -14,10 +14,10 @@ Reads `ANTHROPIC_API_KEY` from the environment; `.env` and `.env.local` in
 the current directory hierarchy or `$HOME` are auto-loaded.
 
 Usage:
-  eval-score artifact.eval.yaml                         # update in place
-  eval-score artifact.eval.yaml --out filled.eval.yaml  # write elsewhere
-  eval-score artifact.eval.yaml --model sonnet          # specify Claude model
-  eval-score artifact.eval.yaml --dry-run               # render prompt, skip API call
+  eval-score artifact.eval.md                         # update in place
+  eval-score artifact.eval.md --out filled.eval.md  # write elsewhere
+  eval-score artifact.eval.md --model sonnet          # specify Claude model
+  eval-score artifact.eval.md --dry-run               # render prompt, skip API call
 """
 
 from __future__ import annotations
@@ -34,6 +34,7 @@ from pathlib import Path
 from pydantic import BaseModel
 
 from prose_eval import rubric_schema as rs
+from prose_eval.eval_render import render_single_doc_rollup
 from prose_eval.eval_report import (
     EvalReport,
     ExpressionReasons,
@@ -67,8 +68,8 @@ def _find_repo_root(start: Path) -> Path:
 
 REPO_ROOT = _find_repo_root(PACKAGE_ROOT)
 PROMPT_TEMPLATE_PATH = PACKAGE_ROOT / "prompts" / "eval-rubric-score.md"
-RUBRIC_PATH = REPO_ROOT / "tools" / "docs" / "practical-prose-rubric.md"
-GUIDELINES_PATH = REPO_ROOT / "tools" / "docs" / "practical-prose-guidelines.md"
+RUBRIC_PATH = REPO_ROOT / "docs" / "practical-prose-rubric.md"
+GUIDELINES_PATH = REPO_ROOT / "docs" / "practical-prose-guidelines.md"
 
 JSON_FENCE_RE = re.compile(r"```json\s*\n(.+?)\n```", re.DOTALL)
 
@@ -501,8 +502,8 @@ class _ScorePrep:
 
 
 def _prepare_score(yaml_path: Path, *, out: Path | None) -> _ScorePrep:
-    """Load the YAML, resolve the artifact path, build messages + I/O paths."""
-    report = EvalReport.from_yaml(yaml_path)
+    """Load the eval file, resolve the artifact path, build messages + I/O paths."""
+    report = EvalReport.from_eval_md(yaml_path)
     artifact_path = Path(report.artifact.path)
     if not artifact_path.is_absolute():
         artifact_path = REPO_ROOT / artifact_path
@@ -511,9 +512,9 @@ def _prepare_score(yaml_path: Path, *, out: Path | None) -> _ScorePrep:
 
     out_path = out if out else yaml_path
     raw_path = (
-        out_path.with_suffix(out_path.suffix + ".raw.txt")
-        if not out_path.name.endswith(".eval.yaml")
-        else out_path.parent / (out_path.name[: -len(".eval.yaml")] + ".eval.raw.txt")
+        out_path.parent / (out_path.name[: -len(".eval.md")] + ".eval.raw.txt")
+        if out_path.name.endswith(".eval.md")
+        else out_path.with_suffix(out_path.suffix + ".raw.txt")
     )
     return _ScorePrep(
         report=report,
@@ -590,7 +591,8 @@ def _apply_score(
             file=sys.stderr,
         )
 
-    output = filled.to_yaml()
+    body = render_single_doc_rollup(filled, heading_level=1)
+    output = filled.to_eval_md(body)
     prep.out_path.write_text(output, encoding="utf-8")
     if not quiet:
         print(f"OK: wrote {prep.out_path}", file=sys.stderr)
@@ -807,7 +809,7 @@ def main(argv: list[str] | None = None) -> int:
         if len(yaml_paths) > 1:
             print("error: --dry-run is only valid with a single YAML input", file=sys.stderr)
             return 2
-        report = EvalReport.from_yaml(yaml_paths[0])
+        report = EvalReport.from_eval_md(yaml_paths[0])
         artifact_path = Path(report.artifact.path)
         if not artifact_path.is_absolute():
             artifact_path = REPO_ROOT / artifact_path

@@ -100,7 +100,7 @@ These signals feed the qualitative scoring; they don’t substitute for it.
 For one-off raw metrics inspection without producing a YAML:
 
 ```bash
-prose-metrics path/to/artifact.md --json
+prose-metrics path/to/artifact.md --format=yaml
 ```
 
 ### 2. Score the 18 qualitative dimensions
@@ -247,9 +247,9 @@ change.
 
 ## Related docs
 
-- [practical-prose-rubric.md](../tools/docs/practical-prose-rubric.md): per-dimension
+- [practical-prose-rubric.md](../docs/practical-prose-rubric.md): per-dimension
   0-5 anchors and scoring rules.
-- [practical-prose-guidelines.md](../tools/docs/practical-prose-guidelines.md):
+- [practical-prose-guidelines.md](../docs/practical-prose-guidelines.md):
   prescriptive rules cited by `violations`.
 - [practical-prose-eval-compare.runbook.md](practical-prose-eval-compare.runbook.md):
   runbook for comparing N evals.

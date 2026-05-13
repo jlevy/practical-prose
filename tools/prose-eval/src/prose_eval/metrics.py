@@ -2,8 +2,8 @@
 Quantitative metrics for analytical-writing artifacts.
 
 Companion to:
-  - tools/docs/practical-prose-rubric.md (qualitative 0-5 scoring)
-  - tools/docs/practical-prose-guidelines.md (prescriptive rules)
+  - docs/practical-prose-rubric.md (qualitative 0-5 scoring)
+  - docs/practical-prose-guidelines.md (prescriptive rules)
 
 Counts (all per-document):
   - Headings by depth (h1-h6) and total — ATX (# Heading) and setext (underline) styles
@@ -60,7 +60,7 @@ Known limitations:
 
 Usage:
   prose-metrics path/to/document.md
-  prose-metrics path/to/document.md --json
+  prose-metrics path/to/document.md --format=yaml
   prose-metrics *.md            # multiple files, summary table
   prose-metrics doc.md --words-per-page 250
 """
@@ -74,6 +74,7 @@ import sys
 from dataclasses import asdict, dataclass, field
 from pathlib import Path
 
+import yaml
 from chopdiff.docs import TextDoc, TextUnit
 
 WORDS_PER_PAGE = 275
@@ -171,7 +172,7 @@ GENERIC_HEADING_RE = re.compile(
 EXTERNAL_SCHEMES = ("http://", "https://", "ftp://", "ftps://", "mailto:", "tel:")
 
 # Default banned-register words. Canonical source:
-#   tools/docs/common-doc-guidelines.md §4.2
+#   docs/common-doc-guidelines.md §4.2
 # Referenced from practical-prose-guidelines.md §5 Clarity rule 4 and applied by the
 # `banned-register hits` metric below.
 #
@@ -475,7 +476,17 @@ def main() -> int:
         epilog=__doc__,
     )
     parser.add_argument("paths", nargs="+", type=Path, help="Markdown file(s) to measure.")
-    parser.add_argument("--json", action="store_true", help="Emit JSON instead of text.")
+    parser.add_argument(
+        "--format",
+        choices=["text", "yaml", "json"],
+        default="text",
+        help=(
+            "Output shape. `text` is the human-readable default. `yaml` is the "
+            "preferred machine-readable shape and matches the rest of the eval "
+            "tooling's hybrid YAML+Markdown convention. `json` is supported for "
+            "interop with non-YAML consumers."
+        ),
+    )
     parser.add_argument(
         "--words-per-page",
         type=int,
@@ -511,7 +522,16 @@ def main() -> int:
     if not metrics_list:
         return 1
 
-    if args.json:
+    if args.format == "yaml":
+        print(
+            yaml.safe_dump(
+                [asdict(m) for m in metrics_list],
+                sort_keys=False,
+                allow_unicode=True,
+            ),
+            end="",
+        )
+    elif args.format == "json":
         print(json.dumps([asdict(m) for m in metrics_list], indent=2))
     elif len(metrics_list) == 1:
         print(format_human(metrics_list[0]))

@@ -11,6 +11,7 @@ from pathlib import Path
 
 import pytest
 
+from prose_eval.eval_render import render_single_doc_rollup
 from prose_eval.eval_report import (  # noqa: E402
     EvalReport,
     ExpressionScores,
@@ -169,7 +170,7 @@ def test_parse_response_no_scores_object_raises():
 def _stub_report(tmp_path: Path) -> EvalReport:
     from prose_eval.eval_report import main as report_main
 
-    out = tmp_path / "stub.eval.yaml"
+    out = tmp_path / "stub.eval.md"
     rc = report_main(
         [
             "from-metrics",
@@ -179,7 +180,7 @@ def _stub_report(tmp_path: Path) -> EvalReport:
         ]
     )
     assert rc == 0
-    return EvalReport.from_yaml(out)
+    return EvalReport.from_eval_md(out)
 
 
 def test_merge_replaces_qual_and_violations(tmp_path: Path):
@@ -296,7 +297,7 @@ def test_build_prompt_missing_artifact_raises(tmp_path: Path):
 def test_main_dry_run_writes_prompt_to_stdout(tmp_path: Path, capsys):
     from prose_eval.eval_report import main as report_main
 
-    stub = tmp_path / "stub.eval.yaml"
+    stub = tmp_path / "stub.eval.md"
     rc = report_main(
         [
             "from-metrics",
@@ -315,7 +316,7 @@ def test_main_dry_run_writes_prompt_to_stdout(tmp_path: Path, capsys):
 
 
 def test_main_missing_yaml_returns_error(tmp_path: Path):
-    rc = main([str(tmp_path / "missing.eval.yaml"), "--dry-run"])
+    rc = main([str(tmp_path / "missing.eval.md"), "--dry-run"])
     assert rc == 1
 
 
@@ -356,9 +357,10 @@ def test_round_trip_merge_then_load(tmp_path: Path):
         stub, ScoredResult(qual=qual, violations=violations), evaluator="round-trip"
     )
 
-    out_path = tmp_path / "merged.eval.yaml"
-    out_path.write_text(merged.to_yaml(), encoding="utf-8")
-    reloaded = EvalReport.from_yaml(out_path)
+    out_path = tmp_path / "merged.eval.md"
+    body = render_single_doc_rollup(merged, heading_level=1)
+    out_path.write_text(merged.to_eval_md(body), encoding="utf-8")
+    reloaded = EvalReport.from_eval_md(out_path)
 
     assert reloaded.qual.expression.clarity == 4
     assert reloaded.qual.expression.coherence == 5
@@ -384,7 +386,7 @@ def test_merge_populates_reproducibility_metadata(tmp_path: Path):
     )
     repro = ReproContext(
         model="claude-opus-4-7",
-        command="eval_score.py /tmp/x.eval.yaml",
+        command="eval_score.py /tmp/x.eval.md",
         raw_response_path="/tmp/x.eval.raw.txt",
         prompt_sha256="a" * 64,
         rubric_sha256="b" * 64,
@@ -395,7 +397,7 @@ def test_merge_populates_reproducibility_metadata(tmp_path: Path):
         stub, ScoredResult(qual=qual, violations=[]), evaluator="test", repro=repro
     )
     assert merged.metadata.model == "claude-opus-4-7"
-    assert merged.metadata.command == "eval_score.py /tmp/x.eval.yaml"
+    assert merged.metadata.command == "eval_score.py /tmp/x.eval.md"
     assert merged.metadata.raw_response_path == "/tmp/x.eval.raw.txt"
     assert merged.metadata.prompt_sha256 == "a" * 64
     assert merged.metadata.rubric_sha256 == "b" * 64
@@ -567,7 +569,7 @@ def test_main_end_to_end_calls_sdk_and_persists_cache_stats(tmp_path: Path, monk
     monkeypatch.setattr(anthropic, "Anthropic", _FakeAnthropic)
     monkeypatch.setenv("ANTHROPIC_API_KEY", "sk-test-fake")
 
-    stub = tmp_path / "stub.eval.yaml"
+    stub = tmp_path / "stub.eval.md"
     rc = report_main(
         [
             "from-metrics",
@@ -581,7 +583,7 @@ def test_main_end_to_end_calls_sdk_and_persists_cache_stats(tmp_path: Path, monk
     rc = score_main([str(stub), "--model", "sonnet"])
     assert rc == 0
 
-    report = EvalReport.from_yaml(stub)
+    report = EvalReport.from_eval_md(stub)
     assert report.metadata.status == "complete"
     assert report.metadata.model == "sonnet"
     assert report.metadata.model_id == "claude-sonnet-4-5-fake"

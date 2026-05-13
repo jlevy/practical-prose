@@ -331,14 +331,14 @@ class TestB1_BannedRegister:
 # B14: reproducibility regression for metrics output
 # ---------------------------------------------------------------------------
 #
-# Fixture-locked metrics JSON: when chopdiff/flowmark or our own heuristics
+# Fixture-locked metrics YAML: when chopdiff/flowmark or our own heuristics
 # change behavior, this test fails loudly so the maintainer must either bless
 # the new output or pin the upstream version.
 #
-# To bless a new output (intentional change): regenerate the expected JSON via
-#   uv run --script scripts/practical_prose_metrics.py \
-#     scripts/test_fixtures/practical_prose_metrics/<fixture>.md --json \
-#     > scripts/test_fixtures/practical_prose_metrics/expected/<fixture>.json
+# To bless a new output (intentional change): regenerate the expected YAML via
+#   uv run prose-metrics \
+#     tests/test_fixtures/practical_prose_metrics/<fixture>.md --format=yaml \
+#     > tests/test_fixtures/practical_prose_metrics/expected/<fixture>.yaml
 # and inspect the diff before committing.
 #
 # Fixtures are chosen to cover the main heuristic surfaces — headings, links,
@@ -352,28 +352,29 @@ class TestB14_ReproducibilityRegression:
         ["all_headings", "links_mixed", "frontmatter_and_code", "banned_register"],
     )
     def test_metrics_output_matches_pinned_expected(self, fixture_name: str):
-        import json
         from dataclasses import asdict
 
-        expected_path = FIXTURES / "expected" / f"{fixture_name}.json"
+        import yaml
+
+        expected_path = FIXTURES / "expected" / f"{fixture_name}.yaml"
         if not expected_path.is_file():
             pytest.fail(
-                f"missing expected JSON: {expected_path}\n"
-                f"regenerate via: uv run --script scripts/practical_prose_metrics.py "
-                f"{FIXTURES / f'{fixture_name}.md'} --json > {expected_path}"
+                f"missing expected YAML: {expected_path}\n"
+                f"regenerate via: uv run prose-metrics "
+                f"{FIXTURES / f'{fixture_name}.md'} --format=yaml > {expected_path}"
             )
 
         actual = asdict(_measure(f"{fixture_name}.md"))
         actual.pop("file", None)  # path is environment-dependent
 
-        expected_list = json.loads(expected_path.read_text(encoding="utf-8"))
+        expected_list = yaml.safe_load(expected_path.read_text(encoding="utf-8"))
         assert isinstance(expected_list, list) and len(expected_list) == 1
         expected = expected_list[0]
         expected.pop("file", None)
 
         assert actual == expected, (
             f"metrics output drift for {fixture_name}; "
-            f"if intentional, regenerate expected JSON (see test docstring)"
+            f"if intentional, regenerate expected YAML (see test docstring)"
         )
 
 
