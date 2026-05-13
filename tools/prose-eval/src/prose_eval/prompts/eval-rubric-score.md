@@ -39,7 +39,7 @@ You will be given, in order:
    5, 0, or `NA` must have zero matching violations.
 6. When using `NA`, the reason must explain why the dimension does not apply (not just
    “not applicable”). For example:
-   `NA — the document makes no probability, forecast, confidence, or uncertainty claims; the task does not require them.`
+   `NA: the document makes no probability, forecast, confidence, or uncertainty claims; the task does not require them.`
 
 ## Output format
 

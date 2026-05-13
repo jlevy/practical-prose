@@ -19,7 +19,7 @@ The deterministic generator is `eval-compare`; this runbook wraps it with the al
 audit and the analytical-prose layer the generator cannot produce.
 
 For an exact rendering of the generator’s output shape, see
-`../tools/prose-eval/tests/fixtures/expected-comparison.md` — the golden output that
+`../tools/prose-eval/tests/fixtures/expected-comparison.md`: the golden output that
 `../tools/prose-eval/tests/test_eval_compare.py` pins against the six
 `figma-*.eval.yaml` fixtures.
 
@@ -96,12 +96,12 @@ eval-compare \
 
 Flags:
 
-- `--format unified` — single combined table (default; matches the reference shape).
+- `--format unified`: single combined table (default; matches the reference shape).
   Use `--format sections` for per-section drilldowns, `--format both` for both.
-- `--bold-rule max` — bold per-row max(es) when not all artifacts tie (default).
+- `--bold-rule max`: bold per-row max(es) when not all artifacts tie (default).
   Use `--bold-rule materially-different` for a stricter rule (max must be ≥ 1 above the
   median).
-- `--pairs 'from=to' ...` — emit Δ tables for each pair, dimension by dimension, plus
+- `--pairs 'from=to' ...`: emit Δ tables for each pair, dimension by dimension, plus
   mean delta. Useful for “process A → process B” comparisons.
 
 ### 4. Verify the alignment audit across artifacts
@@ -160,10 +160,10 @@ Aim for falsifiable claims grounded in specific table cells, not generic.
 
 - [practical-prose-eval-single.runbook.md](practical-prose-eval-single.runbook.md):
   produces the YAML inputs this runbook consumes.
-- [practical-prose-rubric.md](../docs/practical-prose-rubric.md): per-dimension
-  0-5 anchors and scoring rules.
-- [practical-prose-guidelines.md](../docs/practical-prose-guidelines.md):
-  prescriptive rules cited by violations.
+- [practical-prose-rubric.md](../docs/practical-prose-rubric.md): per-dimension 0-5
+  anchors and scoring rules.
+- [practical-prose-guidelines.md](../docs/practical-prose-guidelines.md): prescriptive
+  rules cited by violations.
 - [eval_compare.py](eval-compare): the deterministic generator.
 - [eval_report.py](eval-report): schema and validator.
 

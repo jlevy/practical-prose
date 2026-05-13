@@ -466,12 +466,14 @@ Style Consistency isolates the editorial-polish question from the readability qu
    short and in the same repo.
    Treat the project’s banned-word list as binding, not advisory.
 
-7. **Em-dash discipline.** *(Common agent failure mode.)* Use em dashes only when they
-   are the best punctuation for the sentence; prefer full stops, commas, colons, or
-   semicolons. When an em dash is used, follow American style: no surrounding spaces
-   (“context—like this”), not spaced (“context — like this”). Spaced em-dash overuse
-   marks unedited agent prose; the convention applies even when the author finds the
-   spaced variant readable.
+7. **Em-dash discipline.** *(Common agent failure mode.)* Em dashes are allowed but
+   should be rare. Within routine, full sentences, do not use them.
+   Reach for an em dash only as a sharp separator (a strong break or parenthetical
+   interruption) where no other punctuation captures the same effect; in almost every
+   other case, a full stop, comma, colon, or semicolon is the right choice.
+   When you do use one within a sentence, write it American style, unspaced
+   (`context—like this`), never with surrounding spaces.
+   Spaced em-dash overuse is a hallmark of LLM-written text.
    (Cross-references common-doc-guidelines §5.)
 
 ### 10. Formatting
@@ -480,7 +482,7 @@ Style Consistency isolates the editorial-polish question from the readability qu
 compatible with the chosen medium.
 Distinct from §8 Organization (are the parts arranged well) and §9 Style Consistency
 (does the document follow house style consistently).
-Formatting is the most deterministic of the three — most rules here are lintable.
+Formatting is the most deterministic of the three; most rules here are lintable.
 
 **Rules:**
 
@@ -515,8 +517,8 @@ Formatting is the most deterministic of the three — most rules here are lintab
 specific sources, observations, calculations, or explicit assumptions.
 A document scores high on Verifiability when a competent reader could check its claims
 from what the document provides, before any external lookup.
-Verifiability is text-internal — it tests how well the document equips the reader to
-audit. **Factuality (§12)** is world-aware — it tests whether the audit, when performed,
+Verifiability is text-internal: it tests how well the document equips the reader to
+audit. **Factuality (§12)** is world-aware: it tests whether the audit, when performed,
 passes.
 
 A claim that is too vague to check is a Verifiability defect even when sources are
@@ -528,16 +530,16 @@ Specificity is the precondition for source-traceability.
 
 1. **Claims are stated specifically enough to be checkable.** A claim a reader could in
    principle confirm or refute by consulting sources, observations, or calculations.
-   Vague magnitude words ("rapid," “many,” "in greater volume," “increasingly”) without
+   Vague magnitude words ("rapid," “many,” “in greater volume,” “increasingly”) without
    a stated referent or comparison fail this rule even when the underlying assertion
-   might be true — the document has not made a checkable claim.
+   might be true; the document has not made a checkable claim.
    Score §15 Precision for terminology specificity; this rule covers the claim-level
    bar.
 
 2. **Quantitative claims are source-traceable; the bar scales with stakes.** For
    high-stakes, external, or decision-bearing documents (research reports, audits,
    decision memos, deep research), every quantitative claim has at least one primary
-   source — official documentation, filings, press releases, transcripts, source code,
+   source: official documentation, filings, press releases, transcripts, source code,
    datasets, or first-party measurements.
    Secondary sources (news aggregators, blog summaries, third-party analyses) can
    corroborate but don’t substitute.
@@ -579,13 +581,13 @@ Specificity is the precondition for source-traceability.
 
 *Description:* The document’s verifiable claims hold up when checked against the world,
 at the asserted strength, for the asserted entity, date, and scope.
-Verifiability (§11) is text-internal — does the document let the reader audit?
-Factuality is world-aware — does the audit, when performed, pass?
+Verifiability (§11) is text-internal: does the document let the reader audit?
+Factuality is world-aware: does the audit, when performed, pass?
 
 Truth here means: **the assertion strength matches the available evidence.** A claim
 asserted as certain when the evidence is uncertain is a Factuality defect.
 A claim asserted as speculative, with its speculative status explicit and its basis
-named, is **factually correct** even if the underlying proposition cannot be checked —
+named, is **factually correct** even if the underlying proposition cannot be checked;
 the document is telling the reader the truth about what is known.
 
 Scoring Factuality is corroboration-driven, not citation-driven.
@@ -597,7 +599,7 @@ with a stated basis.
 
 Reviewer access limits are not document defects.
 A claim with a reachable primary source that the reviewer happens to be unable to access
-— paywalled, in a language the reviewer doesn’t read, or in a private system — counts as
+(paywalled, in a language the reviewer doesn’t read, or in a private system) counts as
 neutral, not a Factuality slip.
 The reason note records the access limit so a later reviewer with access can complete
 the audit.
@@ -641,7 +643,7 @@ the audit.
    acknowledges this explicitly and states the basis on which the claim is made anyway.
    A speculative claim labelled speculative, with its basis stated, is factually
    correct. An unhedged claim made as if it were settled, where the evidence does not
-   settle it, is a Factuality defect — even if the claim happens to be true.
+   settle it, is a Factuality defect, even if the claim happens to be true.
 
 ## Reasoning Dimensions
 
@@ -849,7 +851,7 @@ position as comparable to a strong one without saying so).
 
 1. **Engage opposing positions at proportional evidentiary depth.** If the case for has
    three named primitives plus numerical comparisons, the case against deserves
-   comparable depth — three named mechanisms plus numerical thresholds — unless the
+   comparable depth (three named mechanisms plus numerical thresholds) unless the
    evidence is genuinely asymmetric.
    When one side receives much less depth, the document explains why (low plausibility,
    low materiality, well-trodden ground).
@@ -993,7 +995,7 @@ a different cognitive load and a different tool stack:
 The pass separation is **required** for high-stakes documents (audits, decision memos,
 external research, security advisories), **recommended** for standard internal docs, and
 **optional** for low-stakes drafts and operational notes where a single review pass fits
-the risk. Where the discipline applies, do not combine passes — running them in parallel
+the risk. Where the discipline applies, do not combine passes; running them in parallel
 by the same agent in the same context loses the cognitive separation that the four-pass
 structure depends on.
 

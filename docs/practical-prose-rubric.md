@@ -51,8 +51,8 @@ same 18 dimensions in the same five groups, using the same names and section num
   to score is materially absent or fragmentary.
   Rare; see the decision tree below.
 - **NA** = not applicable.
-  The dimension does not engage with this artifact at all — for example, Calibration on
-  a document that makes no probability or forecast claims.
+  The dimension does not engage with this artifact at all: for example, Calibration on a
+  document that makes no probability or forecast claims.
 
 When you score below 5, cite the specific guideline rule that was missed in the
 parenthetical reason.
@@ -61,7 +61,7 @@ coverage or the score is wrong.
 
 **Reader outcome governs local rule compliance.** The rubric checks whether the document
 follows the guidelines, but the guidelines exist to help readers understand, decide, do,
-verify, or maintain something — not to be followed for their own sake.
+verify, or maintain something, not to be followed for their own sake.
 A document that scores high on every dimension but fails its actual reader is not a good
 document. When local rule compliance and reader outcome conflict, reader outcome wins,
 and the deviation is documented (see *Justified deviations* below).
@@ -76,7 +76,7 @@ The same artifact under the same rubric must reach the same answer; if two revie
 reach different answers, one of them has skipped a step.
 
 1. **Does the artifact engage the dimension’s subject matter at all?** Engagement means
-   the artifact contains content the dimension is designed to score — verifiable claims
+   the artifact contains content the dimension is designed to score: verifiable claims
    (Verifiability), cited sources (Factuality), inferential reasoning (Inference
    Discipline), probability claims (Calibration), oppositional framings (Fairness),
    interpretive judgments (Robustness), etc.
@@ -107,7 +107,7 @@ reach different answers, one of them has skipped a step.
 - **NA and 5 are mutually exclusive.** A dimension cannot score both NA and 5 on the
   same artifact. NA means the artifact does not engage the dimension; 5 means the
   artifact engages it and satisfies the rubric.
-  If the artifact contains no content the per-dim 1-5 anchors describe, it is NA — not
+  If the artifact contains no content the per-dim 1-5 anchors describe, it is NA, not
   5\. ("No problems found because there’s nothing to check" → NA. “No problems found
   because everything checks out” → 5.)
 - **NA and 0 are not interchangeable.** Score 0 requires evidence that the artifact
@@ -210,7 +210,7 @@ Suggested primary assignments:
 | Generic templated heading as sole section signal ("Overview," “Background,” “Notes”) | §8 Organization | §5 Clarity |
 | Heading-level skip, table that should be prose, broken link | §8 Organization | — |
 | Inconsistent dialect, casing, or parallel-list syntax | §9 Style Consistency | §5 Clarity |
-| Spaced em-dash overuse (" — “ instead of ”—") | §9 Style Consistency | §5 Clarity |
+| Spaced em-dash overuse (spaces around `—` instead of unspaced) | §9 Style Consistency | §5 Clarity |
 | Malformed Markdown table, broken footnote anchor, misplaced footer | §10 Formatting | §8 Organization |
 | Duplicated table / list content across sections | §7 Concision | §8 Organization |
 | Undeclared or drifting scope on a multi-topic document | §2 Scope | §3 Breadth |
@@ -231,11 +231,11 @@ names, or quoted phrases in the reason where relevant.
 Examples:
 
 ```
-4 (Clear, correct prose throughout; one paragraph at L412-418 has trite phrasing —
-"the agentic thesis fully crystallizes" — and could be tightened.)
+4 (Clear, correct prose throughout; one paragraph at L412-418 has trite phrasing
+("the agentic thesis fully crystallizes") and could be tightened.)
 
 3 (Mix of [VERIFIED] tags with primary sources and unverifiable claims around §1.10
-competitive landscape — Vercel CEO benchmark quote at L820 has no tweet ID;
+competitive landscape: Vercel CEO benchmark quote at L820 has no tweet ID;
 W3Techs market-share at L815 has no URL.)
 
 5 (Bull / base / bear cases at §2.8 each have 3 named primitives + numerical thresholds;
@@ -300,7 +300,7 @@ scope cannot be evaluated for whether it covers everything relevant.
 #### §3 Breadth
 
 Are the relevant areas within the declared scope covered?
-Breadth is the *what is covered* question — relevant case classes, prior work, and
+Breadth is the *what is covered* question: relevant case classes, prior work, and
 standard sources are present within scope.
 The *how thoroughly* question is scored under §4 Depth.
 
@@ -372,7 +372,7 @@ validity is scored under §10 Formatting.
 - **5:** Publication-ready grammar and clarity, with no material defects.
   Words chosen for precision; banned-register words (the canonical common-doc-guidelines
   §4.2 list) and parallel-structure padding absent or earned (per §5 rules 4 and 5); no
-  pedantic, pedagogical, or self-referential prose — no canonicality declarations,
+  pedantic, pedagogical, or self-referential prose: no canonicality declarations,
   word-choice justifications, or reading-order instructions (per rule 6). Suitable for
   high editorial standard publication; minor justified deviations are acceptable when
   documented and reader-serving.
@@ -419,7 +419,7 @@ clear.
 
 #### §8 Organization
 
-Sections, headings, sequence, tables, figures, lists, links, and cross-references —
+Sections, headings, sequence, tables, figures, lists, links, and cross-references: the
 arrangement of the document.
 Visual elements are not required (a tight prose document can score 5), but when present
 they should be arranged well.
@@ -526,7 +526,7 @@ and decision memos require primary sources for every quantitative claim; lightwe
 operational notes only require sources for material claims.
 
 - **NA:** Not applicable.
-  The document makes no **verifiable assertions** — that is, no statements that are
+  The document makes no **verifiable assertions**, that is, no statements that are
   truth-apt and checkable in principle.
   A statement is truth-apt when a competent reader could in principle determine whether
   it is true by consulting sources, observations, or calculations.
@@ -552,14 +552,14 @@ operational notes only require sources for material claims.
 
   Rule: if the artifact contains **any** statement of the second kind, Verifiability is
   engaged and the score is 1-5, not NA. An artifact that *makes* such claims without
-  sourcing them is **not NA** — it scores 1-4 per the anchors below.
+  sourcing them is **not NA**: it scores 1-4 per the anchors below.
   Reserve NA for artifacts whose entire content consists of statements of the first
   kind.
 
 - **0:** Cannot assess.
   The document attempts at least one verifiable assertion, but the supporting content is
-  fragmentary or truncated — the claim is partial, mid-sentence, or marked as
-  intent-only (e.g., `[TODO: cite source]`) rather than executed.
+  fragmentary or truncated: the claim is partial, mid-sentence, or marked as intent-only
+  (e.g., `[TODO: cite source]`) rather than executed.
   Rare. If the document makes verifiable assertions and simply omits sources, score 1-4,
   not 0. Score 0 distinguishes *attempted but missing* from *not attempted*.
 
@@ -579,7 +579,7 @@ operational notes only require sources for material claims.
 - **4:** Score-5 mostly satisfied with one or two minor slips: a single quantitative
   claim without a source, or one `[VERIFIED]` tag without naming what was verified.
 
-- **5:** Every verifiable claim in the document is *easily verifiable* — stated
+- **5:** Every verifiable claim in the document is *easily verifiable*: stated
   specifically enough to be checkable, and traceable to evidence the reader can reach at
   appropriate effort for the document’s stakes.
   Quantitative and high- stakes claims have specific pointers (URL, document ID, page or
@@ -596,14 +596,14 @@ operational notes only require sources for material claims.
   every claim is resolved.
 
   Note: Verifiability 5 measures the document’s *help* in checking claims, not whether
-  the checks would pass — that is Factuality (§12).
+  the checks would pass; that is Factuality (§12).
 
 #### §12 Factuality
 
 Do the document’s verifiable claims hold up when checked against the world, at the
 asserted strength, for the asserted entity, date, and scope?
-**Verifiability (§11)** is text-internal — does the document let the reader audit?
-**Factuality** is world-aware — does the audit pass?
+**Verifiability (§11)** is text-internal: does the document let the reader audit?
+**Factuality** is world-aware: does the audit pass?
 Scoring Factuality requires the reviewer to attempt corroboration: by following the
 document’s cited sources where present; by consulting authoritative external sources
 where citations are absent; and by recording when a claim cannot be confirmed or refuted
@@ -613,7 +613,7 @@ from available evidence at appropriate effort.
 as certain when the evidence is uncertain is a Factuality defect.
 A claim asserted as speculative or hypothetical, *with the speculative status explicit
 and the basis named*, is **factually correct** even if the underlying proposition cannot
-be checked — because the document is telling the reader the truth about what is known.
+be checked, because the document is telling the reader the truth about what is known.
 Calibrated uncertainty is not a Factuality defect; uncalibrated certainty is.
 
 A claim that cannot be corroborated and is *asserted as fact without hedging* is a
@@ -623,7 +623,7 @@ The score reflects this.
 See §16 Calibration for the broader treatment of claim-strength matching.
 
 **Reviewer access limits are a separate concern from document defects.** A claim may be
-theoretically verifiable but unreachable in the current scoring context — a paywalled
+theoretically verifiable but unreachable in the current scoring context: a paywalled
 article, a private dataset, a closed-source repo, or a primary source in a language the
 reviewer cannot read.
 In such cases, the reviewer should:
@@ -634,9 +634,9 @@ In such cases, the reviewer should:
    unreachable evidence) from *reviewer limits* (the doc provided reasonable pointers,
    but the pointers happen to be inaccessible to this reviewer).
 3. Score document failures per the anchors below.
-   Treat reviewer limits as neutral on Factuality: if the document did its part — cited
-   a primary source, stated the basis, or acknowledged the limit explicitly — the claim
-   does not count against Factuality.
+   Treat reviewer limits as neutral on Factuality: if the document did its part—cited a
+   primary source, stated the basis, or acknowledged the limit explicitly—the claim does
+   not count against Factuality.
    The score reason names the access limit so a later reviewer with access can complete
    the audit.
 
@@ -652,8 +652,8 @@ penalize the document for them.
 
 - **0:** Cannot assess.
   The document attempts at least one verifiable assertion, but the claim is fragmentary
-  or truncated — a partial sentence, an unfinished paragraph, or a `[TODO]` marker —
-  leaving no claim to corroborate.
+  or truncated—a partial sentence, an unfinished paragraph, or a `[TODO]` marker—leaving
+  no claim to corroborate.
   Rare. If the document’s claims are fully stated, score 1-5 even if corroboration is
   incomplete (per the rule above).
 
@@ -676,7 +676,7 @@ penalize the document for them.
   one entity/date mismatch, or one claim flagged as uncorroborated without enough basis
   stated.
 
-- **5:** Every verifiable claim is corroborated — ideally by a cited source the reviewer
+- **5:** Every verifiable claim is corroborated, ideally by a cited source the reviewer
   can reach, otherwise by authoritative external evidence accessible at appropriate
   effort. Numbers in prose match cited or corroborating sources, or disclose rounding,
   aggregation, unit conversion, or derivation explicitly.
@@ -699,7 +699,7 @@ Inference Discipline asks whether the rungs exist as distinct rungs at all.
 - **NA:** Not applicable.
   Inference Discipline tests whether the document moves rung by rung up the ladder
   (observation → judgment → interpretation → implication).
-  The dimension is engaged when the document moves between *any two* rungs at all —
+  The dimension is engaged when the document moves between *any two* rungs at all,
   including a single observation that leads to a single implication.
 
   Signals that **do** engage the dimension (any one suffices):
@@ -715,11 +715,11 @@ Inference Discipline asks whether the rungs exist as distinct rungs at all.
   Reserve NA for artifacts whose entire content is a pure reference table, a fact-only
   roster, a literal log excerpt, a definition list, or other content that states facts
   without reasoning *from* them.
-  If the artifact reasons anywhere — even one sentence — score 1-5.
+  If the artifact reasons anywhere (even one sentence), score 1-5.
 
 - **0:** Cannot assess.
-  The artifact attempts inferential reasoning but provides too little to score it —
-  fewer than three sentences of reasoning, or reasoning truncated mid-argument.
+  The artifact attempts inferential reasoning but provides too little to score it: fewer
+  than three sentences of reasoning, or reasoning truncated mid-argument.
 
 - **1:** Rungs systematically blended; observations, judgments, and implications fused
   inside single clauses throughout.
@@ -928,7 +928,7 @@ operationalizes them.
 The pass separation is **required** for high-stakes documents (audits, decision memos,
 external research, security advisories), **recommended** for standard internal docs, and
 **optional** for low-stakes drafts and operational notes where a single review pass fits
-the risk. Where the discipline applies, do not combine passes — running them in parallel
+the risk. Where the discipline applies, do not combine passes: running them in parallel
 by the same agent in the same context loses the cognitive separation that the four-pass
 structure depends on.
 
@@ -973,8 +973,8 @@ invoke live in the guidelines.
 
 - **Metrics are evidence, not quality.** Quantitative metrics and rubric scores can
   reveal risks, but no metric is a substitute for reader value, factual support, and
-  judgment. A document does not become better by adding visible rigor — more tags, more
-  citations, more caveats, more structure, more words — unless those additions make the
+  judgment. A document does not become better by adding visible rigor—more tags, more
+  citations, more caveats, more structure, more words—unless those additions make the
   claims more inspectable, accurate, useful, or humane.
   Once rules become rubrics, agents and humans both tend to optimize the rubric; this
   clause exists to push back on that drift.

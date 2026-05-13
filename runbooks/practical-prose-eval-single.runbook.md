@@ -121,11 +121,11 @@ place. The rubric + guidelines block is sent with prompt-caching enabled, so sub
 calls (and `--batch` runs) reuse the cache and cost ~10× less than the first call.
 Useful flags:
 
-- `--dry-run` — print the prompt to stdout without invoking the model.
-- `--out path` — write the filled YAML to a different file.
-- `--model <name>` — passed to the Anthropic SDK. Accepts aliases (`sonnet`, `haiku`,
+- `--dry-run`: print the prompt to stdout without invoking the model.
+- `--out path`: write the filled YAML to a different file.
+- `--model <name>`: passed to the Anthropic SDK. Accepts aliases (`sonnet`, `haiku`,
   `opus`) or an exact model ID. Defaults to the SDK’s default model.
-- `--batch` — score multiple YAMLs in one invocation:
+- `--batch`: score multiple YAMLs in one invocation:
   `eval-score a.eval.yaml b.eval.yaml ... --batch [--max-concurrent 8 --max-rps 4]`. See
   [practical-prose-eval-compare.runbook.md](practical-prose-eval-compare.runbook.md) for
   the typical batch workflow.
@@ -137,7 +137,7 @@ For each of the 18 dimensions, assign a score 0-5 (or `NA`) per the anchors in
 `practical-prose-rubric.md`. Use the `SCORE (REASON)` shape internally before composing
 the YAML.
 
-`NA` is reserved for dimensions the artifact’s task genuinely does not require — for
+`NA` is reserved for dimensions the artifact’s task genuinely does not require. For
 example, Calibration on a document that makes no probability or forecast claims, or
 Fairness on a reference doc that surfaces no opposing positions.
 A score of 0 means the dimension is applicable but content is missing or unassessable;

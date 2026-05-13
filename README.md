@@ -115,10 +115,9 @@ looking at specific qualities or dimensions.
 |  | Robustness | Do key claims survive plausible alternative interpretations? |
 
 Each dimension maps back to one or more principles in
-[practical-prose-principles.md](docs/practical-prose-principles.md); prescriptive
-rules live in [practical-prose-guidelines.md](docs/practical-prose-guidelines.md)
-and 0-5 scoring anchors in
-[practical-prose-rubric.md](docs/practical-prose-rubric.md).
+[practical-prose-principles.md](docs/practical-prose-principles.md); prescriptive rules
+live in [practical-prose-guidelines.md](docs/practical-prose-guidelines.md) and 0-5
+scoring anchors in [practical-prose-rubric.md](docs/practical-prose-rubric.md).
 
 ## Layers
 
@@ -128,18 +127,18 @@ Each layer answers a different question.
 | Layer | Doc | Answers |
 | --- | --- | --- |
 | Common | [docs/common-doc-guidelines.md](docs/common-doc-guidelines.md) | What general document standards do all docs (practical or otherwise) follow? |
-| Principles | [docs/practical-prose-principles.md](docs/practical-prose-principles.md) | Why these rules — what seven principles do they descend from? |
-| Guidelines | [docs/practical-prose-guidelines.md](docs/practical-prose-guidelines.md) | What should the writer do — prescriptive rules for the 18 dimensions? |
-| Rubric | [docs/practical-prose-rubric.md](docs/practical-prose-rubric.md) | How is a document scored — descriptive 0-5 anchors for the same 18 dimensions? |
-| Bibliography | [docs/practical-prose-bibliography.md](docs/practical-prose-bibliography.md) | Where do these ideas come from — what works ground each tradition? |
+| Principles | [docs/practical-prose-principles.md](docs/practical-prose-principles.md) | Why these rules: what seven principles do they descend from? |
+| Guidelines | [docs/practical-prose-guidelines.md](docs/practical-prose-guidelines.md) | What should the writer do: prescriptive rules for the 18 dimensions? |
+| Rubric | [docs/practical-prose-rubric.md](docs/practical-prose-rubric.md) | How is a document scored: descriptive 0-5 anchors for the same 18 dimensions? |
+| Bibliography | [docs/practical-prose-bibliography.md](docs/practical-prose-bibliography.md) | Where do these ideas come from: what works ground each tradition? |
 | Metrics | [docs/practical-prose-metrics.md](docs/practical-prose-metrics.md) | Which quantitative metrics and qualitative checks map to which dimensions; recommended frontmatter schema. |
 | Shortcut | [shortcuts/practical-prose-quick-checklist.md](shortcuts/practical-prose-quick-checklist.md) | One-page pre-publish self-audit across the 18 dimensions. |
 | Runbook | [runbooks/](runbooks/) | Operational steps for single-document evals and N-way comparisons. |
 
 The Common layer is the base substrate.
 `common-doc-guidelines.md` captures general organization, structure, style, and
-formatting rules that apply to *any* document—technical docs, READMEs, internal memos,
-specifications—not just practical prose.
+formatting rules that apply to *any* document (technical docs, READMEs, internal memos,
+specifications), not just practical prose.
 The practical-prose layers (Principles, Guidelines, Rubric) build on top of it with the
 seven principles and 18 dimensions specific to evaluating practical writing.
 Principles, Guidelines, and Rubric form a tight triple: same seven principles, same 18
@@ -157,9 +156,8 @@ system gets used in practice.
   [practical-prose-quick-checklist.md](shortcuts/practical-prose-quick-checklist.md).
 - **Running a formal eval:** the [runbooks/](runbooks/) directory.
 - **Understanding why a rule exists:** the corresponding principle in
-  [practical-prose-principles.md](docs/practical-prose-principles.md), and the
-  source tradition in
-  [practical-prose-bibliography.md](docs/practical-prose-bibliography.md).
+  [practical-prose-principles.md](docs/practical-prose-principles.md), and the source
+  tradition in [practical-prose-bibliography.md](docs/practical-prose-bibliography.md).
 - **Looking at the tooling:** [tools/prose-eval/](tools/prose-eval/) is the installable
   Python package with the metrics, scoring, and report generators.
 
@@ -169,13 +167,13 @@ system gets used in practice.
 (bootstrapped from [`simple-modern-uv`](https://github.com/jlevy/simple-modern-uv)) that
 installs four console-script entry points:
 
-- `prose-metrics` — deterministic metrics over a document (banned-register hits,
+- `prose-metrics`: deterministic metrics over a document (banned-register hits,
   vague-word counts, link validity, frontmatter presence, etc.).
-- `eval-score` — score a document against the rubric via the Anthropic SDK with prompt
+- `eval-score`: score a document against the rubric via the Anthropic SDK with prompt
   caching; supports `--batch` for parallel runs over N artifacts.
-- `eval-report` — combine metrics and scores into an eval-report YAML; validate /
+- `eval-report`: combine metrics and scores into an eval-report YAML; validate /
   compute-derived / from-metrics subcommands.
-- `eval-compare` — compare N eval reports across versions or variants.
+- `eval-compare`: compare N eval reports across versions or variants.
 
 Quick start:
 

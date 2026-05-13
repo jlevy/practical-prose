@@ -196,10 +196,13 @@ Stylistically, emphasize **clarity**, **depth**, **rigor**, and **warmth**.
 - **Inline headings:** Inline headings, where the heading is on the same line as a
   paragraph of text, should be formatted like this, using a boldfaced colon.
   Use this format consistently for inline headings within itemized lists.
-- **Em dashes:** Use em dashes *only* when they are the best punctuation for the
-  sentence. Prefer full stops, commas, colons, or semicolons as appropriate.
-  When you do use em dashes—like this—follow American style, without spaces around the
-  em dash.
+- **Em dashes:** Em dashes are allowed but should be rare.
+  Within routine, full sentences, do not use them.
+  Reach for an em dash only as a sharp separator (a strong break or parenthetical
+  interruption) where no other punctuation captures the same effect; in almost every
+  other case, a full stop, comma, colon, or semicolon is the right choice.
+  When you do use an em dash, write it American style, unspaced: `like this—right here`.
+  **Never write em dashes with spaces around them.**
 - **Section headings:** Use Title Case (Chicago Manual of Style rules) for H1 `#` and H2
   `##` headings (as in this document).
   For H3 `###` and H4 `####`, title case is optional but should be applied consistently.

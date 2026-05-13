@@ -126,7 +126,7 @@ writing. We list these up front for those looking for a shortlist.
   aerospace.
 - **Klinkenborg, *Several Short Sentences About Writing*** (2012)[^klinkenborg].
   Aphorisms and observations; itself an argument for the short sentence.
-- **ISO 24495-1:2023, *Plain language — Part 1: Governing principles and
+- **ISO 24495-1:2023, *Plain language—Part 1: Governing principles and
   guidelines***[^iso-24495-1]. The current international standard for plain language.
   Establishes principles and guidelines for developing plain-language documents; applies
   beyond public-facing communication to technical writing and controlled languages.
@@ -244,7 +244,7 @@ writing. We list these up front for those looking for a shortlist.
 - **Digital.gov, *Plain language guide series***[^digital-gov-plain]. US federal
   content-design and audience-testing guidance.
   Frames plain language as not only writing but also designing and testing content for
-  audience understanding — a usability discipline, not a style choice.
+  audience understanding: a usability discipline, not a style choice.
 
 ## Accessibility and Inclusive Design
 
@@ -388,15 +388,15 @@ navigate, link, and update reliably.
   Includes dedicated guidance on accessibility, writing for a global audience, and
   inclusive language; explicitly says project-specific style overrides the general guide
   and that writers may break a rule when doing so improves the content.
-- **ISO/IEC/IEEE 26514:2022, *Systems and software engineering — Design and development
-  of information for users***[^iso-26514]. International standard for the design and
+- **ISO/IEC/IEEE 26514:2022, *Systems and software engineering—Design and development of
+  information for users***[^iso-26514]. International standard for the design and
   development of user information for software products.
   Successor to IEEE Std 1063; aligns with the IEC/IEEE 82079 family.
 - **IEC/IEEE 82079-1:2019, *Preparation of information for use (instructions for use) of
-  products — Part 1: Principles and general requirements***[^iec-82079-1]. The general
+  products—Part 1: Principles and general requirements***[^iec-82079-1]. The general
   international standard for instructions for use across product categories.
   Often paired with 26514 for software-specific elaboration.
-- **ISO 24183:2024, *Technical communication — Vocabulary***[^iso-24183]. Defines the
+- **ISO 24183:2024, *Technical communication—Vocabulary***[^iso-24183]. Defines the
   shared vocabulary used across technical-communication standards (audience analysis,
   information types, content models, deliverables).
   Useful when a domain demands precise terminology.
@@ -566,7 +566,7 @@ legal-domain anchors specifically.
     <https://www.penguinrandomhouse.com/books/176920/several-short-sentences-about-writing-by-verlyn-klinkenborg/>.
 
 [^iso-24495-1]: International Organization for Standardization.
-    *ISO 24495-1:2023, Plain language — Part 1: Governing principles and guidelines*.
+    *ISO 24495-1:2023, Plain language—Part 1: Governing principles and guidelines*.
     Geneva: ISO, 2023. <https://www.iso.org/standard/78907.html>.
 
 [^nngroup-scannable]: Nielsen, Jakob, and John Morkes.
@@ -735,18 +735,18 @@ legal-domain anchors specifically.
 
 [^iso-26514]: International Organization for Standardization, International
     Electrotechnical Commission, and Institute of Electrical and Electronics Engineers.
-    *ISO/IEC/IEEE 26514:2022, Systems and software engineering — Design and development
-    of information for users*. Geneva: ISO, 2022.
+    *ISO/IEC/IEEE 26514:2022, Systems and software engineering—Design and development of
+    information for users*. Geneva: ISO, 2022.
     <https://www.iso.org/standard/77451.html>.
 
 [^iec-82079-1]: International Electrotechnical Commission and Institute of Electrical
     and Electronics Engineers.
     *IEC/IEEE 82079-1:2019, Preparation of information for use (instructions for use) of
-    products — Part 1: Principles and general requirements*. Geneva: IEC, 2019.
+    products—Part 1: Principles and general requirements*. Geneva: IEC, 2019.
     <https://www.iso.org/standard/71620.html>.
 
 [^iso-24183]: International Organization for Standardization.
-    *ISO 24183:2024, Technical communication — Vocabulary*. Geneva: ISO, 2024.
+    *ISO 24183:2024, Technical communication—Vocabulary*. Geneva: ISO, 2024.
     <https://www.iso.org/standard/78009.html>.
 
 [^kovach-rosenstiel]: Kovach, Bill, and Tom Rosenstiel.
