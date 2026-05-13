@@ -46,11 +46,13 @@ same 18 dimensions in the same five groups, using the same names and section num
 - **3** = multiple slips, or one severe slip that affects the document’s central claims.
 - **2** = frequent slips on key claims.
 - **1** = the dimension fails on most relevant content.
-- **0** = applicable but unassessable (the dimension applies to this artifact, but the
-  content needed to score it is missing or fragmentary).
-- **NA** = not applicable to this artifact (the dimension does not apply — for example,
-  Calibration on a document that makes no probability or forecast claims, or Fairness on
-  a document that surfaces no opposing positions).
+- **0** = applicable but unassessable.
+  The dimension applies AND the artifact attempted to engage it, but the content needed
+  to score is materially absent or fragmentary.
+  Rare; see the decision tree below.
+- **NA** = not applicable.
+  The dimension does not engage with this artifact at all — for example, Calibration on
+  a document that makes no probability or forecast claims.
 
 When you score below 5, cite the specific guideline rule that was missed in the
 parenthetical reason.
@@ -66,11 +68,59 @@ and the deviation is documented (see *Justified deviations* below).
 The rubric is a strong instrument for catching avoidable defects; it is not a substitute
 for asking whether the document worked.
 
+### Decision tree: NA, 0, or 1-5?
+
+This decision tree is binding.
+Apply the questions in order and stop at the first “yes”.
+The same artifact under the same rubric must reach the same answer; if two reviewers
+reach different answers, one of them has skipped a step.
+
+1. **Does the artifact engage the dimension’s subject matter at all?** Engagement means
+   the artifact contains content the dimension is designed to score — verifiable claims
+   (Verifiability), cited sources (Factuality), inferential reasoning (Inference
+   Discipline), probability claims (Calibration), oppositional framings (Fairness),
+   interpretive judgments (Robustness), etc.
+   - **No.** → consult the per-dim NA anchor.
+     If the per-dim anchor’s NA condition fits, score **NA**. If the per-dim anchor
+     instead says the artifact’s task class was *expected* to engage and didn’t (e.g., a
+     decision memo with no fairness content), score per the **1-anchor** of that
+     dimension and cite the missing- coverage rule.
+     **Do not invent a “should-have” judgment that the per-dim NA anchor does not
+     authorize.** Reasons must quote or paraphrase the per-dim NA anchor when scoring
+     NA.
+   - **Yes.** → continue.
+
+2. **Can the dimension be assessed from what the artifact provides?** Assessment means:
+   the content needed to apply the per-dim anchors is materially present.
+   - **No, because the artifact tried to engage but provides too little to score**
+     (e.g., sources cited but unreachable; fewer than three sentences of reasoning;
+     declared intent without content).
+     → **0.** Score 0 is for *attempted but missing*, not for *not present*. If unsure
+     between NA and 0, prefer NA.
+   - **Yes.** → continue.
+
+3. **Apply the 1-5 anchors for the dimension** below.
+   For any score 1-4, cite at least one guideline rule the document missed.
+
+**Tiebreaks:**
+
+- **NA and 5 are mutually exclusive.** A dimension cannot score both NA and 5 on the
+  same artifact. NA means the artifact does not engage the dimension; 5 means the
+  artifact engages it and satisfies the rubric.
+  If the artifact contains no content the per-dim 1-5 anchors describe, it is NA — not
+  5\. ("No problems found because there’s nothing to check" → NA. “No problems found
+  because everything checks out” → 5.)
+- **NA and 0 are not interchangeable.** Score 0 requires evidence that the artifact
+  *tried* to engage the dimension but came up materially short.
+  If the artifact simply does not engage, the score is NA. Prefer NA when in doubt.
+- **NA vs 1-4 is decided by the per-dim NA anchor, not by the reviewer’s intuition.**
+  Each per-dim NA anchor specifies the conditions under which “should have but didn’t”
+  still warrants NA vs a low score.
+  Apply the per-dim anchor, do not improvise.
+
 NA must be reserved for dimensions the artifact’s task genuinely does not require.
-If a high-stakes document plausibly should engage opposing positions and does not, that
-is a low Fairness score, not NA. When aggregating, NA dimensions are excluded from any
-mean rather than treated as zero so that lightweight artifacts are not penalized for not
-needing every dimension.
+When aggregating, NA dimensions are excluded from any mean rather than treated as zero,
+so that lightweight artifacts are not penalized for not needing every dimension.
 
 ## Justified Deviations
 
@@ -476,57 +526,166 @@ and decision memos require primary sources for every quantitative claim; lightwe
 operational notes only require sources for material claims.
 
 - **NA:** Not applicable.
-  The document makes no quantitative or verifiable claims (a pure prompt template, an
-  outline of intent).
+  The document makes no **verifiable assertions** — that is, no statements that are
+  truth-apt and checkable in principle.
+  A statement is truth-apt when a competent reader could in principle determine whether
+  it is true by consulting sources, observations, or calculations.
+
+  Statements that do **not** engage Verifiability (and therefore do not, by themselves,
+  prevent NA):
+  1. Definitions ("an X is a Y that does Z").
+  2. Stated intent or aim ("this document aims to...").
+  3. Performative declarations ("we adopt the following...").
+  4. Self-referential or navigational content ("section 3 covers...").
+  5. Hypothetical, normative, or imperative statements ("if X, then do Y"; “writers
+     should...”).
+  6. Aesthetic or evaluative judgments offered as opinion ("this approach is elegant").
+
+  Statements that **do** engage Verifiability (and therefore preclude NA):
+  1. Empirical assertions about the external world ("X happens more than Y").
+  2. Quantitative claims with a stated or implied magnitude ("12% of...", “more
+     than...”, “in greater volume than”).
+  3. Historical or causal claims about events, entities, or mechanisms.
+  4. Comparative judgments about external entities offered as fact rather than opinion
+     ("X is faster than Y").
+  5. Attributions to specific people, works, or institutions ("as noted by X").
+
+  Rule: if the artifact contains **any** statement of the second kind, Verifiability is
+  engaged and the score is 1-5, not NA. An artifact that *makes* such claims without
+  sourcing them is **not NA** — it scores 1-4 per the anchors below.
+  Reserve NA for artifacts whose entire content consists of statements of the first
+  kind.
+
 - **0:** Cannot assess.
-  Content missing or fewer than one substantive claim.
-- **1:** Quantitative claims with no source pointers; confidence tags absent or used
-  without sources. The document cannot be audited from what it provides.
-- **2:** Some sources cited but specificity is poor ("the Q4 transcript" with no date or
-  section). Derived facts assert without showing the calculation.
+  The document attempts at least one verifiable assertion, but the supporting content is
+  fragmentary or truncated — the claim is partial, mid-sentence, or marked as
+  intent-only (e.g., `[TODO: cite source]`) rather than executed.
+  Rare. If the document makes verifiable assertions and simply omits sources, score 1-4,
+  not 0. Score 0 distinguishes *attempted but missing* from *not attempted*.
+
+- **1:** Material claims are vague enough that no source could confirm or refute them,
+  *and* unsourced. Quantitative claims with no source pointers; confidence tags absent or
+  used without sources.
+  The document cannot be audited from what it provides.
+
+- **2:** Claims have stated referents but specificity is poor (vague magnitude words
+  like “rapid” or “many” attached to scoped factual claims; “the Q4 transcript” with no
+  date or section). Derived facts assert without showing the calculation.
+
 - **3:** Most quantitative claims have a primary source pointer, but several are vague
   enough that finding the exact passage takes work.
   Confidence tags used but not consistently paired with source pointers.
+
 - **4:** Score-5 mostly satisfied with one or two minor slips: a single quantitative
   claim without a source, or one `[VERIFIED]` tag without naming what was verified.
-- **5:** Quantitative claims source-traceable at the stakes-appropriate bar (every
-  primary source for high-stakes / external / decision-bearing documents; material
-  claims sourced and basis stated for low-stakes notes).
-  Citations specific enough to verify (URL, document ID, page or section number, commit
-  SHA). Confidence tags pair with source pointers; derived facts show the calculation
-  inline (`[DERIVED: 89.6 / 614.5 = 14.6%]`). Unverifiable claims marked rather than
-  silently inherited.
+
+- **5:** Every verifiable claim in the document is *easily verifiable* — stated
+  specifically enough to be checkable, and traceable to evidence the reader can reach at
+  appropriate effort for the document’s stakes.
+  Quantitative and high- stakes claims have specific pointers (URL, document ID, page or
+  section number, commit SHA). Lower-stakes material claims state their basis (a named
+  primary observation, a clearly attributed source, or an inline derivation).
+  Confidence tags pair with source pointers; derived facts show the calculation inline
+  (`[DERIVED: 89.6 / 614.5 = 14.6%]`).
+
+  Calibrated uncertainty does not lower the score.
+  A claim explicitly marked as speculative, unverified, or estimated, with its basis
+  named, is treated as satisfying the dimension because the document is being honest
+  about what is known.
+  The point is that the reader can tell the epistemic status of every claim, not that
+  every claim is resolved.
+
+  Note: Verifiability 5 measures the document’s *help* in checking claims, not whether
+  the checks would pass — that is Factuality (§12).
 
 #### §12 Factuality
 
-Do cited sources actually support the claim, at the asserted strength, for the asserted
-entity, date, and scope?
-Verifiability (§11) tests whether the document is auditable; Factuality tests whether
-the audit would pass.
-Source-aware: scoring requires checking the cited sources, not just inspecting the
-document.
+Do the document’s verifiable claims hold up when checked against the world, at the
+asserted strength, for the asserted entity, date, and scope?
+**Verifiability (§11)** is text-internal — does the document let the reader audit?
+**Factuality** is world-aware — does the audit pass?
+Scoring Factuality requires the reviewer to attempt corroboration: by following the
+document’s cited sources where present; by consulting authoritative external sources
+where citations are absent; and by recording when a claim cannot be confirmed or refuted
+from available evidence at appropriate effort.
+
+**Truth means: the assertion strength matches the available evidence.** A claim asserted
+as certain when the evidence is uncertain is a Factuality defect.
+A claim asserted as speculative or hypothetical, *with the speculative status explicit
+and the basis named*, is **factually correct** even if the underlying proposition cannot
+be checked — because the document is telling the reader the truth about what is known.
+Calibrated uncertainty is not a Factuality defect; uncalibrated certainty is.
+
+A claim that cannot be corroborated and is *asserted as fact without hedging* is a
+Factuality defect, not a “cannot-assess” exemption: the document has failed to match
+assertion strength to evidence.
+The score reflects this.
+See §16 Calibration for the broader treatment of claim-strength matching.
+
+**Reviewer access limits are a separate concern from document defects.** A claim may be
+theoretically verifiable but unreachable in the current scoring context — a paywalled
+article, a private dataset, a closed-source repo, or a primary source in a language the
+reviewer cannot read.
+In such cases, the reviewer should:
+
+1. Note in the reason which specific claim(s) could not be corroborated, and the access
+   limit that prevented it.
+2. Distinguish *document failures* (the doc made an unhedged claim with no basis or
+   unreachable evidence) from *reviewer limits* (the doc provided reasonable pointers,
+   but the pointers happen to be inaccessible to this reviewer).
+3. Score document failures per the anchors below.
+   Treat reviewer limits as neutral on Factuality: if the document did its part — cited
+   a primary source, stated the basis, or acknowledged the limit explicitly — the claim
+   does not count against Factuality.
+   The score reason names the access limit so a later reviewer with access can complete
+   the audit.
+
+The rubric’s Factuality score is about the document’s truth-discipline, not about the
+reviewer’s reach. Mark claims that cannot be checked in this round; do not silently
+penalize the document for them.
 
 - **NA:** Not applicable.
-  The document cites no sources because it makes no source-checkable claims.
+  The document makes no verifiable assertions at all (see §11 Verifiability NA for the
+  engagement test). Factuality engages on the same set of claims Verifiability engages
+  on; if Verifiability is NA, Factuality is NA. If Verifiability is 1-5, Factuality is
+  1-5.
+
 - **0:** Cannot assess.
-  Sources cited but unreachable, or content missing.
-- **1:** Major claims contradicted by their cited sources.
-  Hallucinated sources or sources that don’t contain the cited content.
-- **2:** Several claims overstate or paraphrase past their sources.
+  The document attempts at least one verifiable assertion, but the claim is fragmentary
+  or truncated — a partial sentence, an unfinished paragraph, or a `[TODO]` marker —
+  leaving no claim to corroborate.
+  Rare. If the document’s claims are fully stated, score 1-5 even if corroboration is
+  incomplete (per the rule above).
+
+- **1:** Major claims are contradicted by reasonable corroboration: cited sources do not
+  contain the cited content, or external lookup finds the claim is false.
+  Hallucinated sources, authors, or document IDs.
+  Multiple claims that the reviewer cannot corroborate or refute despite reasonable
+  effort, with no acknowledgement in the document that they are uncorroborated.
+
+- **2:** Several claims overstate, paraphrase past the source, or cannot be corroborated
+  at the asserted strength.
   Numbers in prose don’t match cited sources without disclosure; entity, date, or scope
-  mismatches.
-- **3:** Most claims supported by their sources but with notable strength mismatches or
-  paraphrase drift. One or two cases of advocate-quoted-as-neutral or
-  commentary-quoted-as-primary.
+  mismatches between claim and source.
+
+- **3:** Most claims are corroborated, but with notable strength mismatches, paraphrase
+  drift, or one or two claims that the reviewer can neither confirm nor refute, without
+  the document flagging them as uncorroborated.
+
 - **4:** Score-5 mostly satisfied with one or two minor slips: one undisclosed rounding,
-  or one entity/date mismatch.
-- **5:** Every cited source supports the claim at the asserted strength.
-  Numbers in prose match cited sources, or disclose rounding, aggregation, unit
-  conversion, or derivation explicitly.
-  Entity, date, and scope of citations match the claim.
-  Sources represent the cited entity, not its inverse.
+  one entity/date mismatch, or one claim flagged as uncorroborated without enough basis
+  stated.
+
+- **5:** Every verifiable claim is corroborated — ideally by a cited source the reviewer
+  can reach, otherwise by authoritative external evidence accessible at appropriate
+  effort. Numbers in prose match cited or corroborating sources, or disclose rounding,
+  aggregation, unit conversion, or derivation explicitly.
+  Entity, date, and scope of claims match the supporting evidence.
   No hallucinated URLs, document IDs, or authors; every reference resolves to a real
   artifact that contains the cited content.
+  Where a claim cannot be corroborated from available evidence, the document
+  acknowledges this explicitly (e.g., “we have not been able to verify this”) and states
+  the basis on which the claim is made anyway.
 
 ### Reasoning
 
@@ -538,22 +697,46 @@ neighbor. Sister of Soundness (§14): Soundness asks whether the chain holds tog
 Inference Discipline asks whether the rungs exist as distinct rungs at all.
 
 - **NA:** Not applicable.
-  The document makes no inferential claims (a pure reference table, a literal log
-  excerpt).
+  Inference Discipline tests whether the document moves rung by rung up the ladder
+  (observation → judgment → interpretation → implication).
+  The dimension is engaged when the document moves between *any two* rungs at all —
+  including a single observation that leads to a single implication.
+
+  Signals that **do** engage the dimension (any one suffices):
+  1. A claim drawn from an earlier observation in the same document ("X happened,
+     therefore Y").
+  2. A judgment, conclusion, or implication stated in the document’s own voice (not
+     quoted from a source).
+  3. A causal, evaluative, or predictive statement about something the document has just
+     described.
+  4. Connectives that signal reasoning: “therefore”, “so”, “this means”, “as a result”,
+     “hence”, “it follows that”.
+
+  Reserve NA for artifacts whose entire content is a pure reference table, a fact-only
+  roster, a literal log excerpt, a definition list, or other content that states facts
+  without reasoning *from* them.
+  If the artifact reasons anywhere — even one sentence — score 1-5.
+
 - **0:** Cannot assess.
-  Content missing or fewer than 3 sentences.
+  The artifact attempts inferential reasoning but provides too little to score it —
+  fewer than three sentences of reasoning, or reasoning truncated mid-argument.
+
 - **1:** Rungs systematically blended; observations, judgments, and implications fused
   inside single clauses throughout.
   Reader cannot tell which sub-claim carries evidence.
+
 - **2:** Rungs collapsed in key claims.
   Frequent leaps from observation directly to implication with the intermediate judgment
   and interpretation skipped or buried.
+
 - **3:** Rungs distinguished in some sections but blended in others.
   Several key claims fuse observation + interpretation in one sentence; citation
   legitimacy from the observation rung leaks onto the implication rung.
+
 - **4:** Score-5 mostly satisfied with one or two minor slips: one sentence that bundles
   observation and judgment, or an implication asserted without the interpretation rung
   explicitly named.
+
 - **5:** Each key claim sits on a single, identifiable rung.
   No rung skipped on the way to a conclusion; transitions between rungs signaled ("from
   this we judge…", “which we interpret as…”, “which implies…”). Each rung carries its

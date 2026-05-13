@@ -1,118 +1,122 @@
 version: 18-dim-v1
 groups:
-- key: purpose
-  label: Purpose
-  dimensions:
-  - key: suitability
-    label: Suitability
-    section: 1
-    question: Does the document give the reader what they need, in the form the task
-      requires?
-  - key: scope
-    label: Scope
-    section: 2
-    question: Is the scope stated and does it fit the actual scope of the work?
-  - key: breadth
-    label: Breadth
-    section: 3
-    question: Are the relevant areas within scope covered?
-  - key: depth
-    label: Depth
-    section: 4
-    question: Are the important areas developed enough?
-- key: expression
-  label: Expression
-  dimensions:
-  - key: clarity
-    label: Clarity
-    section: 5
-    question: Does the writing read well?
-  - key: coherence
-    label: Coherence
-    section: 6
-    question: Do the ideas progress smoothly?
-  - key: concision
-    label: Concision
-    section: 7
-    question: Does every section earn its place?
-  - key: organization
-    label: Organization
-    section: 8
-    question: Are sections, headings, sequence, tables, figures, links, and cross-references
-      arranged for navigation?
-  - key: style_consistency
-    label: Style Consistency
-    section: 9
-    question: Does the document follow the chosen style guide or house style consistently?
-  - key: formatting
-    label: Formatting
-    section: 10
-    question: Is the document visually and syntactically clean in its medium?
-- key: grounding
-  label: Grounding
-  dimensions:
-  - key: verifiability
-    label: Verifiability
-    section: 11
-    question: Are claims traceable to specific sources, observations, or calculations?
-  - key: factuality
-    label: Factuality
-    section: 12
-    question: Are claims true and supported by their cited evidence?
-- key: reasoning
-  label: Reasoning
-  dimensions:
-  - key: inference_discipline
-    label: Inference Discipline
-    section: 13
-    question: Are the rungs of the ladder of inference kept distinct?
-  - key: soundness
-    label: Soundness
-    section: 14
-    question: Do claims follow from evidence through valid mechanisms and explicit
-      assumptions?
-  - key: precision
-    label: Precision
-    section: 15
-    question: Are claims and terms specified at the right granularity?
-- key: judgment
-  label: Judgment
-  dimensions:
-  - key: calibration
-    label: Calibration
-    section: 16
-    question: Does claim strength match evidence strength?
-  - key: fairness
-    label: Fairness
-    section: 17
-    question: Are opposing positions argued at proportional evidentiary depth?
-  - key: robustness
-    label: Robustness
-    section: 18
-    question: Do key claims survive plausible alternative interpretations?
+  - key: purpose
+    label: Purpose
+    dimensions:
+      - key: suitability
+        label: Suitability
+        section: 1
+        question:
+          Does the document give the reader what they need, in the form the task
+          requires?
+      - key: scope
+        label: Scope
+        section: 2
+        question: Is the scope stated and does it fit the actual scope of the work?
+      - key: breadth
+        label: Breadth
+        section: 3
+        question: Are the relevant areas within scope covered?
+      - key: depth
+        label: Depth
+        section: 4
+        question: Are the important areas developed enough?
+  - key: expression
+    label: Expression
+    dimensions:
+      - key: clarity
+        label: Clarity
+        section: 5
+        question: Does the writing read well?
+      - key: coherence
+        label: Coherence
+        section: 6
+        question: Do the ideas progress smoothly?
+      - key: concision
+        label: Concision
+        section: 7
+        question: Does every section earn its place?
+      - key: organization
+        label: Organization
+        section: 8
+        question:
+          Are sections, headings, sequence, tables, figures, links, and cross-references
+          arranged for navigation?
+      - key: style_consistency
+        label: Style Consistency
+        section: 9
+        question: Does the document follow the chosen style guide or house style consistently?
+      - key: formatting
+        label: Formatting
+        section: 10
+        question: Is the document visually and syntactically clean in its medium?
+  - key: grounding
+    label: Grounding
+    dimensions:
+      - key: verifiability
+        label: Verifiability
+        section: 11
+        question: Are claims traceable to specific sources, observations, or calculations?
+      - key: factuality
+        label: Factuality
+        section: 12
+        question: Are claims true and supported by their cited evidence?
+  - key: reasoning
+    label: Reasoning
+    dimensions:
+      - key: inference_discipline
+        label: Inference Discipline
+        section: 13
+        question: Are the rungs of the ladder of inference kept distinct?
+      - key: soundness
+        label: Soundness
+        section: 14
+        question:
+          Do claims follow from evidence through valid mechanisms and explicit
+          assumptions?
+      - key: precision
+        label: Precision
+        section: 15
+        question: Are claims and terms specified at the right granularity?
+  - key: judgment
+    label: Judgment
+    dimensions:
+      - key: calibration
+        label: Calibration
+        section: 16
+        question: Does claim strength match evidence strength?
+      - key: fairness
+        label: Fairness
+        section: 17
+        question: Are opposing positions argued at proportional evidentiary depth?
+      - key: robustness
+        label: Robustness
+        section: 18
+        question: Do key claims survive plausible alternative interpretations?
 score_values:
   valid:
-  - NA
-  - 0
-  - 1
-  - 2
-  - 3
-  - 4
-  - 5
-  notes: NA = not applicable to this artifact; 0 = applicable but unassessable (content
+    - NA
+    - 0
+    - 1
+    - 2
+    - 3
+    - 4
+    - 5
+  notes:
+    NA = not applicable to this artifact; 0 = applicable but unassessable (content
     missing); 1-5 = quality score per anchors in practical-prose-rubric.md. When aggregating,
     NA dimensions are excluded from any mean rather than treated as zero.
 na_applicable_dimensions:
-- breadth
-- depth
-- style_consistency
-- formatting
-- verifiability
-- factuality
-- inference_discipline
-- calibration
-- fairness
-- robustness
+  - breadth
+  - depth
+  - style_consistency
+  - formatting
+  - verifiability
+  - factuality
+  - inference_discipline
+  - calibration
+  - fairness
+  - robustness
 rule_counts:
   suitability: 7
   scope: 5
@@ -124,8 +128,8 @@ rule_counts:
   organization: 9
   style_consistency: 7
   formatting: 6
-  verifiability: 5
-  factuality: 5
+  verifiability: 6
+  factuality: 7
   inference_discipline: 9
   soundness: 8
   precision: 5

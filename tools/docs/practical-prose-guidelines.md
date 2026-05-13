@@ -355,8 +355,8 @@ clear and the document coheres.
 
 5. **Describe the present state, not what it replaced.** *(Common agent failure mode.)*
    Write as if the current design, system, or naming has always existed.
-   Replacement history — “this function was previously named X,” “under the new layout,”
-   “we used to use Y,” “removed Z” — pollutes the reader’s context with deprecated
+   Replacement history—“this function was previously named X,” “under the new layout,”
+   “we used to use Y,” “removed Z”—pollutes the reader’s context with deprecated
    concepts they would otherwise never have to learn.
    Git history is the authoritative record of what was removed; the document is the
    record of what *is*. Exception genres where history is the point: migration guides,
@@ -461,9 +461,9 @@ Style Consistency isolates the editorial-polish question from the readability qu
 6. **Domain-specific banned words and house-style conventions are followed.** *(Common
    agent failure mode.)* A `conventions.md` in the doc’s scope (banned-register words,
    confidence-tag conventions, citation-format requirements) is honored consistently.
-   Agents tend to reach for register the project has already ruled out — overconfident
-   words, overblown adjectives, marketing-style intensifiers — even when the rule list
-   is short and in the same repo.
+   Agents tend to reach for register the project has already ruled out—overconfident
+   words, overblown adjectives, marketing-style intensifiers—even when the rule list is
+   short and in the same repo.
    Treat the project’s banned-word list as binding, not advisory.
 
 7. **Em-dash discipline.** *(Common agent failure mode.)* Use em dashes only when they
@@ -511,16 +511,30 @@ Formatting is the most deterministic of the three — most rules here are lintab
 
 ### 11. Verifiability
 
-*Description:* Claims are traceable to specific sources, observations, calculations, or
-explicit assumptions.
+*Description:* Claims are stated specifically enough to be checkable, and traceable to
+specific sources, observations, calculations, or explicit assumptions.
 A document scores high on Verifiability when a competent reader could check its claims
 from what the document provides, before any external lookup.
-Verifiability is text-internal; Factuality (§12) is the source-aware check that the
-audit would actually pass.
+Verifiability is text-internal — it tests how well the document equips the reader to
+audit. **Factuality (§12)** is world-aware — it tests whether the audit, when performed,
+passes.
+
+A claim that is too vague to check is a Verifiability defect even when sources are
+cited: if “things have grown rapidly” has no quantitative referent, no source can
+confirm or refute it.
+Specificity is the precondition for source-traceability.
 
 **Rules:**
 
-1. **Quantitative claims are source-traceable; the bar scales with stakes.** For
+1. **Claims are stated specifically enough to be checkable.** A claim a reader could in
+   principle confirm or refute by consulting sources, observations, or calculations.
+   Vague magnitude words ("rapid," “many,” "in greater volume," “increasingly”) without
+   a stated referent or comparison fail this rule even when the underlying assertion
+   might be true — the document has not made a checkable claim.
+   Score §15 Precision for terminology specificity; this rule covers the claim-level
+   bar.
+
+2. **Quantitative claims are source-traceable; the bar scales with stakes.** For
    high-stakes, external, or decision-bearing documents (research reports, audits,
    decision memos, deep research), every quantitative claim has at least one primary
    source — official documentation, filings, press releases, transcripts, source code,
@@ -531,7 +545,7 @@ audit would actually pass.
    the number is material; otherwise mark the basis or measurement context (for example,
    “local timing run, n=20” or “Grafana, 7d window”).
 
-2. **Citations are specific enough to verify.** Enough information that a reader can
+3. **Citations are specific enough to verify.** Enough information that a reader can
    find the exact passage: a URL, a document or accession ID, a date, a commit SHA, a
    page or section number.
    “The release notes” is vague; “the v2.4 release notes, §3.2 ('breaking changes')” is
@@ -539,17 +553,21 @@ audit would actually pass.
    Press releases need dates.
    Filings need accession numbers or filing dates.
 
-3. **Confidence tags require a source per claim.** `[VERIFIED]` without naming what was
+4. **Confidence tags require a source per claim.** `[VERIFIED]` without naming what was
    verified or against which source is opaque.
    Pair every confidence tag with a specific source pointer.
    For derived facts, show the calculation inline: `[DERIVED: 89.6 / 614.5 = 14.6%]`.
 
-4. **Mark what you can’t verify.** `[UNVERIFIED]` is preferable to silently inheriting
-   an unverifiable claim.
+5. **Calibrated uncertainty is not a defect; uncalibrated assertion is.** `[UNVERIFIED]`
+   is preferable to silently inheriting an unverifiable claim.
    `[ESTIMATED]` with the triangulation method stated is preferable to a bare point
-   estimate.
+   estimate. A claim explicitly marked as speculative or unverified, with its basis
+   named, does not lower the Verifiability score.
+   A claim asserted as fact without the certainty the evidence supports does.
+   The point is that the reader knows the claim’s epistemic status, not that every claim
+   is fully resolved.
 
-5. **For central claims, name what would invalidate them.** Beyond citing sources, state
+6. **For central claims, name what would invalidate them.** Beyond citing sources, state
    what a skeptical reader should inspect to falsify the claim, and what observation
    would change the conclusion.
    Feynman’s first principle: you must not fool yourself, and you are the easiest person
@@ -559,40 +577,71 @@ audit would actually pass.
 
 ### 12. Factuality
 
-*Description:* Cited evidence actually supports the claim, at the asserted strength, for
-the asserted entity, date, and scope.
-Verifiability (§11) tests whether the document is auditable; Factuality tests whether
-the audit would pass.
-This is a source-aware dimension: scoring it requires checking the cited sources, not
-just inspecting the document.
+*Description:* The document’s verifiable claims hold up when checked against the world,
+at the asserted strength, for the asserted entity, date, and scope.
+Verifiability (§11) is text-internal — does the document let the reader audit?
+Factuality is world-aware — does the audit, when performed, pass?
+
+Truth here means: **the assertion strength matches the available evidence.** A claim
+asserted as certain when the evidence is uncertain is a Factuality defect.
+A claim asserted as speculative, with its speculative status explicit and its basis
+named, is **factually correct** even if the underlying proposition cannot be checked —
+the document is telling the reader the truth about what is known.
+
+Scoring Factuality is corroboration-driven, not citation-driven.
+Cited sources are the cleanest mechanism, but a verifiable claim can be corroborated by
+authoritative external evidence when no citation is present.
+A claim is a Factuality defect when it is *asserted as fact* and *cannot be
+corroborated*; it is **not** a defect when it is flagged as uncertain or speculative
+with a stated basis.
+
+Reviewer access limits are not document defects.
+A claim with a reachable primary source that the reviewer happens to be unable to access
+— paywalled, in a language the reviewer doesn’t read, or in a private system — counts as
+neutral, not a Factuality slip.
+The reason note records the access limit so a later reviewer with access can complete
+the audit.
 
 **Rules:**
 
-1. **Cited sources support the claim at the asserted strength.** A source that says “X
+1. **Verifiable claims are corroborated.** When the document makes a checkable claim,
+   that claim is supported either (a) by a cited source the reader can reach, or (b) by
+   authoritative external evidence accessible at appropriate effort.
+   A claim that cannot be corroborated and is asserted as fact without hedging is a
+   defect.
+
+2. **Cited sources support the claim at the asserted strength.** A source that says “X
    is one factor” does not support a claim that “X is the dominant factor.”
    A source about a prior period does not support a claim about a current period without
    an explicit bridge.
 
-2. **Numbers in prose match cited sources, or explicitly disclose rounding, aggregation,
+3. **Numbers in prose match cited sources, or explicitly disclose rounding, aggregation,
    unit conversion, or derivation.** A measurement of 14.6% in the source can appear as
    “~15%” in prose only if the rounding is signaled (an approximation marker, a stated
    rounding policy, or a parenthetical such as “(14.6% rounded)”). Silent rounding,
    silent aggregation across categories, or silent unit conversion all fail this rule.
 
-3. **Entity, date, and scope of citations match the claim.** Claims about a product
+4. **Entity, date, and scope of citations match the claim.** Claims about a product
    should cite that product’s own sources, not third-party commentary about it.
    Claims about the current period should cite current-period data, not extrapolations
    from a prior period without an explicit bridge.
 
-4. **Sources represent the cited entity, not its inverse.** An advocate’s note quoted as
+5. **Sources represent the cited entity, not its inverse.** An advocate’s note quoted as
    if it were neutral, an opinion piece quoted as if it were a primary source, or a
    commentary quoted as if it were the underlying data all fail accuracy even when the
    citation is technically verifiable.
 
-5. **No hallucinated sources.** Every cited URL, document ID, transcript reference, or
+6. **No hallucinated sources.** Every cited URL, document ID, transcript reference, or
    author resolves to a real artifact that contains the cited content.
    Confidence in this is harder to self-audit than the other rules; pair high-stakes
    citations with quoted excerpts when feasible.
+
+7. **Calibrated uncertainty satisfies Factuality; uncalibrated certainty fails it.**
+   When a claim cannot be corroborated from available evidence, the document
+   acknowledges this explicitly and states the basis on which the claim is made anyway.
+   A speculative claim labelled speculative, with its basis stated, is factually
+   correct. An unhedged claim made as if it were settled, where the evidence does not
+   settle it, is a Factuality defect — even if the claim happens to be true.
 
 ## Reasoning Dimensions
 
