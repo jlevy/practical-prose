@@ -230,6 +230,7 @@ Thumbs.db
 
 # Agent / assistant local state
 .claude/
+.codex/
 .aider*
 
 # Local self-eval runs (in flux; not yet ready to track)
