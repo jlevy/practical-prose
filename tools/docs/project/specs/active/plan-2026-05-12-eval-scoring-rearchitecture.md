@@ -1,5 +1,5 @@
 ---
-title: Plan Spec — Eval Scoring Re-Architecture
+title: Plan Spec: Eval Scoring Re-Architecture
 description: Replace the `claude` CLI subprocess in eval_score.py with the Anthropic SDK + prompt caching + bounded async concurrency
 author: Joshua Levy (github.com/jlevy) with agent assistance
 ---
@@ -25,7 +25,7 @@ This works but defeats normal project tooling (ruff, pytest, basedpyright, CI), 
 no dep lock, and makes the SDK migration awkward to test.
 The re-architecture lays a proper package layer in **Phase 0** (using the
 `simple-modern-uv` copier template at
-[attic/simple-modern-uv](../../../../attic/simple-modern-uv/) — or its published origin
+[attic/simple-modern-uv](../../../../../attic/simple-modern-uv/), or its published origin
 if preferred), then migrates the scoring path in **Phase 1**, then adds batch
 concurrency in **Phase 2**.
 
@@ -38,13 +38,13 @@ leximetry codebase (`leximetry/utils/aio_limited.py`).
   for a 12-doc round.
 - **Per-doc cost** drops ~10× by virtue of prompt caching on the ~99K-token
   rubric+guidelines block that’s identical across all docs in a batch.
-- **F6 hangs eliminated** — no more `claude` CLI subprocess that can stick indefinitely;
+- **F6 hangs eliminated:** no more `claude` CLI subprocess that can stick indefinitely;
   SDK calls have native HTTP timeouts and retries.
-- **F3 robustness improved** — the SDK’s structured-output / tool-use path removes the
+- **F3 robustness improved:** the SDK’s structured-output / tool-use path removes the
   JSON-fence parsing layer and the corresponding failure modes.
-- **Audit trail preserved** — raw response, prompt hash, model identity, cache-hit stats
+- **Audit trail preserved:** raw response, prompt hash, model identity, cache-hit stats
   persist to `*.eval.raw.txt` and `metadata.repro` exactly as today.
-- **Output schema unchanged** — every existing `*.eval.yaml`, fixture, and
+- **Output schema unchanged:** every existing `*.eval.yaml`, fixture, and
   `eval_report.py validate` invocation continues to work bit-for-bit.
 
 ## Non-Goals
@@ -54,7 +54,7 @@ leximetry codebase (`leximetry/utils/aio_limited.py`).
 - **Not changing the eval-report YAML schema** or the validation logic in
   `eval_report.py`. The data contract stays put; only the package layout and the
   model-call substrate change.
-- **Not adopting pydantic-ai.** Direct Anthropic SDK only — multi-provider abstraction
+- **Not adopting pydantic-ai.** Direct Anthropic SDK only; multi-provider abstraction
   is out of scope for this round.
 - **Not extracting metaproc runpool.** That would solve subprocess orchestration, which
   we no longer have after Phase 1.
@@ -87,7 +87,7 @@ independent and re-pays the full input-token cost for the ~99K invariant portion
 | F6 | `claude` CLI subprocess can hang indefinitely. **This spec addresses this.** |
 
 Full details:
-[evals/self-eval-v0.1/findings.md](../../../../evals/self-eval-v0.1/findings.md).
+[evals/self-eval-v0.1/findings.md](../../../../../evals/self-eval-v0.1/findings.md).
 
 ### Approaches considered
 
@@ -110,14 +110,14 @@ This is fine for one-off scripts, but it has three real costs for the SDK migrat
    and they would resolve different versions if not kept in sync by hand.
 2. **No proper test runner.** Tests today require an out-of-band
    `uv run --python 3.11 --with pytest --with chopdiff --with pyyaml --with pydantic python -m pytest test_eval_score.py`
-   invocation. There’s no `make test`, no CI hook, no lint pass — F2/F4 ship-bug
+   invocation. There’s no `make test`, no CI hook, no lint pass; F2/F4 ship-bug
    regressions are caught only by manual re-run.
 3. **No shared module layout.** `rubric_schema.py` is imported by `eval_score.py` and
    `eval_report.py` only because they’re sibling files; testing a function from
    `practical_prose_metrics.py` from a test elsewhere requires `sys.path` shimming.
 
 Moving the code under a packaged `tools/<package-name>/` layout produced by the
-[simple-modern-uv](../../../../attic/simple-modern-uv/) copier template fixes all three:
+[simple-modern-uv](../../../../../attic/simple-modern-uv/) copier template fixes all three:
 one lockfile, one `pytest` invocation, one set of CLI entry points, ruff + basedpyright
 \+ codespell wired up, CI green on push.
 
@@ -133,7 +133,7 @@ In `tools/prose-eval/src/prose_eval/eval_score.py`:
    invariant portion (rubric + guidelines + per-dimension rule bounds + instructions).
    The artifact and artifact-specific framing go in a separate, uncached final block.
 3. Add a small `gather_limited(*, max_concurrent, max_rps)` async helper patterned on
-   leximetry’s `aio_limited.py` — ~30 LOC, no new deps beyond `aiolimiter` (or implement
+   leximetry’s `aio_limited.py`: ~30 LOC, no new deps beyond `aiolimiter` (or implement
    the leaky bucket inline, ~10 more LOC, and skip even that dep).
 4. Add a `batch` subcommand or `--batch` flag to `eval_score.py` accepting N YAML paths,
    which schedules all N through `gather_limited`. Default concurrency: 4. Default RPS
@@ -177,7 +177,7 @@ Files with **behavioral** changes (Phase 1 + 2):
   - `call_claude(prompt, model)` → `call_anthropic(messages, model)` using
     `client.messages.create` with cache_control on the invariant block.
   - New: `_build_messages(artifact_path)` returning the multi-block shape.
-  - New: `score_batch(yaml_paths, *, model, max_concurrent, max_rps)` — parallel scoring
+  - New: `score_batch(yaml_paths, *, model, max_concurrent, max_rps)`: parallel scoring
     orchestrator.
   - Existing `parse_response` + `extract_json_block` unchanged.
 - **`_concurrency.py`** (new): `gather_limited(coros, *, max_concurrent, max_rps)`,
@@ -263,13 +263,13 @@ self-eval run; it’ll be deleted once the running background scorer completes.*
   (`[tool.hatch.build.targets.wheel].include = ["src/prose_eval/rubric_schema.yaml", "src/prose_eval/prompts/*.md"]`).
 - [x] Restricted pytest discovery to `tests/` (was `["src", "tests"]` per the template
   default, which caused collection of the source modules).
-- [x] Relaxed basedpyright for the migrated legacy code — turned off the strict-type
+- [x] Relaxed basedpyright for the migrated legacy code: turned off the strict-type
   rules that flag pre-existing patterns (Optional-access, mixed int|str arithmetic,
   unknown-type propagation, unannotated-class-attribute, etc.). Tightening is a
   follow-on once the SDK migration in Phase 1 lands and the surface is small enough to
   type properly.
 - [x] Phase 0 gate verified: - `make install` ✅ - `make lint` ✅ (0 errors) - `make test`
-  146/150 — the 4 remaining failures
+  146/150; the 4 remaining failures
   (`test_metrics.py::TestB14_ReproducibilityRegression`) are **pre-existing
   fixture-drift errors** that fail identically in the original `scripts/` location.
   Tracked separately; not a Phase 0 regression.
@@ -279,8 +279,8 @@ self-eval run; it’ll be deleted once the running background scorer completes.*
 - [ ] Delete `scripts/` once round-1 scoring completes and we’re sure no background
   process references the old paths.
 - [ ] Update runbooks
-  ([practical-prose-eval-single.runbook.md](../../../../runbooks/practical-prose-eval-single.runbook.md),
-  [practical-prose-eval-compare.runbook.md](../../../../runbooks/practical-prose-eval-compare.runbook.md))
+  ([practical-prose-eval-single.runbook.md](../../../../../runbooks/practical-prose-eval-single.runbook.md),
+  [practical-prose-eval-compare.runbook.md](../../../../../runbooks/practical-prose-eval-compare.runbook.md))
   to call the new entry points (`eval-score …` instead of
   `../tools/prose-eval/src/prose_eval/eval_score.py …`).
 - [ ] Update root `README.md` Tooling section to point at `tools/prose-eval/`.
@@ -288,7 +288,7 @@ self-eval run; it’ll be deleted once the running background scorer completes.*
   `tools/prose-eval/` subdir.
   (Out of scope per Non-Goals until publishing is decided.)
 - [ ] Fix the 4 pre-existing fixture-drift failures in
-  `test_metrics.py::TestB14_ReproducibilityRegression` (chopdiff added new fields —
+  `test_metrics.py::TestB14_ReproducibilityRegression` (chopdiff added new fields;
   regenerate the pinned JSON, or pin chopdiff version).
 
 ### Phase 1: Single-doc SDK migration with prompt caching (DONE)
@@ -320,7 +320,7 @@ Source paths refer to `tools/prose-eval/src/prose_eval/`.)
   round-trip persisting `cache_stats`. All 155 tests pass (up from 150).
 - [x] Manual verification: re-scored `readme.eval.yaml` end-to-end via SDK in **58s**
   (target <60s ✓). `cache_stats.creation_input_tokens=26198` written.
-  `overall_mean` shifted 4.36 → 3.67 — outside the ±0.2 target but **attributable to
+  `overall_mean` shifted 4.36 → 3.67, outside the ±0.2 target but **attributable to
   model-version calibration drift** (Sonnet 4.5 now assesses
   Calibration/Fairness/Robustness/Factuality where the round-1 model marked them NA).
   Logged as a separate calibration finding, not a Phase 1 regression.
@@ -329,7 +329,7 @@ Source paths refer to `tools/prose-eval/src/prose_eval/`.)
 
 - [x] Added `src/prose_eval/_concurrency.py` with
   `gather_limited(*coros, max_concurrent, max_rps, return_exceptions)` patterned on
-  leximetry’s `aio_limited.py` — `asyncio.Semaphore` + `aiolimiter.AsyncLimiter`.
+  leximetry’s `aio_limited.py`: `asyncio.Semaphore` + `aiolimiter.AsyncLimiter`.
   Aiolimiter dep added.
 - [x] Factored `_score_one` body into `_prepare_score()` + `_apply_score()` shared
   between sync and async paths.
@@ -352,9 +352,9 @@ Source paths refer to `tools/prose-eval/src/prose_eval/`.)
   before priming. Round 3 candidate: pre-warm the cache with one call before fanning out
   the rest.
 - [x] Updated
-  [runbooks/practical-prose-eval-single.runbook.md](../../../../runbooks/practical-prose-eval-single.runbook.md)
+  [runbooks/practical-prose-eval-single.runbook.md](../../../../../runbooks/practical-prose-eval-single.runbook.md)
   and
-  [runbooks/practical-prose-eval-compare.runbook.md](../../../../runbooks/practical-prose-eval-compare.runbook.md)
+  [runbooks/practical-prose-eval-compare.runbook.md](../../../../../runbooks/practical-prose-eval-compare.runbook.md)
   to mention the new `--batch` form, the `ANTHROPIC_API_KEY` requirement, the observed
   batch wall-clock, and the F3a alignment-failure recovery path.
 
@@ -382,7 +382,7 @@ Source paths refer to `tools/prose-eval/src/prose_eval/`.)
 
 - Single commit on `main` (or a branch + PR if preferred) implementing both phases.
 - Update
-  [runbooks/practical-prose-eval-single.runbook.md](../../../../runbooks/practical-prose-eval-single.runbook.md)
+  [runbooks/practical-prose-eval-single.runbook.md](../../../../../runbooks/practical-prose-eval-single.runbook.md)
   with the new commands and env-var note.
 - Bump the round-1 self-eval to round-2 once the new tool is in place and re-run for
   comparison.
@@ -410,7 +410,7 @@ Source paths refer to `tools/prose-eval/src/prose_eval/`.)
    install dir or via `git rev-parse --show-toplevel`. Same logic as the F2 fix already
    in `eval_score.py`.
 
-### Phase 1 / 2 — resolved
+### Phase 1 / 2: resolved
 
 | # | Question | Decision |
 | --- | --- | --- |
@@ -429,18 +429,22 @@ Our equivalent: a small `_load_env_files()` helper that walks `cwd` and home for
 
 ## References
 
-- [attic/simple-modern-uv/](../../../../attic/simple-modern-uv/) — the copier template
+- [attic/simple-modern-uv/](../../../../../attic/simple-modern-uv/): the copier template
   used by Phase 0.
-- [evals/self-eval-v0.1/findings.md](../../../../evals/self-eval-v0.1/findings.md) —
+- [evals/self-eval-v0.1/findings.md](../../../../../evals/self-eval-v0.1/findings.md):
   F1–F6 friction log.
-- [tools/prose-eval/src/prose_eval/eval_score.py](../../../../tools/prose-eval/src/prose_eval/eval_score.py)
-  — the file being relocated and rewritten.
-- [tools/prose-eval/src/prose_eval/prompts/eval-rubric-score.md](../../../../tools/prose-eval/src/prose_eval/prompts/eval-rubric-score.md)
-  — the prompt template that becomes the cached block.
-- [runbooks/practical-prose-eval-single.runbook.md](../../../../runbooks/practical-prose-eval-single.runbook.md)
-  — the runbook to update.
+- [tools/prose-eval/src/prose_eval/eval_score.py](../../../../../tools/prose-eval/src/prose_eval/eval_score.py):
+  the file being relocated and rewritten.
+- [tools/prose-eval/src/prose_eval/prompts/eval-rubric-score.md](../../../../../tools/prose-eval/src/prose_eval/prompts/eval-rubric-score.md):
+  the prompt template that becomes the cached block.
+- [runbooks/practical-prose-eval-single.runbook.md](../../../../../runbooks/practical-prose-eval-single.runbook.md):
+  the runbook to update.
 - The `gather_limited` primitive in the leximetry codebase
-  (`leximetry/utils/aio_limited.py`) — pattern adopted here.
-- The metaproc `runpool` subsystem — surveyed; rejected as overkill for this use case
+  (`leximetry/utils/aio_limited.py`): pattern adopted here.
+- The metaproc `runpool` subsystem: surveyed; rejected as overkill for this use case
   (process-pool orchestration vs.
   async I/O).
+
+<!-- This document follows common-doc-guidelines.md.
+Review guidelines before editing.
+-->
