@@ -231,3 +231,9 @@ Thumbs.db
 # Agent / assistant local state
 .claude/
 .aider*
+
+# Local self-eval runs (in flux; not yet ready to track)
+evals/
+
+# Local scratchpad / reference store (templates, archived experiments, scratch)
+attic/
