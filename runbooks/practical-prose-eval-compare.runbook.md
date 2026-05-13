@@ -15,12 +15,13 @@ Joshua Levy (github.com/jlevy)
 Produce a unified comparison Markdown from N evaluated artifacts: unified table
 (qualitative scores + quantitative metrics + derived ratios), optional per-section
 drilldowns, and per-pair deltas.
-The deterministic generator is `../scripts/eval_compare.py`; this runbook wraps it with
-the alignment audit and the analytical-prose layer the generator cannot produce.
+The deterministic generator is `eval-compare`; this runbook wraps it with the alignment
+audit and the analytical-prose layer the generator cannot produce.
 
 For an exact rendering of the generator’s output shape, see
-`../scripts/fixtures/expected-comparison.md` — the golden output that
-`../scripts/test_eval_compare.py` pins against the six `figma-*.eval.yaml` fixtures.
+`../tools/prose-eval/tests/fixtures/expected-comparison.md` — the golden output that
+`../tools/prose-eval/tests/test_eval_compare.py` pins against the six
+`figma-*.eval.yaml` fixtures.
 
 ## Inputs and outputs
 
@@ -29,22 +30,53 @@ For an exact rendering of the generator’s output shape, see
 - **Output:** one comparison Markdown combining the generator’s table with
   reviewer-authored cross-artifact analysis.
 
-## Steps
+## Setup
 
-Commands below assume the working directory is this runbook’s directory (`runbooks/`),
-so `../scripts/...` resolves into the bundle.
-Run from elsewhere by substituting the full bundle path.
+The eval tooling lives as an installable Python package at
+[../tools/prose-eval/](../tools/prose-eval/). Install once
+(`cd tools/prose-eval && make install`) and use the `eval-score`, `eval-report`,
+`eval-compare` console scripts.
+
+Batch eval outputs live under `evals/<round-name>/` at the repo root.
+
+## Steps
 
 ### 1. Score each artifact
 
-For each artifact, run the single-doc runbook (`practical-prose-eval-single.runbook.md`)
-end to end. The output of that runbook is the input to this one.
+For a one-off run on a single artifact: see
+[practical-prose-eval-single.runbook.md](practical-prose-eval-single.runbook.md).
+
+For a multi-artifact batch (the common case for this runbook), score all artifacts in
+one invocation using the `--batch` flag:
+
+```bash
+eval-score evals/<round>/*.eval.yaml --batch --max-concurrent 8 --max-rps 4
+```
+
+This fans out the SDK calls under `gather_limited` (an `asyncio.Semaphore`
++ `aiolimiter` leaky bucket).
+  Defaults: `--max-concurrent 8`, `--max-rps 4`.
+
+**Prompt caching**: the rubric + guidelines + instructions block is marked
+`cache_control: ephemeral`, so once one call has written the cache, others within ~5
+minutes read it at ~0.1× the input cost.
+Observed batch run on 12 docs (this repo’s self-eval-v0.2): **~1m33s wall-clock** vs ~4
+hours sequential in round 1. Note: when many calls fire simultaneously and no prior
+cache exists, each independently creates the cache; cache *hits* land on docs that
+arrive after at least one cache-creating call has completed.
+
+**Expect occasional alignment failures.** The validator may drop a violation whose
+`rule_number` is out of range for its dimension (F3a softening), which can orphan a
+sub-5 score and fail alignment for that doc.
+Failed docs leave their raw responses at `<name>.eval.raw.txt` for recovery.
+Either rescore the failed doc(s) individually (model variance often clears it on retry),
+or pass `--allow-misaligned` for human review.
 
 ### 2. Confirm each input is validated
 
 ```bash
 for f in path/to/*.eval.yaml; do
-  ../scripts/eval_report.py validate "$f" || break
+  eval-report validate "$f" || break
 done
 ```
 
@@ -53,7 +85,7 @@ Each file should print `OK: <path>`. Do not proceed if any fail.
 ### 3. Generate the comparison Markdown
 
 ```bash
-../scripts/eval_compare.py \
+eval-compare \
   path/to/a.eval.yaml \
   path/to/b.eval.yaml \
   path/to/c.eval.yaml \
@@ -113,7 +145,8 @@ Aim for falsifiable claims grounded in specific table cells, not generic.
 - One-off comparisons: save alongside the artifacts being compared (one directory per
   topic / eval).
 - Ongoing alignment-regression tracking: pin the expected scores in the single-doc
-  runbook’s regression fixtures (`../scripts/fixtures/`) and cite this report.
+  runbook’s regression fixtures (`../tools/prose-eval/tests/fixtures/`) and cite this
+  report.
 
 ## Alignment audit (before declaring the comparison done)
 
@@ -127,13 +160,13 @@ Aim for falsifiable claims grounded in specific table cells, not generic.
 
 - [practical-prose-eval-single.runbook.md](practical-prose-eval-single.runbook.md):
   produces the YAML inputs this runbook consumes.
-- [practical-prose-rubric.md](../docs/practical-prose-rubric.md): per-dimension 0-5
-  anchors and scoring rules.
-- [practical-prose-guidelines.md](../docs/practical-prose-guidelines.md): prescriptive
-  rules cited by violations.
-- [eval_compare.py](../scripts/eval_compare.py): the deterministic generator.
-- [eval_report.py](../scripts/eval_report.py): schema and validator.
+- [practical-prose-rubric.md](../tools/docs/practical-prose-rubric.md): per-dimension
+  0-5 anchors and scoring rules.
+- [practical-prose-guidelines.md](../tools/docs/practical-prose-guidelines.md):
+  prescriptive rules cited by violations.
+- [eval_compare.py](eval-compare): the deterministic generator.
+- [eval_report.py](eval-report): schema and validator.
 
-<!-- This document follows std-doc-guidelines.md.
+<!-- This document follows common-doc-guidelines.md.
 Review guidelines before editing.
 -->

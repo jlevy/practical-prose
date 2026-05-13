@@ -1,0 +1,206 @@
+# ---- Project Info and Dependencies ----
+
+[project.urls]
+Repository = "https://github.com/jlevy/prose-eval"
+# Homepage = "https://..."
+# Documentation = "https://..."
+
+[project]
+name = "prose-eval"
+description = "Practical-prose eval tooling: rubric scoring, reports, comparisons"
+authors = [
+    { name="Joshua Levy", email="joshuadlevy@gmail.com" },
+]
+readme = "README.md"
+license = "MIT"
+requires-python = ">=3.11,<4.0"
+dynamic = ["version"]
+
+# https://pypi.org/classifiers/
+# Adjust as needed:
+classifiers = [
+    # Adjust as needed:
+    "Development Status :: 4 - Beta",
+    # "Development Status :: 5 - Production/Stable",
+    "Intended Audience :: Developers",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
+    "Typing :: Typed",
+    # Include this to avoid accidentally publishing to PyPI:
+    # "Private :: Do Not Upload",
+]
+
+
+# ---- Main dependencies ----
+
+dependencies = [
+    "aiolimiter>=1.2",
+    "anthropic>=0.39",
+    "chopdiff>=0.2.1",
+    "pydantic>=2.0",
+    "python-dotenv>=1.0",
+    "pyyaml>=6.0",
+]
+
+
+# ---- Dev dependencies ----
+
+[dependency-groups]
+dev = [
+    "pytest>=9.0.2",
+    "pytest-sugar>=1.1.1",
+    "ruff>=0.15.1",
+    "codespell>=2.4.1",
+    "rich>=14.3.2",
+    "basedpyright>=1.38.0",
+    "funlog>=0.2.1",
+]
+
+[project.scripts]
+eval-score = "prose_eval.eval_score:main"
+eval-report = "prose_eval.eval_report:main"
+eval-compare = "prose_eval.eval_compare:main"
+prose-metrics = "prose_eval.metrics:main"
+
+
+# ---- Build system ----
+
+# Dynamic versioning from:
+# https://github.com/ninoseki/uv-dynamic-versioning/
+
+[build-system]
+requires = ["hatchling", "uv-dynamic-versioning"]
+build-backend = "hatchling.build"
+
+[tool.hatch.version]
+source = "uv-dynamic-versioning"
+# Note JSON schemas don't seem to be right for tool.hatch.version.source so
+# this may cause false warnings in IDEs.
+# https://github.com/ninoseki/uv-dynamic-versioning/issues/21
+
+[tool.uv-dynamic-versioning]
+vcs = "git"
+style = "pep440"
+bump = true
+
+[tool.hatch.build.targets.wheel]
+# The source location for the package.
+packages = ["src/prose_eval"]
+# Include packaged data files (rubric schema JSON and prompt template) in the wheel.
+# These are loaded at runtime via Path(__file__).parent / "rubric_schema.json" and
+# PACKAGE_ROOT / "prompts" / "eval-rubric-score.md".
+include = [
+    "src/prose_eval/rubric_schema.json",
+    "src/prose_eval/prompts/*.md",
+]
+
+
+# ---- Settings ----
+
+[tool.ruff]
+# Set as desired, typically 88 (black standard) or 100 (wide).
+line-length = 100
+
+[tool.ruff.lint]
+select = [
+    # See: https://docs.astral.sh/ruff/rules/
+    # Basic list from: https://docs.astral.sh/ruff/linter/#rule-selection
+    "E", # https://docs.astral.sh/ruff/rules/#error-e
+    "F", # https://docs.astral.sh/ruff/rules/#pyflakes-f
+    "UP", # https://docs.astral.sh/ruff/rules/#pyupgrade-up
+    "B", # https://docs.astral.sh/ruff/rules/#flake8-bugbear-b
+    "I", # https://docs.astral.sh/ruff/rules/#isort-i
+    # Other possibilities:
+    # "D", # https://docs.astral.sh/ruff/rules/#pydocstyle-d
+    # "Q", # https://docs.astral.sh/ruff/rules/#flake8-quotes-q
+    # "COM", # https://docs.astral.sh/ruff/rules/#flake8-commas-com
+    # "SIM", # https://docs.astral.sh/ruff/rules/#flake8-simplify-sim
+
+]
+ignore = [
+    # Disable some rules that are overly pedantic. Add/remove as desired:
+    "E501", # https://docs.astral.sh/ruff/rules/line-too-long/
+    "E402", # https://docs.astral.sh/ruff/rules/module-import-not-at-top-of-file/
+    "E731", # https://docs.astral.sh/ruff/rules/lambda-assignment/
+    "B017", # https://docs.astral.sh/ruff/rules/assert-raises-exception/ — test idiom for negative-path schema checks
+    "B904", # https://docs.astral.sh/ruff/rules/raise-without-from-inside-except/ — common in CLI error handling
+    # We use both ruff formatter and linter so some rules should always be disabled.
+    # See: https://docs.astral.sh/ruff/formatter/#conflicting-lint-rules
+    "W191", # https://docs.astral.sh/ruff/rules/tab-indentation/
+    "E111", # https://docs.astral.sh/ruff/rules/indentation-with-invalid-multiple/
+    "E114", # https://docs.astral.sh/ruff/rules/indentation-with-invalid-multiple-comment/
+    "E117", # https://docs.astral.sh/ruff/rules/over-indented/
+    "D206", # https://docs.astral.sh/ruff/rules/docstring-tab-indentation/
+    "D300", # https://docs.astral.sh/ruff/rules/triple-single-quotes/
+    "Q000", # https://docs.astral.sh/ruff/rules/bad-quotes-inline-string/
+    "Q001", # https://docs.astral.sh/ruff/rules/bad-quotes-multiline-string/
+    "Q002", # https://docs.astral.sh/ruff/rules/bad-quotes-docstring/
+    "Q003", # https://docs.astral.sh/ruff/rules/avoidable-escaped-quote/
+    "COM812", # https://docs.astral.sh/ruff/rules/missing-trailing-comma/
+    "COM819", # https://docs.astral.sh/ruff/rules/prohibited-trailing-comma/
+    "ISC002", # https://docs.astral.sh/ruff/rules/multi-line-implicit-string-concatenation/
+]
+
+[tool.basedpyright]
+# BasedPyright currently seems like the best type checker option, much faster
+# than mypy and with a good extension for VSCode/Cursor.
+# https://marketplace.visualstudio.com/items?itemName=detachhead.basedpyright
+# https://docs.basedpyright.com/latest/configuration/config-files/#sample-pyprojecttoml-file
+include = ["src", "tests", "devtools"]
+# The eval tooling was migrated from a set of inline-uv-script files (see Phase 0
+# of plan-2026-05-12-eval-scoring-rearchitecture.md) without full type
+# annotations. BasedPyright's strict defaults are relaxed below; tightening is
+# a follow-on once the SDK migration lands.
+reportIgnoreCommentWithoutRule = false
+reportUnnecessaryTypeIgnoreComment = false
+reportMissingTypeStubs = false
+reportUnusedCallResult = false
+reportAny = false
+reportExplicitAny = false
+reportImplicitStringConcatenation = false
+reportUnreachable = false
+# Relaxed for the Phase 0 migration; consider re-enabling after typing pass.
+reportPrivateUsage = false
+reportPrivateImportUsage = false
+reportPrivateLocalImportUsage = false
+reportUnknownVariableType = false
+reportUnknownArgumentType = false
+reportUnknownMemberType = false
+reportUnknownParameterType = false
+reportUnknownLambdaType = false
+reportMissingParameterType = false
+reportUnnecessaryIsInstance = false
+reportArgumentType = false
+reportOptionalMemberAccess = false
+reportOptionalSubscript = false
+reportOptionalIterable = false
+reportOperatorIssue = false
+reportIndexIssue = false
+reportGeneralTypeIssues = false
+reportCallIssue = false
+reportAttributeAccessIssue = false
+reportReturnType = false
+reportMissingTypeArgument = false
+reportConstantRedefinition = false
+reportUnannotatedClassAttribute = false
+reportUnusedParameter = false
+
+[tool.codespell]
+# Add here as needed:
+# ignore-words-list = "foo,bar"
+# skip = "foo.py,bar.py"
+
+[tool.pytest.ini_options]
+python_files = ["test_*.py"]
+python_classes = ["Test*"]
+python_functions = ["test_*"]
+testpaths = [
+    "tests",
+]
+norecursedirs = []
+filterwarnings = []

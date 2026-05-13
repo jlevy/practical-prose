@@ -16,14 +16,13 @@ usefulness.
 Good prose serves human needs and reflects human qualities.
 Usefulness is not in opposition to style, beauty, or human expression.
 The best practical writing joins the classic virtues of structure, precision, evidence,
-and method with the romantic virtues of voice, proportion, rhythm, image, and felt
-meaning.
+and method with the romantic virtues of voice, proportion, rhythm, and felt meaning.
 
 ## Practical Writing in the Age of AI
 
 The rise of AI makes the need to focus on quality more urgent than ever.
-Language is now drafted, transformed, summarized, and evaluated by machines more often
-than by humans.
+Language is now drafted, transformed, summarized, and evaluated by LLMs in greater
+volume than by humans.
 
 Fluency is cheap. Judgment remains precious.
 
@@ -116,9 +115,10 @@ looking at specific qualities or dimensions.
 |  | Robustness | Do key claims survive plausible alternative interpretations? |
 
 Each dimension maps back to one or more principles in
-[practical-prose-principles.md](docs/practical-prose-principles.md); prescriptive rules
-live in [practical-prose-guidelines.md](docs/practical-prose-guidelines.md) and 0-5
-scoring anchors in [practical-prose-rubric.md](docs/practical-prose-rubric.md).
+[practical-prose-principles.md](tools/docs/practical-prose-principles.md); prescriptive
+rules live in [practical-prose-guidelines.md](tools/docs/practical-prose-guidelines.md)
+and 0-5 scoring anchors in
+[practical-prose-rubric.md](tools/docs/practical-prose-rubric.md).
 
 ## Layers
 
@@ -127,16 +127,21 @@ Each layer answers a different question.
 
 | Layer | Doc | Answers |
 | --- | --- | --- |
-| Standard | [docs/std-doc-guidelines.md](docs/std-doc-guidelines.md) | What general document standards do all docs (practical or otherwise) follow? |
-| Principles | [docs/practical-prose-principles.md](docs/practical-prose-principles.md) | Why these rules — what seven principles do they descend from? |
-| Guidelines | [docs/practical-prose-guidelines.md](docs/practical-prose-guidelines.md) | What should the writer do — prescriptive rules for the 18 dimensions? |
-| Rubric | [docs/practical-prose-rubric.md](docs/practical-prose-rubric.md) | How is a document scored — descriptive 0-5 anchors for the same 18 dimensions? |
-| Bibliography | [docs/practical-prose-bibliography.md](docs/practical-prose-bibliography.md) | Where do these ideas come from — what works ground each tradition? |
-| Metrics | [docs/practical-prose-metrics.md](docs/practical-prose-metrics.md) | Which quantitative metrics and qualitative checks map to which dimensions; recommended frontmatter schema. |
+| Common | [tools/docs/common-doc-guidelines.md](tools/docs/common-doc-guidelines.md) | What general document standards do all docs (practical or otherwise) follow? |
+| Principles | [tools/docs/practical-prose-principles.md](tools/docs/practical-prose-principles.md) | Why these rules — what seven principles do they descend from? |
+| Guidelines | [tools/docs/practical-prose-guidelines.md](tools/docs/practical-prose-guidelines.md) | What should the writer do — prescriptive rules for the 18 dimensions? |
+| Rubric | [tools/docs/practical-prose-rubric.md](tools/docs/practical-prose-rubric.md) | How is a document scored — descriptive 0-5 anchors for the same 18 dimensions? |
+| Bibliography | [tools/docs/practical-prose-bibliography.md](tools/docs/practical-prose-bibliography.md) | Where do these ideas come from — what works ground each tradition? |
+| Metrics | [tools/docs/practical-prose-metrics.md](tools/docs/practical-prose-metrics.md) | Which quantitative metrics and qualitative checks map to which dimensions; recommended frontmatter schema. |
 | Shortcut | [shortcuts/practical-prose-quick-checklist.md](shortcuts/practical-prose-quick-checklist.md) | One-page pre-publish self-audit across the 18 dimensions. |
 | Runbook | [runbooks/](runbooks/) | Operational steps for single-document evals and N-way comparisons. |
 
-The Standard layer is the substrate.
+The Common layer is the base substrate.
+`common-doc-guidelines.md` captures general organization, structure, style, and
+formatting rules that apply to *any* document—technical docs, READMEs, internal memos,
+specifications—not just practical prose.
+The practical-prose layers (Principles, Guidelines, Rubric) build on top of it with the
+seven principles and 18 dimensions specific to evaluating practical writing.
 Principles, Guidelines, and Rubric form a tight triple: same seven principles, same 18
 dimensions, same five groups (Purpose, Expression, Grounding, Reasoning, Judgment).
 The bibliography supplies the intellectual basis; the shortcuts and runbooks are how the
@@ -145,31 +150,46 @@ system gets used in practice.
 ## Where to Start
 
 - **Writing a document and want the rules:**
-  [practical-prose-guidelines.md](docs/practical-prose-guidelines.md).
+  [practical-prose-guidelines.md](tools/docs/practical-prose-guidelines.md).
 - **Scoring a document and want the anchors:**
-  [practical-prose-rubric.md](docs/practical-prose-rubric.md).
+  [practical-prose-rubric.md](tools/docs/practical-prose-rubric.md).
 - **Running a pre-publish self-audit:**
   [practical-prose-quick-checklist.md](shortcuts/practical-prose-quick-checklist.md).
 - **Running a formal eval:** the [runbooks/](runbooks/) directory.
 - **Understanding why a rule exists:** the corresponding principle in
-  [practical-prose-principles.md](docs/practical-prose-principles.md), and the source
-  tradition in [practical-prose-bibliography.md](docs/practical-prose-bibliography.md).
-- **Looking at the tooling:** [scripts/](scripts/) holds the metrics, scoring, and
-  report generators.
+  [practical-prose-principles.md](tools/docs/practical-prose-principles.md), and the
+  source tradition in
+  [practical-prose-bibliography.md](tools/docs/practical-prose-bibliography.md).
+- **Looking at the tooling:** [tools/prose-eval/](tools/prose-eval/) is the installable
+  Python package with the metrics, scoring, and report generators.
 
 ## Tooling
 
-[scripts/](scripts/) contains the operational tooling:
+[tools/prose-eval/](tools/prose-eval/) is a standalone modern-Python package
+(bootstrapped from [`simple-modern-uv`](https://github.com/jlevy/simple-modern-uv)) that
+installs four console-script entry points:
 
-- `practical_prose_metrics.py` — deterministic metrics over a document (banned-register
-  hits, vague-word counts, link validity, frontmatter presence, etc.)
-- `eval_score.py` — score a document against the rubric using an LLM scorer
-- `eval_report.py` — combine metrics and scores into an eval report
-- `eval_compare.py` — compare N eval reports across versions or variants
-- `rubric_schema.json` / `rubric_schema.py` — canonical schema for eval YAMLs
+- `prose-metrics` — deterministic metrics over a document (banned-register hits,
+  vague-word counts, link validity, frontmatter presence, etc.).
+- `eval-score` — score a document against the rubric via the Anthropic SDK with prompt
+  caching; supports `--batch` for parallel runs over N artifacts.
+- `eval-report` — combine metrics and scores into an eval-report YAML; validate /
+  compute-derived / from-metrics subcommands.
+- `eval-compare` — compare N eval reports across versions or variants.
+
+Quick start:
+
+```bash
+cd tools/prose-eval
+make install
+# Set ANTHROPIC_API_KEY in .env (loaded automatically by the entry points).
+eval-report from-metrics path/to/doc.md --label my-doc --scope-class brief --out my-doc.eval.yaml
+eval-score my-doc.eval.yaml
+eval-report validate my-doc.eval.yaml
+```
 
 See the runbooks for end-to-end operation.
 
-<!-- This document follows std-doc-guidelines.md.
+<!-- This document follows common-doc-guidelines.md.
 Review guidelines before editing.
 -->

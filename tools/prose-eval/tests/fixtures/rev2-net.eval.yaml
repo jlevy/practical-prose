@@ -1,0 +1,327 @@
+artifact:
+  label: rev2-net
+  path: <external artifact not in this repo>
+  scope_class: deep_research
+metadata:
+  eval_date: '2026-05-10'
+  evaluator: subagent (Claude Opus 4.7)
+  method: 18-dim-v1 re-baseline via parallel subagent
+  notes: Re-scored 2026-05-11 under 18-dim-v1 as part of practical-prose v0.4 calibration
+    set. Weaker baseline (overall ~3.0); pervasive register issues, citation gaps,
+    and verbatim duplication. Replaces prior 15-dim-v1-stale-baseline.
+  rubric_version: 18-dim-v1
+  status: complete
+qual:
+  expression:
+    clarity: 3
+    coherence: 3
+    concision: 3
+    formatting: 3
+    organization: 3
+    style_consistency: 3
+  grounding:
+    factuality: 3
+    verifiability: 2
+  judgment:
+    calibration: 3
+    fairness: 3
+    robustness: 3
+  purpose:
+    breadth: 4
+    depth: 3
+    scope: 4
+    suitability: 4
+  reasoning:
+    inference_discipline: 3
+    precision: 3
+    soundness: 3
+qual_reasons:
+  expression:
+    clarity: Generally readable prose but contains banned-register hits ('crystallized'
+      at §2.1 and §2.8a), meta-commentary at L44-46 narrating document lineage, and
+      parallel-structure padding.
+    coherence: Ideas generally progress well within sections, but verbatim paragraph
+      duplication at L1326-1342 is a literal backtrack; §2.7 restates §1.7 findings
+      without advancing argument.
+    concision: Beat-magnitude series ($6.6M to $25.5M) duplicated across five locations;
+      §1.12 Macro [OPTIONAL] adds little beyond §2.10; frontmatter carries substantive
+      framing claims.
+    formatting: Markdown renders correctly; no broken fences or malformed frontmatter;
+      however zero hyperlinks for any citation makes link-resolution vacuous.
+    organization: Phase 1/Phase 2 structure logical, but several tables should be
+      prose (§1.7, §2.9), Mermaid timeline at §1.4 lacks a caption, and zero cross-reference
+      links in a 17.8K-word document.
+    style_consistency: Register mostly holds but 'crystallized/crystallizes' is extravagant
+      register inconsistent with the otherwise analytical tone; citation style varies
+      between [VERIFIED via X] and bare prose-embedded references.
+  grounding:
+    factuality: Cannot externally verify sources; claims look well-formed and internally
+      consistent, but Anthropic '$4B Amazon investment' is a simplified round number
+      for a multi-tranche arrangement, and AI market-size figures cite 'Multiple'
+      and 'AgentMarketCap' without URLs or dates.
+    verifiability: Zero hyperlinks in a 17.8K-word deep-research document; [VERIFIED]
+      tags used without filing dates or accession numbers; Vercel CEO benchmark claim
+      has no tweet ID or URL.
+  judgment:
+    calibration: Scenario probabilities 30/50/20 sum to 100% but lack empirical base-rate
+      anchors for SaaS earnings scenario distributions; Pass 1 updates lack explicit
+      shrinkage or triangulation method.
+    fairness: Bull/base/bear cases present with falsification conditions, but §2.12
+      counterintuitive findings skew ~5 bull / 1 bear / 2 neutral with no explicit
+      count; bear case receives less evidentiary depth than bull case.
+    robustness: Base-to-bull lean named but the 'all narrative' bear lens at §2.8
+      not run through the same evidence at comparable depth; DBNRR-AI correlation
+      finding treats temporal alignment as the obvious reading.
+  purpose:
+    breadth: Five competitive vectors, eight quarters of financials, product families,
+      risk register spanning five classes; gap is missing competitive depth on Akamai/Fastly
+      CDN share data and limited SASE benchmarking.
+    depth: Key sections like §2.1 quarterly deep-dives well-developed with full series,
+      but vague magnitude words persist ('heavy hiring', 'materially', 'modest') and
+      AI revenue triangulated estimate 5-15% lacks its method.
+    scope: Scope explicitly declared with included/excluded sections, body largely
+      matches; one minor drift with §1.12 Macro context tagged [OPTIONAL] but still
+      included without scope-statement update.
+    suitability: Task stated and output shape matches (research brief with scenario
+      tree and recommendations), but central thesis answer and scenario tree buried
+      in §2.8, not recoverable from a skim of intro + headings.
+  reasoning:
+    inference_discipline: 'Several sentences blend observation and judgment in single
+      clauses; most sections keep rungs distinct but blending recurs in §2.1 Q1 narrative
+      and §2.12 finding #3.'
+    precision: '''Anthropic ($4B Amazon investment)'' uses a round umbrella figure;
+      ''heavy hiring'' and ''materially'' used as vague placeholders in §1.9 and multiple
+      §2.x sections.'
+    soundness: AI-revenue triangulated estimate 5-15% stated without triangulation
+      method; verbatim paragraph duplication is an internal-consistency failure; 'financial
+      fingerprint of AI is in the gross margin' finding asserted without naming the
+      mechanism.
+quant:
+  bracket_tag_examples:
+  - DERIVED
+  - OPTIONAL
+  - UNVERIFIED
+  - VERIFIED
+  headings:
+    h1: 1
+    h2: 9
+    h3: 34
+    h4: 21
+    h5: 0
+    h6: 0
+    total: 65
+  links:
+    autolink: 0
+    bare_urls: 0
+    external: 0
+    inline: 0
+    internal: 0
+    reference: 0
+    total: 0
+  lint:
+    banned_register_hits: 2
+  provenance:
+    bracket_tags: 7
+    footnote_defs: 0
+    footnote_refs: 0
+  size:
+    bytes_kb: 117.0
+    lines: 2016
+    pages_275wpp: 64.9
+    paragraphs: 336
+    sentences: 817
+    words: 17846
+  structural:
+    code_blocks: 2
+    images: 0
+    tables: 27
+violations:
+- description: Central thesis answer and scenario tree buried in §2.8; not recoverable
+    from a skim of intro + section headings
+  dimension: Suitability
+  location: Overview L29-47
+  rule_number: 2
+- description: §1.12 Macro context tagged [OPTIONAL] but included without flagging
+    as mid-document scope expansion
+  dimension: Scope
+  location: §1.12, L1018-1043
+  rule_number: 3
+- description: Limited competitive benchmarking data for SASE segment; Akamai/Fastly
+    CDN share decline asserted without sourced market-share series
+  dimension: Breadth
+  location: §1.10 Vector 4, L935-938
+  rule_number: 2
+- description: 'Vague magnitude words persist without quantification: ''heavy hiring'',
+    ''materially'', ''modest'' across §1.9, §2.1, §2.2'
+  dimension: Depth
+  location: §1.9 L885; §2.1 L1154; §2.2 L1441
+  rule_number: 3
+- description: AI revenue triangulated estimate 5-15% is a key claim without its triangulation
+    method shown
+  dimension: Depth
+  location: §2.8, L1685-1687
+  rule_number: 1
+- description: 'Banned-register hit: ''crystallized'' at §2.1 Q3''25 narrative and
+    ''crystallizes'' at §2.8a crux table'
+  dimension: Clarity
+  location: §2.1 L1266; §2.8a L1694
+  rule_number: 4
+- description: 'Meta-commentary narrating the document''s lineage: ''this rev2 dry-run
+    aims to exceed that depth'''
+  dimension: Clarity
+  location: Overview, L44-46
+  rule_number: 3
+- description: 'Parallel-structure padding: ''not a CDN/security provider but an essential
+    control plane for autonomous AI agents'''
+  dimension: Clarity
+  location: §2.1 Q4'25, L1309-1310
+  rule_number: 5
+- description: Verbatim paragraph duplication at L1326-1342 creates a literal copy-paste
+    backtrack
+  dimension: Coherence
+  location: §2.1, L1326-1342
+  rule_number: 3
+- description: §2.7 customer interpretation largely restates §1.7 findings without
+    advancing a distinct analytical job
+  dimension: Coherence
+  location: §2.7, L1607-1634
+  rule_number: 1
+- description: Beat-magnitude series ($6.6M to $25.5M) duplicated across five sections
+  dimension: Concision
+  location: §1.3 L381; §2.0 L1062; §2.1 L1316; §2.2 L1387; §2.9 L1729
+  rule_number: 2
+- description: §1.12 Macro tagged [OPTIONAL] adds little marginal information beyond
+    §2.10 risk register coverage
+  dimension: Concision
+  location: §1.12, L1018-1043
+  rule_number: 1
+- description: Frontmatter carries substantive claims (target_decision, event_anchor)
+    that are prose framing, not machine-readable metadata
+  dimension: Concision
+  location: Frontmatter, L1-18
+  rule_number: 4
+- description: Mermaid timeline code block at §1.4 is a figure without a caption explaining
+    what it shows
+  dimension: Organization
+  location: §1.4, L477-495
+  rule_number: 4
+- description: Zero hyperlinks in a 17.8K-word document; all citations prose-embedded
+    with no stable anchor targets
+  dimension: Organization
+  location: Document-wide
+  rule_number: 6
+- description: Several tables have too few meaningful columns to earn tabular shape
+    (§1.7 2-row mega-deal table, §2.9 positioning metrics 2-column table)
+  dimension: Organization
+  location: §1.7 L802-809; §2.9 L1749-1758
+  rule_number: 3
+- description: Register drifts between analytical and extravagant ('crystallized',
+    'essential control plane') without consistent house-style enforcement
+  dimension: Style Consistency
+  location: §2.1 L1266; §2.1 L1309
+  rule_number: 5
+- description: 'Citation style inconsistent: some claims use [VERIFIED via X] bracket
+    tags, others use bare prose references'
+  dimension: Style Consistency
+  location: §1.7 L820 vs §1.9 L898
+  rule_number: 4
+- description: Zero reference-style or inline links means the document's link layer
+    is entirely absent
+  dimension: Formatting
+  location: Document-wide
+  rule_number: 2
+- description: Inconsistent blank-line spacing around the verbatim-duplicated paragraph
+    block at L1326-1342
+  dimension: Formatting
+  location: §2.1, L1325-1343
+  rule_number: 3
+- description: Zero hyperlinks in a deep-research document; no quantitative claim
+    verifiable via a link despite [VERIFIED] tags
+  dimension: Verifiability
+  location: Document-wide
+  rule_number: 1
+- description: '[VERIFIED via 10-K cover] at §1.1 L236 does not give filing date or
+    accession number; pattern repeats at §1.5b L535, §1.6 L683'
+  dimension: Verifiability
+  location: §1.1 L236; §1.5b L535; §1.6 L683
+  rule_number: 3
+- description: Vercel CEO benchmark claim (1.2-5x faster) has no tweet ID or URL
+  dimension: Verifiability
+  location: §1.10, L911-914
+  rule_number: 2
+- description: Anthropic '$4B Amazon investment' at §2.8 is a simplified round number;
+    actual investment is multi-tranche
+  dimension: Factuality
+  location: §2.8, L1669
+  rule_number: 2
+- description: AI market-size figures cite aggregator sources ('Multiple', 'AgentMarketCap')
+    without URLs, dates, or verifiable identifiers
+  dimension: Factuality
+  location: §1.8 AI adoption table
+  rule_number: 5
+- description: '''GM at peak, op margin at through — typical Q1 seasonality with year-start
+    S&M reset'' fuses observed values with interpretive judgment'
+  dimension: Inference Discipline
+  location: §2.1 Q1 2024, L1107
+  rule_number: 2
+- description: '''DBNRR re-acceleration and the AI product GA timeline align too tightly
+    to be coincidence'' blends observation with interpretation'
+  dimension: Inference Discipline
+  location: '§2.12 finding #3, L1913-1920'
+  rule_number: 2
+- description: AI-revenue triangulated estimate 5-15% stated without showing the triangulation
+    method or naming the data points
+  dimension: Soundness
+  location: §2.8, L1685-1687
+  rule_number: 3
+- description: Verbatim paragraph duplication at L1326-1342 is an internal-consistency
+    failure
+  dimension: Soundness
+  location: §2.1, L1326-1342
+  rule_number: 7
+- description: '''Financial fingerprint of AI is in the gross margin'' asserted as
+    finding without naming the mechanism distinguishing AI-mix-shift from R2/APAC
+    effects'
+  dimension: Soundness
+  location: '§2.12 finding #2, L1904-1911'
+  rule_number: 5
+- description: '''Anthropic ($4B Amazon investment)'' uses round umbrella figure where
+    multi-tranche sub-distinction matters'
+  dimension: Precision
+  location: §2.5, L1554
+  rule_number: 2
+- description: '''Heavy hiring'' and ''materially'' used as vague placeholders where
+    counts or named specifics are available'
+  dimension: Precision
+  location: §1.9 L885; §2.1 L1154
+  rule_number: 5
+- description: Scenario probabilities 30/50/20 stated without empirical base-rate
+    anchor for SaaS earnings scenario distributions
+  dimension: Calibration
+  location: §2.8 scenario tree, L1710-1712
+  rule_number: 1
+- description: AI-revenue triangulated estimate 5-15% given without showing the triangulation
+    method or what data points contribute
+  dimension: Calibration
+  location: §2.8, L1348-1350
+  rule_number: 3
+- description: §2.12 counterintuitive findings skew ~5 bull / 1 bear / 2 neutral with
+    no explicit count or confirmation-bias acknowledgement
+  dimension: Fairness
+  location: §2.12, L1889-1965
+  rule_number: 4
+- description: Bull case argued with three named primitives and numerical thresholds
+    while bear case receives a single paragraph without comparable named mechanisms
+  dimension: Fairness
+  location: §2.8, L1651-1675
+  rule_number: 1
+- description: 'Base-to-bull lean not tested against most threatening alternative:
+    ''all narrative'' bear lens named in §2.8 but not run at comparable depth'
+  dimension: Robustness
+  location: §2.8, L1706-1712
+  rule_number: 2
+- description: DBNRR-AI correlation finding treats temporal alignment as the obvious
+    reading without naming alternative explanations (GTM rebuild, macro cycle)
+  dimension: Robustness
+  location: '§2.12 finding #3, L1913-1920'
+  rule_number: 1
