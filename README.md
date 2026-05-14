@@ -185,6 +185,11 @@ Install paths:
 3. If a Claude Code plugin marketplace entry exists, install that as a Claude-only
    convenience.
 
+Do not copy only the `skills/*` directories into another location unless you also preserve
+this repo's sibling `docs/`, `shortcuts/`, and `runbooks/` layout or update the relative
+links inside each `SKILL.md`. The skill files are intentionally small routers into those
+canonical source documents.
+
 ## Tooling
 
 [tools/prose-eval/](tools/prose-eval/) is a standalone modern-Python package
