@@ -62,6 +62,7 @@ dev = [
 ]
 
 [project.scripts]
+prose-eval = "prose_eval.cli:main"
 eval-score = "prose_eval.eval_score:main"
 eval-report = "prose_eval.eval_report:main"
 eval-compare = "prose_eval.eval_compare:main"
