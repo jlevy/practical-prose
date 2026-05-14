@@ -722,16 +722,17 @@ async def score_batch(
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(
         description=(
-            "Score the qual + violations blocks of one or more eval-report YAMLs "
+            "Score the qual + violations blocks of one or more eval reports "
             "via the Anthropic SDK. The rubric + guidelines block is cached "
             "across calls within ~5 minutes."
         ),
     )
     parser.add_argument(
         "yaml_paths",
+        metavar="report_paths",
         nargs="+",
         help=(
-            "One or more eval-report YAMLs (typically from `eval-report from-metrics`). "
+            "One or more eval reports (typically from `prose-eval report from-metrics`). "
             "Multiple paths score them sequentially; pair with --batch for parallel."
         ),
     )
@@ -739,8 +740,8 @@ def main(argv: list[str] | None = None) -> int:
         "--out",
         default=None,
         help=(
-            "Output path for a single YAML (default: rewrite in place). "
-            "Not allowed when scoring multiple YAMLs in one run."
+            "Output path for a single eval report (default: rewrite in place). "
+            "Not allowed when scoring multiple reports in one run."
         ),
     )
     parser.add_argument(
@@ -765,7 +766,7 @@ def main(argv: list[str] | None = None) -> int:
         "--allow-misaligned",
         action="store_true",
         help=(
-            "Write the eval YAML even if the model's response violates the "
+            "Write the eval report even if the model's response violates the "
             "alignment property (score < 5 without a matching violation, or "
             "score 5 with one). Use only for inspection / debugging."
         ),
@@ -774,7 +775,7 @@ def main(argv: list[str] | None = None) -> int:
         "--batch",
         action="store_true",
         help=(
-            "Score the listed YAMLs in parallel via bounded async concurrency. "
+            "Score the listed eval reports in parallel via bounded async concurrency. "
             "The rubric + guidelines block is shared across calls, so the first "
             "call writes the prompt cache and the rest read it (~10× cheaper)."
         ),
@@ -797,7 +798,7 @@ def main(argv: list[str] | None = None) -> int:
 
     yaml_paths = [Path(p) for p in args.yaml_paths]
     if args.out and len(yaml_paths) > 1:
-        print("error: --out is only valid with a single YAML input", file=sys.stderr)
+        print("error: --out is only valid with a single eval report", file=sys.stderr)
         return 2
     for p in yaml_paths:
         if not p.is_file():
@@ -807,7 +808,7 @@ def main(argv: list[str] | None = None) -> int:
     if args.dry_run:
         # Dry-run only meaningful for a single doc.
         if len(yaml_paths) > 1:
-            print("error: --dry-run is only valid with a single YAML input", file=sys.stderr)
+            print("error: --dry-run is only valid with a single eval report", file=sys.stderr)
             return 2
         report = EvalReport.from_eval_md(yaml_paths[0])
         artifact_path = Path(report.artifact.path)

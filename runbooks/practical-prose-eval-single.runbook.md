@@ -1,20 +1,20 @@
 ---
 title: Practical Prose Eval, single-document runbook
-description: End-to-end operational steps for evaluating one practical writing artifact and producing a validated eval-report YAML.
+description: End-to-end operational steps for evaluating one practical writing artifact and producing a validated prose-eval report.
 date: 2026-05-07
-last_updated: 2026-05-10
+last_updated: 2026-05-14
 status: active
 ---
 # Practical Prose Eval, Single-Document Runbook
 
-Version: v0.1 (last update 2026-05-11)\
+Version: v0.1 (last update 2026-05-14)\
 Joshua Levy (github.com/jlevy)
 
 ## Purpose
 
 End-to-end operational steps for evaluating one practical writing artifact: run
 quantitative metrics, score the 18 qualitative dimensions, cite guideline-rule
-violations, produce a validated `<artifact>.eval.yaml` report.
+violations, produce a validated `<artifact>.eval.md` report.
 
 The substance of *how* to score lives in `practical-prose-rubric.md` (anchors per
 dimension, alignment principle, output format); this runbook covers what commands to
@@ -26,8 +26,8 @@ For comparing N evaluated artifacts, see `practical-prose-eval-compare.runbook.m
 
 - **Input:** one Markdown artifact + the rubric (`practical-prose-rubric.md`) + the
   prescriptive guidelines (`practical-prose-guidelines.md`).
-- **Output:** one `<artifact-name>.eval.yaml` validated against the schema in
-  `eval-report` (`EvalReport`).
+- **Output:** one `<artifact-name>.eval.md` validated against the schema in
+  `prose-eval report` (`EvalReport`).
 
 ## Setup
 
@@ -38,14 +38,15 @@ The eval tooling lives as an installable Python package at
 cd tools/prose-eval && make install
 ```
 
-This puts four console scripts on PATH inside the package’s `.venv`: `eval-report`,
-`eval-score`, `eval-compare`, `prose-metrics`. Activate the venv (or use `uv run <cmd>`
-from inside `tools/prose-eval/`) before running the commands below.
+This puts the `prose-eval` console script on PATH inside the package's `.venv`.
+Use `prose-eval metrics`, `prose-eval report`, `prose-eval score`, and
+`prose-eval compare` as subcommands. Activate the venv, or use `uv run prose-eval ...`
+from inside `tools/prose-eval/`, before running the commands below.
 
-For batch eval audits, the convention is to store the `*.eval.yaml` outputs under
+For batch eval audits, the convention is to store the `*.eval.md` outputs under
 `evals/<round-name>/` at the repo root (e.g. `evals/self-eval-v0.1/`).
 
-`eval-score` reads `ANTHROPIC_API_KEY` from the environment.
+`prose-eval score` reads `ANTHROPIC_API_KEY` from the environment.
 The entry point auto-loads `.env` / `.env.local` from the current directory and `$HOME`,
 so the typical setup is:
 
@@ -55,11 +56,11 @@ echo 'ANTHROPIC_API_KEY=sk-ant-...' > .env   # gitignored
 
 ## Steps
 
-### 1. Generate the YAML stub
+### 1. Generate the eval-report stub
 
 ```bash
-eval-report from-metrics path/to/artifact.md --label NAME \
-  --scope-class deep_research > artifact.eval.yaml
+prose-eval report from-metrics path/to/artifact.md --label NAME \
+  --scope-class deep_research --out artifact.eval.md
 ```
 
 This runs the metrics script internally, populates the `quant` block in schema-correct
@@ -97,10 +98,10 @@ Inspect the populated `quant` block for outliers before scoring:
 
 These signals feed the qualitative scoring; they don’t substitute for it.
 
-For one-off raw metrics inspection without producing a YAML:
+For one-off raw metrics inspection without producing an eval report:
 
 ```bash
-prose-metrics path/to/artifact.md --format=yaml
+prose-eval metrics path/to/artifact.md --format=yaml
 ```
 
 ### 2. Score the 18 qualitative dimensions
@@ -112,30 +113,31 @@ when calibrating the rubric.
 **Model-scoring path (default):**
 
 ```bash
-eval-score path/to/artifact.eval.yaml
+prose-eval score path/to/artifact.eval.md
 ```
 
 This calls the Anthropic SDK with the rubric, guidelines, and artifact, parses the
-structured JSON response, and fills the `qual` + `violations` blocks of the YAML in
-place. The rubric + guidelines block is sent with prompt-caching enabled, so subsequent
-calls (and `--batch` runs) reuse the cache and cost ~10× less than the first call.
+structured JSON response, and fills the `qual` + `violations` blocks of the eval report
+in place. The rubric + guidelines block is sent with prompt-caching enabled, so
+subsequent calls (and `--batch` runs) reuse the cache and cost ~10× less than the first
+call.
 Useful flags:
 
-- `--dry-run` — print the prompt to stdout without invoking the model.
-- `--out path` — write the filled YAML to a different file.
-- `--model <name>` — passed to the Anthropic SDK. Accepts aliases (`sonnet`, `haiku`,
+- `--dry-run`: print the prompt to stdout without invoking the model.
+- `--out path`: write the filled eval report to a different file.
+- `--model <name>`: passed to the Anthropic SDK. Accepts aliases (`sonnet`, `haiku`,
   `opus`) or an exact model ID. Defaults to the SDK’s default model.
-- `--batch` — score multiple YAMLs in one invocation:
-  `eval-score a.eval.yaml b.eval.yaml ... --batch [--max-concurrent 8 --max-rps 4]`. See
-  [practical-prose-eval-compare.runbook.md](practical-prose-eval-compare.runbook.md) for
-  the typical batch workflow.
+- `--batch`: score multiple eval reports in one invocation:
+  `prose-eval score a.eval.md b.eval.md ... --batch [--max-concurrent 8 --max-rps 4]`.
+  See [practical-prose-eval-compare.runbook.md](practical-prose-eval-compare.runbook.md)
+  for the typical batch workflow.
 
 **Manual path:**
 
 Read the artifact end to end.
 For each of the 18 dimensions, assign a score 0-5 (or `NA`) per the anchors in
 `practical-prose-rubric.md`. Use the `SCORE (REASON)` shape internally before composing
-the YAML.
+the eval report.
 
 `NA` is reserved for dimensions the artifact’s task genuinely does not require — for
 example, Calibration on a document that makes no probability or forecast claims, or
@@ -152,7 +154,7 @@ heading like `§2.8`, or quoted phrase).
 
 If you ran the model-scoring path in step 2, this is already done; skip to step 4.
 
-If manual: open the YAML produced in step 1 and edit:
+If manual: open the eval report produced in step 1 and edit:
 
 - `qual`: replace the all-zero stubs with real 0-5 scores per group (`expression`,
   `purpose`, `grounding`, `reasoning`, `judgment`). Score 0 means “cannot assess”; leave
@@ -168,10 +170,10 @@ by hand. The schema validator recomputes `derived` from `quant` + `qual`.
 ### 4. Validate
 
 ```bash
-eval-report validate path/to/artifact.eval.yaml
+prose-eval report validate path/to/artifact.eval.md
 ```
 
-Expected: `OK: path/to/artifact.eval.yaml`. Common failures:
+Expected: `OK: path/to/artifact.eval.md`. Common failures:
 
 - Score outside 0-5
 - Missing dimension under `qual`
@@ -185,13 +187,13 @@ violation, and every score-5 (or score-0 = “cannot assess”) needs none.
 For the publish gate before feeding into a multi-doc comparison, add `--complete`:
 
 ```bash
-eval-report validate path/to/artifact.eval.yaml --complete
+prose-eval report validate path/to/artifact.eval.md --complete
 ```
 
 `--complete` additionally requires `metadata.status='complete'`, evaluator set (not
 `TODO`), `rubric_version` present, no all-zero stubs, and a reason in `qual_reasons` for
 every dimension scored 1-5. The model-scoring path (step 2) sets these automatically.
-`eval-compare` rejects draft / alignment-invalid inputs by default so the gate
+`prose-eval compare` rejects draft / alignment-invalid inputs by default so the gate
 effectively runs there too.
 
 ### 5. Optionally: render the per-artifact section
@@ -200,7 +202,7 @@ To preview the artifact’s section of the comparison Markdown (mostly useful fo
 eyeballing the derived rollups before adding to a multi-doc comparison):
 
 ```bash
-eval-compare path/to/artifact.eval.yaml --format unified
+prose-eval compare path/to/artifact.eval.md --format unified
 ```
 
 This produces a 1-column “comparison” against just the one artifact.
@@ -210,7 +212,7 @@ This produces a 1-column “comparison” against just the one artifact.
 - [ ] Every dimension scored below 5 has at least one violation cited.
 - [ ] Every score-5, score-0, and `NA` has no violation in the read pass.
 - [ ] Quantitative outliers from step 1 correlate with rubric findings.
-- [ ] `eval_report.py validate` passes.
+- [ ] `prose-eval report validate` passes.
 
 If the audit fails, revise scores or violations until consistent.
 
@@ -222,20 +224,20 @@ drift and self-eval overrating against a fixed reference:
 
 | Fixture | Artifact | Type | Overall mean | NA dims |
 | --- | --- | --- | ---: | ---: |
-| `rev1-net.eval.yaml` | External deep-research artifact (rev1) | strong baseline (deep_research) | ~4.1 | 0 |
-| `rev2-net.eval.yaml` | External deep-research artifact (rev2 dry-run) | weaker baseline (deep_research) | ~3.1 | 0 |
-| `guidelines-self.eval.yaml` | `practical-prose-guidelines.md` itself | self-eval (guidelines doc) | ~4.1 | 4 (Inference Discipline, Calibration, Fairness, Robustness) |
+| `rev1-net.eval.md` | External deep-research artifact (rev1) | strong baseline (deep_research) | ~4.1 | 0 |
+| `rev2-net.eval.md` | External deep-research artifact (rev2 dry-run) | weaker baseline (deep_research) | ~3.1 | 0 |
+| `guidelines-self.eval.md` | `practical-prose-guidelines.md` itself | self-eval (guidelines doc) | ~4.1 | 4 (Inference Discipline, Calibration, Fairness, Robustness) |
 
 Use this set to calibrate model-scoring runs:
 
 ```bash
-eval-score path/to/your-artifact.eval.yaml --model sonnet
-# then run eval_score against the calibration artifacts and compare overall_mean +
+prose-eval score path/to/your-artifact.eval.md --model sonnet
+# then run prose-eval score against the calibration artifacts and compare overall_mean +
 # per-dimension scores to the pinned values above; gap >0.5 on overall or >1 on any
 # dimension flags a calibration drift to investigate.
 ```
 
-The 6 `figma-*.eval.yaml` fixtures are comparison-renderer test data, not calibration
+The 6 `figma-*.eval.md` fixtures are comparison-renderer test data, not calibration
 baselines: many dimensions are scored 0 because the original 12-dim eval did not
 enumerate per-dim violations satisfying the 18-dim-v1 alignment property.
 To restore those scores, re-eval the underlying artifact under 18-dim-v1.
@@ -253,10 +255,13 @@ change.
   prescriptive rules cited by `violations`.
 - [practical-prose-eval-compare.runbook.md](practical-prose-eval-compare.runbook.md):
   runbook for comparing N evals.
-- [eval_report.py](eval-report): schema, validator, `from-metrics` stub generator.
-- [eval_score.py](eval-score): model-scoring runner (calls `claude` CLI) that fills
+- [eval_report.py](../tools/prose-eval/src/prose_eval/eval_report.py): schema,
+  validator, `from-metrics` stub generator.
+- [eval_score.py](../tools/prose-eval/src/prose_eval/eval_score.py): model-scoring
+  runner that fills
   `qual` + `violations`.
-- [practical_prose_metrics.py](prose-metrics): quantitative metrics tool.
+- [metrics.py](../tools/prose-eval/src/prose_eval/metrics.py): quantitative metrics
+  tool.
 
 <!-- This document follows common-doc-guidelines.md.
 Review guidelines before editing.

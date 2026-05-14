@@ -163,19 +163,44 @@ system gets used in practice.
 - **Looking at the tooling:** [tools/prose-eval/](tools/prose-eval/) is the installable
   Python package with the metrics, scoring, and report generators.
 
+## Agent Skills
+
+This repo can be used directly by modern coding agents through `AGENTS.md` and portable
+Agent Skills under [skills/](skills/). The eval skills use the
+[`prose-eval` tooling](#tooling) described below.
+
+| Skill | Kind | Use When |
+| --- | --- | --- |
+| [prose-apply-common-guidelines](skills/prose-apply-common-guidelines/SKILL.md) | Apply | Tidy, clean up, conform, fix formatting, or add the documentation footer. |
+| [prose-quick-check](skills/prose-quick-check/SKILL.md) | Audit | Review, self-audit, quality-check, or pre-publish-check a practical document. |
+| [prose-copy-edit](skills/prose-copy-edit/SKILL.md) | Apply | Copy edit, proofread, polish, tighten, line edit, or style-edit a document. |
+| [prose-eval](skills/prose-eval/SKILL.md) | Evaluate | Score, grade, rubric-check, or measure the quality of one document. |
+| [prose-compare](skills/prose-compare/SKILL.md) | Evaluate | Compare drafts, A/B versions, quality-diff documents, or pick a best variant. |
+
+Install paths:
+
+1. Point the agent at this repo and let `AGENTS.md` route to the right skill.
+2. Symlink `skills/*` into the agent's skill directory. Claude Code can use the committed
+   `.claude/skills/` symlinks.
+3. If a Claude Code plugin marketplace entry exists, install that as a Claude-only
+   convenience.
+
 ## Tooling
 
 [tools/prose-eval/](tools/prose-eval/) is a standalone modern-Python package
 (bootstrapped from [`simple-modern-uv`](https://github.com/jlevy/simple-modern-uv)) that
-installs four console-script entry points:
+installs a single `prose-eval` console-script entry point:
 
-- `prose-metrics` — deterministic metrics over a document (banned-register hits,
+- `prose-eval metrics`: deterministic metrics over a document (banned-register hits,
   vague-word counts, link validity, frontmatter presence, etc.).
-- `eval-score` — score a document against the rubric via the Anthropic SDK with prompt
+- `prose-eval score`: score a document against the rubric via the Anthropic SDK with prompt
   caching; supports `--batch` for parallel runs over N artifacts.
-- `eval-report` — combine metrics and scores into an eval-report YAML; validate /
-  compute-derived / from-metrics subcommands.
-- `eval-compare` — compare N eval reports across versions or variants.
+- `prose-eval report`: combine metrics and scores into an eval report; validate,
+  compute-derived, and from-metrics subcommands.
+- `prose-eval compare`: compare N eval reports across versions or variants.
+
+The older `prose-metrics`, `eval-score`, `eval-report`, and `eval-compare` scripts remain
+as compatibility aliases for now, but new docs and skills use `prose-eval ...`.
 
 Quick start:
 
@@ -183,9 +208,9 @@ Quick start:
 cd tools/prose-eval
 make install
 # Set ANTHROPIC_API_KEY in .env (loaded automatically by the entry points).
-eval-report from-metrics path/to/doc.md --label my-doc --scope-class brief --out my-doc.eval.yaml
-eval-score my-doc.eval.yaml
-eval-report validate my-doc.eval.yaml
+uv run prose-eval report from-metrics path/to/doc.md --label my-doc --scope-class brief --out my-doc.eval.md
+uv run prose-eval score my-doc.eval.md
+uv run prose-eval report validate my-doc.eval.md
 ```
 
 See the runbooks for end-to-end operation.
