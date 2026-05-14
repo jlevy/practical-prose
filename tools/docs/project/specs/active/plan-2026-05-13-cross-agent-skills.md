@@ -266,6 +266,78 @@ Keep the existing top-level scripts (`prose-metrics`, `eval-score`, `eval-report
 so creates avoidable maintenance cost.
 No reference-doc schema changes.
 
+### File and function design
+
+This implementation must stay aligned with the repo-as-skill research findings:
+portable skill frontmatter only, short router-style `SKILL.md` bodies, progressive
+disclosure into existing docs/runbooks, no setup wizard, no hooks, no docs bundled into
+the CLI package, and a clean `uvx prose-eval ...` command surface.
+
+**CLI files and functions:**
+
+- **`tools/prose-eval/src/prose_eval/cli.py`** (new): package-named command entry point.
+  - `COMMANDS: dict[str, CommandSpec]`: maps `metrics`, `score`, `report`, and
+    `compare` to their dispatcher functions and short help text.
+  - `main(argv: list[str] | None = None) -> int`: parses the first subcommand, prints
+    top-level help for `-h` / `--help`, and delegates the remaining args to the existing
+    implementation module.
+  - `_run_with_prog(command: str, func: Callable[[list[str] | None], int], args:
+    list[str]) -> int`: temporarily sets `sys.argv[0]` to `prose-eval <command>` so
+    each delegated `argparse` help page is self-documenting.
+- **`tools/prose-eval/src/prose_eval/metrics.py`**: change `main() -> int` to
+  `main(argv: list[str] | None = None) -> int` and pass `argv` to
+  `parser.parse_args(argv)`, matching `eval_score.py`, `eval_report.py`, and
+  `eval_compare.py`.
+- **`tools/prose-eval/pyproject.toml`**: add
+  `prose-eval = "prose_eval.cli:main"` under `[project.scripts]`; keep
+  `prose-metrics`, `eval-score`, `eval-report`, and `eval-compare` as compatibility
+  aliases for the first release.
+- **`tools/prose-eval/tests/test_cli.py`** (new): test the new entry point without
+  network access.
+  - `test_top_level_help_lists_subcommands`
+  - `test_subcommand_help_uses_prose_eval_command_name`
+  - `test_metrics_subcommand_matches_compatibility_script`
+  - `test_report_subcommand_dispatches_validate`
+  - `test_unknown_subcommand_exits_validation_error`
+
+**Agent-facing files:**
+
+- **`AGENTS.md`** (new): always-on cross-agent guide with one short value statement,
+  a workflow-to-skill table, and condensed authoring rules. It must not duplicate the
+  full rubric, guidelines, or runbooks.
+- **`CLAUDE.md`** (new): one line, `@AGENTS.md`, matching the Claude Code memory
+  workaround recommended in the research.
+- **`skills/prose-apply-common-guidelines/SKILL.md`** (new): apply skill wrapping
+  `docs/common-doc-guidelines.md`; modifies the target doc.
+- **`skills/prose-quick-check/SKILL.md`** (new): read-only audit skill wrapping
+  `shortcuts/practical-prose-quick-checklist.md`.
+- **`skills/prose-copy-edit/SKILL.md`** (new): apply skill wrapping
+  `shortcuts/shortcut-copy-edit.md`; modifies the target doc.
+- **`skills/prose-eval/SKILL.md`** (new): read-only-on-source evaluation skill wrapping
+  `runbooks/practical-prose-eval-single.runbook.md` and documenting
+  `uvx prose-eval metrics`, `uvx prose-eval report`, and `uvx prose-eval score`.
+- **`skills/prose-compare/SKILL.md`** (new): read-only comparison skill wrapping
+  `runbooks/practical-prose-eval-compare.runbook.md` and documenting
+  `uvx prose-eval compare`.
+- **`.claude/skills/<name>`** (new symlinks): relative symlinks from Claude Code’s
+  native skill-discovery directory to the canonical `skills/<name>` directories.
+  Because `.claude/` is otherwise local agent state, update `.gitignore` with a narrow
+  exception that tracks `.claude/skills/` while leaving hooks/settings ignored.
+- **`README.md`**: add install paths and a short Skills section; document only
+  `uvx prose-eval ...` for user-facing CLI flows.
+
+**Skill authoring constraints:**
+
+- Frontmatter uses only `name` and `description`; no `allowed-tools`, `paths`,
+  arguments, hooks, model, or other agent-specific fields.
+- Each description leads with the capability and ends with literal trigger phrases.
+  Keep descriptions short enough for large skill collections.
+- Each `SKILL.md` is a router, not a duplicate reference doc. Target 100-200 lines and
+  stay under 300 unless a concrete workflow requires more.
+- Reference chains stay shallow: `SKILL.md` links directly to source docs/runbooks.
+- Apply skills state clearly that they modify source files; audit/evaluate skills state
+  clearly that they are read-only on source files.
+
 ## Implementation Plan
 
 ### Phase 1
