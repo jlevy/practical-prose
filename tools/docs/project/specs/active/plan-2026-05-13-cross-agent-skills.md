@@ -25,8 +25,9 @@ description so an agent (and a user) knows what to expect:
   `prose-quick-check`, `prose-eval`, and `prose-compare` are audit/evaluate skills.
 
 The design treats the repo as the distribution: content and CLI are packaged together,
-the `prose-eval` CLI is invoked via `uvx`, and frontmatter stays within the portable
-Agent Skills subset so the same files work everywhere.
+the `prose-eval` CLI is invoked as a single `uvx prose-eval ...` entry point, and
+frontmatter stays within the portable Agent Skills subset so the same files work
+everywhere.
 
 ## Goals
 
@@ -34,8 +35,8 @@ Agent Skills subset so the same files work everywhere.
   working apply-common-guidelines, quick-check, copy-edit, single-doc-eval, and
   N-way-compare workflows with no setup beyond having `uv` installed.
 - The same skill files work in Claude Code, Codex CLI, Cursor, Gemini CLI, and Copilot.
-- The `prose-eval` Python package is installable and invocable through `uvx --from
-  prose-eval <script> …` with no install step required by the user.
+- The `prose-eval` Python package publishes a single `prose-eval` console script, so a
+  user or agent can run `uvx prose-eval ...` with no install step and no `--from` flag.
 - Reference content (principles, guidelines, rubric, bibliography, metrics) is reused in
   place; no duplication into skill files.
 - Three install paths are documented: zero-install (point an agent at the repo
@@ -71,12 +72,12 @@ The current Practical Prose surface that maps naturally to skills:
 | `prose-apply-common-guidelines` | Apply | `common-doc-guidelines.md` | None (pure content) |
 | `prose-quick-check` | Audit | `shortcuts/practical-prose-quick-checklist.md` | None (pure content) |
 | `prose-copy-edit` | Apply | `shortcuts/shortcut-copy-edit.md` | None (pure content) |
-| `prose-eval` | Evaluate | `runbooks/practical-prose-eval-single.runbook.md` | `uvx --from prose-eval eval-score …` plus metrics / report scripts |
-| `prose-compare` | Evaluate | `runbooks/practical-prose-eval-compare.runbook.md` | `uvx --from prose-eval eval-compare …` |
+| `prose-eval` | Evaluate | `runbooks/practical-prose-eval-single.runbook.md` | `uvx prose-eval score …` plus `metrics` / `report` subcommands |
+| `prose-compare` | Evaluate | `runbooks/practical-prose-eval-compare.runbook.md` | `uvx prose-eval compare …` |
 
 Three skills are content-only; two shell out to the Python CLI.
 The shared invocation pattern is “agent reads SKILL.md → agent reads linked reference
-docs as needed → for CLI skills, agent runs `uvx --from prose-eval <script> …`.”
+docs as needed → for CLI skills, agent runs `uvx prose-eval <subcommand> …`.”
 
 `prose-apply-common-guidelines` is the lightest-weight skill: it applies the general
 `common-doc-guidelines.md` (organization, structuring, writing style, formatting, and
@@ -170,7 +171,7 @@ Each SKILL.md body has:
 - Required inputs (e.g., path to the document; optional label, scope class).
 - Step-by-step workflow, with explicit links to the source shortcut / runbook and to any
   reference doc the agent should read first.
-- For CLI skills, the exact `uvx --from prose-eval <script> …` invocations.
+- For CLI skills, the exact `uvx prose-eval <subcommand> …` invocations.
 - “When to use this skill” callout that mirrors the description triggers, so an agent
   reading the body still gets reinforcement on activation conditions.
 
@@ -184,16 +185,40 @@ The symlinks are committed; they are nice-to-have, not load-bearing. `AGENTS.md`
 `CLAUDE.md` also point at the canonical `skills/` paths so Claude works without them
 too.
 
+**Single `prose-eval` CLI entry point.** Add `src/prose_eval/cli.py` and publish one
+console script:
+
+```toml
+[project.scripts]
+prose-eval = "prose_eval.cli:main"
+```
+
+Use subcommands instead of separate top-level script names:
+
+| Current script | New command |
+| --- | --- |
+| `prose-metrics` | `uvx prose-eval metrics ...` |
+| `eval-score` | `uvx prose-eval score ...` |
+| `eval-report` | `uvx prose-eval report ...` |
+| `eval-compare` | `uvx prose-eval compare ...` |
+
+This follows the modern Python CLI pattern: one package-named entry point, a dedicated
+`cli.py` module, command handlers kept testable, useful `--help` output, and
+automation-friendly behavior. Preserve stdout/stderr discipline, respect `CI` and
+`NO_COLOR`, and support `--no-progress` anywhere progress output is introduced.
+Keep the existing scripts as compatibility aliases for the first release if that lowers
+rollout risk, but document only the new `uvx prose-eval ...` form in skills and README.
+
 **PyPI publishing for `prose-eval`.** The `tools/prose-eval` package is already
 structured for PyPI release via GitHub Actions (`tools/prose-eval/docs/publishing.md`
 documents the flow inherited from `simple-modern-uv`). Cut a `v0.1.0` (or first
-appropriate) tagged release so `uvx --from prose-eval eval-score` and
-`uvx --from prose-eval eval-compare` work.
+appropriate) tagged release so `uvx prose-eval score` and `uvx prose-eval compare`
+work.
 
-For local development before/after the first release,
-`uvx --from <repo>/tools/prose-eval eval-score …` is the equivalent invocation for
-single-document scoring; the SKILL.md text can mention both the local path form and the
-published package form.
+For local development before/after the first release, run the same entry point from the
+package workspace, for example: `cd tools/prose-eval && uv run prose-eval score ...`.
+The SKILL.md text can mention this local form only in a development note; the primary
+workflow should stay `uvx prose-eval ...`.
 
 **README update.** Add an “Install” section that lists the three install paths, plus a
 short “Skills” section that surfaces the five skill names with their one-line
@@ -226,9 +251,20 @@ tighten" for copy-edit.
 
 ### API Changes
 
-None to the `prose-eval` CLI or to any reference doc.
-The change is purely additive: new files at the repo root and under `skills/`,
-`.claude/skills/`, and `docs/project/`.
+Add one public `prose-eval` console script with subcommands.
+The intended public interface is:
+
+```shell
+uvx prose-eval metrics ...
+uvx prose-eval score ...
+uvx prose-eval report ...
+uvx prose-eval compare ...
+```
+
+Keep the existing top-level scripts (`prose-metrics`, `eval-score`, `eval-report`,
+`eval-compare`) as compatibility aliases for now unless implementation proves that doing
+so creates avoidable maintenance cost.
+No reference-doc schema changes.
 
 ## Implementation Plan
 
@@ -238,6 +274,14 @@ The change is purely additive: new files at the repo root and under `skills/`,
   Condense `shortcuts/practical-prose-agent-policy.md` into the principles section; add
   the workflows table; add the one-paragraph value statement.
 - [ ] Add `CLAUDE.md` containing `@AGENTS.md`.
+- [ ] Add the single CLI entry point in `tools/prose-eval`:
+  - [ ] Add `src/prose_eval/cli.py` with `metrics`, `score`, `report`, and `compare`
+    subcommands delegating to the existing command implementations.
+  - [ ] Add `prose-eval = "prose_eval.cli:main"` to `pyproject.toml`.
+  - [ ] Preserve the existing console scripts as compatibility aliases unless there is a
+    concrete reason to remove them before the first release.
+  - [ ] Ensure `uvx prose-eval --help` and each subcommand `--help` are useful to a
+    human and to an agent.
 - [ ] Create `skills/prose-apply-common-guidelines/SKILL.md`: wraps
   `common-doc-guidelines.md`; instructs the agent to apply the guidelines and ensure
   the required footer is present.
@@ -248,14 +292,15 @@ The change is purely additive: new files at the repo root and under `skills/`,
   `shortcuts/shortcut-copy-edit.md`; modifies the doc.
 - [ ] Create `skills/prose-eval/SKILL.md`: wraps
   `runbooks/practical-prose-eval-single.runbook.md`; documents
-  `uvx --from prose-eval eval-score`, `prose-metrics`, and `eval-report` invocations.
+  `uvx prose-eval score`, `uvx prose-eval metrics`, and `uvx prose-eval report`
+  invocations.
 - [ ] Create `skills/prose-compare/SKILL.md`: wraps
   `runbooks/practical-prose-eval-compare.runbook.md`; documents
-  `uvx --from prose-eval eval-compare` for the multi-input invocation.
+  `uvx prose-eval compare` for the multi-input invocation.
 - [ ] Add `.claude/skills/<name>` symlinks for all five skills.
-- [ ] Cut a first PyPI release of `prose-eval` so the `uvx --from prose-eval …`
-  invocations resolve. (If the package name is taken, pick an alternative; otherwise
-  reserve and publish.)
+- [ ] Cut a first PyPI release of `prose-eval` so `uvx prose-eval ...` resolves.
+  (If the package name is taken, pick an alternative whose package name and console
+  script still match, so `uvx <name> ...` stays clean.)
 - [ ] Update README with the “Install” section (three paths) and a “Skills” section
   surfacing the five skill names with one-line descriptions and links.
 - [ ] Manual test pass in Claude Code: verify each skill triggers from its intended user
@@ -268,8 +313,18 @@ The change is purely additive: new files at the repo root and under `skills/`,
 
 ## Testing Strategy
 
-This is a content-and-glue change, not a code change, so testing is manual and
-behavioral rather than automated.
+This is mostly content-and-glue, but the new CLI entry point needs automated coverage.
+Keep the skill activation checks manual and add focused CLI tests for the command
+surface.
+
+For `tools/prose-eval`, add tests that verify:
+
+1. `prose-eval --help` lists `metrics`, `score`, `report`, and `compare`.
+2. Each subcommand help page exits 0 and names the underlying workflow clearly.
+3. `uv run prose-eval <subcommand> ...` dispatches to the same implementation as the
+   existing compatibility script for a small fixture.
+4. Output behavior stays agent-friendly: data goes to stdout, errors to stderr, and no
+   progress UI appears in non-TTY or `CI` contexts.
 
 Per skill, in each target agent (Claude Code and Codex CLI at minimum), verify:
 
@@ -281,23 +336,22 @@ Per skill, in each target agent (Claude Code and Codex CLI at minimum), verify:
    content, and produces the expected output (rewritten doc, checklist results, eval
    report YAML, comparison table).
 3. **Cross-link integrity.** Every link in the SKILL.md resolves; every referenced
-   `uvx --from prose-eval …` invocation runs cleanly.
+   `uvx prose-eval …` invocation runs cleanly.
 
 Sample input docs for the runs can be drawn from `attic/` or any existing markdown in
 the repo.
 The objective is the workflow firing, not benchmarking output quality; quality
 is the job of the rubric itself.
 
-No new unit tests for `prose-eval`; if the manual passes surface a CLI bug, file a
-separate issue.
+If the manual passes surface deeper CLI behavior bugs, file separate issues rather than
+expanding this rollout beyond the entry-point cleanup.
 
 ## Rollout Plan
 
 The change is additive and reversible.
 Suggested rollout sequence:
 
-1. Land all the new files in a single PR. The PR description points at this spec and the
-   research brief.
+1. Land all the new files in a single PR. The PR description points at this spec.
 2. After merge, dogfood for a week or two on real editing work in this repo and one or
    two other repos that pull Practical Prose in.
 3. Once descriptions and bodies feel stable, **optionally**: submit to
@@ -314,10 +368,11 @@ Rollback is `git revert` of the PR; no migrations, no external state.
   The trade-off is context-budget cost (AGENTS.md is always loaded) vs.
   always-on guidance. Working assumption: condense the eight-priority list into
   AGENTS.md; leave the guidelines / rubric / principles in `docs/` and link to them.
-- **PyPI package name.** `prose-eval` is unclaimed on PyPI as of this writing (verified
-  2026-05-13). Reserve and publish, or pick a more specific name (e.g.,
-  `practical-prose-eval`) if there’s a risk of collision with adjacent tools?
-  Working assumption: claim `prose-eval`.
+- **PyPI package and command name.** `prose-eval` is unclaimed on PyPI as of this
+  writing (verified 2026-05-13). Reserve and publish, or pick a more specific name
+  (e.g., `practical-prose-eval`) if there’s a risk of collision with adjacent tools?
+  Working assumption: claim `prose-eval` and publish a matching `prose-eval` console
+  script so `uvx prose-eval ...` stays clean.
 - **MCP wrapper.** Defer to a follow-up spec, but worth a one-line note in the README
   ("future: MCP server for non-coding-agent clients") so the path is signposted.
 - **Whether to ship a per-skill `references/` subdirectory** under each skill, or rely
