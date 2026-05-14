@@ -469,7 +469,7 @@ def format_summary_table(metrics_list: list[Metrics]) -> str:
     return "\n".join(rows)
 
 
-def main() -> int:
+def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(
         description="Quantitative metrics for analytical-writing artifacts.",
         formatter_class=argparse.RawDescriptionHelpFormatter,
@@ -500,7 +500,7 @@ def main() -> int:
         help="File with banned-register words (one per line, '#' starts a comment). "
         "Replaces the default Clarity Rule 4 list.",
     )
-    args = parser.parse_args()
+    args = parser.parse_args(argv)
 
     if args.banned_words_file is not None:
         words = tuple(
