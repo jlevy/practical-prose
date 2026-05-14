@@ -24,11 +24,11 @@ COMMANDS: dict[str, CommandSpec] = {
         metrics.main,
     ),
     "score": CommandSpec(
-        "Fill qualitative scores and violations in eval-report YAMLs.",
+        "Fill qualitative scores and violations in eval reports.",
         eval_score.main,
     ),
     "report": CommandSpec(
-        "Create, validate, and recompute eval-report YAMLs.",
+        "Create, validate, and recompute eval reports.",
         eval_report.main,
     ),
     "compare": CommandSpec(

@@ -2,12 +2,12 @@
 title: Practical Prose Eval, multi-document comparison runbook
 description: Operational steps for producing a unified comparison Markdown report from N validated single-doc eval reports.
 date: 2026-05-07
-last_updated: 2026-05-10
+last_updated: 2026-05-14
 status: active
 ---
 # Practical Prose Eval, Multi-Document Comparison Runbook
 
-Version: v0.1 (last update 2026-05-10)\
+Version: v0.1 (last update 2026-05-14)\
 Joshua Levy (github.com/jlevy)
 
 ## Purpose
@@ -15,17 +15,17 @@ Joshua Levy (github.com/jlevy)
 Produce a unified comparison Markdown from N evaluated artifacts: unified table
 (qualitative scores + quantitative metrics + derived ratios), optional per-section
 drilldowns, and per-pair deltas.
-The deterministic generator is `eval-compare`; this runbook wraps it with the alignment
-audit and the analytical-prose layer the generator cannot produce.
+The deterministic generator is `prose-eval compare`; this runbook wraps it with the
+alignment audit and the analytical-prose layer the generator cannot produce.
 
 For an exact rendering of the generator’s output shape, see
 `../tools/prose-eval/tests/fixtures/expected-comparison.md`: the golden output that
 `../tools/prose-eval/tests/test_eval_compare.py` pins against the six
-`figma-*.eval.yaml` fixtures.
+`figma-*.eval.md` fixtures.
 
 ## Inputs and outputs
 
-- **Input:** N validated `<artifact>.eval.yaml` files (each produced by
+- **Input:** N validated `<artifact>.eval.md` files (each produced by
   `practical-prose-eval-single.runbook.md`).
 - **Output:** one comparison Markdown combining the generator’s table with
   reviewer-authored cross-artifact analysis.
@@ -34,8 +34,8 @@ For an exact rendering of the generator’s output shape, see
 
 The eval tooling lives as an installable Python package at
 [../tools/prose-eval/](../tools/prose-eval/). Install once
-(`cd tools/prose-eval && make install`) and use the `eval-score`, `eval-report`,
-`eval-compare` console scripts.
+(`cd tools/prose-eval && make install`) and use the `prose-eval` console script with
+the `score`, `report`, and `compare` subcommands.
 
 Batch eval outputs live under `evals/<round-name>/` at the repo root.
 
@@ -50,7 +50,7 @@ For a multi-artifact batch (the common case for this runbook), score all artifac
 one invocation using the `--batch` flag:
 
 ```bash
-eval-score evals/<round>/*.eval.yaml --batch --max-concurrent 8 --max-rps 4
+prose-eval score evals/<round>/*.eval.md --batch --max-concurrent 8 --max-rps 4
 ```
 
 This fans out the SDK calls under `gather_limited` (an `asyncio.Semaphore`
@@ -75,8 +75,8 @@ or pass `--allow-misaligned` for human review.
 ### 2. Confirm each input is validated
 
 ```bash
-for f in path/to/*.eval.yaml; do
-  eval-report validate "$f" || break
+for f in path/to/*.eval.md; do
+  prose-eval report validate "$f" || break
 done
 ```
 
@@ -85,10 +85,10 @@ Each file should print `OK: <path>`. Do not proceed if any fail.
 ### 3. Generate the comparison Markdown
 
 ```bash
-eval-compare \
-  path/to/a.eval.yaml \
-  path/to/b.eval.yaml \
-  path/to/c.eval.yaml \
+prose-eval compare \
+  path/to/a.eval.md \
+  path/to/b.eval.md \
+  path/to/c.eval.md \
   --format unified \
   --pairs 'a=b' 'b=c' \
   > comparison.md
@@ -110,7 +110,7 @@ The generator emits the table mechanically; confirm the alignment principle hold
 all artifacts:
 
 - [ ] Every below-5 score in any artifact has at least one cited violation in that
-  artifact’s YAML.
+  artifact's eval report.
 - [ ] Every score-5 has no cited violation.
 - [ ] Quantitative outliers (e.g. one artifact with 0 inline links in a long doc)
   correlate with rubric findings (Structure score below 5 with Rule 5 cited).
@@ -135,8 +135,8 @@ Author the analytical prose on top, in this order (matches the reference report)
    lever”).
 5. **Verdict:** which artifact or process should the reader pick, and why?
    What is left to fix in a hypothetical next revision?
-6. **Reproducibility footer:** eval date, evaluator, method, list of YAMLs consumed, and
-   the exact command used to generate the table.
+6. **Reproducibility footer:** eval date, evaluator, method, list of eval reports
+   consumed, and the exact command used to generate the table.
 
 Aim for falsifiable claims grounded in specific table cells, not generic.
 
@@ -150,7 +150,7 @@ Aim for falsifiable claims grounded in specific table cells, not generic.
 
 ## Alignment audit (before declaring the comparison done)
 
-- [ ] Every input YAML validated.
+- [ ] Every input eval report validated.
 - [ ] Generator ran without warnings (including cross-rubric-version warnings).
 - [ ] Cross-artifact alignment audit passed.
 - [ ] Analytical prose grounded in specific table cells.
@@ -159,13 +159,15 @@ Aim for falsifiable claims grounded in specific table cells, not generic.
 ## Related docs
 
 - [practical-prose-eval-single.runbook.md](practical-prose-eval-single.runbook.md):
-  produces the YAML inputs this runbook consumes.
+  produces the eval reports this runbook consumes.
 - [practical-prose-rubric.md](../docs/practical-prose-rubric.md): per-dimension 0-5
   anchors and scoring rules.
 - [practical-prose-guidelines.md](../docs/practical-prose-guidelines.md): prescriptive
   rules cited by violations.
-- [eval_compare.py](eval-compare): the deterministic generator.
-- [eval_report.py](eval-report): schema and validator.
+- [eval_compare.py](../tools/prose-eval/src/prose_eval/eval_compare.py): the
+  deterministic generator.
+- [eval_report.py](../tools/prose-eval/src/prose_eval/eval_report.py): schema and
+  validator.
 
 <!-- This document follows common-doc-guidelines.md.
 Review guidelines before editing.

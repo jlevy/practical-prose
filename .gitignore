@@ -229,7 +229,14 @@ Thumbs.db
 *~
 
 # Agent / assistant local state
-.claude/
+.claude/*
+!.claude/skills/
+.claude/skills/*
+!.claude/skills/prose-apply-common-guidelines
+!.claude/skills/prose-quick-check
+!.claude/skills/prose-copy-edit
+!.claude/skills/prose-eval
+!.claude/skills/prose-compare
 .codex/
 .aider*
 

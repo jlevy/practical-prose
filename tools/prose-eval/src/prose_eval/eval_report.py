@@ -865,12 +865,12 @@ def cmd_from_metrics(args: argparse.Namespace) -> int:
 
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(
-        description="Validate and compute derived rollups for eval-report YAMLs."
+        description="Validate and compute derived rollups for eval reports."
     )
     sub = parser.add_subparsers(dest="cmd", required=True)
 
-    p_validate = sub.add_parser("validate", help="Load + validate a single eval-report YAML.")
-    p_validate.add_argument("path", help="Path to YAML file.")
+    p_validate = sub.add_parser("validate", help="Load + validate a single eval report.")
+    p_validate.add_argument("path", help="Path to eval report file.")
     p_validate.add_argument(
         "--allow-misalignment",
         action="store_true",
@@ -891,15 +891,15 @@ def main(argv: list[str] | None = None) -> int:
         "compute-derived",
         help="Recompute derived rollups from quant+qual; print or rewrite in place.",
     )
-    p_compute.add_argument("path", help="Path to YAML file.")
+    p_compute.add_argument("path", help="Path to eval report file.")
     p_compute.add_argument(
-        "--in-place", action="store_true", help="Rewrite the YAML file in place."
+        "--in-place", action="store_true", help="Rewrite the eval report in place."
     )
     p_compute.set_defaults(func=cmd_compute_derived)
 
     p_from = sub.add_parser(
         "from-metrics",
-        help="Build an eval-report YAML stub from a Markdown artifact (quant block populated, qual block stubbed).",
+        help="Build an eval-report stub from a Markdown artifact.",
     )
     p_from.add_argument("artifact", help="Path to Markdown artifact.")
     p_from.add_argument("--label", default=None, help="Artifact label (default: file stem).")

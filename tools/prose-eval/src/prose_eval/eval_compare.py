@@ -536,12 +536,13 @@ def check_rubric_versions(reports: list[EvalReport]) -> str | None:
 
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(
-        description="Generate a Markdown comparison table from N eval-report YAMLs."
+        description="Generate a Markdown comparison table from N eval reports."
     )
     parser.add_argument(
         "yamls",
+        metavar="reports",
         nargs="+",
-        help="Paths to validated eval-report YAML files.",
+        help="Paths to validated eval report files.",
     )
     parser.add_argument(
         "--format",

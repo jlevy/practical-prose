@@ -406,7 +406,7 @@ Per skill, in each target agent (Claude Code and Codex CLI at minimum), verify:
    Test at least three distinct phrasings per skill.
 2. **End-to-end run.** The agent follows the SKILL.md, reads the referenced source
    content, and produces the expected output (rewritten doc, checklist results, eval
-   report YAML, comparison table).
+   report, comparison table).
 3. **Cross-link integrity.** Every link in the SKILL.md resolves; every referenced
    `uvx prose-eval …` invocation runs cleanly.
 
