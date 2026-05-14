@@ -3,9 +3,9 @@ type: is
 id: is-01krhz3gxh1scmhma34gzqjwvv
 title: Finalize file-level skill design against research
 kind: task
-status: open
+status: closed
 priority: 2
-version: 10
+version: 12
 spec_path: tools/docs/project/specs/active/plan-2026-05-13-cross-agent-skills.md
 labels:
   - cross-agent-skills
@@ -32,6 +32,8 @@ dependencies:
     target: is-01krhz2f5wsv5rwkvzz2c6mbaq
 parent_id: is-01krhz0ckjzn0s26wggjjfays1
 created_at: 2026-05-14T00:45:07.376Z
-updated_at: 2026-05-14T00:45:28.214Z
+updated_at: 2026-05-14T00:50:51.301Z
+closed_at: 2026-05-14T00:50:51.300Z
+close_reason: Expanded the cross-agent skills spec with file/function-level implementation detail and explicit research-alignment constraints before implementation.
 ---
 Before implementation, review the cross-agent skills spec against tools/docs/general/research/research-2026-05-13-repo-as-cross-agent-skill.md and expand the plan to file/function-level detail. Confirm concrete paths for AGENTS.md, CLAUDE.md, skills/*/SKILL.md, .claude/skills symlinks, tools/prose-eval/src/prose_eval/cli.py, pyproject.toml scripts, and CLI tests. Confirm the design follows the research: portable name/description frontmatter only, short router SKILL.md bodies, repo-as-distribution, uvx prose-eval entry point, no setup wizard/hooks/doc bundling, supported install paths, and no contradiction with AGENTS.md/CLAUDE.md guidance.
