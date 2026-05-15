@@ -198,17 +198,18 @@ def render_single_doc_rollup(
     for group in rs.GROUPS:
         scores_obj = getattr(report.qual, group.key)
         reasons_obj = getattr(report.qual_reasons, group.key)
-        for dim in group.dimensions:
+        for i, dim in enumerate(group.dimensions):
             score = getattr(scores_obj, dim.key)
             reason = getattr(reasons_obj, dim.key) or ""
             # Markdown table cells can't contain raw newlines or unescaped pipes.
             reason_cell = reason.replace("|", "\\|").replace("\n", " ").strip()
-            out.append(f"| {group.label} | {dim.label} | {fmt_score(score)} | {reason_cell} |")
+            group_cell = f"**{group.label}**" if i == 0 else ""
+            out.append(f"| {group_cell} | {dim.label} | {fmt_score(score)} | {reason_cell} |")
         # Group mean row: 0.0 means "no scored dimensions" (all NA).
         mean = group_means[group.key]
         mean_cell = f"**{mean:.2f}**" if mean > 0 else "—"
-        out.append(f"| **{group.label}** | **Mean** | {mean_cell} | |")
-    out.append(f"| | **Overall mean (18 dims)** | **{overall:.2f}** | |")
+        out.append(f"|  | **Mean** | {mean_cell} | |")
+    out.append(f"|  | **Overall mean (18 dims)** | **{overall:.2f}** | |")
     out.append("")
 
     # Violations.

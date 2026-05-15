@@ -432,7 +432,6 @@ class ReproContext:
     model: str | None = None
     model_id: str | None = None
     command: str | None = None
-    raw_response_path: str | None = None
     prompt_sha256: str | None = None
     rubric_sha256: str | None = None
     guidelines_sha256: str | None = None
@@ -473,7 +472,6 @@ def merge_into_report(
             ("model", repro.model),
             ("model_id", repro.model_id),
             ("command", repro.command),
-            ("raw_response_path", repro.raw_response_path),
             ("prompt_sha256", repro.prompt_sha256),
             ("rubric_sha256", repro.rubric_sha256),
             ("guidelines_sha256", repro.guidelines_sha256),
@@ -498,7 +496,6 @@ class _ScorePrep:
     artifact_path: Path
     messages: list[dict]
     out_path: Path
-    raw_path: Path
 
 
 def _prepare_score(yaml_path: Path, *, out: Path | None) -> _ScorePrep:
@@ -511,17 +508,11 @@ def _prepare_score(yaml_path: Path, *, out: Path | None) -> _ScorePrep:
     messages = _build_messages(artifact_path)
 
     out_path = out if out else yaml_path
-    raw_path = (
-        out_path.parent / (out_path.name[: -len(".eval.md")] + ".eval.raw.txt")
-        if out_path.name.endswith(".eval.md")
-        else out_path.with_suffix(out_path.suffix + ".raw.txt")
-    )
     return _ScorePrep(
         report=report,
         artifact_path=artifact_path,
         messages=messages,
         out_path=out_path,
-        raw_path=raw_path,
     )
 
 
@@ -535,15 +526,11 @@ def _apply_score(
     argv: list[str] | None,
     quiet: bool = False,
 ) -> int:
-    """Persist the raw response, parse, merge into the YAML, write it out.
+    """Parse the model response, merge into the eval report, write `.eval.md`.
 
-    Returns 0 on success, 1 on alignment failure (with raw response always
-    preserved). Shared between the sync and async _score_one paths.
+    Returns 0 on success, 1 on alignment failure. Shared between the sync and
+    async _score_one paths.
     """
-    # Persist the raw model response BEFORE parsing so parse / validation
-    # failures don't lose the evidence.
-    prep.raw_path.write_text(result.text, encoding="utf-8")
-
     payload = extract_json_block(result.text)
     scored = parse_response(payload)
 
@@ -553,9 +540,6 @@ def _apply_score(
         model=model,
         model_id=result.model_id,
         command=cmd_str,
-        raw_response_path=str(prep.raw_path.relative_to(REPO_ROOT))
-        if prep.raw_path.is_relative_to(REPO_ROOT)
-        else str(prep.raw_path),
         prompt_sha256=_sha256_of_text(prompt_for_hash),
         rubric_sha256=_sha256_of_file(RUBRIC_PATH),
         guidelines_sha256=_sha256_of_file(GUIDELINES_PATH),
@@ -578,7 +562,6 @@ def _apply_score(
         )
         for e in align_errors:
             print(f"  {e}", file=sys.stderr)
-        print(f"  raw response preserved at: {prep.raw_path}", file=sys.stderr)
         print(
             "  hint: pass --allow-misaligned to write the YAML anyway for inspection",
             file=sys.stderr,
@@ -596,7 +579,6 @@ def _apply_score(
     prep.out_path.write_text(output, encoding="utf-8")
     if not quiet:
         print(f"OK: wrote {prep.out_path}", file=sys.stderr)
-        print(f"     raw response: {prep.raw_path}", file=sys.stderr)
     return 0
 
 

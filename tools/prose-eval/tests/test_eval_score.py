@@ -183,6 +183,17 @@ def _stub_report(tmp_path: Path) -> EvalReport:
     return EvalReport.from_eval_md(out)
 
 
+def test_single_doc_rollup_coalesces_qualitative_groups(tmp_path: Path):
+    stub = _stub_report(tmp_path)
+    body = render_single_doc_rollup(stub, heading_level=1)
+
+    assert "| **Purpose** | Suitability | 0 |" in body
+    assert "|  | Scope | 0 |" in body
+    assert "| Purpose | Scope |" not in body
+    assert "|  | **Mean** |" in body
+    assert "| **Purpose** | **Mean** |" not in body
+
+
 def test_merge_replaces_qual_and_violations(tmp_path: Path):
     stub = _stub_report(tmp_path)
     qual = QualScores(
@@ -387,7 +398,6 @@ def test_merge_populates_reproducibility_metadata(tmp_path: Path):
     repro = ReproContext(
         model="claude-opus-4-7",
         command="eval_score.py /tmp/x.eval.md",
-        raw_response_path="/tmp/x.eval.raw.txt",
         prompt_sha256="a" * 64,
         rubric_sha256="b" * 64,
         guidelines_sha256="c" * 64,
@@ -398,7 +408,6 @@ def test_merge_populates_reproducibility_metadata(tmp_path: Path):
     )
     assert merged.metadata.model == "claude-opus-4-7"
     assert merged.metadata.command == "eval_score.py /tmp/x.eval.md"
-    assert merged.metadata.raw_response_path == "/tmp/x.eval.raw.txt"
     assert merged.metadata.prompt_sha256 == "a" * 64
     assert merged.metadata.rubric_sha256 == "b" * 64
     assert merged.metadata.guidelines_sha256 == "c" * 64
@@ -594,10 +603,9 @@ def test_main_end_to_end_calls_sdk_and_persists_cache_stats(tmp_path: Path, monk
         "output_tokens": 1800,
     }
     assert report.metadata.sdk_version  # something non-empty
-    # Raw response was saved next to the YAML.
+    # The .eval.md hybrid file is the only persisted scoring artifact.
     raw_path = stub.parent / "stub.eval.raw.txt"
-    assert raw_path.is_file()
-    assert "hello" not in raw_path.read_text() and "```json" in raw_path.read_text()
+    assert not raw_path.exists()
 
 
 if __name__ == "__main__":

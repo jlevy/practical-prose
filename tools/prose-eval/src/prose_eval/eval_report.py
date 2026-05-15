@@ -29,7 +29,7 @@ import argparse
 import sys
 from datetime import date
 from pathlib import Path
-from typing import Annotated, Literal
+from typing import Annotated, Any, Literal
 
 import yaml
 from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
@@ -37,6 +37,7 @@ from pydantic import BaseModel, ConfigDict, Field, field_validator, model_valida
 from prose_eval import metrics as pwm
 from prose_eval import rubric_schema as rs
 from prose_eval.eval_render import render_single_doc_rollup
+from prose_eval.table_styles import with_practical_prose_display_metadata
 
 # Score = integer 0-5 or the literal "NA" (not applicable to this artifact).
 # 0 means "applicable but unassessable" (content missing); "NA" means the dimension
@@ -376,7 +377,6 @@ class EvalMetadata(BaseModel):
     # like "claude-sonnet-4-5-20250929" even when `model` was the alias "sonnet").
     model_id: str | None = None
     command: str | None = None
-    raw_response_path: str | None = None
     prompt_sha256: str | None = None
     rubric_sha256: str | None = None
     guidelines_sha256: str | None = None
@@ -397,6 +397,9 @@ class EvalReport(BaseModel):
     violations: list[Violation] = []
     derived: DerivedRollups | None = None
     metadata: EvalMetadata
+    # Portable display metadata. Eval semantics do not depend on this block; table-aware
+    # browsers may use it to style generated Markdown tables, and other tools may ignore it.
+    display: dict[str, Any] | None = None
 
     @model_validator(mode="after")
     def populate_derived(self) -> EvalReport:
@@ -465,8 +468,10 @@ class EvalReport(BaseModel):
         data = yaml.safe_load(text)
         return cls.model_validate(data)
 
-    def to_yaml(self) -> str:
+    def to_yaml(self, *, include_table_styles: bool = False) -> str:
         data = self.model_dump(mode="json", exclude_none=True)
+        if include_table_styles:
+            data = with_practical_prose_display_metadata(data)
         return yaml.safe_dump(
             data,
             sort_keys=True,
@@ -482,13 +487,13 @@ class EvalReport(BaseModel):
         data = _parse_frontmatter(text)
         return cls.model_validate(data)
 
-    def to_eval_md(self, body: str) -> str:
+    def to_eval_md(self, body: str, *, include_table_styles: bool = True) -> str:
         """Serialize as `.eval.md`: YAML frontmatter + caller-rendered body.
 
         The frontmatter is canonical structured data; the body is the human-
         readable rendering, regenerated whenever the frontmatter changes.
         """
-        frontmatter = self.to_yaml()
+        frontmatter = self.to_yaml(include_table_styles=include_table_styles)
         return f"---\n{frontmatter}---\n\n{body.rstrip()}\n"
 
 

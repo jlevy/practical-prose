@@ -13,12 +13,14 @@ import pytest
 import yaml  # noqa: E402
 
 from prose_eval.eval_compare import (  # noqa: E402
+    QUALITATIVE_SCORE_NOTE,
     _bold_indices,
     check_rubric_versions,
     check_scope_classes,
     collect_density_concerns,
     main,
     render_per_pair_deltas,
+    render_section_drilldown,
     render_unified_table,
 )
 from prose_eval.eval_report import EvalReport  # noqa: E402
@@ -170,6 +172,45 @@ def test_format_sections_emits_per_aspect_tables(capsys: pytest.CaptureFixture[s
     assert "### Derived — Density" in out
 
 
+def test_unified_cli_emits_score_note_below_table(capsys: pytest.CaptureFixture[str]):
+    rc = main([str(p) for p in ALL_FIXTURES[:2]] + ["--allow-misalignment", "--format", "unified"])
+    assert rc == 0
+    out = capsys.readouterr().out
+    assert QUALITATIVE_SCORE_NOTE in out
+    assert out.index(QUALITATIVE_SCORE_NOTE) > out.index("| Approach | Aspect | Measure |")
+
+
+def test_table_styles_flag_prepends_portable_frontmatter(capsys: pytest.CaptureFixture[str]):
+    rc = main(
+        [str(p) for p in ALL_FIXTURES[:2]]
+        + ["--allow-misalignment", "--format", "unified", "--table-styles"]
+    )
+    assert rc == 0
+    out = capsys.readouterr().out
+    assert "&id" not in out
+    assert "*id" not in out
+    lines = out.splitlines()
+    assert lines[0] == "---"
+    end = lines.index("---", 1)
+    frontmatter = yaml.safe_load("\n".join(lines[1:end]))
+
+    table_styles = frontmatter["display"]["table_styles"]
+    assert table_styles["version"] == 1
+    comparison_table = next(
+        table
+        for table in table_styles["tables"]
+        if table["id"] == "practical_prose_unified_comparison"
+    )
+    assert comparison_table["match"]["columns"] == [
+        "Approach",
+        "Aspect",
+        "Measure",
+        "DDOG-r1",
+        "DDOG-r2",
+    ]
+    assert "| Approach | Aspect | Measure | DDOG-r1 | DDOG-r2 |" in "\n".join(lines[end + 1 :])
+
+
 def test_determinism():
     reports = _load(ALL_FIXTURES)
     a = render_unified_table(reports)
@@ -195,7 +236,12 @@ def test_lint_row_bolds_minimum():
 # ---------------------------------------------------------------------------
 
 
-def _make_report(label: str, rubric_version: str | None) -> EvalReport:
+def _make_report(
+    label: str,
+    rubric_version: str | None,
+    *,
+    judgment_na: bool = False,
+) -> EvalReport:
     """Build a minimal EvalReport with the given rubric_version tag."""
     data = {
         "artifact": {"label": label, "path": f"{label}.md"},
@@ -233,13 +279,27 @@ def _make_report(label: str, rubric_version: str | None) -> EvalReport:
             "purpose": {"suitability": 4, "breadth": 4, "depth": 4},
             "grounding": {"verifiability": 5, "factuality": 4},
             "reasoning": {"inference_discipline": 4, "soundness": 5, "precision": 4},
-            "judgment": {"calibration": 5, "fairness": 5, "robustness": 4},
+            "judgment": (
+                {"calibration": "NA", "fairness": "NA", "robustness": "NA"}
+                if judgment_na
+                else {"calibration": 5, "fairness": 5, "robustness": 4}
+            ),
         },
         "metadata": {"eval_date": "2026-05-09", "evaluator": "test"},
     }
     if rubric_version is not None:
         data["metadata"]["rubric_version"] = rubric_version
     return EvalReport.model_validate(data)
+
+
+def test_all_na_group_mean_renders_dash():
+    reports = [
+        _make_report("scored", "18-dim-v1"),
+        _make_report("all-na", "18-dim-v1", judgment_na=True),
+    ]
+
+    assert "| *Mean* | 4.67 | — |" in render_section_drilldown(reports)
+    assert "|  |  | *Mean* | 4.67 | — |" in render_unified_table(reports)
 
 
 def test_check_rubric_versions_all_same():

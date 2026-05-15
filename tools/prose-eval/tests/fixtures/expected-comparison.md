@@ -1,28 +1,28 @@
 | Approach | Aspect | Measure | DDOG-r1 | DDOG-r2 | DDOG-r4 | NET-r1 | NET-r2 | NET-r4 |
 | --- | --- | --- | ---: | ---: | ---: | ---: | ---: | ---: |
-| **Qualitative (rubric 0-5 or NA)** | Purpose | Suitability | 0 | 0 | 0 | 0 | 0 | 0 |
+| **Qualitative** | Purpose | Suitability | 0 | 0 | 0 | 0 | 0 | 0 |
 |  |  | Scope | 0 | 0 | 0 | 0 | 0 | 0 |
 |  |  | Breadth | 0 | 0 | 0 | 0 | 0 | 0 |
 |  |  | Depth | 0 | 0 | **4** | 0 | 0 | **4** |
-| **Qualitative (rubric 0-5)** |  | *Mean* | 0.00 | 0.00 | **4.00** | 0.00 | 0.00 | **4.00** |
-| **Qualitative (rubric 0-5 or NA)** | Expression | Clarity | **4** | 0 | **4** | **4** | 0 | **4** |
+|  |  | *Mean* | 0.00 | 0.00 | **4.00** | 0.00 | 0.00 | **4.00** |
+|  | Expression | Clarity | **4** | 0 | **4** | **4** | 0 | **4** |
 |  |  | Coherence | 5 | 5 | 5 | 5 | 5 | 5 |
 |  |  | Concision | 0 | 3 | 4 | 0 | 3 | **5** |
 |  |  | Organization | 0 | 4 | 4 | **5** | 4 | 4 |
 |  |  | Style Consistency | 0 | 0 | 0 | 0 | 0 | 0 |
 |  |  | Formatting | 0 | 0 | 0 | 0 | 0 | 0 |
-| **Qualitative (rubric 0-5)** |  | *Mean* | 4.50 | 4.00 | 4.25 | **4.67** | 4.00 | 4.50 |
-| **Qualitative (rubric 0-5 or NA)** | Grounding | Verifiability | 0 | 0 | **5** | 0 | 0 | **5** |
+|  |  | *Mean* | 4.50 | 4.00 | 4.25 | **4.67** | 4.00 | 4.50 |
+|  | Grounding | Verifiability | 0 | 0 | **5** | 0 | 0 | **5** |
 |  |  | Factuality | 0 | 4 | **5** | 4 | 4 | **5** |
-| **Qualitative (rubric 0-5)** |  | *Mean* | 0.00 | 4.00 | **5.00** | 4.00 | 4.00 | **5.00** |
-| **Qualitative (rubric 0-5 or NA)** | Reasoning | Inference Discipline | 0 | 0 | 0 | 0 | 0 | 0 |
+|  |  | *Mean* | 0.00 | 4.00 | **5.00** | 4.00 | 4.00 | **5.00** |
+|  | Reasoning | Inference Discipline | 0 | 0 | 0 | 0 | 0 | 0 |
 |  |  | Soundness | 0 | 0 | **5** | 0 | 0 | **5** |
 |  |  | Precision | 0 | 0 | 0 | 0 | 0 | 0 |
-| **Qualitative (rubric 0-5)** |  | *Mean* | 0.00 | 0.00 | **5.00** | 0.00 | 0.00 | **5.00** |
-| **Qualitative (rubric 0-5 or NA)** | Judgment | Calibration | 3 | 3 | **5** | 3 | 3 | **5** |
+|  |  | *Mean* | 0.00 | 0.00 | **5.00** | 0.00 | 0.00 | **5.00** |
+|  | Judgment | Calibration | 3 | 3 | **5** | 3 | 3 | **5** |
 |  |  | Fairness | 4 | 4 | **5** | 4 | 4 | **5** |
 |  |  | Robustness | 0 | 0 | 0 | 0 | 0 | 0 |
-| **Qualitative (rubric 0-5)** |  | *Mean* | 3.50 | 3.50 | **5.00** | 3.50 | 3.50 | **5.00** |
+|  |  | *Mean* | 3.50 | 3.50 | **5.00** | 3.50 | 3.50 | **5.00** |
 |  | Overall | *Mean (18 dims)* | 4.00 | 3.83 | 4.60 | 4.17 | 3.83 | **4.70** |
 | **Quantitative** | Size | Words | 9,742 | 11,347 | 12,512 | 9,065 | 10,736 | 7,143 |
 |  |  | Sentences | 468 | 495 | 538 | 417 | 502 | 345 |
@@ -50,6 +50,8 @@
 |  |  | Links / 1k words | 2.67 | 0.00 | 1.92 | 7.61 | 0.00 | 4.20 |
 |  |  | Links / page | 0.73 | 0.00 | 0.53 | 2.09 | 0.00 | 1.15 |
 |  | Heading shape | H4 share of headings | 0.00 | 0.36 | 0.33 | 0.00 | 0.36 | 0.25 |
+
+**Score notes:** Qualitative rows use the rubric's 0-5 scale. `NA` means the dimension is not applicable and is excluded from group and overall means. Bold numeric cells mark the best value in that row under the selected bolding rule.
 
 ### Delta: DDOG-r1 → DDOG-r4
 

@@ -347,6 +347,30 @@ def test_from_metrics_round_trip(tmp_path: Path):
     assert report.quant.headings.h1 == 2
 
 
+def test_from_metrics_emits_optional_table_style_metadata(tmp_path: Path):
+    from prose_eval.eval_report import main
+
+    out_path = tmp_path / "fixture.eval.md"
+    rc = main(
+        [
+            "from-metrics",
+            str(FIXTURES / "all_headings.md"),
+            "--label",
+            "all-headings",
+            "--out",
+            str(out_path),
+        ]
+    )
+    assert rc == 0
+
+    frontmatter = yaml.safe_load(out_path.read_text(encoding="utf-8").split("---", 2)[1])
+    table_styles = frontmatter["display"]["table_styles"]
+    assert table_styles["version"] == 1
+    assert any(
+        table["id"] == "practical_prose_single_doc_qualitative" for table in table_styles["tables"]
+    )
+
+
 def test_from_metrics_quant_mapping_matches_metrics_script(tmp_path: Path):
     """Verify the rename/regroup in quant_from_metrics is correct end-to-end."""
     from prose_eval import metrics as pwm

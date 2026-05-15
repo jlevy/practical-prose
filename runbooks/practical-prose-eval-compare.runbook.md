@@ -20,8 +20,8 @@ alignment audit and the analytical-prose layer the generator cannot produce.
 
 For an exact rendering of the generator’s output shape, see
 `../tools/prose-eval/tests/fixtures/expected-comparison.md` — the golden output that
-`../tools/prose-eval/tests/test_eval_compare.py` pins against the six
-`figma-*.eval.md` fixtures.
+`../tools/prose-eval/tests/test_eval_compare.py` pins against the six `figma-*.eval.md`
+fixtures.
 
 ## Inputs and outputs
 
@@ -34,8 +34,8 @@ For an exact rendering of the generator’s output shape, see
 
 The eval tooling lives as an installable Python package at
 [../tools/prose-eval/](../tools/prose-eval/). Install once
-(`cd tools/prose-eval && make install`) and use the `prose-eval` console script with
-the `score`, `report`, and `compare` subcommands.
+(`cd tools/prose-eval && make install`) and use the `prose-eval` console script with the
+`score`, `report`, and `compare` subcommands.
 
 Batch eval outputs live under `evals/<round-name>/` at the repo root.
 
@@ -68,9 +68,10 @@ arrive after at least one cache-creating call has completed.
 **Expect occasional alignment failures.** The validator may drop a violation whose
 `rule_number` is out of range for its dimension (F3a softening), which can orphan a
 sub-5 score and fail alignment for that doc.
-Failed docs leave their raw responses at `<name>.eval.raw.txt` for recovery.
-Either rescore the failed doc(s) individually (model variance often clears it on retry),
-or pass `--allow-misaligned` for human review.
+The scorer does not write raw response sidecars; `.eval.md` is the only persisted eval
+artifact. Either rescore the failed doc(s) individually (model variance often clears it
+on retry), or pass `--allow-misaligned` to write an inspectable `.eval.md` for human
+review.
 
 ### 2. Confirm each input is validated
 
@@ -103,6 +104,9 @@ Flags:
   median).
 - `--pairs 'from=to' ...` — emit Δ tables for each pair, dimension by dimension, plus
   mean delta. Useful for “process A → process B” comparisons.
+- `--table-styles` — prepend optional `display.table_styles` frontmatter for browsers
+  that support the table-style microformat. The table body remains ordinary Markdown;
+  omit this flag when you need byte-for-byte plain Markdown output.
 
 ### 4. Verify the alignment audit across artifacts
 
@@ -110,7 +114,7 @@ The generator emits the table mechanically; confirm the alignment principle hold
 all artifacts:
 
 - [ ] Every below-5 score in any artifact has at least one cited violation in that
-  artifact's eval report.
+  artifact’s eval report.
 - [ ] Every score-5 has no cited violation.
 - [ ] Quantitative outliers (e.g. one artifact with 0 inline links in a long doc)
   correlate with rubric findings (Structure score below 5 with Rule 5 cited).

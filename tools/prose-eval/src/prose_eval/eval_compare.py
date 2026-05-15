@@ -2,7 +2,7 @@
 Comparison-table generator for practical-writing eval reports.
 
 Reads N validated EvalReport YAMLs (see eval-report) and emits a
-unified Markdown comparison table with per-section drilldowns.
+unified Markdown comparison table, with optional per-section drilldowns.
 
 Output shape (unified mode):
   - Columns: one per input artifact (labels from each YAML's `artifact.label`).
@@ -23,6 +23,7 @@ Usage:
   eval-compare a.eval.md b.eval.md [c.eval.md ...]
   eval-compare --format unified a.yaml b.yaml > unified.md
   eval-compare --format sections a.yaml b.yaml > sections.md
+  eval-compare --format unified --table-styles a.yaml b.yaml > styled.md
   eval-compare --bold-rule materially-different a.yaml b.yaml
 """
 
@@ -44,9 +45,16 @@ from prose_eval.eval_render import (
     render_per_doc_rollup,
 )
 from prose_eval.eval_report import EvalReport
+from prose_eval.table_styles import render_table_style_frontmatter
 
 BoldRule = Literal["max", "min", "none"]
 BoldMode = Literal["max", "materially-different"]
+
+QUALITATIVE_SCORE_NOTE = (
+    "**Score notes:** Qualitative rows use the rubric's 0-5 scale. `NA` means the "
+    "dimension is not applicable and is excluded from group and overall means. Bold "
+    "numeric cells mark the best value in that row under the selected bolding rule."
+)
 
 
 @dataclass
@@ -67,7 +75,7 @@ def _qual_rows(reports: list[EvalReport]) -> list[Row]:
             vals = [getattr(getattr(r.qual, group.key), dim.key) for r in reports]
             rows.append(
                 Row(
-                    "Qualitative (rubric 0-5 or NA)",
+                    "Qualitative",
                     group.label,
                     dim.label,
                     vals,
@@ -75,21 +83,28 @@ def _qual_rows(reports: list[EvalReport]) -> list[Row]:
                 )
             )
         mean_attr = f"{group.key}_mean"
-        means = [getattr(r.derived.rubric_rollup, mean_attr) for r in reports]
+        means: list[float | None] = []
+        for report in reports:
+            group_obj = getattr(report.qual, group.key)
+            vals = [getattr(group_obj, d.key) for d in group.dimensions]
+            if all(v == "NA" for v in vals):
+                means.append(None)
+            else:
+                means.append(getattr(report.derived.rubric_rollup, mean_attr))
         rows.append(
             Row(
-                "Qualitative (rubric 0-5)",
+                "Qualitative",
                 group.label,
                 "*Mean*",
                 means,
-                [fmt_float_2(v) for v in means],
+                [fmt_float_2(v) if v is not None else "—" for v in means],
             )
         )
 
     overall_means = [r.derived.rubric_rollup.overall_mean for r in reports]
     rows.append(
         Row(
-            "Qualitative (rubric 0-5)",
+            "Qualitative",
             "Overall",
             f"*Mean ({rs.dimension_count()} dims)*",
             overall_means,
@@ -567,6 +582,14 @@ def main(argv: list[str] | None = None) -> int:
         help="Optional delta pairs: --pairs 'a=b' 'c=d' renders Δ tables for each.",
     )
     parser.add_argument(
+        "--table-styles",
+        action="store_true",
+        help=(
+            "Prepend optional display.table_styles frontmatter for table-aware browsers. "
+            "The Markdown table body is unchanged and remains portable."
+        ),
+    )
+    parser.add_argument(
         "--allow-draft",
         action="store_true",
         help=(
@@ -640,6 +663,10 @@ def main(argv: list[str] | None = None) -> int:
     bold_mode: BoldMode = "max" if args.bold_rule == "max" else "materially-different"
 
     chunks: list[str] = []
+    if args.table_styles:
+        chunks.append(
+            render_table_style_frontmatter(comparison_labels=[r.artifact.label for r in reports])
+        )
     if rubric_warning:
         chunks.append(f"> **Rubric-version warning:** {rubric_warning}\n")
     if scope_warning:
@@ -667,6 +694,7 @@ def main(argv: list[str] | None = None) -> int:
         chunks.append("\n".join(lines) + "\n")
     if args.format in ("unified", "both"):
         chunks.append(render_unified_table(reports, bold_mode))
+        chunks.append(QUALITATIVE_SCORE_NOTE)
     if args.format in ("sections", "both"):
         chunks.append(render_section_drilldown(reports, bold_mode))
     if args.format == "by-doc":

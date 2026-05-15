@@ -4,9 +4,14 @@ description: Score one practical document with metrics and rubric grading; read-
 ---
 # Evaluate One Practical Prose Document
 
-This is read-only on the source document. It writes eval report files.
+This is read-only on the source document.
+It writes eval report files.
 
 Use it when the user wants a formal Practical Prose evaluation of one document.
+
+For the repo’s baseline batch evals, read
+`../../runbooks/practical-prose-baseline-evals.runbook.md` and default to running all
+third-party and self-eval artifacts unless the user asks for a subset.
 
 ## Inputs
 
@@ -19,6 +24,7 @@ Use it when the user wants a formal Practical Prose evaluation of one document.
 ## Steps
 
 1. Read `../../runbooks/practical-prose-eval-single.runbook.md`.
+
 2. Generate the eval stub:
 
    ```bash

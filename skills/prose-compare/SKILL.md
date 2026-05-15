@@ -28,6 +28,9 @@ Use it after each input document already has a validated Practical Prose eval re
    uvx prose-eval compare a.eval.md b.eval.md --format unified --pairs 'a=b' > comparison.md
    ```
 
+   Add `--table-styles` only when generating a report for a browser that supports the
+   optional table-style microformat.
+
 4. Add human analytical prose only when the user asks for a full report, and ground it
    in specific table cells.
 
