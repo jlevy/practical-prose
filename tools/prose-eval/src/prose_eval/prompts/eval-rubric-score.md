@@ -12,16 +12,32 @@ You will be given, in order:
    groups with score anchors 0-5 (and `NA`) and the alignment operating principle.
 2. **The prescriptive guidelines** (`practical-prose-guidelines.md`): the rules cited by
    violations.
-3. **The artifact under review**: a Markdown document.
+3. **The deterministic metrics context** from the eval report, when available:
+   precomputed counts and derived ratios such as word count, headings, links,
+   footnotes, tables, banned-register hits, replacement-history hits, pedantic-marker
+   hits, generic-heading hits, and density concerns.
+4. **The artifact under review**: a Markdown document.
 
 ## What to do
 
 1. Read the artifact end to end.
-2. Score every dimension defined in the rubric on the 0-5 scale, following the rubric
+2. Use the deterministic metrics context as evidence, not as an automatic score. Never
+   contradict it. If a metric is a candidate flag rather than a true defect, say so in
+   the reason (for example, banned-register hits that appear only inside an explicit
+   banned-words list).
+   Do not cite a violation solely because a count is nonzero; cite a violation only
+   after inspecting the metric examples and the artifact text.
+   For style metrics, distinguish authorial prose from preserved source text: official
+   titles, direct quotations, URLs, code, and explicit negative examples may retain
+   punctuation or wording that the house style would not use in ordinary prose.
+   Do not cite a Style Consistency or Clarity violation for punctuation that appears
+   only inside official titles, citation titles, footnotes preserving source titles,
+   direct quotations, URLs, code, or explicit negative examples.
+3. Score every dimension defined in the rubric on the 0-5 scale, following the rubric
    anchors. Score 0 means “applicable but unassessable”; use only when content is missing
    for that dimension. `NA` means the dimension does not apply to this artifact at all
    (for example, Calibration on a document that makes no probability claims).
-3. For every dimension scored 1-4, identify at least one specific guideline-rule
+4. For every dimension scored 1-4, identify at least one specific guideline-rule
    violation. Cite:
    - the dimension by its canonical name (the exact label used in the rubric:
      Suitability, Scope, Breadth, Depth, Clarity, Coherence, Concision, Organization,
@@ -32,14 +48,42 @@ You will be given, in order:
    - a one-line description,
    - a location pointer (line range like `L412-418`, section heading like `§2.8`, or
      quoted phrase).
-4. For every dimension scored 5, 0, or `NA`, do not cite any violation for that
+5. For every dimension scored 5, 0, or `NA`, do not cite any violation for that
    dimension. Score 5 means every rule followed; 0 means applicable but unassessable;
    `NA` means the dimension does not apply.
-5. Cross-check: every score 1-4 must have at least one matching violation; every score
+6. Cross-check: every score 1-4 must have at least one matching violation; every score
    5, 0, or `NA` must have zero matching violations.
-6. When using `NA`, the reason must explain why the dimension does not apply (not just
+7. When using `NA`, the reason must explain why the dimension does not apply (not just
    “not applicable”). For example:
    `NA — the document makes no probability, forecast, confidence, or uncertainty claims; the task does not require them.`
+8. Be conservative with Grounding `NA`. Prescriptive, reference, and rubric documents
+   can still make verifiable claims. Attributions to people, works, institutions, or
+   prior documents, historical claims, quantitative counts, and factual claims about
+   external sources engage Verifiability and Factuality; score those dimensions 1-5
+   instead of `NA`.
+   For repository documentation, internal file paths, section references, version
+   strings, fixture claims, package names, command names, dates, standard names, and
+   claims about what another local document contains are also verifiable claims. If any
+   such claim appears, Verifiability and Factuality are not `NA`.
+9. Be conservative with Inference Discipline `NA`. A document that gives a decision
+   tree, explains why a rule exists, describes failure modes, draws distinctions, or
+   links a condition to an implication is reasoning. Score Inference Discipline 1-5 for
+   that content. Reserve `NA` only for artifacts that are pure rosters, literal logs, or
+   uninterpreted reference tables with no stated rationale.
+   Guideline and rubric documents that define rules, anchors, decision trees, examples,
+   or failure modes almost always engage Inference Discipline. Annotated bibliographies
+   that map traditions to principles, explain source relevance, or distinguish scope
+   limits also engage reasoning; they are not pure rosters.
+   Apply the same standard to Soundness: if the artifact explains why items matter,
+   maps concepts, gives selection rationale, or makes evaluative characterizations,
+   Soundness is 1-5, not `NA`.
+10. Do not overclaim external verification. Unless source excerpts, link-checker output,
+    tool results, or other corroborating evidence are included in the artifact or metrics
+    context, do not say you "spot-checked" sources, followed links, verified URLs,
+    confirmed facts externally, or found that sources resolve. You may say citations are
+    specific enough to check, no contradiction is apparent from the provided context, or
+    external corroboration was not performed in this pass. Treat unavailable external
+    checking as a reviewer limit when the document provides reasonable source pointers.
 
 ## Output format
 

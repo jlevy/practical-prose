@@ -199,11 +199,40 @@ def _cached_block_text() -> str:
     return "\n".join(parts)
 
 
-def _artifact_block_text(artifact_path: Path) -> str:
+def _metrics_context_text(report: EvalReport | None) -> str:
+    if report is None:
+        return "## Deterministic metrics context\n\nNo eval-report metrics were provided."
+
+    context = {
+        "artifact": report.artifact.model_dump(mode="json", exclude_none=True),
+        "quant": report.quant.model_dump(mode="json", exclude_none=True),
+        "derived": report.derived.model_dump(mode="json", exclude_none=True)
+        if report.derived is not None
+        else None,
+        "density_concerns": report.density_concerns(),
+    }
+    return "\n".join(
+        [
+            "## Deterministic metrics context",
+            "",
+            "Use these metrics as precomputed evidence. Do not contradict them in score",
+            "reasons. Treat candidate lint hits as flags to inspect, not automatic",
+            "violations.",
+            "",
+            "```json",
+            json.dumps(context, indent=2, sort_keys=True),
+            "```",
+        ]
+    )
+
+
+def _artifact_block_text(artifact_path: Path, report: EvalReport | None = None) -> str:
     if not artifact_path.is_file():
         raise FileNotFoundError(f"artifact missing: {artifact_path}")
     return "\n".join(
         [
+            _metrics_context_text(report),
+            "",
             f"## Artifact under review ({artifact_path})",
             "",
             artifact_path.read_text(encoding="utf-8"),
@@ -211,21 +240,21 @@ def _artifact_block_text(artifact_path: Path) -> str:
     )
 
 
-def build_prompt(artifact_path: Path) -> str:
+def build_prompt(artifact_path: Path, report: EvalReport | None = None) -> str:
     """Render the full prompt as a single string (used for --dry-run and prompt_sha256).
 
     The text matches what the SDK sees (cached block followed by artifact block),
     so the prompt_sha256 stays comparable across CLI-era and SDK-era YAMLs.
     """
-    return _cached_block_text() + "\n\n" + _artifact_block_text(artifact_path)
+    return _cached_block_text() + "\n\n" + _artifact_block_text(artifact_path, report)
 
 
-def _build_messages(artifact_path: Path) -> list[dict]:
+def _build_messages(artifact_path: Path, report: EvalReport | None = None) -> list[dict]:
     """Build the Anthropic SDK message list with cache_control on the invariant block.
 
     Returns one user message with two content blocks:
       1. The rubric + guidelines + instructions, marked `cache_control: ephemeral`.
-      2. The artifact body, uncached.
+      2. The deterministic metrics context + artifact body, uncached.
 
     The cache TTL is ~5 minutes (default ephemeral); subsequent calls within
     that window read the cached prefix at ~0.1× the input cost.
@@ -241,7 +270,7 @@ def _build_messages(artifact_path: Path) -> list[dict]:
                 },
                 {
                     "type": "text",
-                    "text": _artifact_block_text(artifact_path),
+                    "text": _artifact_block_text(artifact_path, report),
                 },
             ],
         }
@@ -505,7 +534,7 @@ def _prepare_score(yaml_path: Path, *, out: Path | None) -> _ScorePrep:
     if not artifact_path.is_absolute():
         artifact_path = REPO_ROOT / artifact_path
 
-    messages = _build_messages(artifact_path)
+    messages = _build_messages(artifact_path, report)
 
     out_path = out if out else yaml_path
     return _ScorePrep(
@@ -535,7 +564,7 @@ def _apply_score(
     scored = parse_response(payload)
 
     cmd_str = " ".join(["eval-score"] + (argv or sys.argv[1:]))
-    prompt_for_hash = build_prompt(prep.artifact_path)
+    prompt_for_hash = build_prompt(prep.artifact_path, prep.report)
     repro = ReproContext(
         model=model,
         model_id=result.model_id,
@@ -796,7 +825,7 @@ def main(argv: list[str] | None = None) -> int:
         artifact_path = Path(report.artifact.path)
         if not artifact_path.is_absolute():
             artifact_path = REPO_ROOT / artifact_path
-        sys.stdout.write(build_prompt(artifact_path))
+        sys.stdout.write(build_prompt(artifact_path, report))
         return 0
 
     if "ANTHROPIC_API_KEY" not in os.environ:

@@ -16,15 +16,15 @@ Output shape (unified mode):
     materially different scores between columns.
 
 The shape is exercised by the renderer regression test in
-scripts/test_eval_compare.py, which renders the six `figma-*.eval.md` fixtures
-and asserts byte-for-byte equality with `scripts/fixtures/expected-comparison.md`.
+`tests/test_eval_compare.py`, which renders the six `figma-*.eval.md` fixtures
+and asserts byte-for-byte equality with `tests/fixtures/expected-comparison.md`.
 
 Usage:
-  eval-compare a.eval.md b.eval.md [c.eval.md ...]
-  eval-compare --format unified a.yaml b.yaml > unified.md
-  eval-compare --format sections a.yaml b.yaml > sections.md
-  eval-compare --format unified --table-styles a.yaml b.yaml > styled.md
-  eval-compare --bold-rule materially-different a.yaml b.yaml
+  prose-eval compare a.eval.md b.eval.md [c.eval.md ...]
+  prose-eval compare --format unified a.yaml b.yaml > unified.md
+  prose-eval compare --format sections a.yaml b.yaml > sections.md
+  prose-eval compare --format unified --table-styles a.yaml b.yaml > styled.md
+  prose-eval compare --bold-rule materially-different a.yaml b.yaml
 """
 
 from __future__ import annotations

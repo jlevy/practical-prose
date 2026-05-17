@@ -1,7 +1,7 @@
-"""Tests for scripts/eval_report.py — Pydantic eval-report schema.
+"""Tests for prose_eval.eval_report, the Pydantic eval-report schema.
 
 Run:
-  uv run --script scripts/test_eval_report.py
+  uv run pytest tests/test_eval_report.py
 """
 
 from __future__ import annotations
@@ -388,6 +388,15 @@ def test_from_metrics_quant_mapping_matches_metrics_script(tmp_path: Path):
     # Regrouping.
     assert quant.structural.images == metrics.images
     assert quant.lint.banned_register_hits == metrics.banned_register_hits
+    assert quant.lint.banned_register_examples == metrics.banned_register_examples
+    assert quant.lint.spaced_em_dash_count == metrics.spaced_em_dash_count
+    assert quant.lint.spaced_em_dash_examples == metrics.spaced_em_dash_examples
+    assert quant.lint.replacement_history_hits == metrics.replacement_history_hits
+    assert quant.lint.replacement_history_examples == metrics.replacement_history_examples
+    assert quant.lint.pedantic_marker_hits == metrics.pedantic_marker_hits
+    assert quant.lint.pedantic_marker_examples == metrics.pedantic_marker_examples
+    assert quant.lint.generic_heading_hits == metrics.generic_heading_hits
+    assert quant.lint.generic_heading_examples == metrics.generic_heading_examples
 
     # Headings total reconstructed.
     assert quant.headings.total == metrics.headings_total

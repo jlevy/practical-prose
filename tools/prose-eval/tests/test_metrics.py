@@ -1,10 +1,10 @@
 """
-Tests for scripts/practical_prose_metrics.py.
+Tests for prose_eval.metrics.
 
 Run:
-  uv run --script scripts/test_practical_prose_metrics.py
+  uv run pytest tests/test_metrics.py
 
-All tests use local fixtures under scripts/test_fixtures/practical_prose_metrics/
+All tests use local fixtures under tests/test_fixtures/practical_prose_metrics/
 and require no network access.
 """
 
@@ -325,6 +325,26 @@ class TestB1_BannedRegister:
         empty_re = pwm._compile_banned_words(())
         m = pwm.measure(FIXTURES / "banned_register.md", banned_re=empty_re)
         assert m.banned_register_hits == 0
+
+
+class TestB2_EmDashDiscipline:
+    def test_spaced_em_dash_examples_capture_lines(self, tmp_path: Path):
+        path = tmp_path / "spaced-dashes.md"
+        path.write_text(
+            "# Title\n\n"
+            "Normal prose — with a spaced dash.\n\n"
+            "`Code — ignored.`\n\n"
+            "Another line — also flagged.\n",
+            encoding="utf-8",
+        )
+
+        m = pwm.measure(path)
+
+        assert m.spaced_em_dash_count == 2
+        assert m.spaced_em_dash_examples == [
+            "Normal prose — with a spaced dash.",
+            "Another line — also flagged.",
+        ]
 
 
 # ---------------------------------------------------------------------------

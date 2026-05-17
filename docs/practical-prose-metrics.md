@@ -25,10 +25,9 @@ substantive judgment.
 ## Metrics by Dimension
 
 For each dimension, the table lists at least one quantitative metric and one qualitative
-check. *“Tooling”* names the operational tool today;
-**scripts/practical_prose_metrics.py** is the deterministic metrics script in this
-directory, **eval_score.py** runs an LLM scorer against the rubric, and **manual**
-denotes a human reviewer.
+check. *“Tooling”* names the operational tool today: `prose-eval metrics` runs
+deterministic metrics, `prose-eval score` runs the model scorer, and **manual** denotes a
+human reviewer.
 
 | § | Dimension | Quantitative metric(s) | Qualitative check | Tooling |
 | ---: | --- | --- | --- | --- |
@@ -66,18 +65,22 @@ fair.
 
 ## Tooling map
 
-- [scripts/practical_prose_metrics.py](../scripts/practical_prose_metrics.py): the
-  deterministic metrics script.
+- `prose-eval metrics`
+  ([metrics.py](../tools/prose-eval/src/prose_eval/metrics.py)): deterministic metrics.
   Computes headings by depth, link counts (external/internal, by markdown form),
   footnote references and definitions, bracket-tag counts and examples, bare URLs,
   tables, code blocks, banned-register hits (Clarity Rule 4 by default; overridable),
-  word/sentence/paragraph/line counts, and page estimate.
-- [scripts/eval_score.py](../scripts/eval_score.py): LLM-based rubric scorer.
-- [scripts/eval_report.py](../scripts/eval_report.py): combines metrics and scores into
-  a single eval report.
-- [scripts/eval_compare.py](../scripts/eval_compare.py): compare N eval reports across
-  versions or variants.
-- [scripts/rubric_schema.yaml](../scripts/rubric_schema.yaml): canonical
+  spaced-em-dash examples, word/sentence/paragraph/line counts, and page estimate.
+- `prose-eval score`
+  ([eval_score.py](../tools/prose-eval/src/prose_eval/eval_score.py)): model-based
+  rubric scorer.
+- `prose-eval report`
+  ([eval_report.py](../tools/prose-eval/src/prose_eval/eval_report.py)): combines
+  metrics and scores into a single eval report.
+- `prose-eval compare`
+  ([eval_compare.py](../tools/prose-eval/src/prose_eval/eval_compare.py)): compares N
+  eval reports across versions or variants.
+- [rubric_schema.yaml](../tools/prose-eval/src/prose_eval/rubric_schema.yaml):
   machine-readable schema for the 18 dimensions, the five groups, allowed score values,
   and `NA`-eligible dimensions.
 
@@ -104,7 +107,7 @@ agent-evaluable; optional fields apply when their condition is relevant.
 | `source_policy` | Optional | enum | `primary-required`, `secondary-ok`, `internal-only`. Sets the strictness for §11 Verifiability. |
 | `update_triggers` | Optional | list | Events that should prompt re-review (release cuts, regulatory changes, dependency upgrades). |
 | `evaluation_mode` | Optional | enum | `self`, `external`, `tooling-only`. Records whether the rubric is being applied by the author, by an external reviewer, or by deterministic tooling only. Cross-checks the rubric’s self-eval-overrate note. |
-| `rubric_version` | Required for eval YAMLs | string | Pinned rubric revision (e.g., `18-dim-v1`). Set automatically by `eval_report.py from-metrics`. Not required on the underlying artifact. |
+| `rubric_version` | Required for eval YAMLs | string | Pinned rubric revision (e.g., `18-dim-v1`). Set automatically by `prose-eval report from-metrics`. Not required on the underlying artifact. |
 
 Minimum agent-evaluable set: `title`, `description`, `date`, `status`, `purpose`,
 `audience`, `scope`, `owner`, `last_reviewed`, `risk_level`.
@@ -163,8 +166,8 @@ See the *Audit passes for high-stakes evals* section in
   anchors. The metrics here serve the rubric; the rubric serves judgment.
 - [practical-prose-guidelines.md](practical-prose-guidelines.md): prescriptive rules
   these metrics flag against.
-- [../scripts/practical_prose_metrics.py](../scripts/practical_prose_metrics.py): the
-  deterministic metrics script.
+- [../tools/prose-eval/](../tools/prose-eval/): package workspace for deterministic
+  metrics, model scoring, report validation, and comparison.
 - [../runbooks/practical-prose-eval-single.runbook.md](../runbooks/practical-prose-eval-single.runbook.md):
   end-to-end single-document eval procedure.
 

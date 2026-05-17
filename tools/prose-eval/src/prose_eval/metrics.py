@@ -22,8 +22,8 @@ Counts (all per-document):
     practical-prose-guidelines.md §5 Clarity rule 4 (e.g. incontrovertibly, monumental,
     paradigm-shifting). Override the default list with --banned-words-file.
   - Em-dash discipline: count of spaced em dashes (" — " — a common agent failure
-    mode prohibited by practical-prose-guidelines.md §9 rule 7) and total em-dash
-    density per 1000 words.
+    mode prohibited by practical-prose-guidelines.md §9 rule 7), examples of matching
+    lines, and total em-dash density per 1000 words.
   - Replacement-history hits: prose occurrences of phrases that narrate change
     ("previously named", "formerly", "under the new layout", "this design was changed",
     "now uses"). §7 Concision rule 5 — flags only, since some genres legitimately
@@ -253,6 +253,7 @@ class Metrics:
     banned_register_hits: int = 0
     banned_register_examples: list[str] = field(default_factory=list)
     spaced_em_dash_count: int = 0
+    spaced_em_dash_examples: list[str] = field(default_factory=list)
     em_dashes_total: int = 0
     em_dash_density_per_1000_words: float = 0.0
     replacement_history_hits: int = 0
@@ -273,6 +274,31 @@ def strip_code_and_frontmatter(text: str) -> str:
     text = CODE_FENCE_RE.sub("", text)
     text = CODE_INLINE_RE.sub("", text)
     return text
+
+
+def examples_for_matches(
+    text: str,
+    pattern: re.Pattern[str],
+    *,
+    limit: int = 10,
+    max_len: int = 160,
+) -> list[str]:
+    examples: list[str] = []
+    seen: set[str] = set()
+    for match in pattern.finditer(text):
+        line_start = text.rfind("\n", 0, match.start()) + 1
+        line_end = text.find("\n", match.end())
+        if line_end == -1:
+            line_end = len(text)
+        line = re.sub(r"\s+", " ", text[line_start:line_end]).strip()
+        if len(line) > max_len:
+            line = f"{line[: max_len - 1]}…"
+        if line and line not in seen:
+            examples.append(line)
+            seen.add(line)
+        if len(examples) >= limit:
+            break
+    return examples
 
 
 def count_headings(text: str) -> dict[str, int]:
@@ -324,6 +350,7 @@ def measure(
     banned_examples = sorted({m.lower() for m in banned_matches})[:10]
 
     spaced_em_dashes = SPACED_EM_DASH_RE.findall(structural)
+    spaced_em_dash_examples = examples_for_matches(structural, SPACED_EM_DASH_RE)
     em_dashes_total = len(EM_DASH_RE.findall(structural))
 
     replacement_history_matches = REPLACEMENT_HISTORY_RE.findall(structural)
@@ -365,6 +392,7 @@ def measure(
         banned_register_hits=len(banned_matches),
         banned_register_examples=banned_examples,
         spaced_em_dash_count=len(spaced_em_dashes),
+        spaced_em_dash_examples=spaced_em_dash_examples,
         em_dashes_total=em_dashes_total,
         em_dash_density_per_1000_words=em_dash_density,
         replacement_history_hits=len(replacement_history_matches),
@@ -385,6 +413,7 @@ def format_human(m: Metrics) -> str:
     h = m.headings
     examples = ", ".join(f"[{x}]" for x in m.bracket_tag_examples) or "—"
     banned_examples = ", ".join(m.banned_register_examples) or "—"
+    spaced_dash_examples = " | ".join(m.spaced_em_dash_examples) or "—"
     rh_examples = ", ".join(m.replacement_history_examples) or "—"
     pm_examples = ", ".join(m.pedantic_marker_examples) or "—"
     gh_examples = ", ".join(m.generic_heading_examples) or "—"
@@ -430,6 +459,7 @@ Lint (§5 Clarity rule 4 — banned register from common-doc-guidelines §4.2; m
 
 Lint (§9 Style Consistency rule 7 — em-dash discipline):
   spaced em " — " {m.spaced_em_dash_count:>4}    (common agent failure mode; prefer "—" or other punctuation)
+  examples        {spaced_dash_examples}
   em dashes total {m.em_dashes_total:>4}
   density /1k wds {m.em_dash_density_per_1000_words:>4.2f}
 

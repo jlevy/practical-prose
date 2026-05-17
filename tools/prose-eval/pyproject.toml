@@ -1,7 +1,7 @@
 # ---- Project Info and Dependencies ----
 
 [project.urls]
-Repository = "https://github.com/jlevy/prose-eval"
+Repository = "https://github.com/jlevy/practical-prose"
 # Homepage = "https://..."
 # Documentation = "https://..."
 

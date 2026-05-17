@@ -110,7 +110,7 @@ writing. We list these up front for those looking for a shortlist.
   Famous Ch. 2 ("Simplicity") advice: “strip every sentence to its cleanest components.”
   Zinsser’s four articles of faith: clarity, simplicity, brevity, humanity.
 - **Garner, *Garner’s Modern English Usage*** (1998, current 5th ed.
-  2022)[^garner-meu]. The dominant contemporary American usage authority; the modern
+  2022)[^garner-meu]. The leading contemporary American usage authority; the modern
   successor to Fowler.
   (Garner’s legal-writing works are cited under *Legal and Regulatory Writing*.)
 - **Clark, *Writing Tools*** (2006)[^clark-writing-tools]. Fifty short chapters on
@@ -244,7 +244,7 @@ writing. We list these up front for those looking for a shortlist.
 - **Digital.gov, *Plain language guide series***[^digital-gov-plain]. US federal
   content-design and audience-testing guidance.
   Frames plain language as not only writing but also designing and testing content for
-  audience understanding — a usability discipline, not a style choice.
+  audience understanding—a usability discipline, not a style choice.
 
 ## Accessibility and Inclusive Design
 
@@ -287,11 +287,11 @@ navigate, link, and update reliably.
   documentation.
 - **Hackos, *Information Development: Managing Your Documentation Projects, Portfolio,
   and People*** (2007) and earlier *Managing Your Documentation Projects* (1994) and
-  *Content Management for Dynamic Web Delivery* (2002)[^hackos]. The dominant US voice
+  *Content Management for Dynamic Web Delivery* (2002)[^hackos]. A leading US voice
   in technical-communication leadership: planning, audience analysis, information
   modeling, and the lifecycle of documentation as a project rather than as one-off
   prose.
-- **OASIS DITA (Darwin Information Typing Architecture)**[^dita]. The dominant
+- **OASIS DITA (Darwin Information Typing Architecture)**[^dita]. The standard
   structured-authoring standard for technical content.
   Topic-based authoring with typed information units (concept, task, reference),
   enabling reliable reuse and transformation.
@@ -316,7 +316,7 @@ navigate, link, and update reliably.
   [^nasem-reproducibility]. The most recent consensus statement on scientific reporting
   norms.
 - ***The Chicago Manual of Style*** (1906, current 18th ed.
-  2024)[^chicago-manual]. The dominant US humanities and trade-publishing style guide.
+  2024)[^chicago-manual]. The standard US humanities and trade-publishing style guide.
   The 18th edition adds explicit guidance on diversity, accessibility, inclusive
   language, and use of AI tools alongside the traditional citation, mechanics, and
   manuscript-preparation content.
@@ -325,20 +325,20 @@ navigate, link, and update reliably.
   sciences. Maintains a searchable library of 600+ guidelines (CONSORT, PRISMA, STROBE,
   ARRIVE, CARE, SPIRIT, and others) and pairs each with checklists, flow diagrams, and
   examples.
-- **CONSORT (Consolidated Standards of Reporting Trials)**[^consort]. The dominant
+- **CONSORT (Consolidated Standards of Reporting Trials)**[^consort]. The primary
   reporting standard for randomized controlled trials.
   Mandated by most major medical journals; the checklist defines what a trial report
   must contain to be evaluable.
 - **PRISMA (Preferred Reporting Items for Systematic Reviews and Meta-Analyses)**
-  (current PRISMA 2020)[^prisma]. The dominant standard for systematic reviews and
+  (current PRISMA 2020)[^prisma]. The primary standard for systematic reviews and
   meta-analyses; the four-phase flow diagram is a structural fixture of the genre.
 - **ICMJE, *Recommendations for the Conduct, Reporting, Editing, and Publication of
   Scholarly Work in Medical Journals***[^icmje]. The International Committee of Medical
   Journal Editors’ standing recommendations on authorship, conflicts of interest,
   manuscript preparation, and editorial responsibilities; adopted by ~5,000 journals.
-- **APA Publication Manual** (current 7th ed., 2019)[^apa]. The dominant style guide for
+- **APA Publication Manual** (current 7th ed., 2019)[^apa]. The standard style guide for
   psychology and the social sciences; the source of APA citation style.
-- **AMA Manual of Style** (current 11th ed., 2020)[^ama]. The dominant style guide for
+- **AMA Manual of Style** (current 11th ed., 2020)[^ama]. The standard style guide for
   biomedical writing and the source of AMA citation style; pairs with the ICMJE
   recommendations on editorial substance.
 
@@ -378,13 +378,13 @@ navigate, link, and update reliably.
 - **Read the Docs**[^read-the-docs]. Representative hosting platform for
   Sphinx/MkDocs/Jupyter Book docs, with PR previews and versioned builds.
 - **Microsoft Writing Style Guide**[^microsoft-style]. Online successor to the print
-  *Microsoft Manual of Style* (4th ed., 2012). One of two dominant industry style guides
+  *Microsoft Manual of Style* (4th ed., 2012). One of two leading industry style guides
   for technical documentation.
   Foregrounds bias-free communication, global audience, and accessibility as first-class
   style concerns, not afterthoughts.
 - **Google Developer Documentation Style Guide**[^google-style]. Google’s
   developer-documentation conventions.
-  The other dominant industry style guide.
+  The other leading industry style guide.
   Includes dedicated guidance on accessibility, writing for a global audience, and
   inclusive language; explicitly says project-specific style overrides the general guide
   and that writers may break a rule when doing so improves the content.
@@ -433,10 +433,10 @@ legal-domain anchors specifically.
   2014) covers advocacy writing for litigators with 100 tips on brief structure,
   argument staging, and citation style; *Garner’s Dictionary of Legal Usage* (3rd ed.,
   2011\) is the legal-writing companion to *Garner’s Modern English Usage* and the
-  dominant US legal-usage authority.
+  leading US legal-usage authority.
   Together they form the most-used contemporary US legal-writing reference set.
 - **Joseph Kimble, *Lifting the Fog of Legalese: Essays on Plain Language*** (2006) and
-  *Writing for Dollars, Writing to Please* (2012)[^kimble]. The dominant US scholarly
+  *Writing for Dollars, Writing to Please* (2012)[^kimble]. The leading US scholarly
   advocate for legal plain-language reform; assembles empirical evidence that
   plain-language drafting reduces cost and improves comprehension across regulatory,
   judicial, and contractual domains.
@@ -449,12 +449,12 @@ legal-domain anchors specifically.
   documents are written for publication in the Federal Register.
   The closest thing the US has to a regulatory-prose style guide.
 - **The Bluebook: A Uniform System of Citation** (current 21st ed., 2020)[^bluebook].
-  The dominant US legal citation standard, governing how legal sources are cited in
+  The standard US legal citation manual, governing how legal sources are cited in
   scholarship, briefs, and judicial opinions.
   Produced jointly by the Columbia, Harvard, University of Pennsylvania, and Yale law
   reviews. In active use since 1926.
 - **OSCOLA (Oxford Standard for the Citation of Legal Authorities)** (current 4th ed.,
-  2012)[^oscola]. The UK and Commonwealth counterpart to the Bluebook; the dominant
+  2012)[^oscola]. The UK and Commonwealth counterpart to the Bluebook; the standard
   legal citation standard outside the US. Maintained by the Oxford Law Faculty.
 
 ## Journalism and Reporting

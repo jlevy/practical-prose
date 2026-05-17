@@ -133,6 +133,17 @@ class ProvenanceMetrics(BaseModel):
 class LintMetrics(BaseModel):
     model_config = ConfigDict(extra="forbid")
     banned_register_hits: int
+    banned_register_examples: list[str] = []
+    spaced_em_dash_count: int = 0
+    spaced_em_dash_examples: list[str] = []
+    em_dashes_total: int = 0
+    em_dash_density_per_1000_words: float = 0.0
+    replacement_history_hits: int = 0
+    replacement_history_examples: list[str] = []
+    pedantic_marker_hits: int = 0
+    pedantic_marker_examples: list[str] = []
+    generic_heading_hits: int = 0
+    generic_heading_examples: list[str] = []
 
 
 class QuantMetrics(BaseModel):
@@ -362,7 +373,7 @@ class EvalMetadata(BaseModel):
     eval_date: str
     evaluator: str
     # "draft" = stub or in-progress; "complete" = ready for comparison / publication.
-    # `eval_report.py from-metrics` writes "draft"; eval_score.py promotes to
+    # `prose-eval report from-metrics` writes "draft"; `prose-eval score` promotes to
     # "complete" on a successful model-scoring merge.
     status: EvalStatus = "draft"
     method: str | None = None
@@ -714,7 +725,20 @@ def quant_from_metrics(metrics: pwm.Metrics, *, bytes_kb: float | None = None) -
             footnote_refs=metrics.footnote_references,
             footnote_defs=metrics.footnote_definitions,
         ),
-        lint=LintMetrics(banned_register_hits=metrics.banned_register_hits),
+        lint=LintMetrics(
+            banned_register_hits=metrics.banned_register_hits,
+            banned_register_examples=metrics.banned_register_examples,
+            spaced_em_dash_count=metrics.spaced_em_dash_count,
+            spaced_em_dash_examples=metrics.spaced_em_dash_examples,
+            em_dashes_total=metrics.em_dashes_total,
+            em_dash_density_per_1000_words=metrics.em_dash_density_per_1000_words,
+            replacement_history_hits=metrics.replacement_history_hits,
+            replacement_history_examples=metrics.replacement_history_examples,
+            pedantic_marker_hits=metrics.pedantic_marker_hits,
+            pedantic_marker_examples=metrics.pedantic_marker_examples,
+            generic_heading_hits=metrics.generic_heading_hits,
+            generic_heading_examples=metrics.generic_heading_examples,
+        ),
         bracket_tag_examples=metrics.bracket_tag_examples,
     )
 

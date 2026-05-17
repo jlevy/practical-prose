@@ -1,7 +1,7 @@
-"""Tests for scripts/eval_score.py — subagent runner for qualitative scoring.
+"""Tests for prose_eval.eval_score, the qualitative model scorer.
 
 Run:
-  uv run --script scripts/test_eval_score.py
+  uv run pytest tests/test_eval_score.py
 """
 
 from __future__ import annotations
@@ -288,6 +288,13 @@ def test_build_prompt_includes_all_inputs():
     prompt = build_prompt(FIXTURES / "all_headings.md")
     assert "practical-prose-rubric.md" in prompt
     assert "practical-prose-guidelines.md" in prompt
+    assert "Deterministic metrics context" in prompt
+    assert "preserved source text" in prompt
+    assert "footnotes preserving source titles" in prompt
+    assert "internal file paths" in prompt
+    assert "decision tree" in prompt
+    assert "Soundness is 1-5" in prompt
+    assert "Do not overclaim external verification" in prompt
     assert "Artifact under review" in prompt
     # The fixture has known h1 content
     assert "h1" in prompt.lower() or "heading" in prompt.lower()
@@ -323,6 +330,9 @@ def test_main_dry_run_writes_prompt_to_stdout(tmp_path: Path, capsys):
     assert rc == 0
     out = capsys.readouterr().out
     assert "practical-prose-rubric.md" in out
+    assert "Deterministic metrics context" in out
+    assert '"headings"' in out
+    assert '"banned_register_hits"' in out
     assert "Artifact under review" in out
 
 
@@ -435,6 +445,7 @@ def test_build_messages_has_cached_invariant_and_uncached_artifact():
     # Block 2: artifact, NOT cached (every doc varies).
     assert blocks[1]["type"] == "text"
     assert "cache_control" not in blocks[1]
+    assert "Deterministic metrics context" in blocks[1]["text"]
     assert "Artifact under review" in blocks[1]["text"]
 
 

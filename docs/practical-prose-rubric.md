@@ -20,7 +20,7 @@ Use the guidelines to author; use the rubric to assess.
 
 The doc-type list above is a descriptive framing of what this rubric applies to.
 The eval tooling has a separate, narrower tag (`artifact.scope_class`, set via
-`--scope-class` on `eval_report.py from-metrics`) for density-threshold flagging:
+`--scope-class` on `prose-eval report from-metrics`) for density-threshold flagging:
 `status`, `memo`, `brief`, `deep_research`, `design_doc`. See
 [practical-prose-eval-single.runbook.md](../runbooks/practical-prose-eval-single.runbook.md)
 for the scope-class table and when to set each value.
@@ -51,7 +51,7 @@ same 18 dimensions in the same five groups, using the same names and section num
   to score is materially absent or fragmentary.
   Rare; see the decision tree below.
 - **NA** = not applicable.
-  The dimension does not engage with this artifact at all — for example, Calibration on
+  The dimension does not engage with this artifact at all—for example, Calibration on
   a document that makes no probability or forecast claims.
 
 When you score below 5, cite the specific guideline rule that was missed in the
@@ -61,7 +61,7 @@ coverage or the score is wrong.
 
 **Reader outcome governs local rule compliance.** The rubric checks whether the document
 follows the guidelines, but the guidelines exist to help readers understand, decide, do,
-verify, or maintain something — not to be followed for their own sake.
+verify, or maintain something—not to be followed for their own sake.
 A document that scores high on every dimension but fails its actual reader is not a good
 document. When local rule compliance and reader outcome conflict, reader outcome wins,
 and the deviation is documented (see *Justified deviations* below).
@@ -76,7 +76,7 @@ The same artifact under the same rubric must reach the same answer; if two revie
 reach different answers, one of them has skipped a step.
 
 1. **Does the artifact engage the dimension’s subject matter at all?** Engagement means
-   the artifact contains content the dimension is designed to score — verifiable claims
+   the artifact contains content the dimension is designed to score—verifiable claims
    (Verifiability), cited sources (Factuality), inferential reasoning (Inference
    Discipline), probability claims (Calibration), oppositional framings (Fairness),
    interpretive judgments (Robustness), etc.
@@ -84,7 +84,7 @@ reach different answers, one of them has skipped a step.
      If the per-dim anchor’s NA condition fits, score **NA**. If the per-dim anchor
      instead says the artifact’s task class was *expected* to engage and didn’t (e.g., a
      decision memo with no fairness content), score per the **1-anchor** of that
-     dimension and cite the missing- coverage rule.
+     dimension and cite the missing-coverage rule.
      **Do not invent a “should-have” judgment that the per-dim NA anchor does not
      authorize.** Reasons must quote or paraphrase the per-dim NA anchor when scoring
      NA.
@@ -107,7 +107,7 @@ reach different answers, one of them has skipped a step.
 - **NA and 5 are mutually exclusive.** A dimension cannot score both NA and 5 on the
   same artifact. NA means the artifact does not engage the dimension; 5 means the
   artifact engages it and satisfies the rubric.
-  If the artifact contains no content the per-dim 1-5 anchors describe, it is NA — not
+  If the artifact contains no content the per-dim 1-5 anchors describe, it is NA—not
   5\. ("No problems found because there’s nothing to check" → NA. “No problems found
   because everything checks out” → 5.)
 - **NA and 0 are not interchangeable.** Score 0 requires evidence that the artifact
@@ -201,16 +201,16 @@ Suggested primary assignments:
 
 | Defect | Primary | Secondary |
 | --- | --- | --- |
-| Vague language in ordinary prose ("very," “quickly”) | §5 Clarity | — |
+| Vague language in ordinary prose ("very," “quickly”) | §5 Clarity | None |
 | Vague magnitude in a scoped factual claim ("rapid growth") | §4 Depth | §5 Clarity |
 | Vague countable / category name where specific term exists ("the company") | §15 Precision | §5 Clarity |
-| Trite phrasing or banned-register hit | §5 Clarity | — |
-| Canonicality declaration or word-choice / naming justification ("this is the canonical X"; “we use the term Y because…”) | §5 Clarity | §7 Concision |
-| Replacement-history narration in a non-history genre ("previously named X"; “under the new layout”) | §7 Concision | §5 Clarity |
+| Trite phrasing or banned-register hit | §5 Clarity | None |
+| Canonicality declaration or word-choice / naming rationale | §5 Clarity | §7 Concision |
+| Replacement-history narration in a non-history genre | §7 Concision | §5 Clarity |
 | Generic templated heading as sole section signal ("Overview," “Background,” “Notes”) | §8 Organization | §5 Clarity |
-| Heading-level skip, table that should be prose, broken link | §8 Organization | — |
+| Heading-level skip, table that should be prose, broken link | §8 Organization | None |
 | Inconsistent dialect, casing, or parallel-list syntax | §9 Style Consistency | §5 Clarity |
-| Spaced em-dash overuse (" — “ instead of ”—") | §9 Style Consistency | §5 Clarity |
+| Spaced em-dash overuse (spaces around an em dash instead of “—”) | §9 Style Consistency | §5 Clarity |
 | Malformed Markdown table, broken footnote anchor, misplaced footer | §10 Formatting | §8 Organization |
 | Duplicated table / list content across sections | §7 Concision | §8 Organization |
 | Undeclared or drifting scope on a multi-topic document | §2 Scope | §3 Breadth |
@@ -231,11 +231,11 @@ names, or quoted phrases in the reason where relevant.
 Examples:
 
 ```
-4 (Clear, correct prose throughout; one paragraph at L412-418 has trite phrasing —
-"the agentic thesis fully crystallizes" — and could be tightened.)
+4 (Clear, correct prose throughout; one paragraph at L412-418 has trite phrasing—
+"the agentic thesis fully crystallizes"—and could be tightened.)
 
 3 (Mix of [VERIFIED] tags with primary sources and unverifiable claims around §1.10
-competitive landscape — Vercel CEO benchmark quote at L820 has no tweet ID;
+competitive landscape—Vercel CEO benchmark quote at L820 has no tweet ID;
 W3Techs market-share at L815 has no URL.)
 
 5 (Bull / base / bear cases at §2.8 each have 3 named primitives + numerical thresholds;
@@ -300,7 +300,7 @@ scope cannot be evaluated for whether it covers everything relevant.
 #### §3 Breadth
 
 Are the relevant areas within the declared scope covered?
-Breadth is the *what is covered* question — relevant case classes, prior work, and
+Breadth is the *what is covered* question—relevant case classes, prior work, and
 standard sources are present within scope.
 The *how thoroughly* question is scored under §4 Depth.
 
@@ -370,9 +370,9 @@ validity is scored under §10 Formatting.
   occasional banned-register hits, parallel-structure padding ("It’s not X, it’s Y"
   without a real contrast), or sentences that are unnecessarily dense.
 - **5:** Publication-ready grammar and clarity, with no material defects.
-  Words chosen for precision; banned-register words (the canonical common-doc-guidelines
+  Words chosen for precision; banned-register words (the common-doc-guidelines
   §4.2 list) and parallel-structure padding absent or earned (per §5 rules 4 and 5); no
-  pedantic, pedagogical, or self-referential prose — no canonicality declarations,
+  pedantic, pedagogical, or self-referential prose—no canonicality declarations,
   word-choice justifications, or reading-order instructions (per rule 6). Suitable for
   high editorial standard publication; minor justified deviations are acceptable when
   documented and reader-serving.
@@ -526,7 +526,7 @@ and decision memos require primary sources for every quantitative claim; lightwe
 operational notes only require sources for material claims.
 
 - **NA:** Not applicable.
-  The document makes no **verifiable assertions** — that is, no statements that are
+  The document makes no **verifiable assertions**—that is, no statements that are
   truth-apt and checkable in principle.
   A statement is truth-apt when a competent reader could in principle determine whether
   it is true by consulting sources, observations, or calculations.
@@ -552,13 +552,13 @@ operational notes only require sources for material claims.
 
   Rule: if the artifact contains **any** statement of the second kind, Verifiability is
   engaged and the score is 1-5, not NA. An artifact that *makes* such claims without
-  sourcing them is **not NA** — it scores 1-4 per the anchors below.
+  sourcing them is **not NA**—it scores 1-4 per the anchors below.
   Reserve NA for artifacts whose entire content consists of statements of the first
   kind.
 
 - **0:** Cannot assess.
   The document attempts at least one verifiable assertion, but the supporting content is
-  fragmentary or truncated — the claim is partial, mid-sentence, or marked as
+  fragmentary or truncated—the claim is partial, mid-sentence, or marked as
   intent-only (e.g., `[TODO: cite source]`) rather than executed.
   Rare. If the document makes verifiable assertions and simply omits sources, score 1-4,
   not 0. Score 0 distinguishes *attempted but missing* from *not attempted*.
@@ -579,10 +579,10 @@ operational notes only require sources for material claims.
 - **4:** Score-5 mostly satisfied with one or two minor slips: a single quantitative
   claim without a source, or one `[VERIFIED]` tag without naming what was verified.
 
-- **5:** Every verifiable claim in the document is *easily verifiable* — stated
+- **5:** Every verifiable claim in the document is *easily verifiable*—stated
   specifically enough to be checkable, and traceable to evidence the reader can reach at
   appropriate effort for the document’s stakes.
-  Quantitative and high- stakes claims have specific pointers (URL, document ID, page or
+  Quantitative and high-stakes claims have specific pointers (URL, document ID, page or
   section number, commit SHA). Lower-stakes material claims state their basis (a named
   primary observation, a clearly attributed source, or an inline derivation).
   Confidence tags pair with source pointers; derived facts show the calculation inline
@@ -596,14 +596,14 @@ operational notes only require sources for material claims.
   every claim is resolved.
 
   Note: Verifiability 5 measures the document’s *help* in checking claims, not whether
-  the checks would pass — that is Factuality (§12).
+  the checks would pass—that is Factuality (§12).
 
 #### §12 Factuality
 
 Do the document’s verifiable claims hold up when checked against the world, at the
 asserted strength, for the asserted entity, date, and scope?
-**Verifiability (§11)** is text-internal — does the document let the reader audit?
-**Factuality** is world-aware — does the audit pass?
+**Verifiability (§11)** is text-internal—does the document let the reader audit?
+**Factuality** is world-aware—does the audit pass?
 Scoring Factuality requires the reviewer to attempt corroboration: by following the
 document’s cited sources where present; by consulting authoritative external sources
 where citations are absent; and by recording when a claim cannot be confirmed or refuted
@@ -613,7 +613,7 @@ from available evidence at appropriate effort.
 as certain when the evidence is uncertain is a Factuality defect.
 A claim asserted as speculative or hypothetical, *with the speculative status explicit
 and the basis named*, is **factually correct** even if the underlying proposition cannot
-be checked — because the document is telling the reader the truth about what is known.
+be checked—because the document is telling the reader the truth about what is known.
 Calibrated uncertainty is not a Factuality defect; uncalibrated certainty is.
 
 A claim that cannot be corroborated and is *asserted as fact without hedging* is a
@@ -623,7 +623,7 @@ The score reflects this.
 See §16 Calibration for the broader treatment of claim-strength matching.
 
 **Reviewer access limits are a separate concern from document defects.** A claim may be
-theoretically verifiable but unreachable in the current scoring context — a paywalled
+theoretically verifiable but unreachable in the current scoring context—a paywalled
 article, a private dataset, a closed-source repo, or a primary source in a language the
 reviewer cannot read.
 In such cases, the reviewer should:
@@ -634,8 +634,8 @@ In such cases, the reviewer should:
    unreachable evidence) from *reviewer limits* (the doc provided reasonable pointers,
    but the pointers happen to be inaccessible to this reviewer).
 3. Score document failures per the anchors below.
-   Treat reviewer limits as neutral on Factuality: if the document did its part — cited
-   a primary source, stated the basis, or acknowledged the limit explicitly — the claim
+   Treat reviewer limits as neutral on Factuality: if the document did its part—cited
+   a primary source, stated the basis, or acknowledged the limit explicitly—the claim
    does not count against Factuality.
    The score reason names the access limit so a later reviewer with access can complete
    the audit.
@@ -652,7 +652,7 @@ penalize the document for them.
 
 - **0:** Cannot assess.
   The document attempts at least one verifiable assertion, but the claim is fragmentary
-  or truncated — a partial sentence, an unfinished paragraph, or a `[TODO]` marker —
+  or truncated—a partial sentence, an unfinished paragraph, or a `[TODO]` marker—
   leaving no claim to corroborate.
   Rare. If the document’s claims are fully stated, score 1-5 even if corroboration is
   incomplete (per the rule above).
@@ -676,7 +676,7 @@ penalize the document for them.
   one entity/date mismatch, or one claim flagged as uncorroborated without enough basis
   stated.
 
-- **5:** Every verifiable claim is corroborated — ideally by a cited source the reviewer
+- **5:** Every verifiable claim is corroborated—ideally by a cited source the reviewer
   can reach, otherwise by authoritative external evidence accessible at appropriate
   effort. Numbers in prose match cited or corroborating sources, or disclose rounding,
   aggregation, unit conversion, or derivation explicitly.
@@ -715,7 +715,7 @@ Inference Discipline asks whether the rungs exist as distinct rungs at all.
   Reserve NA for artifacts whose entire content is a pure reference table, a fact-only
   roster, a literal log excerpt, a definition list, or other content that states facts
   without reasoning *from* them.
-  If the artifact reasons anywhere — even one sentence — score 1-5.
+  If the artifact reasons anywhere—even one sentence—score 1-5.
 
 - **0:** Cannot assess.
   The artifact attempts inferential reasoning but provides too little to score it —
@@ -906,8 +906,7 @@ dimension because it invites subjective evaluation:
 
 This is a check, not a score.
 The general standard guideline’s “Be engaging and warm” rule in
-[common-doc-guidelines.md](common-doc-guidelines.md) is the canonical home for tone
-guidance.
+[common-doc-guidelines.md](common-doc-guidelines.md) contains the tone guidance.
 Cite a Tone / Reader Respect concern in an eval’s qualitative section, not as a
 dimension score.
 
@@ -920,7 +919,7 @@ operationalizes them.
 
 | Pass | Scope | Primary dimensions | Stack |
 | --- | --- | --- | --- |
-| Lint | Surface defects | §8 Organization, §9 Style Consistency, §10 Formatting, §5 Clarity (banned-register and vague-word checks) | `practical_prose_metrics.py`, linters, deterministic checks |
+| Lint | Surface defects | §8 Organization, §9 Style Consistency, §10 Formatting, §5 Clarity (banned-register and vague-word checks) | `prose-eval metrics`, linters, deterministic checks |
 | Claim audit | Every quantitative claim against its cited source | §11 Verifiability, §12 Factuality | Source lookups, calculation re-runs |
 | Reasoning audit | Mechanisms, assumptions, counter-evidence, alternative lenses | §13 Inference Discipline, §14 Soundness, §17 Fairness, §18 Robustness | Subject-matter expert or fresh-context agent |
 | Purpose audit | Output shape vs task shape; scope; skim-recoverability | §1 Suitability, §2 Scope, §3 Breadth, §4 Depth | Reader simulation; subject-matter expert |
@@ -928,7 +927,7 @@ operationalizes them.
 The pass separation is **required** for high-stakes documents (audits, decision memos,
 external research, security advisories), **recommended** for standard internal docs, and
 **optional** for low-stakes drafts and operational notes where a single review pass fits
-the risk. Where the discipline applies, do not combine passes — running them in parallel
+the risk. Where the discipline applies, do not combine passes—running them in parallel
 by the same agent in the same context loses the cognitive separation that the four-pass
 structure depends on.
 
@@ -969,12 +968,12 @@ Cross-references to the guidelines:
 These are diagnostic prompts for evaluators, not new rules for writers; the rules they
 invoke live in the guidelines.
 
-## Notes
+## Scoring Caveats
 
 - **Metrics are evidence, not quality.** Quantitative metrics and rubric scores can
   reveal risks, but no metric is a substitute for reader value, factual support, and
-  judgment. A document does not become better by adding visible rigor — more tags, more
-  citations, more caveats, more structure, more words — unless those additions make the
+  judgment. A document does not become better by adding visible rigor—more tags, more
+  citations, more caveats, more structure, more words—unless those additions make the
   claims more inspectable, accurate, useful, or humane.
   Once rules become rubrics, agents and humans both tend to optimize the rubric; this
   clause exists to push back on that drift.
@@ -996,8 +995,8 @@ invoke live in the guidelines.
 ## Versioning
 
 Current revision: **`18-dim-v1`**. Eval YAMLs produced under it set
-`metadata.rubric_version: 18-dim-v1`. The `from-metrics` subcommand of
-`../scripts/eval_report.py` writes this automatically.
+`metadata.rubric_version: 18-dim-v1`. The `prose-eval report from-metrics` subcommand
+writes this automatically.
 
 The previous revision `15-dim-v1` covered 15 dimensions in five groups; `18-dim-v1` adds
 three dimensions (Breadth + Depth split from Coverage; Style Consistency; Formatting),
@@ -1008,14 +1007,14 @@ Bump the version on substantive changes:
 
 - New dimension added or removed: bump the dim count (e.g., `18-dim-v1` → `19-dim-v1`).
 - Anchor language changed in a way that could shift scores: bump the rev (`18-dim-v1` →
-  `18-dim-v2`). The rubric schema in `../scripts/rubric_schema.yaml` is the canonical
-  source for the current version string; bumping the rubric here means bumping `version`
-  there too.
+  `18-dim-v2`). The rubric schema in
+  `../tools/prose-eval/src/prose_eval/rubric_schema.yaml` is the source for the current
+  version string; bumping the rubric here means bumping `version` there too.
 
-`../scripts/eval_compare.py` warns when comparing across rubric versions.
-Pinned regression fixtures (`../scripts/fixtures/rev{1,2}-net.eval.yaml`,
-`../scripts/fixtures/{guidelines,runbook}-self.eval.yaml`) were scored under `15-dim-v1`
-and must be re-scored before they can be reused under `18-dim-v1`.
+`prose-eval compare` warns when comparing across rubric versions.
+Pinned regression fixtures under `../tools/prose-eval/tests/fixtures/` include legacy
+reports scored under `15-dim-v1`; re-score them before using them as `18-dim-v1`
+calibration references.
 
 ## Related docs
 

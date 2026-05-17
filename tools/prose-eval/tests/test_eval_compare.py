@@ -1,7 +1,7 @@
-"""Tests for scripts/eval_compare.py — Markdown comparison generator.
+"""Tests for prose_eval.eval_compare, the Markdown comparison generator.
 
 Run:
-  uv run --script scripts/test_eval_compare.py
+  uv run pytest tests/test_eval_compare.py
 """
 
 from __future__ import annotations
