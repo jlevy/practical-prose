@@ -7,7 +7,7 @@ output is reused as:
 
   - the body of each `.eval.md` file (frontmatter + body; body is regenerated
     whenever the frontmatter is updated),
-  - the per-section content of `eval-compare --format by-doc`.
+  - the per-section content of `pprose compare --format by-doc`.
 
 The frontmatter is canonical; this body is derived presentation.
 """
@@ -16,7 +16,7 @@ from __future__ import annotations
 
 from typing import Any
 
-from prose_eval import rubric_schema as rs
+from pprose import rubric_schema as rs
 
 # Reports are typed `Any` here rather than `EvalReport` because eval_report
 # imports this module at top level. Annotating with `EvalReport` (even under
@@ -250,9 +250,7 @@ def render_per_doc_rollup(
     density_concerns: list[tuple[str, list[str]]] | None = None,
 ) -> str:
     """Render N docs as N consecutive self-contained sections (used by --format by-doc)."""
-    concerns_by_label: dict[str, list[str]] = {}
-    if density_concerns:
-        concerns_by_label = {label: c for label, c in density_concerns}
+    concerns_by_label: dict[str, list[str]] = dict(density_concerns or [])
     parts: list[str] = []
     for r in reports:
         parts.append(render_single_doc_rollup(r, concerns_by_label.get(r.artifact.label)))

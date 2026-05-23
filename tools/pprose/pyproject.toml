@@ -1,13 +1,13 @@
 # ---- Project Info and Dependencies ----
 
 [project.urls]
-Repository = "https://github.com/jlevy/prose-eval"
+Repository = "https://github.com/jlevy/practical-prose"
 # Homepage = "https://..."
 # Documentation = "https://..."
 
 [project]
-name = "prose-eval"
-description = "Practical-prose eval tooling: rubric scoring, reports, comparisons"
+name = "pprose"
+description = "Practical Prose tooling: metrics, rubric scoring, evaluation reports, and comparisons"
 authors = [
     { name="Joshua Levy", email="joshuadlevy@gmail.com" },
 ]
@@ -62,11 +62,7 @@ dev = [
 ]
 
 [project.scripts]
-prose-eval = "prose_eval.cli:main"
-eval-score = "prose_eval.eval_score:main"
-eval-report = "prose_eval.eval_report:main"
-eval-compare = "prose_eval.eval_compare:main"
-prose-metrics = "prose_eval.metrics:main"
+pprose = "pprose.cli:main"
 
 
 # ---- Build system ----
@@ -91,13 +87,13 @@ bump = true
 
 [tool.hatch.build.targets.wheel]
 # The source location for the package.
-packages = ["src/prose_eval"]
+packages = ["src/pprose"]
 # Include packaged data files (rubric schema YAML and prompt template) in the wheel.
 # These are loaded at runtime via Path(__file__).parent / "rubric_schema.yaml" and
 # PACKAGE_ROOT / "prompts" / "eval-rubric-score.md".
 include = [
-    "src/prose_eval/rubric_schema.yaml",
-    "src/prose_eval/prompts/*.md",
+    "src/pprose/rubric_schema.yaml",
+    "src/pprose/prompts/*.md",
 ]
 
 

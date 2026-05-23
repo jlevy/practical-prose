@@ -50,7 +50,7 @@ files.
 Each generated report should pass:
 
 ```bash
-prose-eval report validate path/to/report.eval.md --complete
+pprose report validate path/to/report.eval.md --complete
 ```
 
 ## Default: Run All Baselines
@@ -62,101 +62,95 @@ comparison files, and Flowmark-formats the generated Markdown.
 
 ```bash
 REPO_ROOT="$(git rev-parse --show-toplevel)"
-TOOL_DIR="$REPO_ROOT/tools/prose-eval"
 OUT_DIR="$REPO_ROOT/evals/baselines"
 COMMIT_SHA="$(git -C "$REPO_ROOT" rev-parse HEAD)"
 
 rm -rf "$OUT_DIR"
 mkdir -p "$OUT_DIR/third-party" "$OUT_DIR/self"
 
-cd "$TOOL_DIR"
-
-uv run prose-eval report from-metrics \
+pprose report from-metrics \
   "$REPO_ROOT/example-texts/sqlite-appropriate-uses.md" \
   --label "SQLite: Appropriate Uses" \
   --scope-class brief \
   --commit-sha "$COMMIT_SHA" \
   --evaluator "model:claude-sonnet-4-5" \
-  --method "prose-eval score" \
+  --method "pprose score" \
   --out "$OUT_DIR/third-party/sqlite-appropriate-uses.eval.md"
 
-uv run prose-eval report from-metrics \
+pprose report from-metrics \
   "$REPO_ROOT/example-texts/nasa-stakeholder-expectations-definition.md" \
   --label "NASA SEH: Stakeholder Expectations" \
   --scope-class design_doc \
   --commit-sha "$COMMIT_SHA" \
   --evaluator "model:claude-sonnet-4-5" \
-  --method "prose-eval score" \
+  --method "pprose score" \
   --out "$OUT_DIR/third-party/nasa-stakeholder-expectations-definition.eval.md"
 
-uv run prose-eval report from-metrics \
+pprose report from-metrics \
   "$REPO_ROOT/example-texts/irs-1040-filing-requirements.md" \
   --label "IRS 1040: Filing Requirements" \
   --scope-class brief \
   --commit-sha "$COMMIT_SHA" \
   --evaluator "model:claude-sonnet-4-5" \
-  --method "prose-eval score" \
+  --method "pprose score" \
   --out "$OUT_DIR/third-party/irs-1040-filing-requirements.eval.md"
 
-uv run prose-eval report from-metrics \
+pprose report from-metrics \
   "$REPO_ROOT/docs/practical-prose-guidelines.md" \
   --label "Practical Prose Guidelines" \
   --scope-class design_doc \
   --commit-sha "$COMMIT_SHA" \
   --evaluator "model:claude-sonnet-4-5" \
-  --method "prose-eval score" \
+  --method "pprose score" \
   --out "$OUT_DIR/self/practical-prose-guidelines.eval.md"
 
-uv run prose-eval report from-metrics \
+pprose report from-metrics \
   "$REPO_ROOT/docs/practical-prose-rubric.md" \
   --label "Practical Prose Rubric" \
   --scope-class design_doc \
   --commit-sha "$COMMIT_SHA" \
   --evaluator "model:claude-sonnet-4-5" \
-  --method "prose-eval score" \
+  --method "pprose score" \
   --out "$OUT_DIR/self/practical-prose-rubric.eval.md"
 
-uv run prose-eval report from-metrics \
+pprose report from-metrics \
   "$REPO_ROOT/docs/practical-prose-bibliography.md" \
   --label "Practical Prose Bibliography" \
   --scope-class deep_research \
   --commit-sha "$COMMIT_SHA" \
   --evaluator "model:claude-sonnet-4-5" \
-  --method "prose-eval score" \
+  --method "pprose score" \
   --out "$OUT_DIR/self/practical-prose-bibliography.eval.md"
 
-uv run prose-eval score "$OUT_DIR"/third-party/*.eval.md "$OUT_DIR"/self/*.eval.md --batch
+pprose score "$OUT_DIR"/third-party/*.eval.md "$OUT_DIR"/self/*.eval.md --batch
 
 for report in "$OUT_DIR"/third-party/*.eval.md "$OUT_DIR"/self/*.eval.md; do
-  uv run prose-eval report validate "$report" --complete
+  pprose report validate "$report" --complete
 done
 
-uv run prose-eval compare "$OUT_DIR"/third-party/*.eval.md \
+pprose compare "$OUT_DIR"/third-party/*.eval.md \
   --format both \
   > "$OUT_DIR/comparison-third-party.md"
 
-uv run prose-eval compare "$OUT_DIR"/self/*.eval.md \
+pprose compare "$OUT_DIR"/self/*.eval.md \
   --format both \
   > "$OUT_DIR/comparison-self.md"
 
-uv run prose-eval compare "$OUT_DIR"/third-party/*.eval.md "$OUT_DIR"/self/*.eval.md \
+pprose compare "$OUT_DIR"/third-party/*.eval.md "$OUT_DIR"/self/*.eval.md \
   --format both \
   > "$OUT_DIR/comparison-all.md"
 
-cd "$REPO_ROOT"
 flowmark --auto "$OUT_DIR"/*.md "$OUT_DIR"/third-party/*.md "$OUT_DIR"/self/*.md
 
-cd "$TOOL_DIR"
 for report in "$OUT_DIR"/third-party/*.eval.md "$OUT_DIR"/self/*.eval.md; do
-  uv run prose-eval report validate "$report" --complete
+  pprose report validate "$report" --complete
 done
 ```
 
-If a report fails alignment during `prose-eval score`, retry that specific report:
+If a report fails alignment during `pprose score`, retry that specific report:
 
 ```bash
-cd tools/prose-eval
-uv run prose-eval score "$REPO_ROOT/evals/baselines/path/to/failed.eval.md"
+pprose score "$REPO_ROOT/evals/baselines/path/to/failed.eval.md"
 ```
 
 Do not use `--allow-misaligned` for a published baseline unless the goal is explicitly
@@ -168,14 +162,13 @@ Use this only when debugging converted source examples.
 The default baseline run should include the self docs too.
 
 ```bash
-cd "$REPO_ROOT/tools/prose-eval"
-uv run prose-eval score "$REPO_ROOT/evals/baselines/third-party"/*.eval.md --batch
+pprose score "$REPO_ROOT/evals/baselines/third-party"/*.eval.md --batch
 
 for report in "$REPO_ROOT/evals/baselines/third-party"/*.eval.md; do
-  uv run prose-eval report validate "$report" --complete
+  pprose report validate "$report" --complete
 done
 
-uv run prose-eval compare "$REPO_ROOT/evals/baselines/third-party"/*.eval.md \
+pprose compare "$REPO_ROOT/evals/baselines/third-party"/*.eval.md \
   --format both \
   > "$REPO_ROOT/evals/baselines/comparison-third-party.md"
 ```
@@ -187,14 +180,13 @@ documentation scores.
 The default baseline run should include the third-party examples too.
 
 ```bash
-cd "$REPO_ROOT/tools/prose-eval"
-uv run prose-eval score "$REPO_ROOT/evals/baselines/self"/*.eval.md --batch
+pprose score "$REPO_ROOT/evals/baselines/self"/*.eval.md --batch
 
 for report in "$REPO_ROOT/evals/baselines/self"/*.eval.md; do
-  uv run prose-eval report validate "$report" --complete
+  pprose report validate "$report" --complete
 done
 
-uv run prose-eval compare "$REPO_ROOT/evals/baselines/self"/*.eval.md \
+pprose compare "$REPO_ROOT/evals/baselines/self"/*.eval.md \
   --format both \
   > "$REPO_ROOT/evals/baselines/comparison-self.md"
 ```

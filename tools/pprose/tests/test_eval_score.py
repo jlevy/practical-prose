@@ -1,18 +1,13 @@
-"""Tests for scripts/eval_score.py — subagent runner for qualitative scoring.
-
-Run:
-  uv run --script scripts/test_eval_score.py
-"""
+"""Tests for pprose.eval_score — the qualitative-scoring runner."""
 
 from __future__ import annotations
 
-import sys
 from pathlib import Path
 
 import pytest
 
-from prose_eval.eval_render import render_single_doc_rollup
-from prose_eval.eval_report import (  # noqa: E402
+from pprose.eval_render import render_single_doc_rollup
+from pprose.eval_report import (
     EvalReport,
     ExpressionScores,
     GroundingScores,
@@ -22,7 +17,7 @@ from prose_eval.eval_report import (  # noqa: E402
     ReasoningScores,
     Violation,
 )
-from prose_eval.eval_score import (  # noqa: E402
+from pprose.eval_score import (
     build_prompt,
     extract_json_block,
     main,
@@ -30,13 +25,12 @@ from prose_eval.eval_score import (  # noqa: E402
     parse_response,
 )
 
-SCRIPTS_DIR = Path(__file__).resolve().parent
-FIXTURES = SCRIPTS_DIR / "test_fixtures" / "practical_prose_metrics"
+FIXTURES = Path(__file__).resolve().parent / "test_fixtures" / "practical_prose_metrics"
 
 
 def _full_payload(score: int = 4, with_violation: bool = True) -> dict:
     """Build a JSON payload covering every rubric dimension at a uniform score."""
-    from prose_eval import rubric_schema as rs
+    from pprose import rubric_schema as rs
 
     payload = {
         "scores": {d.key: {"score": score, "reason": "test"} for d in rs.DIMENSIONS},
@@ -168,7 +162,7 @@ def test_parse_response_no_scores_object_raises():
 
 
 def _stub_report(tmp_path: Path) -> EvalReport:
-    from prose_eval.eval_report import main as report_main
+    from pprose.eval_report import main as report_main
 
     out = tmp_path / "stub.eval.md"
     rc = report_main(
@@ -205,7 +199,7 @@ def test_merge_replaces_qual_and_violations(tmp_path: Path):
         reasoning=ReasoningScores(discipline=5, soundness=5, precision=5, parsimony=5),
         judgment=JudgmentScores(calibration=5, fairness=5, robustness=5),
     )
-    from prose_eval.eval_score import ScoredResult
+    from pprose.eval_score import ScoredResult
 
     scored = ScoredResult(qual=qual, violations=[])
     merged = merge_into_report(stub, scored, evaluator="test-eval")
@@ -235,7 +229,7 @@ def test_merge_preserves_existing_method(tmp_path: Path):
         reasoning=ReasoningScores(discipline=5, soundness=5, precision=5, parsimony=5),
         judgment=JudgmentScores(calibration=5, fairness=5, robustness=5),
     )
-    from prose_eval.eval_score import ScoredResult
+    from pprose.eval_score import ScoredResult
 
     merged = merge_into_report(stub, ScoredResult(qual=qual, violations=[]), evaluator="x")
     assert merged.metadata.method == "12-dim re-baseline"
@@ -253,7 +247,7 @@ def test_merge_alignment_clean_passes_strict_validate(tmp_path: Path):
         reasoning=ReasoningScores(discipline=5, soundness=5, precision=5, parsimony=5),
         judgment=JudgmentScores(calibration=5, fairness=5, robustness=5),
     )
-    from prose_eval.eval_score import ScoredResult
+    from pprose.eval_score import ScoredResult
 
     merged = merge_into_report(stub, ScoredResult(qual=qual, violations=[]), evaluator="x")
     assert merged.alignment_errors() == []
@@ -271,7 +265,7 @@ def test_merge_with_proper_violations_passes_alignment(tmp_path: Path):
         reasoning=ReasoningScores(discipline=5, soundness=5, precision=5, parsimony=5),
         judgment=JudgmentScores(calibration=5, fairness=5, robustness=5),
     )
-    from prose_eval.eval_score import ScoredResult
+    from pprose.eval_score import ScoredResult
 
     violations = [Violation(dimension="Clarity", rule_number=4, description="x", location="L1")]
     merged = merge_into_report(stub, ScoredResult(qual=qual, violations=violations), evaluator="x")
@@ -299,7 +293,7 @@ def test_build_prompt_is_schema_derived():
     """The dimension list, JSON skeleton, and key count are generated from the
     schema, not hard-coded in the template. Adding a dimension to the YAML must
     flow into the prompt without editing the template."""
-    import prose_eval.rubric_schema as rs
+    import pprose.rubric_schema as rs
 
     prompt = build_prompt(FIXTURES / "all_headings.md")
     # No unsubstituted placeholders leak into the rendered prompt.
@@ -325,7 +319,7 @@ def test_build_prompt_missing_artifact_raises(tmp_path: Path):
 
 
 def test_main_dry_run_writes_prompt_to_stdout(tmp_path: Path, capsys):
-    from prose_eval.eval_report import main as report_main
+    from pprose.eval_report import main as report_main
 
     stub = tmp_path / "stub.eval.md"
     rc = report_main(
@@ -381,7 +375,7 @@ def test_round_trip_merge_then_load(tmp_path: Path):
     violations = [
         Violation(dimension=d, rule_number=1, description="x", location="L1") for d in sub5_dims
     ]
-    from prose_eval.eval_score import ScoredResult
+    from pprose.eval_score import ScoredResult
 
     merged = merge_into_report(
         stub, ScoredResult(qual=qual, violations=violations), evaluator="round-trip"
@@ -402,7 +396,7 @@ def test_round_trip_merge_then_load(tmp_path: Path):
 
 def test_merge_populates_reproducibility_metadata(tmp_path: Path):
     """A ReproContext flows through merge_into_report into metadata.*"""
-    from prose_eval.eval_score import ReproContext, ScoredResult
+    from pprose.eval_score import ReproContext, ScoredResult
 
     stub = _stub_report(tmp_path)
     qual = QualScores(
@@ -440,9 +434,11 @@ def test_merge_populates_reproducibility_metadata(tmp_path: Path):
 
 def test_build_messages_has_cached_invariant_and_uncached_artifact():
     """The Anthropic message list must mark the rubric+guidelines block as cached."""
-    from prose_eval.eval_score import _build_messages
+    from pprose.eval_score import _artifact_block_text, _build_messages, _cached_block_text
 
-    messages = _build_messages(FIXTURES / "all_headings.md")
+    messages = _build_messages(
+        _cached_block_text(), _artifact_block_text(FIXTURES / "all_headings.md")
+    )
     assert len(messages) == 1
     blocks = messages[0]["content"]
     assert len(blocks) == 2, "expected exactly two content blocks: cached + artifact"
@@ -458,7 +454,7 @@ def test_build_messages_has_cached_invariant_and_uncached_artifact():
 
 
 def test_resolve_model_handles_aliases_and_full_ids():
-    from prose_eval.eval_score import DEFAULT_MODEL, _resolve_model
+    from pprose.eval_score import DEFAULT_MODEL, _resolve_model
 
     assert _resolve_model(None) == DEFAULT_MODEL
     assert _resolve_model("") == DEFAULT_MODEL
@@ -472,7 +468,7 @@ def test_resolve_model_handles_aliases_and_full_ids():
 
 def test_repro_context_persists_sdk_fields(tmp_path: Path):
     """sdk_version + model_id + cache_stats flow through merge_into_report."""
-    from prose_eval.eval_score import ReproContext, ScoredResult
+    from pprose.eval_score import ReproContext, ScoredResult
 
     stub = _stub_report(tmp_path)
     qual = QualScores(
@@ -567,7 +563,7 @@ def test_call_anthropic_extracts_text_and_usage(monkeypatch):
     """call_anthropic returns text + cache usage from the SDK response."""
     import anthropic
 
-    from prose_eval.eval_score import call_anthropic
+    from pprose.eval_score import call_anthropic
 
     _FakeAnthropic.stub("hello world", model_id="claude-sonnet-4-5-fake")
     monkeypatch.setattr(anthropic, "Anthropic", _FakeAnthropic)
@@ -587,8 +583,8 @@ def test_main_end_to_end_calls_sdk_and_persists_cache_stats(tmp_path: Path, monk
     """Full main() path: SDK mocked, YAML written, cache_stats recorded."""
     import anthropic
 
-    from prose_eval.eval_report import main as report_main
-    from prose_eval.eval_score import main as score_main
+    from pprose.eval_report import main as report_main
+    from pprose.eval_score import main as score_main
 
     # Stub: a model response that scores every dimension at 5 (no violations needed).
     payload = _full_payload(score=5, with_violation=False)
@@ -625,7 +621,3 @@ def test_main_end_to_end_calls_sdk_and_persists_cache_stats(tmp_path: Path, monk
     # The .eval.md hybrid file is the only persisted scoring artifact.
     raw_path = stub.parent / "stub.eval.raw.txt"
     assert not raw_path.exists()
-
-
-if __name__ == "__main__":
-    sys.exit(pytest.main([__file__, "-v"]))

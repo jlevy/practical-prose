@@ -1,20 +1,15 @@
-"""Tests for scripts/eval_report.py — Pydantic eval-report schema.
-
-Run:
-  uv run --script scripts/test_eval_report.py
-"""
+"""Tests for pprose.eval_report — Pydantic eval report schema."""
 
 from __future__ import annotations
 
-import sys
 from pathlib import Path
 
 import pytest
 import yaml
 from pydantic import ValidationError
 
-from prose_eval import rubric_schema as rs  # noqa: E402
-from prose_eval.eval_report import (  # noqa: E402
+from pprose import rubric_schema as rs
+from pprose.eval_report import (
     EvalReport,
     QualScores,
     QuantMetrics,
@@ -279,7 +274,7 @@ def test_load_from_yaml_path(tmp_path: Path):
 
 
 def test_validate_cli(tmp_path: Path):
-    from prose_eval.eval_report import main
+    from pprose.eval_report import main
 
     data = _minimal_report_dict()
     path = tmp_path / "test.eval.md"
@@ -291,7 +286,7 @@ def test_validate_cli(tmp_path: Path):
 
 
 def test_validate_cli_failure(tmp_path: Path):
-    from prose_eval.eval_report import main
+    from pprose.eval_report import main
 
     path = tmp_path / "bad.eval.md"
     path.write_text("artifact:\n  label: X\n", encoding="utf-8")
@@ -300,7 +295,7 @@ def test_validate_cli_failure(tmp_path: Path):
 
 
 def test_compute_derived_cli_in_place(tmp_path: Path):
-    from prose_eval.eval_report import main
+    from pprose.eval_report import main
 
     data = _minimal_report_dict()
     path = tmp_path / "test.eval.md"
@@ -317,13 +312,12 @@ def test_compute_derived_cli_in_place(tmp_path: Path):
 # ---------------------------------------------------------------------------
 
 
-SCRIPTS_DIR = Path(__file__).resolve().parent
-FIXTURES = SCRIPTS_DIR / "test_fixtures" / "practical_prose_metrics"
+FIXTURES = Path(__file__).resolve().parent / "test_fixtures" / "practical_prose_metrics"
 
 
 def test_from_metrics_round_trip(tmp_path: Path):
     """from-metrics output validates and round-trips through the schema."""
-    from prose_eval.eval_report import EvalReport, main
+    from pprose.eval_report import EvalReport, main
 
     out_path = tmp_path / "fixture.eval.md"
     rc = main(
@@ -351,7 +345,7 @@ def test_from_metrics_round_trip(tmp_path: Path):
 
 
 def test_from_metrics_emits_optional_table_style_metadata(tmp_path: Path):
-    from prose_eval.eval_report import main
+    from pprose.eval_report import main
 
     out_path = tmp_path / "fixture.eval.md"
     rc = main(
@@ -376,8 +370,8 @@ def test_from_metrics_emits_optional_table_style_metadata(tmp_path: Path):
 
 def test_from_metrics_quant_mapping_matches_metrics_script(tmp_path: Path):
     """Verify the rename/regroup in quant_from_metrics is correct end-to-end."""
-    from prose_eval import metrics as pwm
-    from prose_eval.eval_report import quant_from_metrics
+    from pprose import metrics as pwm
+    from pprose.eval_report import quant_from_metrics
 
     metrics = pwm.measure(FIXTURES / "links_mixed.md")
     quant = quant_from_metrics(metrics)
@@ -397,7 +391,7 @@ def test_from_metrics_quant_mapping_matches_metrics_script(tmp_path: Path):
 
 
 def test_from_metrics_default_label_is_file_stem(tmp_path: Path):
-    from prose_eval.eval_report import EvalReport, main
+    from pprose.eval_report import EvalReport, main
 
     out_path = tmp_path / "out.eval.md"
     rc = main(
@@ -414,7 +408,7 @@ def test_from_metrics_default_label_is_file_stem(tmp_path: Path):
 
 
 def test_from_metrics_records_optional_fields(tmp_path: Path):
-    from prose_eval.eval_report import EvalReport, main
+    from pprose.eval_report import EvalReport, main
 
     out_path = tmp_path / "out.eval.md"
     rc = main(
@@ -439,7 +433,7 @@ def test_from_metrics_records_optional_fields(tmp_path: Path):
 
 
 def test_from_metrics_missing_file_returns_error(tmp_path: Path):
-    from prose_eval.eval_report import main
+    from pprose.eval_report import main
 
     rc = main(["from-metrics", str(tmp_path / "does-not-exist.md")])
     assert rc == 1
@@ -472,7 +466,7 @@ def test_scope_class_rejects_unknown():
 
 
 def test_from_metrics_records_scope_class(tmp_path: Path):
-    from prose_eval.eval_report import EvalReport, main
+    from pprose.eval_report import EvalReport, main
 
     out_path = tmp_path / "out.eval.md"
     rc = main(
@@ -564,7 +558,7 @@ def test_rubric_version_preserved_when_set():
 
 
 def test_from_metrics_writes_current_rubric_version(tmp_path: Path):
-    from prose_eval.eval_report import CURRENT_RUBRIC_VERSION, EvalReport, main
+    from pprose.eval_report import CURRENT_RUBRIC_VERSION, EvalReport, main
 
     out_path = tmp_path / "out.eval.md"
     rc = main(
@@ -581,7 +575,7 @@ def test_from_metrics_writes_current_rubric_version(tmp_path: Path):
 
 
 def test_from_metrics_custom_rubric_version(tmp_path: Path):
-    from prose_eval.eval_report import EvalReport, main
+    from pprose.eval_report import EvalReport, main
 
     out_path = tmp_path / "out.eval.md"
     rc = main(
@@ -719,7 +713,7 @@ class TestB10_AlignmentProperty:
             EvalReport.model_validate(data)
 
     def test_validate_cli_strict_by_default_rejects_misaligned(self, tmp_path: Path):
-        from prose_eval.eval_report import main
+        from pprose.eval_report import main
 
         data = _minimal_report_dict()  # clarity=4 with no violations
         path = tmp_path / "test.eval.md"
@@ -728,7 +722,7 @@ class TestB10_AlignmentProperty:
         assert rc != 0
 
     def test_validate_cli_allow_misalignment_passes(self, tmp_path: Path):
-        from prose_eval.eval_report import main
+        from pprose.eval_report import main
 
         data = _minimal_report_dict()
         path = tmp_path / "test.eval.md"
@@ -738,7 +732,7 @@ class TestB10_AlignmentProperty:
 
     def test_validate_complete_rejects_all_zero_stub(self, tmp_path: Path):
         """validate --complete should reject the from-metrics all-zero stub."""
-        from prose_eval.eval_report import main
+        from pprose.eval_report import main
 
         out_path = tmp_path / "stub.eval.md"
         rc = main(
@@ -755,7 +749,7 @@ class TestB10_AlignmentProperty:
 
     def test_validate_complete_rejects_evaluator_todo(self, tmp_path: Path):
         """validate --complete should reject evaluator='TODO'."""
-        from prose_eval.eval_report import main
+        from pprose.eval_report import main
 
         data = _minimal_report_dict()
         data["metadata"]["evaluator"] = "TODO"
@@ -767,7 +761,7 @@ class TestB10_AlignmentProperty:
 
     def test_validate_complete_rejects_draft_status(self, tmp_path: Path):
         """validate --complete should reject status='draft'."""
-        from prose_eval.eval_report import main
+        from pprose.eval_report import main
 
         data = _minimal_report_dict()
         # _minimal_report_dict yields clarity=4 etc.; status defaults to draft.
@@ -778,7 +772,7 @@ class TestB10_AlignmentProperty:
 
     def test_validate_complete_accepts_filled_report(self, tmp_path: Path):
         """A filled, status=complete, with-reasons report passes --complete."""
-        from prose_eval.eval_report import main
+        from pprose.eval_report import main
 
         data = _minimal_report_dict()
         data["metadata"]["status"] = "complete"
@@ -823,7 +817,7 @@ class TestB10_AlignmentProperty:
 
     def test_from_metrics_stub_passes_strict_validate(self, tmp_path: Path):
         """The from-metrics stub is all-zero qual; alignment should not flag it."""
-        from prose_eval.eval_report import main
+        from pprose.eval_report import main
 
         out_path = tmp_path / "stub.eval.md"
         rc = main(
@@ -848,13 +842,9 @@ def test_from_metrics_stub_qual_is_consistent_with_alignment_principle():
     means the artifact cannot be assessed (e.g. content missing) rather than 'failing
     the rubric without citing a rule'.
     """
-    from prose_eval.eval_report import stub_qual
+    from pprose.eval_report import stub_qual
 
     qual = stub_qual()
-    from prose_eval import rubric_schema as rs
+    from pprose import rubric_schema as rs
 
     assert qual.all_scores() == [0] * rs.dimension_count()
-
-
-if __name__ == "__main__":
-    sys.exit(pytest.main([__file__, "-v"]))

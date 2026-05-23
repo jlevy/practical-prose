@@ -59,10 +59,10 @@ Known limitations:
     use these patterns; the reviewer judges genre exception.
 
 Usage:
-  prose-metrics path/to/document.md
-  prose-metrics path/to/document.md --format=yaml
-  prose-metrics *.md            # multiple files, summary table
-  prose-metrics doc.md --words-per-page 250
+  pprose metrics path/to/document.md
+  pprose metrics path/to/document.md --format=yaml
+  pprose metrics *.md            # multiple files, summary table
+  pprose metrics doc.md --words-per-page 250
 """
 
 from __future__ import annotations
@@ -219,13 +219,7 @@ DEFAULT_BANNED_RE = _compile_banned_words(DEFAULT_BANNED_WORDS)
 
 
 def classify_url(url: str) -> str:
-    """Classify a link target as 'external' or 'internal'.
-
-    External: targets a network resource (http(s), ftp, mailto, tel).
-    Internal: relative paths, absolute paths, anchors, or anything else not
-    requiring network access — i.e., references that resolve within the
-    repository or document.
-    """
+    """Classify a link target as 'external' (network: http(s)/ftp/mailto/tel) or 'internal'."""
     url = url.strip().lower()
     return "external" if url.startswith(EXTERNAL_SCHEMES) else "internal"
 
@@ -472,8 +466,6 @@ def format_summary_table(metrics_list: list[Metrics]) -> str:
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(
         description="Quantitative metrics for analytical-writing artifacts.",
-        formatter_class=argparse.RawDescriptionHelpFormatter,
-        epilog=__doc__,
     )
     parser.add_argument("paths", nargs="+", type=Path, help="Markdown file(s) to measure.")
     parser.add_argument(

@@ -144,7 +144,7 @@ formatting rules that apply to *any* document—technical docs, READMEs, interna
 specifications—not just practical prose.
 The practical-prose layers (Principles, Guidelines, Rubric) build on top of it with the
 seven principles and 20 dimensions specific to evaluating practical writing.
-Principles, Guidelines, and Rubric form a tight triple: same seven principles, same 18
+Principles, Guidelines, and Rubric form a tight triple: same seven principles, same 20
 dimensions, same five groups (Purpose, Expression, Grounding, Reasoning, Judgment).
 The bibliography supplies the intellectual basis; the shortcuts and runbooks are how the
 system gets used in practice.
@@ -162,14 +162,14 @@ system gets used in practice.
   [practical-prose-principles.md](docs/practical-prose-principles.md), and the
   source tradition in
   [practical-prose-bibliography.md](docs/practical-prose-bibliography.md).
-- **Looking at the tooling:** [tools/prose-eval/](tools/prose-eval/) is the installable
+- **Looking at the tooling:** [tools/pprose/](tools/pprose/) is the installable
   Python package with the metrics, scoring, and report generators.
 
 ## Agent Skills
 
 This repo can be used directly by modern coding agents through `AGENTS.md` and portable
 Agent Skills under [skills/](skills/). The eval skills use the
-[`prose-eval` tooling](#tooling) described below.
+[`pprose` tooling](#tooling) described below.
 
 | Skill | Kind | Use When |
 | --- | --- | --- |
@@ -194,33 +194,29 @@ canonical source documents.
 
 ## Tooling
 
-[tools/prose-eval/](tools/prose-eval/) is a standalone modern-Python package
+[tools/pprose/](tools/pprose/) is a standalone modern-Python package
 (bootstrapped from [`simple-modern-uv`](https://github.com/jlevy/simple-modern-uv)) that
-installs a single `prose-eval` console-script entry point:
+installs a single `pprose` console-script entry point:
 
-- `prose-eval metrics`: deterministic metrics over a document (banned-register hits,
+- `pprose metrics`: deterministic metrics over a document (banned-register hits,
   vague-word counts, link validity, frontmatter presence, etc.).
-- `prose-eval score`: score a document against the rubric via the Anthropic SDK with prompt
+- `pprose score`: score a document against the rubric via the Anthropic SDK with prompt
   caching; supports `--batch` for parallel runs over N artifacts.
-- `prose-eval report`: combine metrics and scores into an eval report; validate,
+- `pprose report`: combine metrics and scores into an eval report; validate,
   compute-derived, and from-metrics subcommands.
-- `prose-eval compare`: compare N eval reports across versions or variants.
-
-The older `prose-metrics`, `eval-score`, `eval-report`, and `eval-compare` scripts remain
-as compatibility aliases for now, but new docs and skills use `prose-eval ...`.
+- `pprose compare`: compare N eval reports across versions or variants.
 
 Quick start:
 
 ```bash
-cd tools/prose-eval
-make install
-# Set ANTHROPIC_API_KEY in .env (loaded automatically by the entry points).
-uv run prose-eval report from-metrics path/to/doc.md --label my-doc --scope-class brief --out my-doc.eval.md
-uv run prose-eval score my-doc.eval.md
-uv run prose-eval report validate my-doc.eval.md
+# Run with no install via uv (https://docs.astral.sh/uv/). `score` needs ANTHROPIC_API_KEY.
+uvx pprose report from-metrics path/to/doc.md --label my-doc --scope-class brief --out my-doc.eval.md
+uvx pprose score my-doc.eval.md
+uvx pprose report validate my-doc.eval.md
 ```
 
-See the runbooks for end-to-end operation.
+See the runbooks for end-to-end operation and
+[tools/pprose/docs/development.md](tools/pprose/docs/development.md) for local development.
 
 <!-- This document follows common-doc-guidelines.md.
 Review guidelines before editing.

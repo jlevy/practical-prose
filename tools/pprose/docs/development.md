@@ -7,7 +7,7 @@ dependencies. First, be sure you
 [have uv installed](https://docs.astral.sh/uv/getting-started/installation/).
 
 Then
-[fork the jlevy/prose-eval repo](https://github.com/jlevy/prose-eval/fork)
+[fork the jlevy/practical-prose repo](https://github.com/jlevy/practical-prose/fork)
 (having your own fork will make it easier to contribute) and
 [clone it](https://docs.github.com/en/repositories/creating-and-managing-repositories/cloning-a-repository).
 
@@ -42,7 +42,7 @@ make upgrade
 
 # To run tests by hand:
 uv run pytest   # all tests
-uv run pytest -s src/module/some_file.py  # one test, showing outputs
+uv run pytest -s tests/test_metrics.py  # one file, showing outputs
 
 # Build and install current dev executables, to let you use your dev copies
 # as local tools:
@@ -59,10 +59,6 @@ uv sync --upgrade
 uv lock --upgrade-package package_name
 # Update dependencies on a package:
 uv add package_name@latest
-
-# Run a shell within the Python environment:
-uv venv
-source .venv/bin/activate
 ```
 
 See [uv docs](https://docs.astral.sh/uv/) for details.
@@ -87,8 +83,3 @@ See [publishing.md](publishing.md) for instructions on publishing to PyPI.
 - [uv docs](https://docs.astral.sh/uv/)
 
 - [basedpyright docs](https://docs.basedpyright.com/latest/)
-
-* * *
-
-*This file was built with
-[simple-modern-uv](https://github.com/jlevy/simple-modern-uv).*

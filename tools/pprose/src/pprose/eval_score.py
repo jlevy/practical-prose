@@ -1,8 +1,8 @@
 """
 Model-scoring runner for the qualitative rubric (Anthropic SDK + prompt caching).
 
-Reads an in-progress eval-report YAML (typically produced by
-`eval-report from-metrics`), invokes the Anthropic SDK with the rubric +
+Reads an in-progress eval report YAML (typically produced by
+`pprose report from-metrics`), invokes the Anthropic SDK with the rubric +
 guidelines + artifact + structured-output prompt, parses the JSON block out
 of the response, and fills the YAML's qual + violations + metadata.
 
@@ -13,11 +13,7 @@ input — ~10× cheaper and faster per call after the first.
 Reads `ANTHROPIC_API_KEY` from the environment; `.env` and `.env.local` in
 the current directory hierarchy or `$HOME` are auto-loaded.
 
-Usage:
-  eval-score artifact.eval.md                         # update in place
-  eval-score artifact.eval.md --out filled.eval.md  # write elsewhere
-  eval-score artifact.eval.md --model sonnet          # specify Claude model
-  eval-score artifact.eval.md --dry-run               # render prompt, skip API call
+Run `pprose score --help` for the CLI surface.
 """
 
 from __future__ import annotations
@@ -33,9 +29,9 @@ from pathlib import Path
 
 from pydantic import BaseModel
 
-from prose_eval import rubric_schema as rs
-from prose_eval.eval_render import render_single_doc_rollup
-from prose_eval.eval_report import (
+from pprose import rubric_schema as rs
+from pprose.eval_render import render_single_doc_rollup
+from pprose.eval_report import (
     EvalReport,
     ExpressionReasons,
     ExpressionScores,
@@ -57,7 +53,7 @@ PACKAGE_ROOT = Path(__file__).resolve().parent
 
 def _find_repo_root(start: Path) -> Path:
     # Walk up from `start` looking for a .git marker. The package is installed
-    # under the practical-prose repo's tools/prose-eval/ subtree, so REPO_ROOT
+    # under the practical-prose repo's tools/pprose/ subtree, so REPO_ROOT
     # is the practical-prose repo root and holds the rubric / guidelines docs.
     # Fall back to `start` so the tool keeps functioning outside a git tree.
     for p in [start, *start.parents]:
@@ -93,35 +89,21 @@ def _resolve_model(name: str | None) -> str:
     return _MODEL_ALIASES.get(name, name)
 
 
-def _load_env_files() -> list[Path]:
-    """Load .env and .env.local from cwd hierarchy and $HOME.
+def _load_env_files() -> None:
+    """Load .env then .env.local from the cwd hierarchy and $HOME.
 
-    Mirrors the pattern in leximetry's clideps.env_vars.dotenv_utils. Later
-    files override earlier ones so a more-specific .env.local trumps a
-    less-specific .env. Returns the list of paths actually loaded.
+    Later files override earlier ones, so a more-specific .env.local trumps a
+    less-specific .env.
     """
     from dotenv import find_dotenv, load_dotenv
 
-    loaded: list[Path] = []
-    seen: set[Path] = set()
     for filename in (".env", ".env.local"):
-        # Walk up from cwd for each filename.
         found = find_dotenv(filename=filename, usecwd=True)
         if found:
-            p = Path(found).resolve()
-            if p not in seen:
-                load_dotenv(p, override=True)
-                loaded.append(p)
-                seen.add(p)
-        # Also check $HOME.
-        home_path = (Path.home() / filename).expanduser()
+            load_dotenv(found, override=True)
+        home_path = Path.home() / filename
         if home_path.exists():
-            p = home_path.resolve()
-            if p not in seen:
-                load_dotenv(p, override=True)
-                loaded.append(p)
-                seen.add(p)
-    return loaded
+            load_dotenv(home_path, override=True)
 
 
 _SCORES_CLS = {
@@ -252,29 +234,20 @@ def build_prompt(artifact_path: Path) -> str:
     return _cached_block_text() + "\n\n" + _artifact_block_text(artifact_path)
 
 
-def _build_messages(artifact_path: Path) -> list[dict]:
-    """Build the Anthropic SDK message list with cache_control on the invariant block.
+def _build_messages(cached_block: str, artifact_block: str) -> list[dict]:
+    """Assemble the SDK message list from pre-rendered block texts.
 
-    Returns one user message with two content blocks:
-      1. The rubric + guidelines + instructions, marked `cache_control: ephemeral`.
-      2. The artifact body, uncached.
-
-    The cache TTL is ~5 minutes (default ephemeral); subsequent calls within
+    One user message with two content blocks: the invariant block (rubric +
+    guidelines + instructions) marked `cache_control: ephemeral`, then the
+    uncached artifact body. The cache TTL is ~5 minutes; subsequent calls within
     that window read the cached prefix at ~0.1× the input cost.
     """
     return [
         {
             "role": "user",
             "content": [
-                {
-                    "type": "text",
-                    "text": _cached_block_text(),
-                    "cache_control": {"type": "ephemeral"},
-                },
-                {
-                    "type": "text",
-                    "text": _artifact_block_text(artifact_path),
-                },
+                {"type": "text", "text": cached_block, "cache_control": {"type": "ephemeral"}},
+                {"type": "text", "text": artifact_block},
             ],
         }
     ]
@@ -528,6 +501,7 @@ class _ScorePrep:
     artifact_path: Path
     messages: list[dict]
     out_path: Path
+    prompt_text: str
 
 
 def _prepare_score(yaml_path: Path, *, out: Path | None) -> _ScorePrep:
@@ -537,7 +511,9 @@ def _prepare_score(yaml_path: Path, *, out: Path | None) -> _ScorePrep:
     if not artifact_path.is_absolute():
         artifact_path = REPO_ROOT / artifact_path
 
-    messages = _build_messages(artifact_path)
+    cached_block = _cached_block_text()
+    artifact_block = _artifact_block_text(artifact_path)
+    messages = _build_messages(cached_block, artifact_block)
 
     out_path = out if out else yaml_path
     return _ScorePrep(
@@ -545,6 +521,7 @@ def _prepare_score(yaml_path: Path, *, out: Path | None) -> _ScorePrep:
         artifact_path=artifact_path,
         messages=messages,
         out_path=out_path,
+        prompt_text=cached_block + "\n\n" + artifact_block,
     )
 
 
@@ -566,13 +543,12 @@ def _apply_score(
     payload = extract_json_block(result.text)
     scored = parse_response(payload)
 
-    cmd_str = " ".join(["eval-score"] + (argv or sys.argv[1:]))
-    prompt_for_hash = build_prompt(prep.artifact_path)
+    cmd_str = " ".join(["pprose", "score"] + (argv or sys.argv[1:]))
     repro = ReproContext(
         model=model,
         model_id=result.model_id,
         command=cmd_str,
-        prompt_sha256=_sha256_of_text(prompt_for_hash),
+        prompt_sha256=_sha256_of_text(prep.prompt_text),
         rubric_sha256=_sha256_of_file(RUBRIC_PATH),
         guidelines_sha256=_sha256_of_file(GUIDELINES_PATH),
         artifact_sha256=_sha256_of_file(prep.artifact_path),
@@ -683,7 +659,7 @@ async def score_batch(
     calls within ~5 min read it at ~0.1× the input cost. Order of completion
     is unrelated to order of input; results are reported as docs finish.
     """
-    from prose_eval._concurrency import gather_limited
+    from pprose._concurrency import gather_limited
 
     if not yaml_paths:
         return 0
@@ -746,7 +722,7 @@ def main(argv: list[str] | None = None) -> int:
         metavar="report_paths",
         nargs="+",
         help=(
-            "One or more eval reports (typically from `prose-eval report from-metrics`). "
+            "One or more eval reports (typically from `pprose report from-metrics`). "
             "Multiple paths score them sequentially; pair with --batch for parallel."
         ),
     )
@@ -839,7 +815,7 @@ def main(argv: list[str] | None = None) -> int:
         )
         return 2
 
-    if args.batch and len(yaml_paths) > 1:
+    if args.batch:
         import asyncio
 
         return asyncio.run(

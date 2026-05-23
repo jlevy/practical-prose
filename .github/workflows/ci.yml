@@ -26,12 +26,12 @@ jobs:
     # Linux only by default. Use ${{ matrix.os }} for other OSes.
     runs-on: ${{ matrix.os }}
 
-    # The eval tooling lives under tools/prose-eval/. All `run:` steps execute
+    # The pprose tooling lives under tools/pprose/. All `run:` steps execute
     # from that directory so `uv sync`, `uv run pytest`, etc. operate on the
     # package without per-step `cd` chains.
     defaults:
       run:
-        working-directory: tools/prose-eval
+        working-directory: tools/pprose
 
     steps:
       # Generally following uv docs:

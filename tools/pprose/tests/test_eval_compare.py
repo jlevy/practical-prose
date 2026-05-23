@@ -1,18 +1,13 @@
-"""Tests for scripts/eval_compare.py — Markdown comparison generator.
-
-Run:
-  uv run --script scripts/test_eval_compare.py
-"""
+"""Tests for pprose.eval_compare — Markdown comparison generator."""
 
 from __future__ import annotations
 
-import sys
 from pathlib import Path
 
 import pytest
-import yaml  # noqa: E402
+import yaml
 
-from prose_eval.eval_compare import (  # noqa: E402
+from pprose.eval_compare import (
     QUALITATIVE_SCORE_NOTE,
     _bold_indices,
     check_rubric_versions,
@@ -23,7 +18,7 @@ from prose_eval.eval_compare import (  # noqa: E402
     render_section_drilldown,
     render_unified_table,
 )
-from prose_eval.eval_report import EvalReport  # noqa: E402
+from pprose.eval_report import EvalReport
 
 
 def _write_eval_md(path: Path, report: EvalReport) -> None:
@@ -54,6 +49,11 @@ def _load(paths: list[Path]) -> list[EvalReport]:
 
 
 def test_golden_six_way_unified_with_pairs(capsys: pytest.CaptureFixture[str]):
+    # Byte-for-byte regression lock on the rendered comparison. To bless an
+    # intentional output change, regenerate the golden file and inspect the diff:
+    #   uv run pprose compare tests/fixtures/figma-*.eval.md --format unified \
+    #     --pairs DDOG-r1=DDOG-r4 NET-r1=NET-r4 DDOG-r2=DDOG-r4 NET-r2=NET-r4 \
+    #     > tests/fixtures/expected-comparison.md
     # The figma fixtures retain their original 12-dim score values where alignment
     # was clean and demote everything else to 0 ("applicable but unassessable")
     # under 18-dim-v1, so --allow-misalignment is not needed.
@@ -238,11 +238,13 @@ def test_lint_row_bolds_minimum():
 
 def _make_report(
     label: str,
-    rubric_version: str | None,
+    rubric_version: str | None = "15-dim-v1",
     *,
+    scope_class: str | None = None,
     judgment_na: bool = False,
+    links_total: int = 10,
 ) -> EvalReport:
-    """Build a minimal EvalReport with the given rubric_version tag."""
+    """Build a minimal EvalReport. Override only the fields a test cares about."""
     data = {
         "artifact": {"label": label, "path": f"{label}.md"},
         "quant": {
@@ -256,10 +258,10 @@ def _make_report(
             "headings": {"h1": 1, "h2": 4, "h3": 10, "h4": 5, "total": 20},
             "structural": {"tables": 4, "code_blocks": 0, "images": 0},
             "links": {
-                "total": 10,
-                "external": 6,
-                "internal": 4,
-                "inline": 10,
+                "total": links_total,
+                "external": links_total,
+                "internal": 0,
+                "inline": links_total,
                 "reference": 0,
                 "autolink": 0,
                 "bare_urls": 0,
@@ -294,6 +296,8 @@ def _make_report(
     }
     if rubric_version is not None:
         data["metadata"]["rubric_version"] = rubric_version
+    if scope_class is not None:
+        data["artifact"]["scope_class"] = scope_class
     return EvalReport.model_validate(data)
 
 
@@ -376,69 +380,18 @@ def test_unified_table_emits_warning_block_on_mismatch(capsys):
 # ---------------------------------------------------------------------------
 
 
-def _make_report_with_scope(label: str, scope_class: str | None) -> EvalReport:
-    data = {
-        "artifact": {"label": label, "path": f"{label}.md"},
-        "quant": {
-            "size": {
-                "words": 1000,
-                "sentences": 50,
-                "paragraphs": 25,
-                "lines": 200,
-                "pages_275wpp": 3.6,
-            },
-            "headings": {"h1": 1, "h2": 4, "h3": 10, "h4": 5, "total": 20},
-            "structural": {"tables": 4, "code_blocks": 0, "images": 0},
-            "links": {
-                "total": 10,
-                "external": 6,
-                "internal": 4,
-                "inline": 10,
-                "reference": 0,
-                "autolink": 0,
-                "bare_urls": 0,
-            },
-            "provenance": {"bracket_tags": 8, "footnote_refs": 0, "footnote_defs": 0},
-            "lint": {"banned_register_hits": 0},
-        },
-        "qual": {
-            "expression": {
-                "clarity": 4,
-                "coherence": 5,
-                "concision": 4,
-                "organization": 5,
-                "consistency": 0,
-                "formatting": 0,
-            },
-            "purpose": {"suitability": 4, "breadth": 4, "depth": 4},
-            "grounding": {"verifiability": 5, "factuality": 4, "relevance": 5},
-            "reasoning": {
-                "discipline": 4,
-                "soundness": 5,
-                "precision": 4,
-                "parsimony": 5,
-            },
-            "judgment": {"calibration": 5, "fairness": 5, "robustness": 4},
-        },
-        "metadata": {"eval_date": "2026-05-09", "evaluator": "test", "rubric_version": "15-dim-v1"},
-    }
-    if scope_class is not None:
-        data["artifact"]["scope_class"] = scope_class
-    return EvalReport.model_validate(data)
-
-
 def test_check_scope_classes_all_same():
     reports = [
-        _make_report_with_scope("a", "deep_research"),
-        _make_report_with_scope("b", "deep_research"),
+        _make_report("a", scope_class="deep_research"),
+        _make_report("b", scope_class="deep_research"),
     ]
     assert check_scope_classes(reports) is None
 
 
 def test_check_scope_classes_cross_class_warns():
     reports = [
-        _make_report_with_scope("a", "status"),
-        _make_report_with_scope("b", "deep_research"),
+        _make_report("a", scope_class="status"),
+        _make_report("b", scope_class="deep_research"),
     ]
     msg = check_scope_classes(reports)
     assert msg is not None
@@ -448,8 +401,8 @@ def test_check_scope_classes_cross_class_warns():
 
 def test_check_scope_classes_mixed_tagged_untagged_warns():
     reports = [
-        _make_report_with_scope("a", "deep_research"),
-        _make_report_with_scope("b", None),
+        _make_report("a", scope_class="deep_research"),
+        _make_report("b", scope_class=None),
     ]
     msg = check_scope_classes(reports)
     assert msg is not None
@@ -463,54 +416,8 @@ def test_check_scope_classes_mixed_tagged_untagged_warns():
 
 def test_collect_density_concerns_returns_only_flagged():
     """Only reports with non-empty density_concerns() show up."""
-    healthy = _make_report_with_scope("healthy", "deep_research")
-    # Build an unhealthy report with 0 links
-    unhealthy_data = {
-        "artifact": {"label": "lownet", "path": "lownet.md", "scope_class": "deep_research"},
-        "quant": {
-            "size": {
-                "words": 5000,
-                "sentences": 250,
-                "paragraphs": 125,
-                "lines": 800,
-                "pages_275wpp": 18.2,
-            },
-            "headings": {"h1": 1, "h2": 5, "h3": 10, "h4": 4, "total": 20},
-            "structural": {"tables": 4, "code_blocks": 0, "images": 0},
-            "links": {
-                "total": 0,
-                "external": 0,
-                "internal": 0,
-                "inline": 0,
-                "reference": 0,
-                "autolink": 0,
-                "bare_urls": 0,
-            },
-            "provenance": {"bracket_tags": 0, "footnote_refs": 0, "footnote_defs": 0},
-            "lint": {"banned_register_hits": 0},
-        },
-        "qual": {
-            "expression": {
-                "clarity": 4,
-                "coherence": 5,
-                "concision": 4,
-                "organization": 5,
-                "consistency": 0,
-                "formatting": 0,
-            },
-            "purpose": {"suitability": 4, "breadth": 4, "depth": 4},
-            "grounding": {"verifiability": 5, "factuality": 4, "relevance": 5},
-            "reasoning": {
-                "discipline": 4,
-                "soundness": 5,
-                "precision": 4,
-                "parsimony": 5,
-            },
-            "judgment": {"calibration": 5, "fairness": 5, "robustness": 4},
-        },
-        "metadata": {"eval_date": "2026-05-09", "evaluator": "test", "rubric_version": "15-dim-v1"},
-    }
-    unhealthy = EvalReport.model_validate(unhealthy_data)
+    healthy = _make_report("healthy", scope_class="deep_research")
+    unhealthy = _make_report("lownet", scope_class="deep_research", links_total=0)
     concerns = collect_density_concerns([healthy, unhealthy])
     assert len(concerns) == 1
     assert concerns[0][0] == "lownet"
@@ -522,8 +429,8 @@ def test_unified_emits_scope_warning_block(capsys):
 
     with tempfile.TemporaryDirectory() as td:
         td_path = Path(td)
-        a = _make_report_with_scope("A", "status")
-        b = _make_report_with_scope("B", "deep_research")
+        a = _make_report("A", scope_class="status")
+        b = _make_report("B", scope_class="deep_research")
         a_path = td_path / "a.eval.md"
         b_path = td_path / "b.eval.md"
         _write_eval_md(a_path, a)
@@ -542,7 +449,3 @@ def test_unified_emits_scope_warning_block(capsys):
     assert rc == 0
     out = capsys.readouterr().out
     assert "Scope-class warning" in out
-
-
-if __name__ == "__main__":
-    sys.exit(pytest.main([__file__, "-v"]))

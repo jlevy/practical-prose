@@ -12,10 +12,10 @@ jobs:
       id-token: write # Mandatory for OIDC.
       contents: read
 
-    # The publishable package lives under tools/prose-eval/.
+    # The publishable package lives under tools/pprose/.
     defaults:
       run:
-        working-directory: tools/prose-eval
+        working-directory: tools/pprose
 
     steps:
       - name: Checkout (official GitHub action)

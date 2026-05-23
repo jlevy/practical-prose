@@ -1,4 +1,4 @@
-"""Unified command entry point for the prose-eval package."""
+"""Unified command entry point for the pprose package."""
 
 from __future__ import annotations
 
@@ -7,7 +7,7 @@ from collections.abc import Callable, Generator
 from contextlib import contextmanager
 from dataclasses import dataclass
 
-from prose_eval import eval_compare, eval_report, eval_score, metrics
+from pprose import eval_compare, eval_report, eval_score, metrics
 
 CommandMain = Callable[[list[str] | None], int]
 
@@ -16,24 +16,29 @@ CommandMain = Callable[[list[str] | None], int]
 class CommandSpec:
     summary: str
     main: CommandMain
+    example: str
 
 
 COMMANDS: dict[str, CommandSpec] = {
     "metrics": CommandSpec(
         "Compute deterministic metrics for one or more Markdown artifacts.",
         metrics.main,
-    ),
-    "score": CommandSpec(
-        "Fill qualitative scores and violations in eval reports.",
-        eval_score.main,
+        "pprose metrics doc.md",
     ),
     "report": CommandSpec(
         "Create, validate, and recompute eval reports.",
         eval_report.main,
+        "pprose report from-metrics doc.md --out doc.eval.md",
+    ),
+    "score": CommandSpec(
+        "Fill qualitative scores and violations in eval reports (needs ANTHROPIC_API_KEY).",
+        eval_score.main,
+        "pprose score doc.eval.md",
     ),
     "compare": CommandSpec(
         "Compare multiple eval reports in Markdown tables.",
         eval_compare.main,
+        "pprose compare a.eval.md b.eval.md",
     ),
 }
 
@@ -41,18 +46,27 @@ COMMANDS: dict[str, CommandSpec] = {
 def _print_help() -> None:
     command_width = max(len(name) for name in COMMANDS)
     lines = [
-        "usage: prose-eval <command> [args]",
+        "pprose — Practical Prose evaluation tooling",
         "",
-        "Practical Prose evaluation tooling.",
+        "Usage:",
+        "  pprose <command> [args]",
         "",
         "Commands:",
     ]
     for name, spec in COMMANDS.items():
         lines.append(f"  {name:<{command_width}}  {spec.summary}")
+    lines.append("")
+    lines.append("Examples:")
+    for spec in COMMANDS.values():
+        lines.append(f"  {spec.example}")
     lines.extend(
         [
             "",
-            "Run `prose-eval <command> --help` for command-specific options.",
+            "Run `pprose <command> --help` for command-specific options.",
+            "",
+            "Getting started:",
+            "  uvx pprose <command> [args]   # zero-install run via uv",
+            "  `score` needs ANTHROPIC_API_KEY (auto-loads .env / .env.local).",
         ]
     )
     print("\n".join(lines))
@@ -69,7 +83,7 @@ def _program_name(name: str) -> Generator[None]:
 
 
 def _run_with_prog(command: str, func: CommandMain, args: list[str]) -> int:
-    with _program_name(f"prose-eval {command}"):
+    with _program_name(f"pprose {command}"):
         try:
             return func(args)
         except SystemExit as exc:

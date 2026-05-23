@@ -42,7 +42,7 @@ class Group:
     dimensions: tuple[Dimension, ...]
 
 
-def _load() -> tuple[str, tuple[Group, ...], dict[str, int], frozenset[str]]:
+def _load() -> tuple[str, tuple[Group, ...], dict[str, int]]:
     data = yaml.safe_load(_SCHEMA_PATH.read_text(encoding="utf-8"))
     groups: list[Group] = []
     rule_counts: dict[str, int] = {}
@@ -62,43 +62,22 @@ def _load() -> tuple[str, tuple[Group, ...], dict[str, int], frozenset[str]]:
         for d in dims:
             rule_counts[d.key] = len(d.rules)
         groups.append(Group(key=g["key"], label=g["label"], dimensions=dims))
-    na_applicable = frozenset(data.get("na_applicable_dimensions", []))
-    return data["version"], tuple(groups), rule_counts, na_applicable
+    return data["version"], tuple(groups), rule_counts
 
-
-# Sentinel for the "not applicable" score value.
-# Score fields accept either an integer 0-5 or the string "NA".
-NA: str = "NA"
 
 RUBRIC_VERSION: str
 GROUPS: tuple[Group, ...]
 RULE_COUNTS: dict[str, int]
-NA_APPLICABLE_DIMENSIONS: frozenset[str]
-RUBRIC_VERSION, GROUPS, RULE_COUNTS, NA_APPLICABLE_DIMENSIONS = _load()
+RUBRIC_VERSION, GROUPS, RULE_COUNTS = _load()
 
 DIMENSIONS: tuple[Dimension, ...] = tuple(d for g in GROUPS for d in g.dimensions)
 
-# Convenience lookups derived from GROUPS / DIMENSIONS.
-DIMENSIONS_BY_KEY: dict[str, Dimension] = {d.key: d for d in DIMENSIONS}
+# Convenience lookup derived from DIMENSIONS.
 DIMENSIONS_BY_LABEL: dict[str, Dimension] = {d.label: d for d in DIMENSIONS}
-DIMENSIONS_BY_SECTION: dict[int, Dimension] = {d.section: d for d in DIMENSIONS}
-GROUPS_BY_KEY: dict[str, Group] = {g.key: g for g in GROUPS}
 
 
 def dimension_count() -> int:
     return len(DIMENSIONS)
-
-
-def group_count() -> int:
-    return len(GROUPS)
-
-
-def group_for_dimension(dim_key: str) -> Group:
-    return GROUPS_BY_KEY[DIMENSIONS_BY_KEY[dim_key].group_key]
-
-
-def dimensions_in_group(group_key: str) -> tuple[Dimension, ...]:
-    return GROUPS_BY_KEY[group_key].dimensions
 
 
 def rule_count(dim_key_or_label: str) -> int:
@@ -115,15 +94,3 @@ def dimension_labels() -> tuple[str, ...]:
 
 def dimension_keys() -> tuple[str, ...]:
     return tuple(d.key for d in DIMENSIONS)
-
-
-def group_labels() -> tuple[str, ...]:
-    return tuple(g.label for g in GROUPS)
-
-
-def group_keys() -> tuple[str, ...]:
-    return tuple(g.key for g in GROUPS)
-
-
-def is_na_eligible(dim_key: str) -> bool:
-    return dim_key in NA_APPLICABLE_DIMENSIONS

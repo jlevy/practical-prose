@@ -28,29 +28,29 @@ third-party and self-eval artifacts unless the user asks for a subset.
 2. Generate the eval stub:
 
    ```bash
-   uvx prose-eval report from-metrics path/to/artifact.md --label NAME --scope-class brief --out artifact.eval.md
+   uvx pprose report from-metrics path/to/artifact.md --label NAME --scope-class brief --out artifact.eval.md
    ```
 
 3. Inspect deterministic metrics:
 
    ```bash
-   uvx prose-eval metrics path/to/artifact.md --format yaml
+   uvx pprose metrics path/to/artifact.md --format yaml
    ```
 
 4. Score the qualitative dimensions:
 
    ```bash
-   uvx prose-eval score artifact.eval.md
+   uvx pprose score artifact.eval.md
    ```
 
 5. Validate the result:
 
    ```bash
-   uvx prose-eval report validate artifact.eval.md --complete
+   uvx pprose report validate artifact.eval.md --complete
    ```
 
 For local development before publication, run the same subcommands with
-`cd tools/prose-eval && uv run prose-eval ...`.
+`cd tools/pprose && uv run pprose ...`.
 
 ## Output
 

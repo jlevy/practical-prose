@@ -15,12 +15,12 @@ Joshua Levy (github.com/jlevy)
 Produce a unified comparison Markdown from N evaluated artifacts: unified table
 (qualitative scores, quantitative metrics, and derived ratios), optional per-section
 drilldowns, and per-pair deltas.
-The deterministic generator is `prose-eval compare`; this runbook wraps it with the
+The deterministic generator is `pprose compare`; this runbook wraps it with the
 alignment audit and the analytical-prose layer the generator cannot produce.
 
 For an exact rendering of the generator’s output shape, see
-`../tools/prose-eval/tests/fixtures/expected-comparison.md` — the golden output that
-`../tools/prose-eval/tests/test_eval_compare.py` pins against the six `figma-*.eval.md`
+`../tools/pprose/tests/fixtures/expected-comparison.md` — the golden output that
+`../tools/pprose/tests/test_eval_compare.py` pins against the six `figma-*.eval.md`
 fixtures.
 
 ## Inputs and outputs
@@ -30,14 +30,11 @@ fixtures.
 - **Output:** one comparison Markdown combining the generator’s table with
   reviewer-authored cross-artifact analysis.
 
-## Setup
+## Prerequisites
 
-The eval tooling lives as an installable Python package at
-[../tools/prose-eval/](../tools/prose-eval/). Install once
-(`cd tools/prose-eval && make install`) and use the `prose-eval` console script with the
-`score`, `report`, and `compare` subcommands.
-
-Batch eval outputs live under `evals/<round-name>/` at the repo root.
+`pprose` available on the command line and `ANTHROPIC_API_KEY` set for scoring — see
+[Tooling](../AGENTS.md#tooling). Batch eval outputs live under `evals/<round-name>/` at
+the repo root.
 
 ## Steps
 
@@ -50,7 +47,7 @@ For a multi-artifact batch (the common case for this runbook), score all artifac
 one invocation using the `--batch` flag:
 
 ```bash
-prose-eval score evals/<round>/*.eval.md --batch --max-concurrent 8 --max-rps 4
+pprose score evals/<round>/*.eval.md --batch --max-concurrent 8 --max-rps 4
 ```
 
 This fans out the SDK calls under `gather_limited` (an `asyncio.Semaphore`
@@ -77,7 +74,7 @@ review.
 
 ```bash
 for f in path/to/*.eval.md; do
-  prose-eval report validate "$f" || break
+  pprose report validate "$f" || break
 done
 ```
 
@@ -86,7 +83,7 @@ Each file should print `OK: <path>`. Do not proceed if any fail.
 ### 3. Generate the comparison Markdown
 
 ```bash
-prose-eval compare \
+pprose compare \
   path/to/a.eval.md \
   path/to/b.eval.md \
   path/to/c.eval.md \
@@ -149,7 +146,7 @@ Aim for falsifiable claims grounded in specific table cells, not generic.
 - One-off comparisons: save alongside the artifacts being compared (one directory per
   topic / eval).
 - Ongoing alignment-regression tracking: pin the expected scores in the single-doc
-  runbook’s regression fixtures (`../tools/prose-eval/tests/fixtures/`) and cite this
+  runbook’s regression fixtures (`../tools/pprose/tests/fixtures/`) and cite this
   report.
 
 ## Alignment audit (before declaring the comparison done)
@@ -168,9 +165,9 @@ Aim for falsifiable claims grounded in specific table cells, not generic.
   anchors and scoring rules.
 - [practical-prose-guidelines.md](../docs/practical-prose-guidelines.md): prescriptive
   rules cited by violations.
-- [eval_compare.py](../tools/prose-eval/src/prose_eval/eval_compare.py): the
+- [eval_compare.py](../tools/pprose/src/pprose/eval_compare.py): the
   deterministic generator.
-- [eval_report.py](../tools/prose-eval/src/prose_eval/eval_report.py): schema and
+- [eval_report.py](../tools/pprose/src/pprose/eval_report.py): schema and
   validator.
 
 <!-- This document follows common-doc-guidelines.md.
