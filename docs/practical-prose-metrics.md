@@ -58,7 +58,7 @@ The deterministic component runs in CI and catches regressions cheaply; the judg
 component runs at review time and catches substantive failures the lint will never
 notice.
 
-**Note on §19 Fairness.** The opposing-vs-supporting paragraph count and depth-ratio
+**Note on J2 Fairness.** The opposing-vs-supporting paragraph count and depth-ratio
 metrics are review flags, not measures of fairness.
 The guidelines define fairness as proportional representation by plausibility,
 materiality, and evidence strength (§19.1), not equal airtime.
@@ -96,14 +96,14 @@ agent-evaluable; optional fields apply when their condition is relevant.
 | `description` | Required | string | One-sentence summary of what the document does for the reader. |
 | `date` | Required | ISO date | Creation date; never silently overwritten. |
 | `status` | Required | enum | `draft`, `active`, `archived`, `deprecated`. |
-| `purpose` | Recommended | string | What reader need this serves (decision, plan, audit, runbook, reference). Cross-checks §1 Suitability. |
+| `purpose` | Recommended | string | What reader need this serves (decision, plan, audit, runbook, reference). Cross-checks P1 Suitability. |
 | `audience` | Recommended | string | Intended reader (role, expertise level, agent vs human). |
-| `scope` | Recommended | string | One-sentence statement of what is in scope. Cross-checks §2 Scope. |
+| `scope` | Recommended | string | One-sentence statement of what is in scope. Cross-checks P2 Scope. |
 | `out_of_scope` | Optional | string or list | Explicit out-of-scope items when the boundary is non-obvious. |
-| `owner` | Recommended | string | Maintainer or accountable role. Cross-checks §7 Concision (frontmatter holds machine-readable metadata) and the Maintainable principle. |
+| `owner` | Recommended | string | Maintainer or accountable role. Cross-checks E3 Concision (frontmatter holds machine-readable metadata) and the Maintainable principle. |
 | `last_reviewed` | Recommended | ISO date | Date the document was last reviewed end-to-end. Useful for staleness alerts. |
 | `risk_level` | Recommended | enum | `low`, `standard`, `high`. Drives audit-pass requirements: high-stakes docs require the four-pass review (see [rubric](practical-prose-rubric.md) audit-passes section); standard docs run the two-pass; low-stakes drafts may use a single pass. |
-| `source_policy` | Optional | enum | `primary-required`, `secondary-ok`, `internal-only`. Sets the strictness for §11 Verifiability. |
+| `source_policy` | Optional | enum | `primary-required`, `secondary-ok`, `internal-only`. Sets the strictness for G1 Verifiability. |
 | `update_triggers` | Optional | list | Events that should prompt re-review (release cuts, regulatory changes, dependency upgrades). |
 | `evaluation_mode` | Optional | enum | `self`, `external`, `tooling-only`. Records whether the rubric is being applied by the author, by an external reviewer, or by deterministic tooling only. Cross-checks the rubric’s self-eval-overrate note. |
 | `rubric_version` | Required for eval YAMLs | string | Pinned rubric revision (e.g., `20-dim-v1`). Set automatically by `eval_report.py from-metrics`. Not required on the underlying artifact. |
@@ -126,17 +126,17 @@ The profiles below tell agents and reviewers which dimensions are *required*,
 
 | Profile | `risk_level` | Required dimensions | Conditional dimensions | Typically NA |
 | --- | --- | --- | --- | --- |
-| **Low-stakes note** (status update, standup, brief progress note) | `low` | §1 Suitability, §5 Clarity, §7 Concision, §10 Formatting | §11 Verifiability only for material claims | §13 Relevance, §14-§17 (Discipline, Soundness, Precision, Parsimony), §18-§20 (Calibration, Fairness, Robustness) |
-| **Standard internal doc** (memo, brief, internal report) | `standard` | All Purpose (§1-§4); all Expression (§5-§10); §11 Verifiability; §12 Factuality; §15 Soundness | §13 Relevance, §14 Discipline, §17 Parsimony, §18 Calibration, §19 Fairness, §20 Robustness when the doc makes those kinds of claims | §16 Precision unless terminology is contested |
+| **Low-stakes note** (status update, standup, brief progress note) | `low` | P1 Suitability, E1 Clarity, E3 Concision, E6 Formatting | G1 Verifiability only for material claims | G3 Relevance, R1-R4 (Discipline, Soundness, Precision, Parsimony), J1-J3 (Calibration, Fairness, Robustness) |
+| **Standard internal doc** (memo, brief, internal report) | `standard` | All Purpose (P1-P4); all Expression (E1-E6); G1 Verifiability; G2 Factuality; R2 Soundness | G3 Relevance, R1 Discipline, R4 Parsimony, J1 Calibration, J2 Fairness, J3 Robustness when the doc makes those kinds of claims | R3 Precision unless terminology is contested |
 | **Decision memo / audit / deep research** | `high` | All 20 unless explicitly NA | Four-pass audit (lint / claim / reasoning / purpose; see [rubric](practical-prose-rubric.md) §Audit passes for high-stakes evals) | None by default; NA only when explicitly stated and justified |
-| **Reference / runbook** | `standard` (override) | §1 Suitability, §2 Scope, §8 Organization, §10 Formatting, §16 Precision; plus the Maintainable principle | §11-§13 if the reference cites sources or makes verifiable claims; §6 Coherence on extended explanations | §19 Fairness, §20 Robustness unless interpretive claims appear |
+| **Reference / runbook** | `standard` (override) | P1 Suitability, P2 Scope, E4 Organization, E6 Formatting, R3 Precision; plus the Maintainable principle | G1-G3 if the reference cites sources or makes verifiable claims; E2 Coherence on extended explanations | J2 Fairness, J3 Robustness unless interpretive claims appear |
 
 Two operational notes:
 
 - **Default is Standard.** When in doubt, score the Standard profile.
   Promoting a document to High requires high-stakes content (binding decisions, audits,
   external research) or an explicit `risk_level: high` setting.
-- **NA is honest, not lazy.** A reference doc with no probability claims should mark §16
+- **NA is honest, not lazy.** A reference doc with no probability claims should mark R3
   Calibration NA, not score it 0; aggregating zeros for genuinely-not-applicable
   dimensions punishes the profile rather than the document.
 
@@ -147,9 +147,9 @@ They only tell the reviewer which dimensions to engage at all.
 ## How metrics interact with the rubric
 
 Quantitative metrics are not scores.
-A banned-register hit is a candidate flag, not a §5 Clarity violation: the reviewer may
+A banned-register hit is a candidate flag, not a E1 Clarity violation: the reviewer may
 accept the hit if the word is earned by an inline citation.
-A `[VERIFIED]` tag without a paired source pointer is a §11 Verifiability flag, not a
+A `[VERIFIED]` tag without a paired source pointer is a G1 Verifiability flag, not a
 hard fail: the reviewer may accept if the source is in the surrounding paragraph.
 
 The lint pass uses metrics to catch defects deterministically.

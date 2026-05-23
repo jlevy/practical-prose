@@ -30,48 +30,48 @@ context, evidence, or maintainability is friction.
 
 | Group | Dimension | Question it answers |
 | --- | --- | --- |
-| **Purpose** | Suitability | Does the document give the reader what they need, in the form the task requires? |
-|  | Scope | Is the scope stated, and does it fit the actual scope of the work? |
-|  | Breadth | Are the relevant areas within scope covered? |
-|  | Depth | Are the important areas developed enough? |
-| **Expression** | Clarity | Does the writing read well? |
-|  | Coherence | Do the ideas progress smoothly? |
-|  | Concision | Does every section earn its place? |
-|  | Organization | Are sections, headings, sequence, tables, figures, links, and cross-references arranged for navigation? |
-|  | Consistency | Does the document follow the chosen style guide or house style consistently? |
-|  | Formatting | Is the document visually and syntactically clean in its medium? |
-| **Grounding** | Verifiability | Are claims traceable to specific sources, observations, or calculations? |
-|  | Factuality | Are the verifiable claims true and supported by cited evidence? |
-|  | Relevance | Do sources, citations, and reasoning chains bear on the document's stated purpose? |
-| **Reasoning** | Discipline | Are observation, judgment, interpretation, and implication worked through in order, with each higher rung supported by the prior? |
-|  | Soundness | Do claims follow from evidence through valid mechanisms and explicit assumptions? |
-|  | Precision | Are claims and terms specified at the right granularity? |
-|  | Parsimony | Is each load-bearing reasoning chain the cleanest, simplest sound argument possible for its conclusion? |
-| **Judgment** | Calibration | Does claim strength match evidence strength? |
-|  | Fairness | Are opposing positions argued at depth proportional to their plausibility and strength? |
-|  | Robustness | Do key claims survive plausible alternative interpretations? |
+| **Purpose** | P1. Suitability | Does the document give the reader what they need, in the form the task requires? |
+|  | P2. Scope | Is the scope stated, and does it fit the actual scope of the work? |
+|  | P3. Breadth | Are the relevant areas within scope covered? |
+|  | P4. Depth | Are the important areas developed enough? |
+| **Expression** | E1. Clarity | Does the writing read well? |
+|  | E2. Coherence | Do the ideas progress smoothly? |
+|  | E3. Concision | Does every section earn its place? |
+|  | E4. Organization | Are sections, headings, sequence, tables, figures, links, and cross-references arranged for navigation? |
+|  | E5. Consistency | Does the document follow the chosen style guide or house style consistently? |
+|  | E6. Formatting | Is the document visually and syntactically clean in its medium? |
+| **Grounding** | G1. Verifiability | Are claims traceable to specific sources, observations, or calculations? |
+|  | G2. Factuality | Are the verifiable claims true and supported by cited evidence? |
+|  | G3. Relevance | Do sources, citations, and reasoning chains bear on the document's stated purpose? |
+| **Reasoning** | R1. Discipline | Are observation, judgment, interpretation, and implication worked through in order, with each higher rung supported by the prior? |
+|  | R2. Soundness | Do claims follow from evidence through valid mechanisms and explicit assumptions? |
+|  | R3. Precision | Are claims and terms specified at the right granularity? |
+|  | R4. Parsimony | Is each load-bearing reasoning chain the cleanest, simplest sound argument possible for its conclusion? |
+| **Judgment** | J1. Calibration | Does claim strength match evidence strength? |
+|  | J2. Fairness | Are opposing positions argued at depth proportional to their plausibility and strength? |
+|  | J3. Robustness | Do key claims survive plausible alternative interpretations? |
 
 ## In Brief
 
 A good practical document does these things; the prescriptive rules below say how:
 
 1. **States its task.** Names the question, decision, plan, or audience need it serves;
-   surfaces the main answer or finding early enough that a skim recovers it (§1, §2).
+   surfaces the main answer or finding early enough that a skim recovers it (P1, P2).
 2. **Covers what is relevant within scope.** Includes the case classes, prior work, and
    standard sources the domain calls for; develops important sections to the depth the
-   stakes require (§3, §4).
+   stakes require (P3, P4).
 3. **Reads cleanly.** Concrete words; one-job paragraphs; earned register; visible
-   structure; consistent style; valid markup (§5–§10).
+   structure; consistent style; valid markup (E1–E6).
 4. **Makes important claims checkable.** Source-traceable, faithful to the cited
    evidence, and tied to the document's purpose; the strictness of the bar scaled to
-   stakes (§11–§13).
+   stakes (G1–G3).
 5. **Reasons in distinct steps, by the shortest sound path.** Observation, judgment,
    interpretation, and implication kept on separate rungs; mechanisms named where
    causation is asserted; precision matched to measurement; each load-bearing chain the
-   minimum sufficient sound argument (§14–§17).
+   minimum sufficient sound argument (R1–R4).
 6. **Matches confidence to evidence.** Claim strength tracks evidence strength; opposing
    positions argued proportionally; key claims tested against alternative interpretive
-   lenses (§18–§20).
+   lenses (J1–J3).
 7. **Is easy to maintain.** Owner, status, dates, dependencies, and open questions per
    [common-doc-guidelines.md](common-doc-guidelines.md).
 
@@ -87,25 +87,25 @@ The table below shows how its clauses relate to this layer:
 
 | common-doc-guidelines clause | Where it applies |
 | --- | --- |
-| §1 Organizing Documentation (rapid orientation, filenames, ownership/audience/cadence) | Cross-document only; not scored by this rubric |
-| §2.1 Explain motivations and background | Absorbed under §1 Suitability and the Humane principle |
-| §2.2 Give context gradually and efficiently | Absorbed into §1 Suitability rule 7 (summary-then-link) |
+| P1 Organizing Documentation (rapid orientation, filenames, ownership/audience/cadence) | Cross-document only; not scored by this rubric |
+| §2.1 Explain motivations and background | Absorbed under P1 Suitability and the Humane principle |
+| §2.2 Give context gradually and efficiently | Absorbed into P1 Suitability rule 7 (summary-then-link) |
 | §2.3 Keep details close (docstrings, YAML descriptions) | Cross-artifact co-location; not scored |
-| §2.4 Avoid duplication | Absorbed into §7 Concision rule 2 |
-| §2.5 Describe present state, not what it replaced | Absorbed into §7 Concision rule 5 (common agent failure mode) |
-| §3.1 Be clear and concise | Absorbed into §5 Clarity and §7 Concision |
-| §3.2 Be detailed and specific | Absorbed into §4 Depth, §11 Verifiability, §16 Precision |
-| §3.3 Headings cleave to subject contours | Absorbed into §8 Organization rule 9 |
+| §2.4 Avoid duplication | Absorbed into E3 Concision rule 2 |
+| §2.5 Describe present state, not what it replaced | Absorbed into E3 Concision rule 5 (common agent failure mode) |
+| §3.1 Be clear and concise | Absorbed into E1 Clarity and E3 Concision |
+| §3.2 Be detailed and specific | Absorbed into P4 Depth, G1 Verifiability, R3 Precision |
+| §3.3 Headings cleave to subject contours | Absorbed into E4 Organization rule 9 |
 | §3.4 Be engaging and warm | Referenced as Tone / Reader Respect contextual modifier in the rubric |
-| §4.1 Respect reader’s intelligence | Absorbed under the Humane principle and §1 Suitability / §4 Depth |
-| §4.2 Banned extravagant words list | Canonical list lives in common-doc-guidelines; referenced from §5 Clarity rule 4 |
-| §4.3 Cut pompousness, meta-commentary, pedantry | Absorbed into §5 Clarity rules 3 and 6 |
-| §5 Em-dash discipline | Absorbed into §9 Consistency rule 7 |
-| §6 Guideline Footer | Operational marker; not scored by this rubric |
+| §4.1 Respect reader’s intelligence | Absorbed under the Humane principle and P1 Suitability / P4 Depth |
+| §4.2 Banned extravagant words list | Canonical list lives in common-doc-guidelines; referenced from E1 Clarity rule 4 |
+| §4.3 Cut pompousness, meta-commentary, pedantry | Absorbed into E1 Clarity rules 3 and 6 |
+| E1 Em-dash discipline | Absorbed into E5 Consistency rule 7 |
+| E2 Guideline Footer | Operational marker; not scored by this rubric |
 
 ## Purpose Dimensions
 
-### 1. Suitability
+### P1. Suitability
 
 *Description:* The document serves the purpose it was written for.
 A document can be clear, factual, and balanced and still fail Suitability if the reader
@@ -152,7 +152,7 @@ can’t extract the needed output, or if the purpose wasn’t named in the first
    (Cross-references common-doc-guidelines §2.2 “Give context gradually and
    efficiently.”)
 
-### 2. Scope
+### P2. Scope
 
 *Description:* The document declares its scope, and the declared scope matches the
 actual scope of the work.
@@ -174,8 +174,8 @@ cannot be evaluated for whether it covers everything relevant.
    update the scope statement to include it.
 
 4. **Out-of-scope omissions are not breadth failures.** A document with a narrowly
-   declared scope is not penalized under §3 Breadth or §4 Depth for omitting
-   out-of-scope material; it is penalized under §2 Scope only if the boundary is
+   declared scope is not penalized under P3 Breadth or P4 Depth for omitting
+   out-of-scope material; it is penalized under P2 Scope only if the boundary is
    undeclared or drifts.
 
 5. **Name what the document is not competent to conclude.** Scope says what is in; this
@@ -185,19 +185,19 @@ cannot be evaluated for whether it covers everything relevant.
    telemetry; an audit should say which claims it tested versus accepted on assertion.
    Especially load-bearing for AI-authored prose, where claim creep is easy.
 
-### 3. Breadth
+### P3. Breadth
 
-*Description:* Within the boundary set by §2 Scope, the document includes the relevant
+*Description:* Within the boundary set by P2 Scope, the document includes the relevant
 facts, cases, contexts, prior work, alternatives, edge cases, and affected areas.
-Breadth is the *what is covered* question; Depth (§4) is the *how thoroughly* question.
+Breadth is the *what is covered* question; Depth (P4) is the *how thoroughly* question.
 Both are judged within declared scope: a narrow document with a narrowly stated scope
 can score 5 if it covers the relevant material within that scope.
 
 **Rules:**
 
-1. **Breadth is judged against declared scope.** Within the boundary set by §2 Scope,
+1. **Breadth is judged against declared scope.** Within the boundary set by P2 Scope,
    all relevant material classes are present.
-   Scope declaration itself is scored under §2; this dimension scores whether the
+   Scope declaration itself is scored under P2; this dimension scores whether the
    declared boundary is filled.
 
 2. **Relevant prior work and standard sources are present.** When the domain has an
@@ -213,9 +213,9 @@ can score 5 if it covers the relevant material within that scope.
 
 4. **Out-of-scope omissions are not breadth failures.** A document with a narrowly
    declared scope is not penalized for omitting out-of-scope material; that is scored
-   under §2 Scope only if the boundary is undeclared or drifts.
+   under P2 Scope only if the boundary is undeclared or drifts.
 
-### 4. Depth
+### P4. Depth
 
 *Description:* The important parts of the document are developed to the level of detail,
 specificity, evidence, and explanation the task requires.
@@ -235,8 +235,8 @@ Depth answers *how thoroughly* once Breadth has answered *what is covered*.
 
 3. **Quantify “small,” “large,” “rapid,” “slow.”** Vague magnitude words in a scoped
    factual claim are depth failures, not just clarity failures.
-   (Vague words in ordinary prose without a quantitative claim are scored under §5
-   Clarity; vague countables where a specific term exists are scored under §16
+   (Vague words in ordinary prose without a quantitative claim are scored under E1
+   Clarity; vague countables where a specific term exists are scored under R3
    Precision.)
 
 4. **Name the instances when you cite a count.** “13 endpoints affected” should be
@@ -250,7 +250,7 @@ Depth answers *how thoroughly* once Breadth has answered *what is covered*.
 
 ## Expression Dimensions
 
-### 5. Clarity
+### E1. Clarity
 
 *Description:* Is the language readable and clear, with good command of language and
 correct spelling and grammar?
@@ -302,12 +302,12 @@ correct spelling and grammar?
    carve-out under rule 3 may define terms or describe structure when that is the
    document’s purpose.
 
-### 6. Coherence
+### E2. Coherence
 
 *Description:* How well can the reader follow the progression of ideas across the whole
 work? This metric reflects only the prose-level flow; it does not include logical
-coherence (covered under §15 Soundness) or scaffolding like heading hierarchy, tables,
-figures, and links (covered under §8 Organization and §10 Formatting).
+coherence (covered under R2 Soundness) or scaffolding like heading hierarchy, tables,
+figures, and links (covered under E4 Organization and E6 Formatting).
 Coherence here is about whether ideas progress smoothly when read sentence to sentence.
 
 **Rules:**
@@ -329,7 +329,7 @@ Coherence here is about whether ideas progress smoothly when read sentence to se
 4. **Ideas arrive with setup.** Don’t introduce a new construct, framework, or label
    without first establishing what it means and why it matters.
 
-### 7. Concision
+### E3. Concision
 
 *Description:* The writing carries only the content the task requires.
 Padding, repetition, and decorative content fail concision even when each sentence is
@@ -370,14 +370,14 @@ clear and the document coheres.
    history serves the reader’s task or merely records the author’s path.
    (Cross-references common-doc-guidelines §2.5.)
 
-### 8. Organization
+### E4. Organization
 
 *Description:* The document’s sections, headings, sequence, tables, figures, lists,
 links, and cross-references help readers navigate the material.
 
 This dimension is about *arrangement*. Whether the markup renders correctly and follows
-medium conventions is §10 Formatting; whether terminology and house style are consistent
-is §9 Consistency.
+medium conventions is E6 Formatting; whether terminology and house style are consistent
+is E5 Consistency.
 
 Visual elements aren’t required.
 A tightly written prose document with no tables or figures can be excellent.
@@ -393,7 +393,7 @@ But when these elements are present, they should be well-arranged.
 2. **Sections are arranged in the order the task requires.** Decision memos lead with
    the recommendation; audits lead with findings; reference docs let readers jump
    directly to the entry they need.
-   Output shape matches task shape (cross-reference §1 Suitability).
+   Output shape matches task shape (cross-reference P1 Suitability).
 
 3. **Tables earn their tabular shape.** A table is the right shape when items are
    parallel rows with a fixed schema and at least two filled columns of comparable
@@ -433,13 +433,13 @@ But when these elements are present, they should be well-arranged.
    subheadings, not left as-is.
    (Cross-references common-doc-guidelines §3.3.)
 
-### 9. Consistency
+### E5. Consistency
 
 *Description:* The document follows the chosen style guide or house style consistently.
 A document can be perfectly understandable and still stylistically inconsistent;
 conversely, a document can be style-guide compliant but unclear, overlong, or wrong.
 Consistency isolates the editorial-polish question from the readability question
-(§5 Clarity) and the markup-validity question (§10 Formatting).
+(E1 Clarity) and the markup-validity question (E6 Formatting).
 
 **Rules:**
 
@@ -476,13 +476,13 @@ Consistency isolates the editorial-polish question from the readability question
    (“context—like this”), not spaced (“context — like this”). Spaced em-dash overuse
    marks unedited agent prose; the convention applies even when the author finds the
    spaced variant readable.
-   (Cross-references common-doc-guidelines §5.)
+   (Cross-references common-doc-guidelines E1.)
 
-### 10. Formatting
+### E6. Formatting
 
 *Description:* The document’s markup and visual presentation are clean, valid, and
 compatible with the chosen medium.
-Distinct from §8 Organization (are the parts arranged well) and §9 Consistency
+Distinct from E4 Organization (are the parts arranged well) and E5 Consistency
 (does the document follow house style consistently).
 Formatting is the most deterministic of the three; most rules here are lintable.
 
@@ -513,14 +513,14 @@ Formatting is the most deterministic of the three; most rules here are lintable.
 
 ## Grounding Dimensions
 
-### 11. Verifiability
+### G1. Verifiability
 
 *Description:* Claims are stated specifically enough to be checkable, and traceable to
 specific sources, observations, calculations, or explicit assumptions.
 A document scores high on Verifiability when a competent reader could check its claims
 from what the document provides, before any external lookup.
 Verifiability is text-internal: it tests how well the document equips the reader to
-audit. **Factuality (§12)** is world-aware: it tests whether the audit, when performed,
+audit. **Factuality (G2)** is world-aware: it tests whether the audit, when performed,
 passes.
 
 A claim that is too vague to check is a Verifiability defect even when sources are
@@ -535,7 +535,7 @@ Specificity is the precondition for source-traceability.
    Vague magnitude words ("rapid," “many,” "in greater volume," “increasingly”) without
    a stated referent or comparison fail this rule even when the underlying assertion
    might be true; the document has not made a checkable claim.
-   Score §16 Precision for terminology specificity; this rule covers the claim-level
+   Score R3 Precision for terminology specificity; this rule covers the claim-level
    bar.
 
 2. **Quantitative claims are source-traceable; the bar scales with stakes.** For
@@ -579,11 +579,11 @@ Specificity is the precondition for source-traceability.
    [practical-prose-rubric.md](practical-prose-rubric.md) for claim-type-specific
    prompts.
 
-### 12. Factuality
+### G2. Factuality
 
 *Description:* The document’s verifiable claims hold up when checked against the world,
 at the asserted strength, for the asserted entity, date, and scope.
-Verifiability (§11) is text-internal: does the document let the reader audit?
+Verifiability (G1) is text-internal: does the document let the reader audit?
 Factuality is world-aware: does the audit, when performed, pass?
 
 Truth here means: **the assertion strength matches the available evidence.** A claim
@@ -635,10 +635,14 @@ the audit.
    commentary quoted as if it were the underlying data all fail accuracy even when the
    citation is technically verifiable.
 
-6. **No hallucinated sources.** Every cited URL, document ID, transcript reference, or
-   author resolves to a real artifact that contains the cited content.
-   Confidence in this is harder to self-audit than the other rules; pair high-stakes
-   citations with quoted excerpts when feasible.
+6. **No hallucinated or invented sources or claims.** Every cited URL, document ID,
+   transcript reference, or author resolves to a real artifact that contains the cited
+   content. The same bar applies to the claims themselves: anything that reads as a fact
+   but is detached from a source or from supporting logic—an invented statistic, a
+   fabricated detail, an asserted specific presented as settled—counts against
+   Factuality even when no source is cited at all. Confidence in this is harder to
+   self-audit than the other rules; pair high-stakes citations with quoted excerpts when
+   feasible.
 
 7. **Calibrated uncertainty satisfies Factuality; uncalibrated certainty fails it.**
    When a claim cannot be corroborated from available evidence, the document
@@ -647,25 +651,25 @@ the audit.
    correct. An unhedged claim made as if it were settled, where the evidence does not
    settle it, is a Factuality defect, even if the claim happens to be true.
 
-### 13. Relevance
+### G3. Relevance
 
 *Description:* Sources, citations, and intermediate reasoning chains relate directly
 to the document's stated purpose. Material that doesn't bear on the main task,
 including tangential sources, performative citations, and digressive arguments,
 should be cut or marked as background. Relevance tests whether each piece of evidence
-and each section does work toward the purpose declared in §1 Suitability and §2 Scope.
+and each section does work toward the purpose declared in P1 Suitability and P2 Scope.
 
 Distinguished from neighbors:
 
-- **§2 Scope** declares what the document covers; Relevance tests whether the content
+- **P2 Scope** declares what the document covers; Relevance tests whether the content
   inside that boundary earns its place.
-- **§7 Concision** is prose-level economy (words, paragraphs, redundant phrasing).
+- **E3 Concision** is prose-level economy (words, paragraphs, redundant phrasing).
   Relevance is content-level economy (sources, sections, points).
-- **§11 Verifiability** asks whether claims trace to sources. Relevance asks whether
+- **G1 Verifiability** asks whether claims trace to sources. Relevance asks whether
   the traced sources connect to the document's purpose.
-- **§12 Factuality** asks whether sources support the claims made. Relevance asks
+- **G2 Factuality** asks whether sources support the claims made. Relevance asks
   whether those claims matter for what the document is for.
-- **§17 Parsimony** asks whether each load-bearing reasoning chain uses the minimum
+- **R4 Parsimony** asks whether each load-bearing reasoning chain uses the minimum
   sound argument. Relevance asks the same question one level up: whether each source
   and section is load-bearing at all.
 
@@ -696,7 +700,7 @@ Distinguished from neighbors:
 
 ## Reasoning Dimensions
 
-### 14. Discipline
+### R1. Discipline
 
 *Description:* The practice of climbing the ladder of inference rung by rung in
 order (observation → judgment → interpretation → implication), with each higher
@@ -704,7 +708,7 @@ rung supported by the rung below it. Each rung is named on its own terms; none i
 skipped, none is blended into its neighbor. Implications rest on sound
 interpretations, which rest on sound judgments, which rest on sound observations.
 
-Discipline is distinct from Soundness (§15). Soundness tests whether each step in
+Discipline is distinct from Soundness (R2). Soundness tests whether each step in
 the chain is itself valid; Discipline tests whether the rungs are climbed in order
 and exist as distinct rungs at all. Both can fail independently: a sound chain can
 still be fused into one sentence or its rungs can be presented out of order, and a
@@ -755,12 +759,12 @@ above are an adaptation for analytical writing.)
    we interpret as…”, “which implies…”). The reader should always know which rung the
    sentence is on.
 
-### 15. Soundness
+### R2. Soundness
 
 *Description:* Content is logically organized, with terms and statements well-defined,
 reasoning sound, and the chain from evidence to claim visible.
 Soundness focuses on the document’s logical structure; the “multiple perspectives
-considered” dimension is broken out as Fairness (§19).
+considered” dimension is broken out as Fairness (J2).
 
 **Rules:**
 
@@ -802,13 +806,13 @@ considered” dimension is broken out as Fairness (§19).
    See the *Failure-Mode Questions* table in
    [practical-prose-rubric.md](practical-prose-rubric.md) for prompts by claim type.
 
-### 16. Precision
+### R3. Precision
 
 *Description:* Claims and terms are specified at the right granularity for the domain
 and audience. Generic vocabulary in place of available specific vocabulary is
 imprecision, even when the generic phrasing is true.
-Precision is distinct from Clarity (§5, which is about register and readability) and
-from Breadth/Depth (§3/§4, which are about scope completeness and section development):
+Precision is distinct from Clarity (E1, which is about register and readability) and
+from Breadth/Depth (P3/P4, which are about scope completeness and section development):
 Precision is the granularity *within* each individual claim.
 
 **Rules:**
@@ -837,7 +841,7 @@ Precision is the granularity *within* each individual claim.
    of,” and “many” with either a count (“12”) or named items (“AWS, Azure, GCP, OCI”).
    Vague countables are breadth/depth failures *and* precision failures.
 
-### 17. Parsimony
+### R4. Parsimony
 
 *Description:* The chain from cited evidence to the document's headline claims uses
 the cleanest, simplest sound argument available. Length is not the metric; minimality
@@ -846,20 +850,20 @@ formal proof, a multi-step regulatory cross-walk) is parsimonious when no shorte
 chain of the same warrant strength exists; a short chain of weak inductive gestures
 is non-parsimonious when it elides intermediates the conclusion requires.
 
-Parsimony presupposes Soundness (§15): when a step is unsound, a longer sound chain
+Parsimony presupposes Soundness (R2): when a step is unsound, a longer sound chain
 would do less damage to the conclusion, so the chain as written cannot be the most
 parsimonious sound argument. When Soundness fails materially on the headline claims,
 Parsimony is scored 0.
 
 Distinguished from neighbors:
 
-- **§7 Concision** is prose-level economy (words, paragraphs, redundant phrasing).
+- **E3 Concision** is prose-level economy (words, paragraphs, redundant phrasing).
   Parsimony is argument-level economy (rungs in the inferential chain).
-- **§13 Relevance** asks whether each source or section is on-task. Parsimony asks
+- **G3 Relevance** asks whether each source or section is on-task. Parsimony asks
   whether the reasoning *within* an on-task chain uses the minimum sound steps.
-- **§14 Discipline** asks whether the rungs are climbed in order and named on
+- **R1 Discipline** asks whether the rungs are climbed in order and named on
   their own terms. Parsimony asks whether the chain is the minimum.
-- **§15 Soundness** asks whether each step is valid in itself. Parsimony asks whether
+- **R2 Soundness** asks whether each step is valid in itself. Parsimony asks whether
   the chain *shape* is minimum given the per-step warrants.
 
 **Rules:**
@@ -905,7 +909,7 @@ Fairness engages opposing positions at proportional evidentiary depth.
 Robustness tests whether key claims survive alternative interpretations of the same
 evidence. All three fail when a directional view crowds out the underlying evidence.
 
-### 18. Calibration
+### J1. Calibration
 
 *Description:* The strength of a claim must match the strength of the underlying
 evidence in both directions.
@@ -946,7 +950,7 @@ evidence) both fail calibration.
    discipline overconfident claims; honest force on strong evidence is part of
    calibration, not a violation of it.
 
-### 19. Fairness
+### J2. Fairness
 
 *Description:* Opposing positions (a case for and a case against, or any oppositional
 framings) are argued at depth proportional to their plausibility, materiality, and
@@ -991,7 +995,7 @@ position as comparable to a strong one without saying so).
    “If Y happens, the claim holds” is a confirmation condition.
    Don’t substitute one for the other.
 
-### 20. Robustness
+### J3. Robustness
 
 *Description:* Key claims survive plausible alternative interpretations of the same
 evidence. Even granting the evidence and the chosen framing, would a *different
@@ -1020,7 +1024,7 @@ interpretive frame that a competent reader would dispute.
    claim is brittle to interpretation.
    State that explicitly.
 
-5. **Distinguish Robustness from Fairness.** Fairness (§19) engages opposing positions
+5. **Distinguish Robustness from Fairness.** Fairness (J2) engages opposing positions
    at proportional evidentiary depth.
    Robustness asks whether the chosen reading survives a different reading of the same
    evidence the opposing cases share.
@@ -1054,25 +1058,25 @@ interpretive frame that a competent reader would dispute.
 The dimension sections above are the full checklist.
 For a tight self-check before publishing, walk the five groups in order and ask:
 
-- **Purpose (§1-§4):** Is the task declared and the main answer recoverable from a skim?
+- **Purpose (P1-P4):** Is the task declared and the main answer recoverable from a skim?
   Scope explicit and matched by the body; relevant areas covered (Breadth); key sections
   developed at the depth the stakes require (Depth)?
-- **Expression (§5-§10):** Any banned-register hit, vague magnitude word,
+- **Expression (E1-E6):** Any banned-register hit, vague magnitude word,
   meta-commentary, parallel-structure padding?
   Each paragraph has one job?
   Heading hierarchy logical and sections arranged for the task?
   Style consistent (dialect, casing, parallel lists)?
   Markup valid and footer/frontmatter in place?
-- **Grounding (§11-§13):** Every quantitative claim source-traceable to a specific
+- **Grounding (G1-G3):** Every quantitative claim source-traceable to a specific
   citation (with stakes-appropriate strictness)?
   Cited sources support the claim at the asserted strength?
   Sources and sections bear on the document's purpose?
-- **Reasoning (§14-§17):** Observation, judgment, interpretation, and implication
+- **Reasoning (R1-R4):** Observation, judgment, interpretation, and implication
   worked through in order, each higher rung supported by the prior?
   Mechanisms named where causation is asserted?
   Domain entities referred to by proper name; quantitative precision matches
   measurement? Load-bearing chains the minimum sufficient sound argument?
-- **Judgment (§18-§20):** Probability claims anchored in base rates?
+- **Judgment (J1-J3):** Probability claims anchored in base rates?
   Opposing positions engaged at proportional depth, with any asymmetry declared?
   Key claims tested against the strongest alternative interpretive lens?
 

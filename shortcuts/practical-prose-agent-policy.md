@@ -19,11 +19,11 @@ The order matters. When two priorities conflict, the earlier one wins.
 1. **Answer the reader’s task.** State the question, decision, plan, or audience need
    the document serves; make the main output recoverable from a skim of intro plus
    headings; name the reader burden the document removes.
-   (§1 Suitability, §1.6 reader-burden.)
+   (P1 Suitability, §1.6 reader-burden.)
 
 2. **State scope and main output early.** Name what the document covers, and name what
    its evidence in scope is not competent to conclude.
-   (§2 Scope, §2.5 claim-boundary.)
+   (P2 Scope, §2.5 claim-boundary.)
 
 3. **Make material claims traceable, and keep cited material on-task.** Every
    quantitative or load-bearing factual claim points to a source the reader can check.
@@ -32,7 +32,7 @@ The order matters. When two priorities conflict, the earlier one wins.
    Each cited source bears on the document's purpose; performative citations and
    tangential sources are cut or marked as background.
    For central claims, also name what would invalidate them.
-   (§11 Verifiability, §12 Factuality, §13 Relevance.)
+   (G1 Verifiability, G2 Factuality, G3 Relevance.)
 
 4. **Keep evidence, inference, and recommendation distinct, and the chain short.**
    Observation, judgment, interpretation, and implication on separate rungs.
@@ -42,26 +42,26 @@ The order matters. When two priorities conflict, the earlier one wins.
    possible: no non-load-bearing rungs, no weaker warrant where a stronger one was
    available, and no re-derivation that doesn't add inspectability, confidence, or
    audience understanding beyond what a citation would.
-   (§14 Discipline, §15 Soundness, §17 Parsimony.)
+   (R1 Discipline, R2 Soundness, R4 Parsimony.)
 
 5. **Use concrete language and specific terms.** Most specific word the audience can
    parse. No vague magnitudes; no umbrella nouns where sub-distinctions matter;
    quantitative precision matches measurement precision.
    Rhetorical force is licensed only when it carries information, clarifies a
    distinction, or preserves a hard-won idea.
-   (§5 Clarity, §16 Precision.)
+   (E1 Clarity, R3 Precision.)
 
 6. **Be concise; don’t add visible rigor unless it improves inspectability.** More tags,
    more citations, more caveats, more structure, more words does not make a document
    better; it makes it more compliant.
    Cut anything that advances no purpose.
-   (§7 Concision; rubric §Notes “metrics are evidence, not quality”.)
+   (E3 Concision; rubric §Notes “metrics are evidence, not quality”.)
 
 7. **Apply fairness and robustness only when the task involves disputed or interpretive
    claims.** Skipping these on a reference doc or status note is not a failure; forcing
    them onto a doc that doesn’t need them is performative rigor.
    Default to the Standard profile; mark dimensions NA when they genuinely don’t apply.
-   (§19 Fairness, §20 Robustness; metrics §Applicability Profiles.)
+   (J2 Fairness, J3 Robustness; metrics §Applicability Profiles.)
 
 8. **Mark unknowns rather than inventing support.** `[UNVERIFIED]`, `[ASSUMING: ...]`,
    or an explicit “I don’t know” line is preferable to a fluent fabrication.
