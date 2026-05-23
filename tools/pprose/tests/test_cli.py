@@ -35,7 +35,7 @@ def test_subcommand_help_uses_pprose_command_name(
     assert f"usage: pprose {command}" in captured.out
 
 
-def test_metrics_subcommand_matches_compatibility_script(
+def test_metrics_subcommand_matches_direct_main(
     capsys: pytest.CaptureFixture[str],
 ) -> None:
     fixture = str(METRICS_FIXTURES / "all_headings.md")
@@ -57,6 +57,23 @@ def test_report_subcommand_dispatches_validate(capsys: pytest.CaptureFixture[str
     captured = capsys.readouterr()
     assert rc == 0
     assert "OK" in captured.out
+
+
+def test_compare_subcommand_dispatches(capsys: pytest.CaptureFixture[str]) -> None:
+    rc = cli.main(
+        [
+            "compare",
+            str(FIXTURE_DIR / "figma-ddog-r1.eval.md"),
+            str(FIXTURE_DIR / "figma-ddog-r2.eval.md"),
+            "--allow-misalignment",
+            "--format",
+            "unified",
+        ]
+    )
+
+    captured = capsys.readouterr()
+    assert rc == 0
+    assert "| Approach | Aspect | Measure |" in captured.out
 
 
 def test_unknown_subcommand_exits_validation_error(

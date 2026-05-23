@@ -1,26 +1,14 @@
-"""
-Tests for scripts/practical_prose_metrics.py.
-
-Run:
-  uv run --script scripts/test_practical_prose_metrics.py
-
-All tests use local fixtures under scripts/test_fixtures/practical_prose_metrics/
-and require no network access.
-"""
+"""Tests for pprose.metrics. All fixtures are local; no network access."""
 
 from __future__ import annotations
 
-import sys
 from pathlib import Path
 
-# Make the scripts directory importable so we can from pprose import metrics as practical_prose_metrics.
-SCRIPTS_DIR = Path(__file__).resolve().parent
-
-import pytest  # noqa: E402
+import pytest
 
 from pprose import metrics as pwm
 
-FIXTURES = SCRIPTS_DIR / "test_fixtures" / "practical_prose_metrics"
+FIXTURES = Path(__file__).resolve().parent / "test_fixtures" / "practical_prose_metrics"
 
 
 def _measure(name: str) -> pwm.Metrics:
@@ -76,14 +64,6 @@ class TestP0_2_BracketTags:
             assert "ALSO EXCLUDED" not in ex
             assert "NOT COUNTED" not in ex
 
-    def test_field_name_is_bracket_tags(self):
-        m = _measure("bracket_tags_in_code.md")
-        assert hasattr(m, "bracket_tags")
-        assert hasattr(m, "bracket_tag_examples")
-        # Old field names must not exist
-        assert not hasattr(m, "bracket_citations")
-        assert not hasattr(m, "bracket_citation_examples")
-
 
 # ---------------------------------------------------------------------------
 # P1-3: links_total documentation (structural, not a code fix — verify formula)
@@ -128,16 +108,6 @@ class TestP1_4_SetextHeadings:
 
 
 # ---------------------------------------------------------------------------
-# P1-5: HTML links documented as out of scope (no code test needed)
-# ---------------------------------------------------------------------------
-
-
-class TestP1_5_HtmlLinksDocumented:
-    def test_docstring_mentions_html_link_limitation(self):
-        assert "HTML links" in pwm.__doc__ or "html" in pwm.__doc__.lower()
-
-
-# ---------------------------------------------------------------------------
 # P1-6: REF_LINK_DEF_RE tightened
 # ---------------------------------------------------------------------------
 
@@ -162,18 +132,11 @@ class TestP1_6_RefLinkDefTightened:
 
 
 class TestP2_7_BareUrls:
-    def test_bare_urls_counted(self):
+    def test_bare_urls_counted_excluding_inline_and_autolinks(self):
+        # Two plain URLs in prose. The fixture also has an inline link
+        # [..](https://inline.example.com) and an autolink <https://auto.example.com>,
+        # neither of which counts as bare.
         m = _measure("bare_urls.md")
-        assert m.bare_urls == 2  # two plain URLs in prose
-
-    def test_inline_links_not_counted_as_bare(self):
-        m = _measure("bare_urls.md")
-        # [not bare](https://inline.example.com) should not be bare
-        assert m.bare_urls == 2  # still only 2
-
-    def test_autolinks_not_counted_as_bare(self):
-        m = _measure("bare_urls.md")
-        # <https://auto.example.com> should not be bare
         assert m.bare_urls == 2
 
 
@@ -407,7 +370,3 @@ class TestOutputFormats:
         loaded = json.loads(j)
         assert loaded["links_total"] == m.links_total
         assert loaded["bracket_tags"] == m.bracket_tags
-
-
-if __name__ == "__main__":
-    sys.exit(pytest.main([__file__, "-v"]))

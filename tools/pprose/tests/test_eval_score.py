@@ -1,18 +1,13 @@
-"""Tests for scripts/eval_score.py — subagent runner for qualitative scoring.
-
-Run:
-  uv run --script scripts/test_eval_score.py
-"""
+"""Tests for pprose.eval_score — the qualitative-scoring runner."""
 
 from __future__ import annotations
 
-import sys
 from pathlib import Path
 
 import pytest
 
 from pprose.eval_render import render_single_doc_rollup
-from pprose.eval_report import (  # noqa: E402
+from pprose.eval_report import (
     EvalReport,
     ExpressionScores,
     GroundingScores,
@@ -22,7 +17,7 @@ from pprose.eval_report import (  # noqa: E402
     ReasoningScores,
     Violation,
 )
-from pprose.eval_score import (  # noqa: E402
+from pprose.eval_score import (
     build_prompt,
     extract_json_block,
     main,
@@ -30,8 +25,7 @@ from pprose.eval_score import (  # noqa: E402
     parse_response,
 )
 
-SCRIPTS_DIR = Path(__file__).resolve().parent
-FIXTURES = SCRIPTS_DIR / "test_fixtures" / "practical_prose_metrics"
+FIXTURES = Path(__file__).resolve().parent / "test_fixtures" / "practical_prose_metrics"
 
 
 def _full_payload(score: int = 4, with_violation: bool = True) -> dict:
@@ -627,7 +621,3 @@ def test_main_end_to_end_calls_sdk_and_persists_cache_stats(tmp_path: Path, monk
     # The .eval.md hybrid file is the only persisted scoring artifact.
     raw_path = stub.parent / "stub.eval.raw.txt"
     assert not raw_path.exists()
-
-
-if __name__ == "__main__":
-    sys.exit(pytest.main([__file__, "-v"]))

@@ -2,15 +2,14 @@
 
 from __future__ import annotations
 
-import sys
 from pathlib import Path
 
 import pytest
 import yaml
 from pydantic import ValidationError
 
-from pprose import rubric_schema as rs  # noqa: E402
-from pprose.eval_report import (  # noqa: E402
+from pprose import rubric_schema as rs
+from pprose.eval_report import (
     EvalReport,
     QualScores,
     QuantMetrics,
@@ -313,8 +312,7 @@ def test_compute_derived_cli_in_place(tmp_path: Path):
 # ---------------------------------------------------------------------------
 
 
-SCRIPTS_DIR = Path(__file__).resolve().parent
-FIXTURES = SCRIPTS_DIR / "test_fixtures" / "practical_prose_metrics"
+FIXTURES = Path(__file__).resolve().parent / "test_fixtures" / "practical_prose_metrics"
 
 
 def test_from_metrics_round_trip(tmp_path: Path):
@@ -850,7 +848,3 @@ def test_from_metrics_stub_qual_is_consistent_with_alignment_principle():
     from pprose import rubric_schema as rs
 
     assert qual.all_scores() == [0] * rs.dimension_count()
-
-
-if __name__ == "__main__":
-    sys.exit(pytest.main([__file__, "-v"]))
