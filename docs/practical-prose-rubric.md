@@ -869,8 +869,8 @@ parsimonious sound argument. When Soundness fails materially on the headline cla
 Parsimony is 0.
 
 Parsimony differs from §7 Concision (prose-level economy: words and paragraphs),
-from §13 Relevance (whether each source or section is on-task), from §14 Inference
-Discipline (whether the rungs are climbed in order), and from §15 Soundness (whether each step is
+from §13 Relevance (whether each source or section is on-task), from §14 Discipline
+(whether the rungs are climbed in order), and from §15 Soundness (whether each step is
 valid). Parsimony asks specifically: given the warrants in use, is the chain shape
 the minimum sufficient?
 

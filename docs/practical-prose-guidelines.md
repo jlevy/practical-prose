@@ -1063,13 +1063,15 @@ For a tight self-check before publishing, walk the five groups in order and ask:
   Heading hierarchy logical and sections arranged for the task?
   Style consistent (dialect, casing, parallel lists)?
   Markup valid and footer/frontmatter in place?
-- **Grounding (§11-§12):** Every quantitative claim source-traceable to a specific
+- **Grounding (§11-§13):** Every quantitative claim source-traceable to a specific
   citation (with stakes-appropriate strictness)?
   Cited sources support the claim at the asserted strength?
-- **Reasoning (§14-§17):** Observation / judgment / interpretation / implication kept
-  distinct? Mechanisms named where causation is asserted?
+  Sources and sections bear on the document's purpose?
+- **Reasoning (§14-§17):** Observation, judgment, interpretation, and implication
+  worked through in order, each higher rung supported by the prior?
+  Mechanisms named where causation is asserted?
   Domain entities referred to by proper name; quantitative precision matches
-  measurement?
+  measurement? Load-bearing chains the minimum sufficient sound argument?
 - **Judgment (§18-§20):** Probability claims anchored in base rates?
   Opposing positions engaged at proportional depth, with any asymmetry declared?
   Key claims tested against the strongest alternative interpretive lens?
