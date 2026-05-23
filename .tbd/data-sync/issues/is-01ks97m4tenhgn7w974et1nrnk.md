@@ -3,9 +3,9 @@ type: is
 id: is-01ks97m4tenhgn7w974et1nrnk
 title: '[epic] Add "Parsimony" as a 4th Reasoning sub-dimension'
 kind: epic
-status: open
+status: closed
 priority: 2
-version: 13
+version: 14
 labels:
   - rubric-rollout
   - parsimony
@@ -24,7 +24,9 @@ child_order_hints:
   - is-01ks97rpmhnq79he6aqq15fvkk
   - is-01ks97s25n1s058wk2nfqbtvx3
 created_at: 2026-05-23T01:36:32.590Z
-updated_at: 2026-05-23T01:39:13.717Z
+updated_at: 2026-05-23T02:12:47.940Z
+closed_at: 2026-05-23T02:12:47.939Z
+close_reason: Parsimony added as §17 Reasoning sub-dim alongside the Relevance rollout. Rubric → 20-dim-v1. All 12 sub-beads closed; tests passing (168/168), lint clean, end-to-end stub generation confirmed.
 ---
 Add a new Practical Prose dimension **Parsimony** as a fourth Reasoning sub-dimension, alongside Inference Discipline, Soundness, and Precision.
 

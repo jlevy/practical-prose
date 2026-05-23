@@ -3,9 +3,9 @@ type: is
 id: is-01ks97r0f8b0ad44w0z5xnccgw
 title: Add §16 Parsimony anchors to practical-prose-rubric.md + renumber + bump rubric_version
 kind: chore
-status: open
+status: closed
 priority: 2
-version: 2
+version: 3
 labels:
   - rubric-rollout
   - parsimony
@@ -15,7 +15,9 @@ dependencies:
     target: is-01ks97s25n1s058wk2nfqbtvx3
 parent_id: is-01ks97m4tenhgn7w974et1nrnk
 created_at: 2026-05-23T01:38:39.208Z
-updated_at: 2026-05-23T01:39:40.448Z
+updated_at: 2026-05-23T02:12:37.851Z
+closed_at: 2026-05-23T02:12:37.851Z
+close_reason: Implemented as part of the combined 20-dim-v1 rollout (commit on claude/vibrant-goldberg-828VB)
 ---
 Update docs/practical-prose-rubric.md with new §16 Parsimony score anchors, renumbering, and version bump.
 

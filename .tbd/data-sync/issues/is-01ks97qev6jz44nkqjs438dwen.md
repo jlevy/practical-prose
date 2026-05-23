@@ -3,9 +3,9 @@ type: is
 id: is-01ks97qev6jz44nkqjs438dwen
 title: Regenerate .eval.md test fixtures and golden expected-comparison.md
 kind: chore
-status: open
+status: closed
 priority: 2
-version: 2
+version: 3
 labels:
   - rubric-rollout
   - parsimony
@@ -15,7 +15,9 @@ dependencies:
     target: is-01ks97s25n1s058wk2nfqbtvx3
 parent_id: is-01ks97m4tenhgn7w974et1nrnk
 created_at: 2026-05-23T01:38:21.157Z
-updated_at: 2026-05-23T01:39:39.862Z
+updated_at: 2026-05-23T02:12:37.266Z
+closed_at: 2026-05-23T02:12:37.266Z
+close_reason: Implemented as part of the combined 20-dim-v1 rollout (commit on claude/vibrant-goldberg-828VB)
 ---
 Ten `.eval.md` fixture files in `tools/prose-eval/tests/fixtures/` each hardcode the dimension scores in YAML frontmatter, render 'Overall mean (18 dims)' in body text, and include the qualitative-table rows. All must be regenerated for the 19-dim (or 20-dim) rubric.
 

@@ -3,9 +3,9 @@ type: is
 id: is-01ks97ws5fabst53vaqba9vdfk
 title: Update LLM scoring prompt (eval-rubric-score.md) to include Relevance
 kind: chore
-status: open
+status: closed
 priority: 2
-version: 2
+version: 3
 labels:
   - rubric-rollout
   - relevance
@@ -15,7 +15,9 @@ dependencies:
     target: is-01ks97wyqfkqcx7w5mzkwhs893
 parent_id: is-01ks97vjxrmnzmxk6ke3hmt505
 created_at: 2026-05-23T01:41:15.567Z
-updated_at: 2026-05-23T01:42:25.074Z
+updated_at: 2026-05-23T02:12:39.901Z
+closed_at: 2026-05-23T02:12:39.901Z
+close_reason: Implemented as part of the combined 20-dim-v1 rollout (commit on claude/vibrant-goldberg-828VB)
 ---
 Update tools/prose-eval/src/prose_eval/prompts/eval-rubric-score.md.
 

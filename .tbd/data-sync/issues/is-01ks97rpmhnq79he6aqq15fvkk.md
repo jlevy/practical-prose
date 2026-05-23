@@ -3,9 +3,9 @@ type: is
 id: is-01ks97rpmhnq79he6aqq15fvkk
 title: "Update minor dim-count references: principles, bibliography, shortcuts, skill, runbook, README"
 kind: chore
-status: open
+status: closed
 priority: 2
-version: 2
+version: 3
 labels:
   - rubric-rollout
   - parsimony
@@ -15,7 +15,9 @@ dependencies:
     target: is-01ks97s25n1s058wk2nfqbtvx3
 parent_id: is-01ks97m4tenhgn7w974et1nrnk
 created_at: 2026-05-23T01:39:01.904Z
-updated_at: 2026-05-23T01:39:41.059Z
+updated_at: 2026-05-23T02:12:38.430Z
+closed_at: 2026-05-23T02:12:38.430Z
+close_reason: Implemented as part of the combined 20-dim-v1 rollout (commit on claude/vibrant-goldberg-828VB)
 ---
 Sweep through smaller files updating dim-count mentions and §-number cross-refs. ~7 small files.
 

@@ -3,9 +3,9 @@ type: is
 id: is-01ks97mrcpevmbkaqgkvwrx6nx
 title: Lock canonical §16 Parsimony content (guideline rules + rubric anchors + metric row + profile placement)
 kind: task
-status: open
+status: closed
 priority: 2
-version: 8
+version: 9
 labels:
   - rubric-rollout
   - parsimony
@@ -23,7 +23,9 @@ dependencies:
     target: is-01ks97rpmhnq79he6aqq15fvkk
 parent_id: is-01ks97m4tenhgn7w974et1nrnk
 created_at: 2026-05-23T01:36:52.629Z
-updated_at: 2026-05-23T01:39:39.272Z
+updated_at: 2026-05-23T02:12:35.468Z
+closed_at: 2026-05-23T02:12:35.455Z
+close_reason: Implemented as part of the combined 20-dim-v1 rollout (commit on claude/vibrant-goldberg-828VB)
 ---
 First sub-bead in the Parsimony epic. Output is a locked draft of the canonical content that every downstream sub-bead pulls from.
 

@@ -3,9 +3,9 @@ type: is
 id: is-01ks97pd2e5h9h8rgzyraxja9f
 title: Add parsimony field to Pydantic models in eval_report.py
 kind: chore
-status: open
+status: closed
 priority: 2
-version: 3
+version: 4
 labels:
   - rubric-rollout
   - parsimony
@@ -17,7 +17,9 @@ dependencies:
     target: is-01ks97qev6jz44nkqjs438dwen
 parent_id: is-01ks97m4tenhgn7w974et1nrnk
 created_at: 2026-05-23T01:37:46.574Z
-updated_at: 2026-05-23T01:39:37.496Z
+updated_at: 2026-05-23T02:12:36.057Z
+closed_at: 2026-05-23T02:12:36.057Z
+close_reason: Implemented as part of the combined 20-dim-v1 rollout (commit on claude/vibrant-goldberg-828VB)
 ---
 Pydantic models in tools/prose-eval/src/prose_eval/eval_report.py have explicit per-dimension field names; these must match the YAML schema keys.
 

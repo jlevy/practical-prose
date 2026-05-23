@@ -3,9 +3,9 @@ type: is
 id: is-01ks97rbrhph4pbq49mhwp9xhz
 title: "Update practical-prose-metrics.md: add Parsimony row + renumber + adjust profiles + version bump"
 kind: chore
-status: open
+status: closed
 priority: 2
-version: 2
+version: 3
 labels:
   - rubric-rollout
   - parsimony
@@ -15,7 +15,9 @@ dependencies:
     target: is-01ks97s25n1s058wk2nfqbtvx3
 parent_id: is-01ks97m4tenhgn7w974et1nrnk
 created_at: 2026-05-23T01:38:50.769Z
-updated_at: 2026-05-23T01:39:40.747Z
+updated_at: 2026-05-23T02:12:38.145Z
+closed_at: 2026-05-23T02:12:38.145Z
+close_reason: Implemented as part of the combined 20-dim-v1 rollout (commit on claude/vibrant-goldberg-828VB)
 ---
 Update docs/practical-prose-metrics.md to add the Parsimony metric row and the profile placements, plus renumbering.
 

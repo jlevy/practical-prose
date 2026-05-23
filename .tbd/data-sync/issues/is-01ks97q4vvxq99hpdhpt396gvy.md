@@ -3,9 +3,9 @@ type: is
 id: is-01ks97q4vvxq99hpdhpt396gvy
 title: Update Python tests for parsimony field (test_eval_report.py, test_eval_score.py, test_eval_compare.py)
 kind: chore
-status: open
+status: closed
 priority: 2
-version: 2
+version: 3
 labels:
   - rubric-rollout
   - parsimony
@@ -15,7 +15,9 @@ dependencies:
     target: is-01ks97s25n1s058wk2nfqbtvx3
 parent_id: is-01ks97m4tenhgn7w974et1nrnk
 created_at: 2026-05-23T01:38:10.939Z
-updated_at: 2026-05-23T01:39:39.574Z
+updated_at: 2026-05-23T02:12:36.942Z
+closed_at: 2026-05-23T02:12:36.942Z
+close_reason: Implemented as part of the combined 20-dim-v1 rollout (commit on claude/vibrant-goldberg-828VB)
 ---
 Three test files have hardcoded dimension dicts for the JudgmentScores model.
 

@@ -3,9 +3,9 @@ type: is
 id: is-01ks97pmpnytq5mjeg6becv852
 title: Update LLM scoring prompt (eval-rubric-score.md) to include Parsimony
 kind: chore
-status: open
+status: closed
 priority: 2
-version: 2
+version: 3
 labels:
   - rubric-rollout
   - parsimony
@@ -15,7 +15,9 @@ dependencies:
     target: is-01ks97q4vvxq99hpdhpt396gvy
 parent_id: is-01ks97m4tenhgn7w974et1nrnk
 created_at: 2026-05-23T01:37:54.388Z
-updated_at: 2026-05-23T01:39:36.786Z
+updated_at: 2026-05-23T02:12:36.356Z
+closed_at: 2026-05-23T02:12:36.356Z
+close_reason: Implemented as part of the combined 20-dim-v1 rollout (commit on claude/vibrant-goldberg-828VB)
 ---
 Update tools/prose-eval/src/prose_eval/prompts/eval-rubric-score.md — the prompt sent to Claude for model-scoring.
 

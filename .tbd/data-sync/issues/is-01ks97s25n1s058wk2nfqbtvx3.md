@@ -3,9 +3,9 @@ type: is
 id: is-01ks97s25n1s058wk2nfqbtvx3
 title: "Validate Parsimony rollout: lint, tests, end-to-end eval"
 kind: task
-status: open
+status: closed
 priority: 2
-version: 1
+version: 2
 labels:
   - rubric-rollout
   - parsimony
@@ -13,7 +13,9 @@ labels:
 dependencies: []
 parent_id: is-01ks97m4tenhgn7w974et1nrnk
 created_at: 2026-05-23T01:39:13.717Z
-updated_at: 2026-05-23T01:39:13.717Z
+updated_at: 2026-05-23T02:12:38.719Z
+closed_at: 2026-05-23T02:12:38.719Z
+close_reason: Implemented as part of the combined 20-dim-v1 rollout (commit on claude/vibrant-goldberg-828VB)
 ---
 Final sub-bead. Run the full validation suite and an end-to-end smoke test before marking the epic done.
 

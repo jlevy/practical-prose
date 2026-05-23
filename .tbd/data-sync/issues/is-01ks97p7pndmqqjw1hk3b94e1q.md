@@ -3,9 +3,9 @@ type: is
 id: is-01ks97p7pndmqqjw1hk3b94e1q
 title: Add parsimony dimension to rubric_schema.yaml (single source of truth) + bump rubric version
 kind: chore
-status: open
+status: closed
 priority: 2
-version: 4
+version: 5
 labels:
   - rubric-rollout
   - parsimony
@@ -19,7 +19,9 @@ dependencies:
     target: is-01ks97qev6jz44nkqjs438dwen
 parent_id: is-01ks97m4tenhgn7w974et1nrnk
 created_at: 2026-05-23T01:37:41.076Z
-updated_at: 2026-05-23T01:39:37.764Z
+updated_at: 2026-05-23T02:12:35.764Z
+closed_at: 2026-05-23T02:12:35.763Z
+close_reason: Implemented as part of the combined 20-dim-v1 rollout (commit on claude/vibrant-goldberg-828VB)
 ---
 Update tools/prose-eval/src/prose_eval/rubric_schema.yaml — the single source of truth for the rubric. Python code derives `DIMENSIONS`, `GROUPS`, and `dimension_count()` from this YAML at import time, so most code is dimension-agnostic.
 

@@ -3,9 +3,9 @@ type: is
 id: is-01ks97w2sc5gv4c3tqgtz4aqzz
 title: Lock canonical §13 Relevance content (guideline rules + rubric anchors + metric row + profile placement)
 kind: task
-status: open
+status: closed
 priority: 2
-version: 6
+version: 7
 labels:
   - rubric-rollout
   - relevance
@@ -23,7 +23,9 @@ dependencies:
     target: is-01ks97ycmb6hp3mfmz5q8qkbpd
 parent_id: is-01ks97vjxrmnzmxk6ke3hmt505
 created_at: 2026-05-23T01:40:52.652Z
-updated_at: 2026-05-23T01:42:26.866Z
+updated_at: 2026-05-23T02:12:39.000Z
+closed_at: 2026-05-23T02:12:39.000Z
+close_reason: Implemented as part of the combined 20-dim-v1 rollout (commit on claude/vibrant-goldberg-828VB)
 ---
 First sub-bead in the Relevance epic. Output is a locked draft of the canonical content that every downstream sub-bead pulls from. User must sign off before downstream beads proceed.
 

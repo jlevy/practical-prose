@@ -3,9 +3,9 @@ type: is
 id: is-01ks97xwbrn363f1mnbm2pptwm
 title: Add §13 Relevance anchors to practical-prose-rubric.md + renumber + bump rubric_version
 kind: chore
-status: open
+status: closed
 priority: 2
-version: 2
+version: 3
 labels:
   - rubric-rollout
   - relevance
@@ -15,7 +15,9 @@ dependencies:
     target: is-01ks97yme61jy7g3wwczpt9fy0
 parent_id: is-01ks97vjxrmnzmxk6ke3hmt505
 created_at: 2026-05-23T01:41:51.607Z
-updated_at: 2026-05-23T01:42:28.027Z
+updated_at: 2026-05-23T02:12:41.080Z
+closed_at: 2026-05-23T02:12:41.080Z
+close_reason: Implemented as part of the combined 20-dim-v1 rollout (commit on claude/vibrant-goldberg-828VB)
 ---
 Update docs/practical-prose-rubric.md.
 

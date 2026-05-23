@@ -3,9 +3,9 @@ type: is
 id: is-01ks97vjxrmnzmxk6ke3hmt505
 title: '[epic] Add "Relevance" as a 3rd Grounding sub-dimension'
 kind: epic
-status: open
+status: closed
 priority: 2
-version: 12
+version: 13
 labels:
   - rubric-rollout
   - relevance
@@ -23,7 +23,9 @@ child_order_hints:
   - is-01ks97ycmb6hp3mfmz5q8qkbpd
   - is-01ks97yme61jy7g3wwczpt9fy0
 created_at: 2026-05-23T01:40:36.408Z
-updated_at: 2026-05-23T01:42:16.261Z
+updated_at: 2026-05-23T02:12:48.271Z
+closed_at: 2026-05-23T02:12:48.271Z
+close_reason: Relevance added as §13 Grounding sub-dim alongside the Parsimony rollout. Rubric → 20-dim-v1. All 11 sub-beads closed; tests passing (168/168), lint clean.
 ---
 Add a new Practical Prose dimension **Relevance** as a third Grounding sub-dimension, alongside §11 Verifiability and §12 Factuality.
 

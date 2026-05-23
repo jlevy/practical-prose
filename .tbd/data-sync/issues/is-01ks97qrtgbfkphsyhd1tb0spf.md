@@ -3,9 +3,9 @@ type: is
 id: is-01ks97qrtgbfkphsyhd1tb0spf
 title: Add §16 Parsimony to practical-prose-guidelines.md + renumber §16-§18 → §17-§19
 kind: chore
-status: open
+status: closed
 priority: 2
-version: 2
+version: 3
 labels:
   - rubric-rollout
   - parsimony
@@ -15,7 +15,9 @@ dependencies:
     target: is-01ks97s25n1s058wk2nfqbtvx3
 parent_id: is-01ks97m4tenhgn7w974et1nrnk
 created_at: 2026-05-23T01:38:31.376Z
-updated_at: 2026-05-23T01:39:40.150Z
+updated_at: 2026-05-23T02:12:37.553Z
+closed_at: 2026-05-23T02:12:37.553Z
+close_reason: Implemented as part of the combined 20-dim-v1 rollout (commit on claude/vibrant-goldberg-828VB)
 ---
 Update docs/practical-prose-guidelines.md: add the new §16 section, renumber three subsequent dims, and fix all inline cross-references.
 

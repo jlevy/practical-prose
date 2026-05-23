@@ -3,9 +3,9 @@ type: is
 id: is-01ks97wdme24jtc6pja2yyqkwk
 title: Add relevance dimension to rubric_schema.yaml at §13 + renumber §13-§18 → §14-§19 + bump version
 kind: chore
-status: open
+status: closed
 priority: 2
-version: 4
+version: 5
 labels:
   - rubric-rollout
   - relevance
@@ -19,7 +19,9 @@ dependencies:
     target: is-01ks97xacz7gyeyycb8ggn697e
 parent_id: is-01ks97vjxrmnzmxk6ke3hmt505
 created_at: 2026-05-23T01:41:03.758Z
-updated_at: 2026-05-23T01:42:25.639Z
+updated_at: 2026-05-23T02:12:39.273Z
+closed_at: 2026-05-23T02:12:39.273Z
+close_reason: Implemented as part of the combined 20-dim-v1 rollout (commit on claude/vibrant-goldberg-828VB)
 ---
 Update tools/prose-eval/src/prose_eval/rubric_schema.yaml — the single source of truth.
 

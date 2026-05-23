@@ -3,9 +3,9 @@ type: is
 id: is-01ks97xacz7gyeyycb8ggn697e
 title: Regenerate .eval.md test fixtures and golden expected-comparison.md for Relevance
 kind: chore
-status: open
+status: closed
 priority: 2
-version: 2
+version: 3
 labels:
   - rubric-rollout
   - relevance
@@ -15,7 +15,9 @@ dependencies:
     target: is-01ks97yme61jy7g3wwczpt9fy0
 parent_id: is-01ks97vjxrmnzmxk6ke3hmt505
 created_at: 2026-05-23T01:41:33.214Z
-updated_at: 2026-05-23T01:42:27.444Z
+updated_at: 2026-05-23T02:12:40.482Z
+closed_at: 2026-05-23T02:12:40.481Z
+close_reason: Implemented as part of the combined 20-dim-v1 rollout (commit on claude/vibrant-goldberg-828VB)
 ---
 Same regeneration work as the Parsimony equivalent (pp-6iju). If Parsimony's regen has already landed, this bead extends the same 19-dim fixtures to 20-dim; if Relevance lands alone, it goes 18 → 19.
 

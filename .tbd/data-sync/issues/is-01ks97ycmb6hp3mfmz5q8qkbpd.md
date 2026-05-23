@@ -3,9 +3,9 @@ type: is
 id: is-01ks97ycmb6hp3mfmz5q8qkbpd
 title: "Update minor dim-count references for Relevance: principles, bibliography, shortcuts, skill, runbook, README"
 kind: chore
-status: open
+status: closed
 priority: 2
-version: 2
+version: 3
 labels:
   - rubric-rollout
   - relevance
@@ -15,7 +15,9 @@ dependencies:
     target: is-01ks97yme61jy7g3wwczpt9fy0
 parent_id: is-01ks97vjxrmnzmxk6ke3hmt505
 created_at: 2026-05-23T01:42:08.267Z
-updated_at: 2026-05-23T01:42:28.638Z
+updated_at: 2026-05-23T02:12:41.680Z
+closed_at: 2026-05-23T02:12:41.680Z
+close_reason: Implemented as part of the combined 20-dim-v1 rollout (commit on claude/vibrant-goldberg-828VB)
 ---
 Sweep through smaller files for Relevance — same files as the Parsimony equivalent (pp-zlkh) but adding Relevance row in Grounding group and renumbering §13+ references.
 
