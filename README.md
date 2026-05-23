@@ -144,7 +144,7 @@ formatting rules that apply to *any* document—technical docs, READMEs, interna
 specifications—not just practical prose.
 The practical-prose layers (Principles, Guidelines, Rubric) build on top of it with the
 seven principles and 20 dimensions specific to evaluating practical writing.
-Principles, Guidelines, and Rubric form a tight triple: same seven principles, same 18
+Principles, Guidelines, and Rubric form a tight triple: same seven principles, same 20
 dimensions, same five groups (Purpose, Expression, Grounding, Reasoning, Judgment).
 The bibliography supplies the intellectual basis; the shortcuts and runbooks are how the
 system gets used in practice.
@@ -209,15 +209,14 @@ installs a single `pprose` console-script entry point:
 Quick start:
 
 ```bash
-cd tools/pprose
-make install
-# Set ANTHROPIC_API_KEY in .env (loaded automatically by the entry points).
-uv run pprose report from-metrics path/to/doc.md --label my-doc --scope-class brief --out my-doc.eval.md
-uv run pprose score my-doc.eval.md
-uv run pprose report validate my-doc.eval.md
+# Run with no install via uv (https://docs.astral.sh/uv/). `score` needs ANTHROPIC_API_KEY.
+uvx pprose report from-metrics path/to/doc.md --label my-doc --scope-class brief --out my-doc.eval.md
+uvx pprose score my-doc.eval.md
+uvx pprose report validate my-doc.eval.md
 ```
 
-See the runbooks for end-to-end operation.
+See the runbooks for end-to-end operation and
+[tools/pprose/docs/development.md](tools/pprose/docs/development.md) for local development.
 
 <!-- This document follows common-doc-guidelines.md.
 Review guidelines before editing.

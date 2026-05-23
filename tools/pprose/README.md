@@ -41,8 +41,3 @@ the current directory hierarchy and `$HOME`.
 - Installing uv and Python: [installation.md](docs/installation.md)
 - Development workflows: [development.md](docs/development.md)
 - Publishing to PyPI: [publishing.md](docs/publishing.md)
-
-* * *
-
-*This project was built from
-[simple-modern-uv](https://github.com/jlevy/simple-modern-uv).*
