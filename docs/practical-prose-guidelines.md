@@ -43,7 +43,7 @@ context, evidence, or maintainability is friction.
 | **Grounding** | Verifiability | Are claims traceable to specific sources, observations, or calculations? |
 |  | Factuality | Are the verifiable claims true and supported by cited evidence? |
 |  | Relevance | Do sources, citations, and reasoning chains bear on the document's stated purpose? |
-| **Reasoning** | Discipline | Are the rungs of the ladder of inference kept distinct? |
+| **Reasoning** | Discipline | Are observation, judgment, interpretation, and implication worked through in order, with each higher rung supported by the prior? |
 |  | Soundness | Do claims follow from evidence through valid mechanisms and explicit assumptions? |
 |  | Precision | Are claims and terms specified at the right granularity? |
 |  | Parsimony | Is each load-bearing reasoning chain the cleanest, simplest sound argument possible for its conclusion? |
@@ -408,7 +408,7 @@ But when these elements are present, they should be well-arranged.
 5. **Lists earn their place.** Lists are right when items are parallel and discrete.
    If list items vary in scope or depth, paragraphs are clearer.
 
-6. **Links target stable anchors.** Prefer permalinks, filename + section anchors, or
+6. **Links target stable anchors.** Prefer permalinks, filename and section anchors, or
    commit-pinned URLs over links that may rot.
    In internal docs, prefer filename-only references when they are unique.
 
@@ -698,14 +698,17 @@ Distinguished from neighbors:
 
 ### 14. Discipline
 
-*Description:* The practice of moving rung by rung up the ladder of inference
-(observation → judgment → interpretation → implication).
-Each rung is named on its own terms; none is skipped, none is blended into its neighbor.
+*Description:* The practice of climbing the ladder of inference rung by rung in
+order (observation → judgment → interpretation → implication), with each higher
+rung supported by the rung below it. Each rung is named on its own terms; none is
+skipped, none is blended into its neighbor. Implications rest on sound
+interpretations, which rest on sound judgments, which rest on sound observations.
 
-Discipline is distinct from Soundness (§15). Soundness tests whether the chain
-of reasoning is sound; Discipline tests whether the rungs exist as distinct
-rungs at all. Both can fail independently: a sound chain can still be fused into one
-sentence, and a well-stepped chain can still be unsound.
+Discipline is distinct from Soundness (§15). Soundness tests whether each step in
+the chain is itself valid; Discipline tests whether the rungs are climbed in order
+and exist as distinct rungs at all. Both can fail independently: a sound chain can
+still be fused into one sentence or its rungs can be presented out of order, and a
+well-ordered chain can still be unsound.
 
 The four rungs, with one example carried through them:
 
@@ -783,7 +786,7 @@ considered” dimension is broken out as Fairness (§19).
    counter-evidence in your own document is a soundness failure.
 
 5. **Asserted ≠ argued.** If the claim is complex, either argue for it (with named
-   primitives + numerical comparisons) or say it’s an assertion subject to falsifiable
+   primitives and numerical comparisons) or say it’s an assertion subject to falsifiable
    conditions. Bare assertions of complex claims fail soundness.
 
 6. **Define terms when they carry weight.** A term the document depends on gets a
@@ -854,17 +857,19 @@ Distinguished from neighbors:
   Parsimony is argument-level economy (rungs in the inferential chain).
 - **§13 Relevance** asks whether each source or section is on-task. Parsimony asks
   whether the reasoning *within* an on-task chain uses the minimum sound steps.
-- **§14 Discipline** asks whether rungs are named on their own terms.
-  Parsimony asks whether the chain is the minimum.
+- **§14 Discipline** asks whether the rungs are climbed in order and named on
+  their own terms. Parsimony asks whether the chain is the minimum.
 - **§15 Soundness** asks whether each step is valid in itself. Parsimony asks whether
   the chain *shape* is minimum given the per-step warrants.
 
 **Rules:**
 
-1. **Cite, don't re-derive.** Where direct evidence is available (a published result,
-   a measured value, a settled definition), cite it rather than constructing an
-   inferential chain that arrives at the same conclusion. Substituting derivation for
-   direct evidence stretches the chain without adding inspectability.
+1. **Prefer citation over re-derivation when both serve the same purpose.** Where
+   direct evidence is available (a published result, a measured value, a settled
+   definition), citing it is usually shorter than re-deriving it. Re-derivation is
+   warranted when it adds inspectability (showing the math), confidence (letting the
+   reader audit the step), or pedagogy (explaining for the audience); it is padding
+   when none of those apply and the cited result would do the same work.
 
 2. **Cut non-load-bearing steps.** Each rung in a load-bearing chain should be
    necessary; if removing it leaves the argument intact, remove it. Steps that restate

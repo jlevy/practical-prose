@@ -159,7 +159,7 @@ are not justified.
 | 11 | Grounding | Verifiability | Are claims traceable to sources or calculations? |
 | 12 |  | Factuality | Do cited sources support the claims as asserted? |
 | 13 |  | Relevance | Do sources, citations, and reasoning chains bear on the document's stated purpose? |
-| 14 | Reasoning | Discipline | Are observation, judgment, interpretation, and implication kept distinct? |
+| 14 | Reasoning | Discipline | Are observation, judgment, interpretation, and implication worked through in order, with each higher rung supported by the prior? |
 | 15 |  | Soundness | Do claims follow from evidence through valid mechanisms? |
 | 16 |  | Precision | Are claims and terms specified at the right granularity? |
 | 17 |  | Parsimony | Is each load-bearing reasoning chain the cleanest, simplest sound argument possible for its conclusion? |
@@ -221,7 +221,7 @@ Suggested primary assignments:
 | Missing inline citation for a quantitative claim | §11 Verifiability | §10 Formatting |
 | Number in prose doesn’t match source (silent rounding) | §12 Factuality | §11 Verifiability |
 | Cited source doesn’t support the claim as asserted | §12 Factuality | §11 Verifiability |
-| Mixed observation + interpretation in one sentence | §14 Discipline | §15 Soundness |
+| Mixed observation and interpretation in one sentence | §14 Discipline | §15 Soundness |
 | Probability claim without base-rate anchor | §18 Calibration | §15 Soundness |
 | One-sided argument with no counter-evidence engaged | §19 Fairness | §18 Calibration |
 | Key claim brittle under a different reasonable interpretive lens | §20 Robustness | §19 Fairness |
@@ -240,7 +240,7 @@ Examples:
 competitive landscape; Vercel CEO benchmark quote at L820 has no tweet ID;
 W3Techs market-share at L815 has no URL.)
 
-5 (Bull / base / bear cases at §2.8 each have 3 named primitives + numerical thresholds;
+5 (Bull / base / bear cases at §2.8 each have 3 named primitives and numerical thresholds;
 risk register at §2.10 spans 5 classes; opposing positions argued at proportional
 depth.)
 
@@ -739,10 +739,14 @@ sections rather than words and paragraphs.
 
 #### §14 Discipline
 
-Moving rung by rung up the ladder of inference (observation → judgment → interpretation
-→ implication). Each rung named on its own terms; none skipped, none blended into its
-neighbor. Sister of Soundness (§15): Soundness asks whether the chain holds together;
-Discipline asks whether the rungs exist as distinct rungs at all.
+Climbing the ladder of inference rung by rung in order (observation → judgment →
+interpretation → implication), with each higher rung supported by the rung below.
+Implications rest on sound interpretations, which rest on sound judgments, which rest
+on sound observations. Each rung is named on its own terms; none is skipped, none is
+blended into its neighbor.
+Sister of Soundness (§15): Soundness asks whether each step is itself valid;
+Discipline asks whether the rungs are climbed in order and exist as distinct rungs
+at all.
 
 - **NA:** Not applicable.
   Discipline tests whether the document moves rung by rung up the ladder
@@ -778,7 +782,7 @@ Discipline asks whether the rungs exist as distinct rungs at all.
   and interpretation skipped or buried.
 
 - **3:** Rungs distinguished in some sections but blended in others.
-  Several key claims fuse observation + interpretation in one sentence; citation
+  Several key claims fuse observation and interpretation in one sentence; citation
   legitimacy from the observation rung leaks onto the implication rung.
 
 - **4:** Score-5 mostly satisfied with one or two minor slips: one sentence that bundles
@@ -825,7 +829,7 @@ scored under §19 Fairness.
 Claims and terms specified at the right granularity for the domain and audience.
 Generic vocabulary in place of available specific vocabulary is imprecision, even when
 the generic phrasing is true.
-Distinct from §5 Clarity (register / readability) and §3 Breadth + §4 Depth (scope
+Distinct from §5 Clarity (register / readability) and §3 Breadth and §4 Depth (scope
 completeness, section development): Precision scores granularity *within* each claim.
 
 - **0:** Cannot assess.
@@ -866,7 +870,7 @@ Parsimony is 0.
 
 Parsimony differs from §7 Concision (prose-level economy: words and paragraphs),
 from §13 Relevance (whether each source or section is on-task), from §14 Inference
-Discipline (whether rungs are named), and from §15 Soundness (whether each step is
+Discipline (whether the rungs are climbed in order), and from §15 Soundness (whether each step is
 valid). Parsimony asks specifically: given the warrants in use, is the chain shape
 the minimum sufficient?
 
@@ -879,14 +883,15 @@ the minimum sufficient?
   headline claims, so the chain cannot be the minimum sound argument.
 
 - **1:** Obviously extraneous elements throughout the chains of reasoning:
-  citable facts re-derived, weaker warrants substituted where stronger ones were
-  available, or non-load-bearing rungs piled into chains that the conclusion does
-  not require. The argument bears little resemblance to a minimum sufficient sound
-  chain.
+  citable facts re-derived where the citation would have served the same purpose,
+  weaker warrants substituted where stronger ones were available, or non-load-bearing
+  rungs piled into chains that the conclusion does not require. The argument bears
+  little resemblance to a minimum sufficient sound chain.
 
 - **2:** Obviously extraneous elements in multiple load-bearing chains, or on the
-  chains that carry headline claims. Substantial re-derivation, padding, or weaker-
-  warrant substitution where direct evidence existed.
+  chains that carry headline claims. Substantial padding, weaker-warrant substitution
+  where direct evidence existed, or re-derivation that adds neither inspectability
+  nor confidence.
 
 - **3:** Workable; the chains are roughly the right shape and the headline claims
   survive a minimum-sufficiency test, but several arguments could be tightened
@@ -894,14 +899,17 @@ the minimum sufficient?
 
 - **4:** A few arguments could be simplified but maintain the same level of
   soundness and precision; otherwise tight. A single re-derivation that could have
-  been a citation, one chain using inductive language where a deductive step is
-  available, or one redundant rung in an otherwise-tight chain.
+  been a citation without loss of inspectability, one chain using inductive language
+  where a deductive step is available, or one redundant rung in an otherwise-tight
+  chain.
 
 - **5:** Every line of inference or argument appears to be the most clean and simple
   argument possible to a sound conclusion. Long chains appear only where the warrant
   strengths in use require them; short chains appear only where per-step warrants
-  are strong enough to support them. No rung is extraneous; no citable fact is
-  re-derived; no weaker warrant is substituted where a stronger one was available.
+  are strong enough to support them. No rung is extraneous; re-derivations are
+  present only where they add inspectability, confidence, or pedagogy that a
+  citation would not; no weaker warrant is substituted where a stronger one was
+  available.
 
 ### Judgment
 
@@ -1102,7 +1110,7 @@ Current revision: **`20-dim-v1`**. Eval YAMLs produced under it set
 `../scripts/eval_report.py` writes this automatically.
 
 The previous revision `15-dim-v1` covered 15 dimensions in five groups; `20-dim-v1` adds
-three dimensions (Breadth + Depth split from Coverage; Consistency; Formatting),
+three dimensions (Breadth and Depth split from Coverage; Consistency; Formatting),
 renames Structure → Organization, and introduces the `NA` value distinct from `0`.
 Score-anchor language was tightened in several dimensions.
 

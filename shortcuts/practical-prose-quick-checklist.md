@@ -19,9 +19,9 @@ for pre-publish audit of an already-drafted doc.
 **Scope of the audit:**
 
 - The applicable dimensions depend on `risk_level`. Low-stakes notes audit only §1 / §5
-  / §7 / §10; standard internal docs audit Purpose + Expression + Grounding
-  + §15 Soundness; decision memos / audits / deep research audit all 20; reference /
-  runbook docs focus on §1 / §2 / §8 / §10 / §16 + Maintainable.
+  / §7 / §10; standard internal docs audit Purpose, Expression, Grounding,
+  and §15 Soundness; decision memos / audits / deep research audit all 20; reference
+  / runbook docs focus on §1 / §2 / §8 / §10 / §16 and the Maintainable principle.
   See `practical-prose-metrics.md` §Applicability Profiles.
 - A scored rule miss can be a **justified deviation** instead of a defect, if you
   document the rule set aside, the reader outcome served, and the risk introduced.
@@ -71,7 +71,8 @@ for pre-publish audit of an already-drafted doc.
 ## Reasoning (§14-§17)
 
 - [ ] **§14 Discipline:** Observation, judgment, interpretation, implication
-  kept distinct? Each rung carries its own evidence?
+  worked through in order, each higher rung supported by the prior? Each rung
+  carries its own evidence?
 - [ ] **§15 Soundness:** Mechanisms named where causation is asserted?
   Assumptions surfaced?
   Counter-evidence engaged?
@@ -80,8 +81,9 @@ for pre-publish audit of an already-drafted doc.
 - [ ] **§16 Precision:** Most specific term the audience can parse used?
   Umbrella terms avoided where sub-distinctions matter?
 - [ ] **§17 Parsimony:** Each load-bearing reasoning chain the minimum sufficient
-  sound argument? No citable facts re-derived, no non-load-bearing rungs, no weaker
-  warrant where a stronger one was available?
+  sound argument? No non-load-bearing rungs; no weaker warrant where a stronger one
+  was available; re-derivations only where they add inspectability, confidence, or
+  audience understanding beyond what a citation would?
 
 ## Judgment (§18-§20)
 

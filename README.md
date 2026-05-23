@@ -108,7 +108,7 @@ looking at specific qualities or dimensions.
 | **Grounding** | Verifiability | Are claims traceable to sources or calculations? |
 |  | Factuality | Do cited sources support the claims as asserted? |
 |  | Relevance | Do sources, citations, and reasoning chains bear on the document's stated purpose? |
-| **Reasoning** | Discipline | Are observation, judgment, interpretation, and implication kept distinct? |
+| **Reasoning** | Discipline | Are observation, judgment, interpretation, and implication worked through in order, with each higher rung supported by the prior? |
 |  | Soundness | Do claims follow from evidence through valid mechanisms? |
 |  | Precision | Are claims and terms specified at the right granularity? |
 |  | Parsimony | Is each load-bearing reasoning chain the cleanest, simplest sound argument possible for its conclusion? |

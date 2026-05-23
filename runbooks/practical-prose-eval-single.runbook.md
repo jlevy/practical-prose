@@ -13,7 +13,7 @@ Joshua Levy (github.com/jlevy)
 ## Purpose
 
 End-to-end operational steps for evaluating one practical writing artifact: run
-quantitative metrics, score the 18 qualitative dimensions, cite guideline-rule
+quantitative metrics, score the 20 qualitative dimensions, cite guideline-rule
 violations, produce a validated `<artifact>.eval.md` report.
 
 The substance of *how* to score lives in `practical-prose-rubric.md` (anchors per
@@ -24,7 +24,7 @@ For comparing N evaluated artifacts, see `practical-prose-eval-compare.runbook.m
 
 ## Inputs and outputs
 
-- **Input:** one Markdown artifact + the rubric (`practical-prose-rubric.md`) + the
+- **Input:** one Markdown artifact, the rubric (`practical-prose-rubric.md`), and the
   prescriptive guidelines (`practical-prose-guidelines.md`).
 - **Output:** one `<artifact-name>.eval.md` validated against the schema in
   `prose-eval report` (`EvalReport`).
@@ -104,7 +104,7 @@ For one-off raw metrics inspection without producing an eval report:
 prose-eval metrics path/to/artifact.md --format=yaml
 ```
 
-### 2. Score the 18 qualitative dimensions
+### 2. Score the 20 qualitative dimensions
 
 Two paths. The model-scoring path is the default and is what the compare workflow
 consumes; use the manual path for the first reviewer-level pass on a new doc class or
@@ -117,8 +117,8 @@ prose-eval score path/to/artifact.eval.md
 ```
 
 This calls the Anthropic SDK with the rubric, guidelines, and artifact, parses the
-structured JSON response, and fills the `qual` + `violations` blocks of the eval report
-in place. The rubric + guidelines block is sent with prompt-caching enabled, so
+structured JSON response, and fills the `qual` and `violations` blocks of the eval report
+in place. The rubric and guidelines block is sent with prompt-caching enabled, so
 subsequent calls (and `--batch` runs) reuse the cache and cost ~10× less than the first
 call.
 Useful flags:
@@ -165,7 +165,7 @@ If manual: open the eval report produced in step 1 and edit:
   optional `method` and `notes`. `eval_date` is pre-filled.
 
 The `quant`, `derived`, and `artifact` blocks were generated in step 1; do not edit them
-by hand. The schema validator recomputes `derived` from `quant` + `qual`.
+by hand. The schema validator recomputes `derived` from `quant` and `qual`.
 
 ### 4. Validate
 
@@ -259,7 +259,7 @@ change.
   validator, `from-metrics` stub generator.
 - [eval_score.py](../tools/prose-eval/src/prose_eval/eval_score.py): model-scoring
   runner that fills
-  `qual` + `violations`.
+  `qual` and `violations`.
 - [metrics.py](../tools/prose-eval/src/prose_eval/metrics.py): quantitative metrics
   tool.
 

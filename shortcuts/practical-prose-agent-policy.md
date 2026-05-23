@@ -39,8 +39,9 @@ The order matters. When two priorities conflict, the earlier one wins.
    Mechanism named where causation is asserted; counterfactual named where the
    explanation could be wrong.
    Each load-bearing reasoning chain is the cleanest, simplest sound argument
-   possible: no citable fact re-derived, no non-load-bearing rungs, no weaker warrant
-   where a stronger one was available.
+   possible: no non-load-bearing rungs, no weaker warrant where a stronger one was
+   available, and no re-derivation that doesn't add inspectability, confidence, or
+   audience understanding beyond what a citation would.
    (§14 Discipline, §15 Soundness, §17 Parsimony.)
 
 5. **Use concrete language and specific terms.** Most specific word the audience can

@@ -1,154 +1,291 @@
 version: 20-dim-v1
 groups:
-  - key: purpose
-    label: Purpose
-    dimensions:
-      - key: suitability
-        label: Suitability
-        section: 1
-        question:
-          Does the document give the reader what they need, in the form the task
-          requires?
-      - key: scope
-        label: Scope
-        section: 2
-        question: Is the scope stated and does it fit the actual scope of the work?
-      - key: breadth
-        label: Breadth
-        section: 3
-        question: Are the relevant areas within scope covered?
-      - key: depth
-        label: Depth
-        section: 4
-        question: Are the important areas developed enough?
-  - key: expression
-    label: Expression
-    dimensions:
-      - key: clarity
-        label: Clarity
-        section: 5
-        question: Does the writing read well?
-      - key: coherence
-        label: Coherence
-        section: 6
-        question: Do the ideas progress smoothly?
-      - key: concision
-        label: Concision
-        section: 7
-        question: Does every section earn its place?
-      - key: organization
-        label: Organization
-        section: 8
-        question:
-          Are sections, headings, sequence, tables, figures, links, and cross-references
-          arranged for navigation?
-      - key: consistency
-        label: Consistency
-        section: 9
-        question: Does the document follow the chosen style guide or house style consistently?
-      - key: formatting
-        label: Formatting
-        section: 10
-        question: Is the document visually and syntactically clean in its medium?
-  - key: grounding
-    label: Grounding
-    dimensions:
-      - key: verifiability
-        label: Verifiability
-        section: 11
-        question: Are claims traceable to specific sources, observations, or calculations?
-      - key: factuality
-        label: Factuality
-        section: 12
-        question: Are claims true and supported by their cited evidence?
-      - key: relevance
-        label: Relevance
-        section: 13
-        question:
-          Do sources, citations, and reasoning chains bear on the document's stated
-          purpose?
-  - key: reasoning
-    label: Reasoning
-    dimensions:
-      - key: discipline
-        label: Discipline
-        section: 14
-        question: Are the rungs of the ladder of inference kept distinct?
-      - key: soundness
-        label: Soundness
-        section: 15
-        question:
-          Do claims follow from evidence through valid mechanisms and explicit
-          assumptions?
-      - key: precision
-        label: Precision
-        section: 16
-        question: Are claims and terms specified at the right granularity?
-      - key: parsimony
-        label: Parsimony
-        section: 17
-        question:
-          Is each load-bearing reasoning chain the cleanest, simplest sound argument
-          possible for its conclusion?
-  - key: judgment
-    label: Judgment
-    dimensions:
-      - key: calibration
-        label: Calibration
-        section: 18
-        question: Does claim strength match evidence strength?
-      - key: fairness
-        label: Fairness
-        section: 19
-        question: Are opposing positions argued at proportional evidentiary depth?
-      - key: robustness
-        label: Robustness
-        section: 20
-        question: Do key claims survive plausible alternative interpretations?
+- key: purpose
+  label: Purpose
+  dimensions:
+  - key: suitability
+    label: Suitability
+    section: 1
+    question: >-
+      Does the document give the reader what they need, in the form the task requires?
+    rules:
+    - State the task
+    - The needed output is recoverable from a skim
+    - Cut sections that don’t serve the stated task
+    - Name what the document doesn’t do
+    - Match output shape to task shape
+    - Name the reader burden the document removes
+    - Open with a summary; link to depth
+  - key: scope
+    label: Scope
+    section: 2
+    question: >-
+      Is the scope stated and does it fit the actual scope of the work?
+    rules:
+    - State the scope explicitly
+    - Declared scope matches actual scope
+    - Flag mid-document scope shifts
+    - Out-of-scope omissions are not breadth failures
+    - Name what the document is not competent to conclude
+  - key: breadth
+    label: Breadth
+    section: 3
+    question: Are the relevant areas within scope covered?
+    rules:
+    - Breadth is judged against declared scope
+    - Relevant prior work and standard sources are present
+    - Cover the affected case classes
+    - Out-of-scope omissions are not breadth failures
+  - key: depth
+    label: Depth
+    section: 4
+    question: Are the important areas developed enough?
+    rules:
+    - Section depth matches section importance
+    - Specificity is part of depth
+    - Quantify “small,” “large,” “rapid,” “slow.”
+    - Name the instances when you cite a count
+    - Develop key arguments at the level the stakes require
+- key: expression
+  label: Expression
+  dimensions:
+  - key: clarity
+    label: Clarity
+    section: 5
+    question: Does the writing read well?
+    rules:
+    - Use the most concrete word that fits
+    - Cut unnecessary qualifiers
+    - Eliminate meta-commentary
+    - Earn extravagant register; don’t deploy it as emphasis
+    - Earn rhetorical force; cut symmetry-for-its-own-sake
+    - No pedantic, pedagogical, or self-referential prose
+  - key: coherence
+    label: Coherence
+    section: 6
+    question: Do the ideas progress smoothly?
+    rules:
+    - Each paragraph has one job
+    - Transitions bridge, not stub
+    - The document progresses without backtracking
+    - Ideas arrive with setup
+  - key: concision
+    label: Concision
+    section: 7
+    question: Does every section earn its place?
+    rules:
+    - Cut anything that advances no purpose
+    - Avoid duplication across sections
+    - Each section earns its place
+    - Frontmatter is for machine-readable fields
+    - Describe the present state, not what it replaced
+  - key: organization
+    label: Organization
+    section: 8
+    question: >-
+      Are sections, headings, sequence, tables, figures, links, and cross-references
+      arranged for navigation?
+    rules:
+    - Heading hierarchy is logical and consistent
+    - Sections are arranged in the order the task requires
+    - Tables earn their tabular shape
+    - Figures have captions and live next to their reference
+    - Lists earn their place
+    - Links target stable anchors
+    - Cross-references resolve and name what they reference
+    - Visual elements earn their place
+    - Headings name what the section contains
+  - key: consistency
+    label: Consistency
+    section: 9
+    question: >-
+      Does the document follow the chosen style guide or house style consistently?
+    rules:
+    - >-
+      Spelling dialect, capitalization, punctuation, hyphenation, and number/date
+      formats are consistent
+    - >-
+      Product names, acronyms, technical terms, and entity names are styled consistently
+    - >-
+      Lists and headings use parallel syntax where parallelism is expected
+    - Citation style is consistent
+    - Register does not drift without reason
+    - >-
+      Domain-specific banned words and house-style conventions are followed
+    - Em-dash discipline
+  - key: formatting
+    label: Formatting
+    section: 10
+    question: >-
+      Is the document visually and syntactically clean in its medium?
+    rules:
+    - Markdown, HTML, or document markup renders correctly
+    - >-
+      Lists, tables, code fences, block quotes, links, images, footnotes, and frontmatter
+      are syntactically valid
+    - Whitespace, indentation, and line breaks are consistent
+    - Emphasis formatting is used according to convention
+    - >-
+      Required headers, metadata, and footers are present and correctly placed
+    - The rendered document has no obvious production defects
+- key: grounding
+  label: Grounding
+  dimensions:
+  - key: verifiability
+    label: Verifiability
+    section: 11
+    question: >-
+      Are claims traceable to specific sources, observations, or calculations?
+    rules:
+    - Claims are stated specifically enough to be checkable
+    - >-
+      Quantitative claims are source-traceable; the bar scales with stakes
+    - Citations are specific enough to verify
+    - Confidence tags require a source per claim
+    - >-
+      Calibrated uncertainty is not a defect; uncalibrated assertion is
+    - For central claims, name what would invalidate them
+  - key: factuality
+    label: Factuality
+    section: 12
+    question: Are claims true and supported by their cited evidence?
+    rules:
+    - Verifiable claims are corroborated
+    - Cited sources support the claim at the asserted strength
+    - >-
+      Numbers in prose match cited sources, or explicitly disclose rounding, aggregation,
+      unit conversion, or derivation
+    - Entity, date, and scope of citations match the claim
+    - Sources represent the cited entity, not its inverse
+    - No hallucinated sources
+    - >-
+      Calibrated uncertainty satisfies Factuality; uncalibrated certainty fails it
+  - key: relevance
+    label: Relevance
+    section: 13
+    question: >-
+      Do sources, citations, and reasoning chains bear on the document's stated purpose?
+    rules:
+    - Cite only sources that bear on the purpose
+    - Cut sections that don't load-bear on the task
+    - Mark digressions as digressions
+    - Each source passes the one-sentence test
+    - Don't pad bibliographies for performative-rigor reasons
+- key: reasoning
+  label: Reasoning
+  dimensions:
+  - key: discipline
+    label: Discipline
+    section: 14
+    question: >-
+      Are observation, judgment, interpretation, and implication worked through in
+      order, with each higher rung supported by the prior?
+    rules:
+    - Don’t skip rungs
+    - Don’t blend rungs in one sentence
+    - Each rung carries its own evidence
+    - >-
+      Use rung tags in audits, evals, and high-stakes analysis; preserve rung separation
+      without tags in polished prose
+    - Mark transitions
+  - key: soundness
+    label: Soundness
+    section: 15
+    question: >-
+      Do claims follow from evidence through valid mechanisms and explicit assumptions?
+    rules:
+    - Mechanism > correlation
+    - Don’t bridge “promising signal” to “outcome confirmed.”
+    - Surface unstated assumptions
+    - Engage the strongest counter-evidence
+    - Asserted ≠ argued
+    - Define terms when they carry weight
+    - Internal consistency
+    - Counterfactual test for causal and explanatory claims
+  - key: precision
+    label: Precision
+    section: 16
+    question: Are claims and terms specified at the right granularity?
+    rules:
+    - Use the most specific term the audience can parse
+    - Refer to entities by their proper name
+    - Avoid umbrella terms when sub-distinctions matter
+    - Quantitative precision matches measurement precision
+    - No vague placeholders for countables
+  - key: parsimony
+    label: Parsimony
+    section: 17
+    question: >-
+      Is each load-bearing reasoning chain the cleanest, simplest sound argument possible
+      for its conclusion?
+    rules:
+    - >-
+      Prefer citation over re-derivation when both serve the same purpose
+    - Cut non-load-bearing steps
+    - Match chain length to warrant strength
+    - Don't truncate required intermediates
+    - Prefer the most direct warrant available
+    - Parsimony applies to load-bearing chains
+- key: judgment
+  label: Judgment
+  dimensions:
+  - key: calibration
+    label: Calibration
+    section: 18
+    question: Does claim strength match evidence strength?
+    rules:
+    - Anchor probability claims in empirical base rates
+    - Bayesian shrinkage from small samples should be explicit
+    - Show the work for triangulated estimates
+    - Pre-event committed priors are the calibration discipline
+    - Scenario probabilities must sum to 100%
+    - Confidence without cowardice
+  - key: fairness
+    label: Fairness
+    section: 19
+    question: >-
+      Are opposing positions argued at proportional evidentiary depth?
+    rules:
+    - Engage opposing positions at proportional evidentiary depth
+    - Acknowledge inverses of one-sided framings
+    - Risk inventories cover the relevant classes
+    - Audit “counterintuitive” sections for confirmation bias
+    - Falsification conditions for each central claim
+  - key: robustness
+    label: Robustness
+    section: 20
+    question: Do key claims survive plausible alternative interpretations?
+    rules:
+    - State the interpretive lens
+    - >-
+      Test the claim against the most threatening alternative interpretation
+    - Flag interpretation-dependent claims
+    - >-
+      Sensitivity to the interpretive frame should match sensitivity to the data
+    - Distinguish Robustness from Fairness
 score_values:
   valid:
-    - NA
-    - 0
-    - 1
-    - 2
-    - 3
-    - 4
-    - 5
-  notes:
+  - NA
+  - 0
+  - 1
+  - 2
+  - 3
+  - 4
+  - 5
+  notes: >-
     NA = not applicable to this artifact; 0 = applicable but unassessable (content
     missing); 1-5 = quality score per anchors in practical-prose-rubric.md. When aggregating,
     NA dimensions are excluded from any mean rather than treated as zero.
 na_applicable_dimensions:
-  - breadth
-  - depth
-  - consistency
-  - formatting
-  - verifiability
-  - factuality
-  - relevance
-  - discipline
-  - parsimony
-  - calibration
-  - fairness
-  - robustness
-rule_counts:
-  suitability: 7
-  scope: 5
-  breadth: 4
-  depth: 5
-  clarity: 6
-  coherence: 4
-  concision: 5
-  organization: 9
-  consistency: 7
-  formatting: 6
-  verifiability: 6
-  factuality: 7
-  relevance: 5
-  discipline: 9
-  soundness: 8
-  precision: 5
-  parsimony: 6
-  calibration: 6
-  fairness: 5
-  robustness: 5
+- breadth
+- depth
+- consistency
+- formatting
+- verifiability
+- factuality
+- relevance
+- discipline
+- parsimony
+- calibration
+- fairness
+- robustness
