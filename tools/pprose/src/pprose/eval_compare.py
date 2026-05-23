@@ -15,22 +15,15 @@ Output shape (unified mode):
   - Cell values are bolded against a configurable rule (`--bold-rule`) to surface
     materially different scores between columns.
 
-The shape is exercised by the renderer regression test in
-scripts/test_eval_compare.py, which renders the six `figma-*.eval.md` fixtures
-and asserts byte-for-byte equality with `scripts/fixtures/expected-comparison.md`.
-
-Usage:
-  pprose compare a.eval.md b.eval.md [c.eval.md ...]
-  pprose compare --format unified a.yaml b.yaml > unified.md
-  pprose compare --format sections a.yaml b.yaml > sections.md
-  pprose compare --format unified --table-styles a.yaml b.yaml > styled.md
-  pprose compare --bold-rule materially-different a.yaml b.yaml
+The output shape is pinned by tests/test_eval_compare.py against
+tests/fixtures/expected-comparison.md. Run `pprose compare --help` for the CLI.
 """
 
 from __future__ import annotations
 
 import argparse
 import sys
+from collections.abc import Callable
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Literal
@@ -366,21 +359,22 @@ def _bold_indices(
     return {i for i, v in valid if v == target}
 
 
+def _value_cells(display_values: list[str], bold_set: set[int]) -> list[str]:
+    """Bold the cells whose index is in bold_set, skipping missing values."""
+    return [
+        f"**{disp}**" if i in bold_set and disp not in {"n/a", "—"} else disp
+        for i, disp in enumerate(display_values)
+    ]
+
+
 def _render_row(
     row: Row,
     bold_set: set[int],
     coalesce: tuple[str, str],
 ) -> str:
-    cells = []
     new_approach = "" if row.approach == coalesce[0] else f"**{row.approach}**"
     new_aspect = "" if row.aspect == coalesce[1] else row.aspect
-    cells.append(new_approach)
-    cells.append(new_aspect)
-    cells.append(row.measure)
-    for i, disp in enumerate(row.display_values):
-        if i in bold_set and disp not in {"n/a", "—"}:
-            disp = f"**{disp}**"
-        cells.append(disp)
+    cells = [new_approach, new_aspect, row.measure, *_value_cells(row.display_values, bold_set)]
     return "| " + " | ".join(cells) + " |"
 
 
@@ -440,11 +434,7 @@ def render_section_drilldown(
         out.append(sep)
         for row in rows:
             bold_set = _bold_indices(row.raw_values, row.bold_rule, bold_mode)
-            cells = [row.measure]
-            for i, disp in enumerate(row.display_values):
-                if i in bold_set and disp not in {"n/a", "—"}:
-                    disp = f"**{disp}**"
-                cells.append(disp)
+            cells = [row.measure, *_value_cells(row.display_values, bold_set)]
             out.append("| " + " | ".join(cells) + " |")
         out.append("")
 
@@ -486,30 +476,45 @@ def render_per_pair_deltas(
     return "\n".join(out).rstrip() + "\n"
 
 
-def check_scope_classes(reports: list[EvalReport]) -> str | None:
-    """Return a warning when reports span multiple scope classes (or mix tagged/untagged).
-
-    A status update and a deep_research brief have different density expectations;
-    comparing them in a single table can mislead unless the reader is told.
-    """
-    classes: dict[str | None, list[str]] = {}
+def _check_heterogeneous(
+    reports: list[EvalReport],
+    *,
+    key: Callable[[EvalReport], str | None],
+    across_label: str,
+    field_path: str,
+) -> str | None:
+    """Warn when reports span >1 distinct key value (untagged reported separately)."""
+    groups: dict[str | None, list[str]] = {}
     for r in reports:
-        classes.setdefault(r.artifact.scope_class, []).append(r.artifact.label)
-    distinct = {k for k in classes if k is not None}
-    has_untagged = None in classes
+        groups.setdefault(key(r), []).append(r.artifact.label)
+    distinct = {k for k in groups if k is not None}
+    has_untagged = None in groups
     if len(distinct) > 1:
-        parts = [f"{c}: {', '.join(classes[c])}" for c in sorted(distinct)]
-        msg = "comparing across scope classes — " + " | ".join(parts)
+        parts = [f"{k}: {', '.join(groups[k])}" for k in sorted(distinct)]
+        msg = f"comparing across {across_label} — " + " | ".join(parts)
         if has_untagged:
-            msg += f" | untagged: {', '.join(classes[None])}"
+            msg += f" | untagged: {', '.join(groups[None])}"
         return msg
     if has_untagged and distinct:
         only = next(iter(distinct))
         return (
-            f"some reports lack artifact.scope_class (assumed {only}); "
-            f"untagged: {', '.join(classes[None])}"
+            f"some reports lack {field_path} (assumed {only}); untagged: {', '.join(groups[None])}"
         )
     return None
+
+
+def check_scope_classes(reports: list[EvalReport]) -> str | None:
+    """Warn when reports span multiple scope classes (or mix tagged/untagged).
+
+    A status update and a deep_research brief have different density expectations;
+    comparing them in a single table can mislead unless the reader is told.
+    """
+    return _check_heterogeneous(
+        reports,
+        key=lambda r: r.artifact.scope_class,
+        across_label="scope classes",
+        field_path="artifact.scope_class",
+    )
 
 
 def collect_density_concerns(reports: list[EvalReport]) -> list[tuple[str, list[str]]]:
@@ -523,30 +528,13 @@ def collect_density_concerns(reports: list[EvalReport]) -> list[tuple[str, list[
 
 
 def check_rubric_versions(reports: list[EvalReport]) -> str | None:
-    """Return a one-line warning when reports span >1 rubric version, else None.
-
-    Reports without `metadata.rubric_version` set are reported separately so the user
-    can decide whether to tag them.
-    """
-    versions: dict[str | None, list[str]] = {}
-    for r in reports:
-        v = r.metadata.rubric_version
-        versions.setdefault(v, []).append(r.artifact.label)
-    distinct_set = {v for v in versions if v is not None}
-    has_untagged = None in versions
-    if len(distinct_set) > 1:
-        parts = [f"{v}: {', '.join(versions[v])}" for v in sorted(distinct_set)]
-        msg = "comparing across rubric versions — " + " | ".join(parts)
-        if has_untagged:
-            msg += f" | untagged: {', '.join(versions[None])}"
-        return msg
-    if has_untagged and distinct_set:
-        only_v = next(iter(distinct_set))
-        return (
-            f"some reports lack metadata.rubric_version (assumed {only_v}); "
-            f"untagged: {', '.join(versions[None])}"
-        )
-    return None
+    """Warn when reports span >1 rubric version (untagged reported separately)."""
+    return _check_heterogeneous(
+        reports,
+        key=lambda r: r.metadata.rubric_version,
+        across_label="rubric versions",
+        field_path="metadata.rubric_version",
+    )
 
 
 def main(argv: list[str] | None = None) -> int:

@@ -15,18 +15,14 @@ Companion to:
   - pprose.rubric_schema / rubric_schema.yaml (single source of truth for groups,
     dimensions, version, and rule counts; everything in this file derives from it)
 
-Usage:
-  pprose report validate path/to/artifact.eval.md
-  pprose report compute-derived path/to/artifact.eval.md
-  pprose report compute-derived path/to/artifact.eval.md --in-place
-  pprose report from-metrics path/to/artifact.md > artifact.eval.md
-  pprose report from-metrics path/to/artifact.md --label NAME --out artifact.eval.md
+Run `pprose report --help` for the CLI surface.
 """
 
 from __future__ import annotations
 
 import argparse
 import sys
+from collections.abc import Iterable
 from datetime import date
 from pathlib import Path
 from typing import Annotated, Any, Literal
@@ -45,7 +41,6 @@ from pprose.table_styles import with_practical_prose_display_metadata
 # When aggregating, "NA" is excluded from any mean; 0 is also excluded so that
 # unassessable dimensions don't drag the rollup down.
 Score = Annotated[int, Field(ge=0, le=5)] | Literal["NA"]
-NA: Literal["NA"] = "NA"
 
 # Re-export from the canonical schema. Bumping the rubric (renaming a dimension,
 # adding one, reordering groups) happens in rubric_schema.yaml — never here.
@@ -191,17 +186,6 @@ class JudgmentScores(BaseModel):
     calibration: Score
     fairness: Score
     robustness: Score
-
-
-# Map from group key to its scores class. Used by `all_scores` and the rollup
-# computation so the iteration order always matches the schema.
-_SCORES_CLASS_BY_GROUP: dict[str, type[BaseModel]] = {
-    "purpose": PurposeScores,
-    "expression": ExpressionScores,
-    "grounding": GroundingScores,
-    "reasoning": ReasoningScores,
-    "judgment": JudgmentScores,
-}
 
 
 class QualScores(BaseModel):
@@ -516,8 +500,8 @@ def _parse_frontmatter(text: str) -> dict:
     return yaml.safe_load("\n".join(lines[1:end])) or {}
 
 
-def _round(value: float, digits: int = 4) -> float:
-    return round(value, digits)
+def _round(value: float) -> float:
+    return round(value, 4)
 
 
 def compute_derived(quant: QuantMetrics, qual: QualScores) -> DerivedRollups:
@@ -595,85 +579,32 @@ def compute_derived(quant: QuantMetrics, qual: QualScores) -> DerivedRollups:
 def check_derived_consistency(
     provided: DerivedRollups, computed: DerivedRollups, tol: float = 0.01
 ) -> None:
-    pairs = [
+    # Compare every recomputable float field. density/structure check all their
+    # fields; rubric_rollup checks only the group/overall means (the integer
+    # counts are not tolerance-compared).
+    checks: list[tuple[str, BaseModel, BaseModel, Iterable[str]]] = [
+        ("density", provided.density, computed.density, DensityRatios.model_fields),
+        ("structure", provided.structure, computed.structure, StructureRatios.model_fields),
         (
-            "density.words_per_sentence",
-            provided.density.words_per_sentence,
-            computed.density.words_per_sentence,
-        ),
-        (
-            "density.words_per_paragraph",
-            provided.density.words_per_paragraph,
-            computed.density.words_per_paragraph,
-        ),
-        (
-            "density.sentences_per_paragraph",
-            provided.density.sentences_per_paragraph,
-            computed.density.sentences_per_paragraph,
-        ),
-        (
-            "density.tables_per_1k_words",
-            provided.density.tables_per_1k_words,
-            computed.density.tables_per_1k_words,
-        ),
-        (
-            "density.tables_per_page",
-            provided.density.tables_per_page,
-            computed.density.tables_per_page,
-        ),
-        (
-            "density.tags_per_1k_words",
-            provided.density.tags_per_1k_words,
-            computed.density.tags_per_1k_words,
-        ),
-        ("density.tags_per_page", provided.density.tags_per_page, computed.density.tags_per_page),
-        (
-            "density.links_per_1k_words",
-            provided.density.links_per_1k_words,
-            computed.density.links_per_1k_words,
-        ),
-        (
-            "density.links_per_page",
-            provided.density.links_per_page,
-            computed.density.links_per_page,
-        ),
-        (
-            "structure.h4_share_of_headings",
-            provided.structure.h4_share_of_headings,
-            computed.structure.h4_share_of_headings,
-        ),
-        (
-            "rubric_rollup.purpose_mean",
-            provided.rubric_rollup.purpose_mean,
-            computed.rubric_rollup.purpose_mean,
-        ),
-        (
-            "rubric_rollup.expression_mean",
-            provided.rubric_rollup.expression_mean,
-            computed.rubric_rollup.expression_mean,
-        ),
-        (
-            "rubric_rollup.grounding_mean",
-            provided.rubric_rollup.grounding_mean,
-            computed.rubric_rollup.grounding_mean,
-        ),
-        (
-            "rubric_rollup.reasoning_mean",
-            provided.rubric_rollup.reasoning_mean,
-            computed.rubric_rollup.reasoning_mean,
-        ),
-        (
-            "rubric_rollup.judgment_mean",
-            provided.rubric_rollup.judgment_mean,
-            computed.rubric_rollup.judgment_mean,
-        ),
-        (
-            "rubric_rollup.overall_mean",
-            provided.rubric_rollup.overall_mean,
-            computed.rubric_rollup.overall_mean,
+            "rubric_rollup",
+            provided.rubric_rollup,
+            computed.rubric_rollup,
+            (
+                "purpose_mean",
+                "expression_mean",
+                "grounding_mean",
+                "reasoning_mean",
+                "judgment_mean",
+                "overall_mean",
+            ),
         ),
     ]
-    mismatches = [(k, p, c) for k, p, c in pairs if abs(p - c) > tol]
+    mismatches: list[tuple[str, float, float]] = []
+    for prefix, prov, comp, fields in checks:
+        for f in fields:
+            p, c = getattr(prov, f), getattr(comp, f)
+            if abs(p - c) > tol:
+                mismatches.append((f"{prefix}.{f}", p, c))
     if mismatches:
         lines = "\n".join(f"  {k}: provided={p} computed={c}" for k, p, c in mismatches)
         raise ValueError(f"derived rollups are inconsistent with quant+qual:\n{lines}")

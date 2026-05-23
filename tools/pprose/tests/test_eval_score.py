@@ -440,9 +440,11 @@ def test_merge_populates_reproducibility_metadata(tmp_path: Path):
 
 def test_build_messages_has_cached_invariant_and_uncached_artifact():
     """The Anthropic message list must mark the rubric+guidelines block as cached."""
-    from pprose.eval_score import _build_messages
+    from pprose.eval_score import _artifact_block_text, _build_messages, _cached_block_text
 
-    messages = _build_messages(FIXTURES / "all_headings.md")
+    messages = _build_messages(
+        _cached_block_text(), _artifact_block_text(FIXTURES / "all_headings.md")
+    )
     assert len(messages) == 1
     blocks = messages[0]["content"]
     assert len(blocks) == 2, "expected exactly two content blocks: cached + artifact"

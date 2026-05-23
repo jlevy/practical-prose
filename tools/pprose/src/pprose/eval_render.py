@@ -250,9 +250,7 @@ def render_per_doc_rollup(
     density_concerns: list[tuple[str, list[str]]] | None = None,
 ) -> str:
     """Render N docs as N consecutive self-contained sections (used by --format by-doc)."""
-    concerns_by_label: dict[str, list[str]] = {}
-    if density_concerns:
-        concerns_by_label = {label: c for label, c in density_concerns}
+    concerns_by_label: dict[str, list[str]] = dict(density_concerns or [])
     parts: list[str] = []
     for r in reports:
         parts.append(render_single_doc_rollup(r, concerns_by_label.get(r.artifact.label)))

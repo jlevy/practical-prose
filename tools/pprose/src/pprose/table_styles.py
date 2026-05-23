@@ -137,16 +137,6 @@ def practical_prose_table_styles(
     }
 
 
-def practical_prose_display_metadata(
-    *,
-    comparison_labels: Sequence[str] | None = None,
-) -> TableStyleMetadata:
-    """Return a `display` metadata object containing Practical Prose table styles."""
-    return {
-        "table_styles": practical_prose_table_styles(comparison_labels=comparison_labels),
-    }
-
-
 def with_practical_prose_display_metadata(
     data: dict[str, Any],
     *,
@@ -170,7 +160,9 @@ def render_table_style_frontmatter(
 ) -> str:
     """Render a YAML frontmatter block containing only display metadata."""
     data = {
-        "display": practical_prose_display_metadata(comparison_labels=comparison_labels),
+        "display": {
+            "table_styles": practical_prose_table_styles(comparison_labels=comparison_labels)
+        },
     }
     frontmatter = yaml.safe_dump(
         data,
