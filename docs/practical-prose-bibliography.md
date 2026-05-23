@@ -244,7 +244,7 @@ writing. We list these up front for those looking for a shortlist.
 - **Digital.gov, *Plain language guide series***[^digital-gov-plain]. US federal
   content-design and audience-testing guidance.
   Frames plain language as not only writing but also designing and testing content for
-  audience understanding — a usability discipline, not a style choice.
+  audience understanding: a usability discipline, not a style choice.
 
 ## Accessibility and Inclusive Design
 

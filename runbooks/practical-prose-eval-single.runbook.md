@@ -139,7 +139,7 @@ For each of the 20 dimensions, assign a score 0-5 (or `NA`) per the anchors in
 `practical-prose-rubric.md`. Use the `SCORE (REASON)` shape internally before composing
 the eval report.
 
-`NA` is reserved for dimensions the artifact’s task genuinely does not require — for
+`NA` is reserved for dimensions the artifact’s task genuinely does not require. For
 example, Calibration on a document that makes no probability or forecast claims, or
 Fairness on a reference doc that surfaces no opposing positions.
 A score of 0 means the dimension is applicable but content is missing or unassessable;

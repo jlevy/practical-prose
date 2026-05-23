@@ -34,7 +34,7 @@ The order matters. When two priorities conflict, the earlier one wins.
    For central claims, also name what would invalidate them.
    (§11 Verifiability, §12 Factuality, §13 Relevance.)
 
-4. **Keep evidence, inference, and recommendation distinct — and the chain short.**
+4. **Keep evidence, inference, and recommendation distinct, and the chain short.**
    Observation, judgment, interpretation, and implication on separate rungs.
    Mechanism named where causation is asserted; counterfactual named where the
    explanation could be wrong.
