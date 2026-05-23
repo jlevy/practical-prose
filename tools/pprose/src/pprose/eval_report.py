@@ -2,7 +2,7 @@
 Pydantic schema for practical-writing eval reports.
 
 Defines the canonical YAML shape for a single-document eval report that combines:
-  - quantitative metrics (mirrors prose-metrics Metrics)
+  - quantitative metrics (mirrors the `pprose metrics` Metrics)
   - qualitative rubric scores (one per dimension defined in rubric_schema.yaml, 0-5 scale)
   - cited guideline-rule violations
   - derived rollups (density ratios, category means, overall mean)
@@ -11,16 +11,16 @@ Defines the canonical YAML shape for a single-document eval report that combines
 Companion to:
   - docs/practical-prose-rubric.md (the rubric)
   - runbooks/practical-prose-eval-single.runbook.md (single-doc workflow)
-  - eval-compare (consumes N validated reports → comparison Markdown)
-  - prose_eval.rubric_schema / rubric_schema.yaml (single source of truth for groups,
+  - `pprose compare` (consumes N validated reports → comparison Markdown)
+  - pprose.rubric_schema / rubric_schema.yaml (single source of truth for groups,
     dimensions, version, and rule counts; everything in this file derives from it)
 
 Usage:
-  eval-report validate path/to/artifact.eval.md
-  eval-report compute-derived path/to/artifact.eval.md
-  eval-report compute-derived path/to/artifact.eval.md --in-place
-  eval-report from-metrics path/to/artifact.md > artifact.eval.md
-  eval-report from-metrics path/to/artifact.md --label NAME --out artifact.eval.md
+  pprose report validate path/to/artifact.eval.md
+  pprose report compute-derived path/to/artifact.eval.md
+  pprose report compute-derived path/to/artifact.eval.md --in-place
+  pprose report from-metrics path/to/artifact.md > artifact.eval.md
+  pprose report from-metrics path/to/artifact.md --label NAME --out artifact.eval.md
 """
 
 from __future__ import annotations
@@ -34,10 +34,10 @@ from typing import Annotated, Any, Literal
 import yaml
 from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 
-from prose_eval import metrics as pwm
-from prose_eval import rubric_schema as rs
-from prose_eval.eval_render import render_single_doc_rollup
-from prose_eval.table_styles import with_practical_prose_display_metadata
+from pprose import metrics as pwm
+from pprose import rubric_schema as rs
+from pprose.eval_render import render_single_doc_rollup
+from pprose.table_styles import with_practical_prose_display_metadata
 
 # Score = integer 0-5 or the literal "NA" (not applicable to this artifact).
 # 0 means "applicable but unassessable" (content missing); "NA" means the dimension
@@ -908,7 +908,7 @@ def main(argv: list[str] | None = None) -> int:
 
     p_from = sub.add_parser(
         "from-metrics",
-        help="Build an eval-report stub from a Markdown artifact.",
+        help="Build an eval report stub from a Markdown artifact.",
     )
     p_from.add_argument("artifact", help="Path to Markdown artifact.")
     p_from.add_argument("--label", default=None, help="Artifact label (default: file stem).")

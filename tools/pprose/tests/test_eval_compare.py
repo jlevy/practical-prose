@@ -12,7 +12,7 @@ from pathlib import Path
 import pytest
 import yaml  # noqa: E402
 
-from prose_eval.eval_compare import (  # noqa: E402
+from pprose.eval_compare import (  # noqa: E402
     QUALITATIVE_SCORE_NOTE,
     _bold_indices,
     check_rubric_versions,
@@ -23,7 +23,7 @@ from prose_eval.eval_compare import (  # noqa: E402
     render_section_drilldown,
     render_unified_table,
 )
-from prose_eval.eval_report import EvalReport  # noqa: E402
+from pprose.eval_report import EvalReport  # noqa: E402
 
 
 def _write_eval_md(path: Path, report: EvalReport) -> None:

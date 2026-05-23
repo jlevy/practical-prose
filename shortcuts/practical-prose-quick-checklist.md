@@ -102,7 +102,7 @@ broad pass:
 
 1. **Lint pass:** Cosmetic / deterministic: E4 Organization, E5 Consistency, E6
    Formatting, E1 banned-register and vague-word checks.
-   Use `prose-eval metrics`.
+   Use `pprose metrics`.
 2. **Claim audit:** Every quantitative claim against its cited source.
    G1 Verifiability, G2 Factuality.
    Re-run calculations.

@@ -1,7 +1,7 @@
 """
 Comparison-table generator for practical-writing eval reports.
 
-Reads N validated EvalReport YAMLs (see eval-report) and emits a
+Reads N validated EvalReport YAMLs (see `pprose report`) and emits a
 unified Markdown comparison table, with optional per-section drilldowns.
 
 Output shape (unified mode):
@@ -20,11 +20,11 @@ scripts/test_eval_compare.py, which renders the six `figma-*.eval.md` fixtures
 and asserts byte-for-byte equality with `scripts/fixtures/expected-comparison.md`.
 
 Usage:
-  eval-compare a.eval.md b.eval.md [c.eval.md ...]
-  eval-compare --format unified a.yaml b.yaml > unified.md
-  eval-compare --format sections a.yaml b.yaml > sections.md
-  eval-compare --format unified --table-styles a.yaml b.yaml > styled.md
-  eval-compare --bold-rule materially-different a.yaml b.yaml
+  pprose compare a.eval.md b.eval.md [c.eval.md ...]
+  pprose compare --format unified a.yaml b.yaml > unified.md
+  pprose compare --format sections a.yaml b.yaml > sections.md
+  pprose compare --format unified --table-styles a.yaml b.yaml > styled.md
+  pprose compare --bold-rule materially-different a.yaml b.yaml
 """
 
 from __future__ import annotations
@@ -35,8 +35,8 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Literal
 
-from prose_eval import rubric_schema as rs
-from prose_eval.eval_render import (
+from pprose import rubric_schema as rs
+from pprose.eval_render import (
     fmt_float_1,
     fmt_float_2,
     fmt_int,
@@ -44,8 +44,8 @@ from prose_eval.eval_render import (
     fmt_score,
     render_per_doc_rollup,
 )
-from prose_eval.eval_report import EvalReport
-from prose_eval.table_styles import render_table_style_frontmatter
+from pprose.eval_report import EvalReport
+from pprose.table_styles import render_table_style_frontmatter
 
 BoldRule = Literal["max", "min", "none"]
 BoldMode = Literal["max", "materially-different"]

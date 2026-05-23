@@ -37,26 +37,26 @@ which rule is set aside, what reader outcome it serves, and what risk it introdu
 
 ## Tooling
 
-The Python eval package lives in `tools/prose-eval/`.
+The Python eval package lives in `tools/pprose/`.
 After publication, use the package through the single command:
 
 ```bash
-uvx prose-eval <command> ...
+uvx pprose <command> ...
 ```
 
 Primary subcommands:
 
-- `uvx prose-eval metrics ...`
-- `uvx prose-eval report ...`
-- `uvx prose-eval score ...`
-- `uvx prose-eval compare ...`
+- `uvx pprose metrics ...`
+- `uvx pprose report ...`
+- `uvx pprose score ...`
+- `uvx pprose compare ...`
 
 For local development before publication, run the same entry point from the package
 workspace:
 
 ```bash
-cd tools/prose-eval
-uv run prose-eval <command> ...
+cd tools/pprose
+uv run pprose <command> ...
 ```
 
 `score` requires `ANTHROPIC_API_KEY`; the package auto-loads `.env` and `.env.local`

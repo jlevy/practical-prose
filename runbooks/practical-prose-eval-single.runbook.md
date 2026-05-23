@@ -1,6 +1,6 @@
 ---
 title: Practical Prose Eval, single-document runbook
-description: End-to-end operational steps for evaluating one practical writing artifact and producing a validated prose-eval report.
+description: End-to-end operational steps for evaluating one practical writing artifact and producing a validated pprose report.
 date: 2026-05-07
 last_updated: 2026-05-14
 status: active
@@ -27,26 +27,26 @@ For comparing N evaluated artifacts, see `practical-prose-eval-compare.runbook.m
 - **Input:** one Markdown artifact, the rubric (`practical-prose-rubric.md`), and the
   prescriptive guidelines (`practical-prose-guidelines.md`).
 - **Output:** one `<artifact-name>.eval.md` validated against the schema in
-  `prose-eval report` (`EvalReport`).
+  `pprose report` (`EvalReport`).
 
 ## Setup
 
 The eval tooling lives as an installable Python package at
-[../tools/prose-eval/](../tools/prose-eval/). Install once:
+[../tools/pprose/](../tools/pprose/). Install once:
 
 ```bash
-cd tools/prose-eval && make install
+cd tools/pprose && make install
 ```
 
-This puts the `prose-eval` console script on PATH inside the package's `.venv`.
-Use `prose-eval metrics`, `prose-eval report`, `prose-eval score`, and
-`prose-eval compare` as subcommands. Activate the venv, or use `uv run prose-eval ...`
-from inside `tools/prose-eval/`, before running the commands below.
+This puts the `pprose` console script on PATH inside the package's `.venv`.
+Use `pprose metrics`, `pprose report`, `pprose score`, and
+`pprose compare` as subcommands. Activate the venv, or use `uv run pprose ...`
+from inside `tools/pprose/`, before running the commands below.
 
 For batch eval audits, the convention is to store the `*.eval.md` outputs under
 `evals/<round-name>/` at the repo root (e.g. `evals/self-eval-v0.1/`).
 
-`prose-eval score` reads `ANTHROPIC_API_KEY` from the environment.
+`pprose score` reads `ANTHROPIC_API_KEY` from the environment.
 The entry point auto-loads `.env` / `.env.local` from the current directory and `$HOME`,
 so the typical setup is:
 
@@ -59,7 +59,7 @@ echo 'ANTHROPIC_API_KEY=sk-ant-...' > .env   # gitignored
 ### 1. Generate the eval-report stub
 
 ```bash
-prose-eval report from-metrics path/to/artifact.md --label NAME \
+pprose report from-metrics path/to/artifact.md --label NAME \
   --scope-class deep_research --out artifact.eval.md
 ```
 
@@ -101,7 +101,7 @@ These signals feed the qualitative scoring; they don’t substitute for it.
 For one-off raw metrics inspection without producing an eval report:
 
 ```bash
-prose-eval metrics path/to/artifact.md --format=yaml
+pprose metrics path/to/artifact.md --format=yaml
 ```
 
 ### 2. Score the 20 qualitative dimensions
@@ -113,7 +113,7 @@ when calibrating the rubric.
 **Model-scoring path (default):**
 
 ```bash
-prose-eval score path/to/artifact.eval.md
+pprose score path/to/artifact.eval.md
 ```
 
 This calls the Anthropic SDK with the rubric, guidelines, and artifact, parses the
@@ -128,7 +128,7 @@ Useful flags:
 - `--model <name>`: passed to the Anthropic SDK. Accepts aliases (`sonnet`, `haiku`,
   `opus`) or an exact model ID. Defaults to the SDK’s default model.
 - `--batch`: score multiple eval reports in one invocation:
-  `prose-eval score a.eval.md b.eval.md ... --batch [--max-concurrent 8 --max-rps 4]`.
+  `pprose score a.eval.md b.eval.md ... --batch [--max-concurrent 8 --max-rps 4]`.
   See [practical-prose-eval-compare.runbook.md](practical-prose-eval-compare.runbook.md)
   for the typical batch workflow.
 
@@ -170,7 +170,7 @@ by hand. The schema validator recomputes `derived` from `quant` and `qual`.
 ### 4. Validate
 
 ```bash
-prose-eval report validate path/to/artifact.eval.md
+pprose report validate path/to/artifact.eval.md
 ```
 
 Expected: `OK: path/to/artifact.eval.md`. Common failures:
@@ -187,13 +187,13 @@ violation, and every score-5 (or score-0 = “cannot assess”) needs none.
 For the publish gate before feeding into a multi-doc comparison, add `--complete`:
 
 ```bash
-prose-eval report validate path/to/artifact.eval.md --complete
+pprose report validate path/to/artifact.eval.md --complete
 ```
 
 `--complete` additionally requires `metadata.status='complete'`, evaluator set (not
 `TODO`), `rubric_version` present, no all-zero stubs, and a reason in `qual_reasons` for
 every dimension scored 1-5. The model-scoring path (step 2) sets these automatically.
-`prose-eval compare` rejects draft / alignment-invalid inputs by default so the gate
+`pprose compare` rejects draft / alignment-invalid inputs by default so the gate
 effectively runs there too.
 
 ### 5. Optionally: render the per-artifact section
@@ -202,7 +202,7 @@ To preview the artifact’s section of the comparison Markdown (mostly useful fo
 eyeballing the derived rollups before adding to a multi-doc comparison):
 
 ```bash
-prose-eval compare path/to/artifact.eval.md --format unified
+pprose compare path/to/artifact.eval.md --format unified
 ```
 
 This produces a 1-column “comparison” against just the one artifact.
@@ -212,13 +212,13 @@ This produces a 1-column “comparison” against just the one artifact.
 - [ ] Every dimension scored below 5 has at least one violation cited.
 - [ ] Every score-5, score-0, and `NA` has no violation in the read pass.
 - [ ] Quantitative outliers from step 1 correlate with rubric findings.
-- [ ] `prose-eval report validate` passes.
+- [ ] `pprose report validate` passes.
 
 If the audit fails, revise scores or violations until consistent.
 
 ## Calibration set
 
-`../tools/prose-eval/tests/fixtures/` ships a small calibration set with **agreed scores
+`../tools/pprose/tests/fixtures/` ships a small calibration set with **agreed scores
 and violations under `20-dim-v1`** so future agent or human evaluators can be tested for
 drift and self-eval overrating against a fixed reference:
 
@@ -231,8 +231,8 @@ drift and self-eval overrating against a fixed reference:
 Use this set to calibrate model-scoring runs:
 
 ```bash
-prose-eval score path/to/your-artifact.eval.md --model sonnet
-# then run prose-eval score against the calibration artifacts and compare overall_mean +
+pprose score path/to/your-artifact.eval.md --model sonnet
+# then run pprose score against the calibration artifacts and compare overall_mean +
 # per-dimension scores to the pinned values above; gap >0.5 on overall or >1 on any
 # dimension flags a calibration drift to investigate.
 ```
@@ -255,12 +255,12 @@ change.
   prescriptive rules cited by `violations`.
 - [practical-prose-eval-compare.runbook.md](practical-prose-eval-compare.runbook.md):
   runbook for comparing N evals.
-- [eval_report.py](../tools/prose-eval/src/prose_eval/eval_report.py): schema,
+- [eval_report.py](../tools/pprose/src/pprose/eval_report.py): schema,
   validator, `from-metrics` stub generator.
-- [eval_score.py](../tools/prose-eval/src/prose_eval/eval_score.py): model-scoring
+- [eval_score.py](../tools/pprose/src/pprose/eval_score.py): model-scoring
   runner that fills
   `qual` and `violations`.
-- [metrics.py](../tools/prose-eval/src/prose_eval/metrics.py): quantitative metrics
+- [metrics.py](../tools/pprose/src/pprose/metrics.py): quantitative metrics
   tool.
 
 <!-- This document follows common-doc-guidelines.md.

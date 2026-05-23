@@ -59,10 +59,10 @@ Known limitations:
     use these patterns; the reviewer judges genre exception.
 
 Usage:
-  prose-metrics path/to/document.md
-  prose-metrics path/to/document.md --format=yaml
-  prose-metrics *.md            # multiple files, summary table
-  prose-metrics doc.md --words-per-page 250
+  pprose metrics path/to/document.md
+  pprose metrics path/to/document.md --format=yaml
+  pprose metrics *.md            # multiple files, summary table
+  pprose metrics doc.md --words-per-page 250
 """
 
 from __future__ import annotations

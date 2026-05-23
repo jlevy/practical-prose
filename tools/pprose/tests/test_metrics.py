@@ -13,12 +13,12 @@ from __future__ import annotations
 import sys
 from pathlib import Path
 
-# Make the scripts directory importable so we can from prose_eval import metrics as practical_prose_metrics.
+# Make the scripts directory importable so we can from pprose import metrics as practical_prose_metrics.
 SCRIPTS_DIR = Path(__file__).resolve().parent
 
 import pytest  # noqa: E402
 
-from prose_eval import metrics as pwm
+from pprose import metrics as pwm
 
 FIXTURES = SCRIPTS_DIR / "test_fixtures" / "practical_prose_metrics"
 
@@ -336,7 +336,7 @@ class TestB1_BannedRegister:
 # the new output or pin the upstream version.
 #
 # To bless a new output (intentional change): regenerate the expected YAML via
-#   uv run prose-metrics \
+#   uv run pprose metrics \
 #     tests/test_fixtures/practical_prose_metrics/<fixture>.md --format=yaml \
 #     > tests/test_fixtures/practical_prose_metrics/expected/<fixture>.yaml
 # and inspect the diff before committing.
@@ -360,7 +360,7 @@ class TestB14_ReproducibilityRegression:
         if not expected_path.is_file():
             pytest.fail(
                 f"missing expected YAML: {expected_path}\n"
-                f"regenerate via: uv run prose-metrics "
+                f"regenerate via: uv run pprose metrics "
                 f"{FIXTURES / f'{fixture_name}.md'} --format=yaml > {expected_path}"
             )
 

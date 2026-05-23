@@ -19,13 +19,13 @@ Use it after each input document already has a validated Practical Prose eval re
 2. Validate each input:
 
    ```bash
-   uvx prose-eval report validate path/to/artifact.eval.md --complete
+   uvx pprose report validate path/to/artifact.eval.md --complete
    ```
 
 3. Generate the comparison:
 
    ```bash
-   uvx prose-eval compare a.eval.md b.eval.md --format unified --pairs 'a=b' > comparison.md
+   uvx pprose compare a.eval.md b.eval.md --format unified --pairs 'a=b' > comparison.md
    ```
 
    Add `--table-styles` only when generating a report for a browser that supports the
@@ -35,7 +35,7 @@ Use it after each input document already has a validated Practical Prose eval re
    in specific table cells.
 
 For local development before publication, run the same subcommands with
-`cd tools/prose-eval && uv run prose-eval ...`.
+`cd tools/pprose && uv run pprose ...`.
 
 ## Output
 

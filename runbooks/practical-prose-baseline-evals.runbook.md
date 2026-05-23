@@ -19,12 +19,12 @@ repo. The default run evaluates **all baseline artifacts**:
 
 Use the subset commands only when you are debugging one side of the baseline set.
 
-## Using the `prose-eval` Skill
+## Using the `pprose` Skill
 
-When asking an agent to run this workflow, invoke the local `prose-eval` skill and point
+When asking an agent to run this workflow, invoke the local `pprose` skill and point
 it at this runbook:
 
-> Use `prose-eval` and run `runbooks/practical-prose-baseline-evals.runbook.md`.
+> Use `pprose` and run `runbooks/practical-prose-baseline-evals.runbook.md`.
 
 Unless the request names a subset, run **Default: Run All Baselines**. Subset runs are
 available for debugging, but the ordinary baseline process should regenerate third-party
@@ -50,7 +50,7 @@ files.
 Each generated report should pass:
 
 ```bash
-prose-eval report validate path/to/report.eval.md --complete
+pprose report validate path/to/report.eval.md --complete
 ```
 
 ## Default: Run All Baselines
@@ -62,7 +62,7 @@ comparison files, and Flowmark-formats the generated Markdown.
 
 ```bash
 REPO_ROOT="$(git rev-parse --show-toplevel)"
-TOOL_DIR="$REPO_ROOT/tools/prose-eval"
+TOOL_DIR="$REPO_ROOT/tools/pprose"
 OUT_DIR="$REPO_ROOT/evals/baselines"
 COMMIT_SHA="$(git -C "$REPO_ROOT" rev-parse HEAD)"
 
@@ -71,75 +71,75 @@ mkdir -p "$OUT_DIR/third-party" "$OUT_DIR/self"
 
 cd "$TOOL_DIR"
 
-uv run prose-eval report from-metrics \
+uv run pprose report from-metrics \
   "$REPO_ROOT/example-texts/sqlite-appropriate-uses.md" \
   --label "SQLite: Appropriate Uses" \
   --scope-class brief \
   --commit-sha "$COMMIT_SHA" \
   --evaluator "model:claude-sonnet-4-5" \
-  --method "prose-eval score" \
+  --method "pprose score" \
   --out "$OUT_DIR/third-party/sqlite-appropriate-uses.eval.md"
 
-uv run prose-eval report from-metrics \
+uv run pprose report from-metrics \
   "$REPO_ROOT/example-texts/nasa-stakeholder-expectations-definition.md" \
   --label "NASA SEH: Stakeholder Expectations" \
   --scope-class design_doc \
   --commit-sha "$COMMIT_SHA" \
   --evaluator "model:claude-sonnet-4-5" \
-  --method "prose-eval score" \
+  --method "pprose score" \
   --out "$OUT_DIR/third-party/nasa-stakeholder-expectations-definition.eval.md"
 
-uv run prose-eval report from-metrics \
+uv run pprose report from-metrics \
   "$REPO_ROOT/example-texts/irs-1040-filing-requirements.md" \
   --label "IRS 1040: Filing Requirements" \
   --scope-class brief \
   --commit-sha "$COMMIT_SHA" \
   --evaluator "model:claude-sonnet-4-5" \
-  --method "prose-eval score" \
+  --method "pprose score" \
   --out "$OUT_DIR/third-party/irs-1040-filing-requirements.eval.md"
 
-uv run prose-eval report from-metrics \
+uv run pprose report from-metrics \
   "$REPO_ROOT/docs/practical-prose-guidelines.md" \
   --label "Practical Prose Guidelines" \
   --scope-class design_doc \
   --commit-sha "$COMMIT_SHA" \
   --evaluator "model:claude-sonnet-4-5" \
-  --method "prose-eval score" \
+  --method "pprose score" \
   --out "$OUT_DIR/self/practical-prose-guidelines.eval.md"
 
-uv run prose-eval report from-metrics \
+uv run pprose report from-metrics \
   "$REPO_ROOT/docs/practical-prose-rubric.md" \
   --label "Practical Prose Rubric" \
   --scope-class design_doc \
   --commit-sha "$COMMIT_SHA" \
   --evaluator "model:claude-sonnet-4-5" \
-  --method "prose-eval score" \
+  --method "pprose score" \
   --out "$OUT_DIR/self/practical-prose-rubric.eval.md"
 
-uv run prose-eval report from-metrics \
+uv run pprose report from-metrics \
   "$REPO_ROOT/docs/practical-prose-bibliography.md" \
   --label "Practical Prose Bibliography" \
   --scope-class deep_research \
   --commit-sha "$COMMIT_SHA" \
   --evaluator "model:claude-sonnet-4-5" \
-  --method "prose-eval score" \
+  --method "pprose score" \
   --out "$OUT_DIR/self/practical-prose-bibliography.eval.md"
 
-uv run prose-eval score "$OUT_DIR"/third-party/*.eval.md "$OUT_DIR"/self/*.eval.md --batch
+uv run pprose score "$OUT_DIR"/third-party/*.eval.md "$OUT_DIR"/self/*.eval.md --batch
 
 for report in "$OUT_DIR"/third-party/*.eval.md "$OUT_DIR"/self/*.eval.md; do
-  uv run prose-eval report validate "$report" --complete
+  uv run pprose report validate "$report" --complete
 done
 
-uv run prose-eval compare "$OUT_DIR"/third-party/*.eval.md \
+uv run pprose compare "$OUT_DIR"/third-party/*.eval.md \
   --format both \
   > "$OUT_DIR/comparison-third-party.md"
 
-uv run prose-eval compare "$OUT_DIR"/self/*.eval.md \
+uv run pprose compare "$OUT_DIR"/self/*.eval.md \
   --format both \
   > "$OUT_DIR/comparison-self.md"
 
-uv run prose-eval compare "$OUT_DIR"/third-party/*.eval.md "$OUT_DIR"/self/*.eval.md \
+uv run pprose compare "$OUT_DIR"/third-party/*.eval.md "$OUT_DIR"/self/*.eval.md \
   --format both \
   > "$OUT_DIR/comparison-all.md"
 
@@ -148,15 +148,15 @@ flowmark --auto "$OUT_DIR"/*.md "$OUT_DIR"/third-party/*.md "$OUT_DIR"/self/*.md
 
 cd "$TOOL_DIR"
 for report in "$OUT_DIR"/third-party/*.eval.md "$OUT_DIR"/self/*.eval.md; do
-  uv run prose-eval report validate "$report" --complete
+  uv run pprose report validate "$report" --complete
 done
 ```
 
-If a report fails alignment during `prose-eval score`, retry that specific report:
+If a report fails alignment during `pprose score`, retry that specific report:
 
 ```bash
-cd tools/prose-eval
-uv run prose-eval score "$REPO_ROOT/evals/baselines/path/to/failed.eval.md"
+cd tools/pprose
+uv run pprose score "$REPO_ROOT/evals/baselines/path/to/failed.eval.md"
 ```
 
 Do not use `--allow-misaligned` for a published baseline unless the goal is explicitly
@@ -168,14 +168,14 @@ Use this only when debugging converted source examples.
 The default baseline run should include the self docs too.
 
 ```bash
-cd "$REPO_ROOT/tools/prose-eval"
-uv run prose-eval score "$REPO_ROOT/evals/baselines/third-party"/*.eval.md --batch
+cd "$REPO_ROOT/tools/pprose"
+uv run pprose score "$REPO_ROOT/evals/baselines/third-party"/*.eval.md --batch
 
 for report in "$REPO_ROOT/evals/baselines/third-party"/*.eval.md; do
-  uv run prose-eval report validate "$report" --complete
+  uv run pprose report validate "$report" --complete
 done
 
-uv run prose-eval compare "$REPO_ROOT/evals/baselines/third-party"/*.eval.md \
+uv run pprose compare "$REPO_ROOT/evals/baselines/third-party"/*.eval.md \
   --format both \
   > "$REPO_ROOT/evals/baselines/comparison-third-party.md"
 ```
@@ -187,14 +187,14 @@ documentation scores.
 The default baseline run should include the third-party examples too.
 
 ```bash
-cd "$REPO_ROOT/tools/prose-eval"
-uv run prose-eval score "$REPO_ROOT/evals/baselines/self"/*.eval.md --batch
+cd "$REPO_ROOT/tools/pprose"
+uv run pprose score "$REPO_ROOT/evals/baselines/self"/*.eval.md --batch
 
 for report in "$REPO_ROOT/evals/baselines/self"/*.eval.md; do
-  uv run prose-eval report validate "$report" --complete
+  uv run pprose report validate "$report" --complete
 done
 
-uv run prose-eval compare "$REPO_ROOT/evals/baselines/self"/*.eval.md \
+uv run pprose compare "$REPO_ROOT/evals/baselines/self"/*.eval.md \
   --format both \
   > "$REPO_ROOT/evals/baselines/comparison-self.md"
 ```

@@ -3,7 +3,7 @@ _commit: v0.2.25
 _src_path: gh:jlevy/simple-modern-uv
 package_author_email: joshua@cal.berkeley.edu
 package_author_name: Joshua Levy
-package_description: "Practical Prose tooling: evals, rubric scoring, reports, comparisons"
+package_description: "Practical Prose tooling: metrics, rubric scoring, evaluation reports, and comparisons"
 package_github_org: jlevy
-package_module: prose_eval
-package_name: prose-eval
+package_module: pprose
+package_name: pprose

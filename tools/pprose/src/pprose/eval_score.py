@@ -1,8 +1,8 @@
 """
 Model-scoring runner for the qualitative rubric (Anthropic SDK + prompt caching).
 
-Reads an in-progress eval-report YAML (typically produced by
-`eval-report from-metrics`), invokes the Anthropic SDK with the rubric +
+Reads an in-progress eval report YAML (typically produced by
+`pprose report from-metrics`), invokes the Anthropic SDK with the rubric +
 guidelines + artifact + structured-output prompt, parses the JSON block out
 of the response, and fills the YAML's qual + violations + metadata.
 
@@ -14,10 +14,10 @@ Reads `ANTHROPIC_API_KEY` from the environment; `.env` and `.env.local` in
 the current directory hierarchy or `$HOME` are auto-loaded.
 
 Usage:
-  eval-score artifact.eval.md                         # update in place
-  eval-score artifact.eval.md --out filled.eval.md  # write elsewhere
-  eval-score artifact.eval.md --model sonnet          # specify Claude model
-  eval-score artifact.eval.md --dry-run               # render prompt, skip API call
+  pprose score artifact.eval.md                       # update in place
+  pprose score artifact.eval.md --out filled.eval.md  # write elsewhere
+  pprose score artifact.eval.md --model sonnet        # specify Claude model
+  pprose score artifact.eval.md --dry-run             # render prompt, skip API call
 """
 
 from __future__ import annotations
@@ -33,9 +33,9 @@ from pathlib import Path
 
 from pydantic import BaseModel
 
-from prose_eval import rubric_schema as rs
-from prose_eval.eval_render import render_single_doc_rollup
-from prose_eval.eval_report import (
+from pprose import rubric_schema as rs
+from pprose.eval_render import render_single_doc_rollup
+from pprose.eval_report import (
     EvalReport,
     ExpressionReasons,
     ExpressionScores,
@@ -57,7 +57,7 @@ PACKAGE_ROOT = Path(__file__).resolve().parent
 
 def _find_repo_root(start: Path) -> Path:
     # Walk up from `start` looking for a .git marker. The package is installed
-    # under the practical-prose repo's tools/prose-eval/ subtree, so REPO_ROOT
+    # under the practical-prose repo's tools/pprose/ subtree, so REPO_ROOT
     # is the practical-prose repo root and holds the rubric / guidelines docs.
     # Fall back to `start` so the tool keeps functioning outside a git tree.
     for p in [start, *start.parents]:
@@ -566,7 +566,7 @@ def _apply_score(
     payload = extract_json_block(result.text)
     scored = parse_response(payload)
 
-    cmd_str = " ".join(["eval-score"] + (argv or sys.argv[1:]))
+    cmd_str = " ".join(["pprose", "score"] + (argv or sys.argv[1:]))
     prompt_for_hash = build_prompt(prep.artifact_path)
     repro = ReproContext(
         model=model,
@@ -683,7 +683,7 @@ async def score_batch(
     calls within ~5 min read it at ~0.1× the input cost. Order of completion
     is unrelated to order of input; results are reported as docs finish.
     """
-    from prose_eval._concurrency import gather_limited
+    from pprose._concurrency import gather_limited
 
     if not yaml_paths:
         return 0
@@ -746,7 +746,7 @@ def main(argv: list[str] | None = None) -> int:
         metavar="report_paths",
         nargs="+",
         help=(
-            "One or more eval reports (typically from `prose-eval report from-metrics`). "
+            "One or more eval reports (typically from `pprose report from-metrics`). "
             "Multiple paths score them sequentially; pair with --batch for parallel."
         ),
     )

@@ -13,7 +13,7 @@ from typing import Any
 
 import yaml
 
-from prose_eval import rubric_schema as rs
+from pprose import rubric_schema as rs
 
 TableStyleMetadata = dict[str, Any]
 
