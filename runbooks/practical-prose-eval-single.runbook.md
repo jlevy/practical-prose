@@ -29,30 +29,11 @@ For comparing N evaluated artifacts, see `practical-prose-eval-compare.runbook.m
 - **Output:** one `<artifact-name>.eval.md` validated against the schema in
   `pprose report` (`EvalReport`).
 
-## Setup
+## Prerequisites
 
-The eval tooling lives as an installable Python package at
-[../tools/pprose/](../tools/pprose/). Install once:
-
-```bash
-cd tools/pprose && make install
-```
-
-This puts the `pprose` console script on PATH inside the package's `.venv`.
-Use `pprose metrics`, `pprose report`, `pprose score`, and
-`pprose compare` as subcommands. Activate the venv, or use `uv run pprose ...`
-from inside `tools/pprose/`, before running the commands below.
-
-For batch eval audits, the convention is to store the `*.eval.md` outputs under
-`evals/<round-name>/` at the repo root (e.g. `evals/self-eval-v0.1/`).
-
-`pprose score` reads `ANTHROPIC_API_KEY` from the environment.
-The entry point auto-loads `.env` / `.env.local` from the current directory and `$HOME`,
-so the typical setup is:
-
-```bash
-echo 'ANTHROPIC_API_KEY=sk-ant-...' > .env   # gitignored
-```
+`pprose` available on the command line and `ANTHROPIC_API_KEY` set for scoring — see
+[Tooling](../AGENTS.md#tooling). Batch eval outputs go under `evals/<round-name>/` at the
+repo root.
 
 ## Steps
 

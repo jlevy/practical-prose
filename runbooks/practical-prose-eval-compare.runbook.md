@@ -30,14 +30,11 @@ fixtures.
 - **Output:** one comparison Markdown combining the generator’s table with
   reviewer-authored cross-artifact analysis.
 
-## Setup
+## Prerequisites
 
-The eval tooling lives as an installable Python package at
-[../tools/pprose/](../tools/pprose/). Install once
-(`cd tools/pprose && make install`) and use the `pprose` console script with the
-`score`, `report`, and `compare` subcommands.
-
-Batch eval outputs live under `evals/<round-name>/` at the repo root.
+`pprose` available on the command line and `ANTHROPIC_API_KEY` set for scoring — see
+[Tooling](../AGENTS.md#tooling). Batch eval outputs live under `evals/<round-name>/` at
+the repo root.
 
 ## Steps
 
