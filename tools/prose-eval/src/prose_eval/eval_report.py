@@ -175,6 +175,7 @@ class GroundingScores(BaseModel):
     model_config = ConfigDict(extra="forbid")
     verifiability: Score
     factuality: Score
+    relevance: Score
 
 
 class ReasoningScores(BaseModel):
@@ -182,6 +183,7 @@ class ReasoningScores(BaseModel):
     inference_discipline: Score
     soundness: Score
     precision: Score
+    parsimony: Score
 
 
 class JudgmentScores(BaseModel):
@@ -239,6 +241,7 @@ class GroundingReasons(BaseModel):
     model_config = ConfigDict(extra="forbid")
     verifiability: str | None = None
     factuality: str | None = None
+    relevance: str | None = None
 
 
 class ReasoningReasons(BaseModel):
@@ -246,6 +249,7 @@ class ReasoningReasons(BaseModel):
     inference_discipline: str | None = None
     soundness: str | None = None
     precision: str | None = None
+    parsimony: str | None = None
 
 
 class JudgmentReasons(BaseModel):
@@ -736,8 +740,8 @@ def stub_qual() -> QualScores:
             style_consistency=0,
             formatting=0,
         ),
-        grounding=GroundingScores(verifiability=0, factuality=0),
-        reasoning=ReasoningScores(inference_discipline=0, soundness=0, precision=0),
+        grounding=GroundingScores(verifiability=0, factuality=0, relevance=0),
+        reasoning=ReasoningScores(inference_discipline=0, soundness=0, precision=0, parsimony=0),
         judgment=JudgmentScores(calibration=0, fairness=0, robustness=0),
     )
 

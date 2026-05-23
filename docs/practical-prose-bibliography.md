@@ -472,7 +472,7 @@ legal-domain anchors specifically.
 - [practical-prose-guidelines.md](practical-prose-guidelines.md): prescriptive rules
   derived from the principles.
 - [practical-prose-rubric.md](practical-prose-rubric.md): descriptive 0-5 scoring
-  anchors for the 18 dimensions.
+  anchors for the 20 dimensions.
 - [common-doc-guidelines.md](common-doc-guidelines.md): general style, organization, and
   formatting.
 

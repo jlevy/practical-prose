@@ -1,4 +1,4 @@
-version: 18-dim-v1
+version: 20-dim-v1
 groups:
   - key: purpose
     label: Purpose
@@ -61,37 +61,49 @@ groups:
         label: Factuality
         section: 12
         question: Are claims true and supported by their cited evidence?
+      - key: relevance
+        label: Relevance
+        section: 13
+        question:
+          Do sources, citations, and reasoning chains bear on the document's stated
+          purpose?
   - key: reasoning
     label: Reasoning
     dimensions:
       - key: inference_discipline
         label: Inference Discipline
-        section: 13
+        section: 14
         question: Are the rungs of the ladder of inference kept distinct?
       - key: soundness
         label: Soundness
-        section: 14
+        section: 15
         question:
           Do claims follow from evidence through valid mechanisms and explicit
           assumptions?
       - key: precision
         label: Precision
-        section: 15
+        section: 16
         question: Are claims and terms specified at the right granularity?
+      - key: parsimony
+        label: Parsimony
+        section: 17
+        question:
+          Is each load-bearing reasoning chain the cleanest, simplest sound argument
+          possible for its conclusion?
   - key: judgment
     label: Judgment
     dimensions:
       - key: calibration
         label: Calibration
-        section: 16
+        section: 18
         question: Does claim strength match evidence strength?
       - key: fairness
         label: Fairness
-        section: 17
+        section: 19
         question: Are opposing positions argued at proportional evidentiary depth?
       - key: robustness
         label: Robustness
-        section: 18
+        section: 20
         question: Do key claims survive plausible alternative interpretations?
 score_values:
   valid:
@@ -113,7 +125,9 @@ na_applicable_dimensions:
   - formatting
   - verifiability
   - factuality
+  - relevance
   - inference_discipline
+  - parsimony
   - calibration
   - fairness
   - robustness
@@ -130,9 +144,11 @@ rule_counts:
   formatting: 6
   verifiability: 6
   factuality: 7
+  relevance: 5
   inference_discipline: 9
   soundness: 8
   precision: 5
+  parsimony: 6
   calibration: 6
   fairness: 5
   robustness: 5

@@ -15,24 +15,199 @@ derived:
     words_per_paragraph: 47.9054
     words_per_sentence: 19.9906
   rubric_rollup:
-    assessed_dimensions: 18
+    assessed_dimensions: 20
     expression_mean: 4.1667
     grounding_mean: 4.0
     judgment_mean: 3.6667
     na_dimensions: 0
-    overall_mean: 4.1111
+    overall_mean: 4.1
     purpose_mean: 4.5
     reasoning_mean: 4.0
   structure:
     h4_share_of_headings: 0.3571
+display:
+  table_styles:
+    palettes:
+      practical_prose_dimensions:
+        Breadth:
+          background: '#eaf2ff'
+          foreground: '#173b68'
+        Calibration:
+          background: '#fff0f3'
+          foreground: '#8a1232'
+        Clarity:
+          background: '#eaf7ec'
+          foreground: '#175c36'
+        Coherence:
+          background: '#eaf7ec'
+          foreground: '#175c36'
+        Concision:
+          background: '#eaf7ec'
+          foreground: '#175c36'
+        Depth:
+          background: '#eaf2ff'
+          foreground: '#173b68'
+        Factuality:
+          background: '#fff6db'
+          foreground: '#6b4a03'
+        Fairness:
+          background: '#fff0f3'
+          foreground: '#8a1232'
+        Formatting:
+          background: '#eaf7ec'
+          foreground: '#175c36'
+        Inference Discipline:
+          background: '#f3ecff'
+          foreground: '#4c1d95'
+        Organization:
+          background: '#eaf7ec'
+          foreground: '#175c36'
+        Parsimony:
+          background: '#f3ecff'
+          foreground: '#4c1d95'
+        Precision:
+          background: '#f3ecff'
+          foreground: '#4c1d95'
+        Relevance:
+          background: '#fff6db'
+          foreground: '#6b4a03'
+        Robustness:
+          background: '#fff0f3'
+          foreground: '#8a1232'
+        Scope:
+          background: '#eaf2ff'
+          foreground: '#173b68'
+        Soundness:
+          background: '#f3ecff'
+          foreground: '#4c1d95'
+        Style Consistency:
+          background: '#eaf7ec'
+          foreground: '#175c36'
+        Suitability:
+          background: '#eaf2ff'
+          foreground: '#173b68'
+        Verifiability:
+          background: '#fff6db'
+          foreground: '#6b4a03'
+      practical_prose_groups:
+        Expression:
+          background: '#eaf7ec'
+          foreground: '#175c36'
+        Grounding:
+          background: '#fff6db'
+          foreground: '#6b4a03'
+        Judgment:
+          background: '#fff0f3'
+          foreground: '#8a1232'
+        Purpose:
+          background: '#eaf2ff'
+          foreground: '#173b68'
+        Reasoning:
+          background: '#f3ecff'
+          foreground: '#4c1d95'
+      practical_prose_scores:
+        '0':
+          font_weight: 400
+          foreground: '#6b7280'
+          opacity: 0.75
+        '1':
+          font_weight: 800
+          foreground: '#991b1b'
+        '2':
+          font_weight: 650
+          foreground: '#92400e'
+        '3':
+          font_weight: 700
+          foreground: '#a16207'
+        '4':
+          font_weight: 750
+          foreground: '#166534'
+        '5':
+          font_weight: 850
+          foreground: '#14532d'
+        NA:
+          font_weight: 400
+          foreground: '#6b7280'
+          opacity: 0.65
+    tables:
+    - encodings:
+      - channel: background
+        field: Dimension
+        palette: practical_prose_dimensions
+        source: row
+        target: row
+      - channel: foreground
+        columns:
+        - Score
+        field: Score
+        palette: practical_prose_scores
+        source: cell
+        target: cell
+      - channel: font_weight
+        columns:
+        - Score
+        field: Score
+        scale:
+          domain:
+          - 0
+          - 5
+          range:
+          - 400
+          - 850
+          type: linear
+        source: cell
+        target: cell
+      headers:
+      - match:
+          column: Score
+        style:
+          align: center
+          font_weight: 700
+      id: practical_prose_single_doc_qualitative
+      match:
+        columns:
+        - Group
+        - Dimension
+        - Score
+        - Reason
+    - headers:
+      - match:
+          column: Value
+        style:
+          align: right
+          font_weight: 700
+      id: practical_prose_single_doc_quantitative
+      match:
+        columns:
+        - Section
+        - Measure
+        - Value
+    - encodings:
+      - channel: background
+        field: Measure
+        palette: practical_prose_dimensions
+        source: row
+        target: row
+      headers:
+      - match:
+          column: Measure
+        style:
+          font_weight: 700
+      id: practical_prose_unified_comparison
+      match:
+        columns:
+        - Approach
+        - Aspect
+        - Measure
+    version: 1
 metadata:
   eval_date: '2026-05-10'
   evaluator: subagent (Claude Opus 4.7)
-  method: 18-dim-v1 re-baseline via parallel subagent
-  notes: Re-scored 2026-05-11 under 18-dim-v1 as part of practical-prose v0.4 calibration
+  method: 20-dim-v1 re-baseline via parallel subagent
+  notes: Re-scored 2026-05-11 under 20-dim-v1 as part of practical-prose v0.4 calibration
     set. Strong baseline overall (overall ~4.0-4.5); Robustness=3 reflects bear-case
     under-treatment. Replaces prior 15-dim-v1-stale-baseline.
-  rubric_version: 18-dim-v1
+  rubric_version: 20-dim-v1
   status: complete
 qual:
   expression:
@@ -44,6 +219,7 @@ qual:
     style_consistency: 4
   grounding:
     factuality: 4
+    relevance: 4
     verifiability: 4
   judgment:
     calibration: 4
@@ -56,6 +232,7 @@ qual:
     suitability: 5
   reasoning:
     inference_discipline: 4
+    parsimony: 4
     precision: 4
     soundness: 4
 qual_reasons:
@@ -78,6 +255,8 @@ qual_reasons:
     factuality: Cannot fully verify externally; citations look well-formed; 'Multiple'
       as source for $12.8B AI coding market at §1.8 is not a verifiable citation;
       Anthropic '$4B Amazon investment' is a rounded aggregate without disclosure.
+    relevance: Cited sources support the financial analysis directly; one or two references
+      at §1.8 are tangential to the headline thesis.
     verifiability: Most quantitative claims cite specific sources (earnings releases,
       10-Qs); Vercel CEO benchmark at §1.7 has no post ID or URL; CF '20% of the web'
       at §1.8 has no source URL.
@@ -108,6 +287,8 @@ qual_reasons:
     inference_discipline: Rungs generally well-separated; Phase 1 observation vs Phase
       2 interpretation cleanly structured; one fusion at §2.6 L982-983 where 'GitHub
       data was a leading indicator' blends observation with interpretation.
+    parsimony: Reasoning chains are mostly tight; one re-derivation at §2.2 restates
+      the §1.3 series rather than citing it.
     precision: Domain entities named precisely (specific product names, versioned
       models, filing dates); 'Multiple' and 'Reported' as source attributions at §1.8
       are imprecise where specific publication names exist.
@@ -235,40 +416,52 @@ violations:
   dimension: Robustness
   location: §2.9 L1206-1209
   rule_number: 1
+- description: References at §1.8 cited for completeness rather than clearly bearing
+    on the headline thesis.
+  dimension: Relevance
+  location: §1.8
+  rule_number: 4
+- description: Re-derivation of the §1.3 series in §2.2 where a back-reference would
+    suffice.
+  dimension: Parsimony
+  location: §2.2
+  rule_number: 1
 ---
 
 # rev1-net
 
-**Source:** `<external artifact not in this repo>`  **Scope:** `deep_research`  **Overall mean (18 dims):** 4.11  **Rubric:** `18-dim-v1`  **Model:** `—`  **Eval date:** 2026-05-10
+**Source:** `<external artifact not in this repo>`  **Scope:** `deep_research`  **Overall mean (20 dims):** 4.10  **Rubric:** `20-dim-v1`  **Model:** `—`  **Eval date:** 2026-05-10
 
 ## Qualitative
 
 | Group | Dimension | Score | Reason |
 | --- | --- | ---: | --- |
-| Purpose | Suitability | 5 | Task clearly stated in Overview; output shape matches (research brief with scenario tree, recommendations, workplan); main answer recoverable from section headings and §2.9 exec summary. |
-| Purpose | Scope | 5 | Scope explicitly declared with included/excluded lists; body matches throughout; out-of-scope items (pre-2024, DCF, investment advice) named. |
-| Purpose | Breadth | 4 | All major case classes covered (financials, product, competitive, AI positioning, risk); §1.5d Application Services changelog deferred without full standalone treatment, a minor gap within declared scope. |
-| Purpose | Depth | 4 | Key sections (§2.7 AI thesis, §2.8 pre-earnings, §1.3 financials) deeply developed with full series and named instances; AI revenue estimate 5-15% lacks development of the triangulation inputs. |
-| **Purpose** | **Mean** | **4.50** | |
-| Expression | Clarity | 4 | Clear, precise prose throughout; one banned-register phrase at §2.6 L983 'thesis only crystallized'; otherwise strong. |
-| Expression | Coherence | 5 | Seamless two-phase structure; each paragraph has one job; transitions bridge cleanly between Phase 1 fact-gathering and Phase 2 analysis; no backtracking. |
-| Expression | Concision | 4 | Mostly tight; beat-magnitude series ($6.6M to $25.5M) appears in full at §1.3 and is referenced at §2.1, §2.2, §2.8 — redundant across four sections. |
-| Expression | Organization | 4 | Logical heading hierarchy; tables earn their shape; 26 internal links to data files; cross-references to data files name only the filename, not what the reader will find. |
-| Expression | Style Consistency | 4 | Consistent American English, consistent bold conventions; date formats mix ISO (2024-08-01) with abbreviated month (Aug 2026) within the same sections. |
-| Expression | Formatting | 4 | Markdown renders correctly; tables well-formed; the §1.3 table footnote uses a bare asterisk rather than a proper footnote anchor. |
-| **Expression** | **Mean** | **4.17** | |
-| Grounding | Verifiability | 4 | Most quantitative claims cite specific sources (earnings releases, 10-Qs); Vercel CEO benchmark at §1.7 has no post ID or URL; CF '20% of the web' at §1.8 has no source URL. |
-| Grounding | Factuality | 4 | Cannot fully verify externally; citations look well-formed; 'Multiple' as source for $12.8B AI coding market at §1.8 is not a verifiable citation; Anthropic '$4B Amazon investment' is a rounded aggregate without disclosure. |
-| **Grounding** | **Mean** | **4.00** | |
-| Reasoning | Inference Discipline | 4 | Rungs generally well-separated; Phase 1 observation vs Phase 2 interpretation cleanly structured; one fusion at §2.6 L982-983 where 'GitHub data was a leading indicator' blends observation with interpretation. |
-| Reasoning | Soundness | 4 | Mechanisms named for key claims (DBNRR-to-growth, GM compression from GPU inference); the 5-15% AI-revenue estimate at §2.7 is stated as 'triangulated' but the method is not shown. |
-| Reasoning | Precision | 4 | Domain entities named precisely (specific product names, versioned models, filing dates); 'Multiple' and 'Reported' as source attributions at §1.8 are imprecise where specific publication names exist. |
-| **Reasoning** | **Mean** | **4.00** | |
-| Judgment | Calibration | 4 | Scenario probabilities sum to 100% (30/50/20); bull probability marked 'subjective'; but the 30/50/20 split is not anchored in any empirical base rate for SaaS earnings outcomes. |
-| Judgment | Fairness | 4 | Bull/base/bear cases present with numerical thresholds; bear case at §2.7 receives one row vs bull's fuller development; risk inventory spans macro, competitive, execution, capital structure. |
-| Judgment | Robustness | 3 | The 'all narrative, little attribution' bear lens at §2.7 is named but not run at depth comparable to the bull case; alternative interpretation (DBNRR recovery driven by pool-of-funds deal timing, not AI adoption) is not tested. |
-| **Judgment** | **Mean** | **3.67** | |
-| | **Overall mean (18 dims)** | **4.11** | |
+| **Purpose** | Suitability | 5 | Task clearly stated in Overview; output shape matches (research brief with scenario tree, recommendations, workplan); main answer recoverable from section headings and §2.9 exec summary. |
+|  | Scope | 5 | Scope explicitly declared with included/excluded lists; body matches throughout; out-of-scope items (pre-2024, DCF, investment advice) named. |
+|  | Breadth | 4 | All major case classes covered (financials, product, competitive, AI positioning, risk); §1.5d Application Services changelog deferred without full standalone treatment, a minor gap within declared scope. |
+|  | Depth | 4 | Key sections (§2.7 AI thesis, §2.8 pre-earnings, §1.3 financials) deeply developed with full series and named instances; AI revenue estimate 5-15% lacks development of the triangulation inputs. |
+|  | **Mean** | **4.50** | |
+| **Expression** | Clarity | 4 | Clear, precise prose throughout; one banned-register phrase at §2.6 L983 'thesis only crystallized'; otherwise strong. |
+|  | Coherence | 5 | Seamless two-phase structure; each paragraph has one job; transitions bridge cleanly between Phase 1 fact-gathering and Phase 2 analysis; no backtracking. |
+|  | Concision | 4 | Mostly tight; beat-magnitude series ($6.6M to $25.5M) appears in full at §1.3 and is referenced at §2.1, §2.2, §2.8 — redundant across four sections. |
+|  | Organization | 4 | Logical heading hierarchy; tables earn their shape; 26 internal links to data files; cross-references to data files name only the filename, not what the reader will find. |
+|  | Style Consistency | 4 | Consistent American English, consistent bold conventions; date formats mix ISO (2024-08-01) with abbreviated month (Aug 2026) within the same sections. |
+|  | Formatting | 4 | Markdown renders correctly; tables well-formed; the §1.3 table footnote uses a bare asterisk rather than a proper footnote anchor. |
+|  | **Mean** | **4.17** | |
+| **Grounding** | Verifiability | 4 | Most quantitative claims cite specific sources (earnings releases, 10-Qs); Vercel CEO benchmark at §1.7 has no post ID or URL; CF '20% of the web' at §1.8 has no source URL. |
+|  | Factuality | 4 | Cannot fully verify externally; citations look well-formed; 'Multiple' as source for $12.8B AI coding market at §1.8 is not a verifiable citation; Anthropic '$4B Amazon investment' is a rounded aggregate without disclosure. |
+|  | Relevance | 4 | Cited sources support the financial analysis directly; one or two references at §1.8 are tangential to the headline thesis. |
+|  | **Mean** | **4.00** | |
+| **Reasoning** | Inference Discipline | 4 | Rungs generally well-separated; Phase 1 observation vs Phase 2 interpretation cleanly structured; one fusion at §2.6 L982-983 where 'GitHub data was a leading indicator' blends observation with interpretation. |
+|  | Soundness | 4 | Mechanisms named for key claims (DBNRR-to-growth, GM compression from GPU inference); the 5-15% AI-revenue estimate at §2.7 is stated as 'triangulated' but the method is not shown. |
+|  | Precision | 4 | Domain entities named precisely (specific product names, versioned models, filing dates); 'Multiple' and 'Reported' as source attributions at §1.8 are imprecise where specific publication names exist. |
+|  | Parsimony | 4 | Reasoning chains are mostly tight; one re-derivation at §2.2 restates the §1.3 series rather than citing it. |
+|  | **Mean** | **4.00** | |
+| **Judgment** | Calibration | 4 | Scenario probabilities sum to 100% (30/50/20); bull probability marked 'subjective'; but the 30/50/20 split is not anchored in any empirical base rate for SaaS earnings outcomes. |
+|  | Fairness | 4 | Bull/base/bear cases present with numerical thresholds; bear case at §2.7 receives one row vs bull's fuller development; risk inventory spans macro, competitive, execution, capital structure. |
+|  | Robustness | 3 | The 'all narrative, little attribution' bear lens at §2.7 is named but not run at depth comparable to the bull case; alternative interpretation (DBNRR recovery driven by pool-of-funds deal timing, not AI adoption) is not tested. |
+|  | **Mean** | **3.67** | |
+|  | **Overall mean (20 dims)** | **4.10** | |
 
 ## Violations
 

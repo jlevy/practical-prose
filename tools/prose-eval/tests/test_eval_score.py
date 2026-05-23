@@ -201,8 +201,8 @@ def test_merge_replaces_qual_and_violations(tmp_path: Path):
             clarity=5, coherence=5, concision=5, organization=5, style_consistency=0, formatting=0
         ),
         purpose=PurposeScores(suitability=5, breadth=5, depth=5),
-        grounding=GroundingScores(verifiability=5, factuality=5),
-        reasoning=ReasoningScores(inference_discipline=5, soundness=5, precision=5),
+        grounding=GroundingScores(verifiability=5, factuality=5, relevance=5),
+        reasoning=ReasoningScores(inference_discipline=5, soundness=5, precision=5, parsimony=5),
         judgment=JudgmentScores(calibration=5, fairness=5, robustness=5),
     )
     from prose_eval.eval_score import ScoredResult
@@ -231,8 +231,8 @@ def test_merge_preserves_existing_method(tmp_path: Path):
             clarity=5, coherence=5, concision=5, organization=5, style_consistency=0, formatting=0
         ),
         purpose=PurposeScores(suitability=5, breadth=5, depth=5),
-        grounding=GroundingScores(verifiability=5, factuality=5),
-        reasoning=ReasoningScores(inference_discipline=5, soundness=5, precision=5),
+        grounding=GroundingScores(verifiability=5, factuality=5, relevance=5),
+        reasoning=ReasoningScores(inference_discipline=5, soundness=5, precision=5, parsimony=5),
         judgment=JudgmentScores(calibration=5, fairness=5, robustness=5),
     )
     from prose_eval.eval_score import ScoredResult
@@ -249,8 +249,8 @@ def test_merge_alignment_clean_passes_strict_validate(tmp_path: Path):
             clarity=5, coherence=5, concision=5, organization=5, style_consistency=0, formatting=0
         ),
         purpose=PurposeScores(suitability=5, breadth=5, depth=5),
-        grounding=GroundingScores(verifiability=5, factuality=5),
-        reasoning=ReasoningScores(inference_discipline=5, soundness=5, precision=5),
+        grounding=GroundingScores(verifiability=5, factuality=5, relevance=5),
+        reasoning=ReasoningScores(inference_discipline=5, soundness=5, precision=5, parsimony=5),
         judgment=JudgmentScores(calibration=5, fairness=5, robustness=5),
     )
     from prose_eval.eval_score import ScoredResult
@@ -267,8 +267,8 @@ def test_merge_with_proper_violations_passes_alignment(tmp_path: Path):
             clarity=4, coherence=5, concision=5, organization=5, style_consistency=0, formatting=0
         ),
         purpose=PurposeScores(suitability=5, breadth=5, depth=5),
-        grounding=GroundingScores(verifiability=5, factuality=5),
-        reasoning=ReasoningScores(inference_discipline=5, soundness=5, precision=5),
+        grounding=GroundingScores(verifiability=5, factuality=5, relevance=5),
+        reasoning=ReasoningScores(inference_discipline=5, soundness=5, precision=5, parsimony=5),
         judgment=JudgmentScores(calibration=5, fairness=5, robustness=5),
     )
     from prose_eval.eval_score import ScoredResult
@@ -343,8 +343,8 @@ def test_round_trip_merge_then_load(tmp_path: Path):
             clarity=4, coherence=5, concision=4, organization=5, style_consistency=4, formatting=5
         ),
         purpose=PurposeScores(suitability=4, breadth=4, depth=4),
-        grounding=GroundingScores(verifiability=5, factuality=4),
-        reasoning=ReasoningScores(inference_discipline=4, soundness=5, precision=4),
+        grounding=GroundingScores(verifiability=5, factuality=4, relevance=5),
+        reasoning=ReasoningScores(inference_discipline=4, soundness=5, precision=4, parsimony=5),
         judgment=JudgmentScores(calibration=5, fairness=5, robustness=4),
     )
     sub5_dims = [
@@ -391,8 +391,8 @@ def test_merge_populates_reproducibility_metadata(tmp_path: Path):
             clarity=5, coherence=5, concision=5, organization=5, style_consistency=0, formatting=0
         ),
         purpose=PurposeScores(suitability=5, breadth=5, depth=5),
-        grounding=GroundingScores(verifiability=5, factuality=5),
-        reasoning=ReasoningScores(inference_discipline=5, soundness=5, precision=5),
+        grounding=GroundingScores(verifiability=5, factuality=5, relevance=5),
+        reasoning=ReasoningScores(inference_discipline=5, soundness=5, precision=5, parsimony=5),
         judgment=JudgmentScores(calibration=5, fairness=5, robustness=5),
     )
     repro = ReproContext(
@@ -461,8 +461,8 @@ def test_repro_context_persists_sdk_fields(tmp_path: Path):
             clarity=5, coherence=5, concision=5, organization=5, style_consistency=5, formatting=5
         ),
         purpose=PurposeScores(suitability=5, breadth=5, depth=5),
-        grounding=GroundingScores(verifiability=5, factuality=5),
-        reasoning=ReasoningScores(inference_discipline=5, soundness=5, precision=5),
+        grounding=GroundingScores(verifiability=5, factuality=5, relevance=5),
+        reasoning=ReasoningScores(inference_discipline=5, soundness=5, precision=5, parsimony=5),
         judgment=JudgmentScores(calibration=5, fairness=5, robustness=5),
     )
     repro = ReproContext(

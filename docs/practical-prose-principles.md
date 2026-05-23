@@ -102,7 +102,7 @@ These principles underlie `practical-prose-guidelines.md` and the dimensions use
 
 ## Mapping Principles to Measurable Attributes
 
-`practical-prose-guidelines.md` defines eighteen review dimensions grouped under five
+`practical-prose-guidelines.md` defines twenty review dimensions grouped under five
 headings. Each maps to one or more principles.
 
 | Dimension | Principles |
@@ -119,9 +119,11 @@ headings. Each maps to one or more principles.
 | Formatting | Lucid; Maintainable |
 | Verifiability | Verifiable |
 | Factuality | Truthful; Verifiable |
+| Relevance | Purposeful; Essential |
 | Inference Discipline | Verifiable; Lucid |
 | Soundness | Truthful; Verifiable |
 | Precision | Truthful; Lucid |
+| Parsimony | Essential; Verifiable |
 | Calibration | Truthful; Humane |
 | Fairness | Truthful |
 | Robustness | Truthful; Verifiable |

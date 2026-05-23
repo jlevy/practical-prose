@@ -1,17 +1,17 @@
 ---
 title: Practical Prose Rubric
-description: Descriptive 0-5 rubric for scoring a practical writing artifact across the 18 dimensions defined in practical-prose-guidelines.md.
+description: Descriptive 0-5 rubric for scoring a practical writing artifact across the 20 dimensions defined in practical-prose-guidelines.md.
 date: 2026-05-11
 status: active
 ---
 # Practical Prose Rubric
 
-Version: v0.1 (rubric: `18-dim-v1`, last update 2026-05-11)\
+Version: v0.1 (rubric: `20-dim-v1`, last update 2026-05-23)\
 Joshua Levy (github.com/jlevy)
 
 A descriptive 0-5 rubric for assessing practical writing artifacts (articles, blog
 posts, research reports, design docs, specs, technical papers, decision memos) across
-the 18 dimensions defined in
+the 20 dimensions defined in
 [practical-prose-guidelines.md](practical-prose-guidelines.md).
 
 The rubric is **descriptive** (what a score looks like); the guidelines are
@@ -28,8 +28,8 @@ for the scope-class table and when to set each value.
 ## Alignment with the guidelines
 
 The rubric and [practical-prose-guidelines.md](practical-prose-guidelines.md) define the
-same 18 dimensions in the same five groups, using the same names and section numbers
-(§1-§18). They are designed as a tight bidirectional map:
+same 20 dimensions in the same five groups, using the same names and section numbers
+(§1-§20). They are designed as a tight bidirectional map:
 
 - A document scoring **5** on a dimension has no material unaddressed rule violations
   for the artifact’s purpose, audience, genre, and risk level.
@@ -158,12 +158,14 @@ are not justified.
 | 10 |  | Formatting | Is the document visually and syntactically clean in its medium? |
 | 11 | Grounding | Verifiability | Are claims traceable to sources or calculations? |
 | 12 |  | Factuality | Do cited sources support the claims as asserted? |
-| 13 | Reasoning | Inference Discipline | Are observation, judgment, interpretation, and implication kept distinct? |
-| 14 |  | Soundness | Do claims follow from evidence through valid mechanisms? |
-| 15 |  | Precision | Are claims and terms specified at the right granularity? |
-| 16 | Judgment | Calibration | Does claim strength match evidence strength? |
-| 17 |  | Fairness | Are opposing positions argued at proportional evidentiary depth? |
-| 18 |  | Robustness | Do key claims survive plausible alternative interpretations? |
+| 13 |  | Relevance | Do sources, citations, and reasoning chains bear on the document's stated purpose? |
+| 14 | Reasoning | Inference Discipline | Are observation, judgment, interpretation, and implication kept distinct? |
+| 15 |  | Soundness | Do claims follow from evidence through valid mechanisms? |
+| 16 |  | Precision | Are claims and terms specified at the right granularity? |
+| 17 |  | Parsimony | Is each load-bearing reasoning chain the cleanest, simplest sound argument possible for its conclusion? |
+| 18 | Judgment | Calibration | Does claim strength match evidence strength? |
+| 19 |  | Fairness | Are opposing positions argued at proportional evidentiary depth? |
+| 20 |  | Robustness | Do key claims survive plausible alternative interpretations? |
 
 ## How to score
 
@@ -203,7 +205,7 @@ Suggested primary assignments:
 | --- | --- | --- |
 | Vague language in ordinary prose ("very," “quickly”) | §5 Clarity | — |
 | Vague magnitude in a scoped factual claim ("rapid growth") | §4 Depth | §5 Clarity |
-| Vague countable / category name where specific term exists ("the company") | §15 Precision | §5 Clarity |
+| Vague countable / category name where specific term exists ("the company") | §16 Precision | §5 Clarity |
 | Trite phrasing or banned-register hit | §5 Clarity | — |
 | Canonicality declaration or word-choice / naming justification ("this is the canonical X"; “we use the term Y because…”) | §5 Clarity | §7 Concision |
 | Replacement-history narration in a non-history genre ("previously named X"; “under the new layout”) | §7 Concision | §5 Clarity |
@@ -214,15 +216,15 @@ Suggested primary assignments:
 | Malformed Markdown table, broken footnote anchor, misplaced footer | §10 Formatting | §8 Organization |
 | Duplicated table / list content across sections | §7 Concision | §8 Organization |
 | Undeclared or drifting scope on a multi-topic document | §2 Scope | §3 Breadth |
-| Missing case class within declared scope (e.g., risk type omitted) | §3 Breadth | §17 Fairness |
+| Missing case class within declared scope (e.g., risk type omitted) | §3 Breadth | §19 Fairness |
 | Thin development of a section the document’s purpose depends on | §4 Depth | §1 Suitability |
 | Missing inline citation for a quantitative claim | §11 Verifiability | §10 Formatting |
 | Number in prose doesn’t match source (silent rounding) | §12 Factuality | §11 Verifiability |
 | Cited source doesn’t support the claim as asserted | §12 Factuality | §11 Verifiability |
-| Mixed observation + interpretation in one sentence | §13 Inference Discipline | §14 Soundness |
-| Probability claim without base-rate anchor | §16 Calibration | §14 Soundness |
-| One-sided argument with no counter-evidence engaged | §17 Fairness | §16 Calibration |
-| Key claim brittle under a different reasonable interpretive lens | §18 Robustness | §17 Fairness |
+| Mixed observation + interpretation in one sentence | §14 Inference Discipline | §15 Soundness |
+| Probability claim without base-rate anchor | §18 Calibration | §15 Soundness |
+| One-sided argument with no counter-evidence engaged | §19 Fairness | §18 Calibration |
+| Key claim brittle under a different reasonable interpretive lens | §20 Robustness | §19 Fairness |
 
 ### Output format
 
@@ -381,7 +383,7 @@ validity is scored under §10 Formatting.
 
 Prose-level flow of ideas: paragraph cohesion, transitions, whether ideas progress
 smoothly sentence to sentence.
-Does not cover logical coherence (§14 Soundness) or arrangement of sections and visual
+Does not cover logical coherence (§15 Soundness) or arrangement of sections and visual
 elements (§8 Organization).
 
 - **0:** Cannot assess.
@@ -620,7 +622,7 @@ A claim that cannot be corroborated and is *asserted as fact without hedging* is
 Factuality defect, not a “cannot-assess” exemption: the document has failed to match
 assertion strength to evidence.
 The score reflects this.
-See §16 Calibration for the broader treatment of claim-strength matching.
+See §18 Calibration for the broader treatment of claim-strength matching.
 
 **Reviewer access limits are a separate concern from document defects.** A claim may be
 theoretically verifiable but unreachable in the current scoring context — a paywalled
@@ -687,13 +689,59 @@ penalize the document for them.
   acknowledges this explicitly (e.g., “we have not been able to verify this”) and states
   the basis on which the claim is made anyway.
 
+#### §13 Relevance
+
+Do sources, citations, and intermediate reasoning chains bear on the document's stated
+purpose?
+Relevance sits in **Grounding** alongside Verifiability (§11) and Factuality (§12):
+Verifiability asks whether claims trace to sources; Factuality asks whether those
+sources support the claims; Relevance asks whether the supported claims matter for the
+document's purpose. A document can score 5 on Verifiability and Factuality and still
+fail Relevance by anchoring its evidence to tangential material.
+
+Relevance is distinct from §2 Scope (which declares the document's boundary) and §7
+Concision (which is prose-level economy): Relevance tests whether the content *inside*
+the declared scope earns its place against the purpose, at the level of sources and
+sections rather than words and paragraphs.
+
+- **NA:** Not applicable.
+  The document makes no inferential claims and cites no sources (pure reference data,
+  raw measurements, a glossary, or a structured form). There is no audit trail to
+  evaluate for relevance.
+
+- **0:** Cannot assess.
+  The document cites sources or builds reasoning chains, but its purpose is itself
+  unstated or contradictory enough that no relevance test can be applied. (When
+  Suitability §1 has failed materially, Relevance is 0.)
+
+- **1:** Half or more of the cited sources or reasoning chains are irrelevant to the
+  document's conclusions or purpose. Headline claims rest on tangential evidence, or
+  major sections do work toward goals the document never declared.
+
+- **2:** A significant fraction of cited sources or reasoning points are ancillary or
+  extraneous to the purpose; load-bearing claims would survive cutting them.
+
+- **3:** Workable; the headline claims rest on relevant evidence, but several sources
+  or sections don't fully earn their place against the purpose. A reader who skims to
+  the recommendations does not pick up tangents, but a careful reader sees padding.
+
+- **4:** Score-5 mostly satisfied with one or two minor slips: a few sources or notes
+  are a bit of a stretch — cited for completeness, or surfacing as digressions — but
+  remain loosely relevant. Background sections, when present, are signalled as
+  background.
+
+- **5:** Every cited source and every line of reasoning is relevant to the document's
+  purpose; nothing can be removed without lowering the quality of the work.
+  Performative citations are absent. Digressions, where present, are explicitly marked
+  so the reader can skip without losing the main thread.
+
 ### Reasoning
 
-#### §13 Inference Discipline
+#### §14 Inference Discipline
 
 Moving rung by rung up the ladder of inference (observation → judgment → interpretation
 → implication). Each rung named on its own terms; none skipped, none blended into its
-neighbor. Sister of Soundness (§14): Soundness asks whether the chain holds together;
+neighbor. Sister of Soundness (§15): Soundness asks whether the chain holds together;
 Inference Discipline asks whether the rungs exist as distinct rungs at all.
 
 - **NA:** Not applicable.
@@ -745,12 +793,12 @@ Inference Discipline asks whether the rungs exist as distinct rungs at all.
   `[interpreted]`, `[implied]`) used; in polished prose, the rung separation holds
   without tags.
 
-#### §14 Soundness
+#### §15 Soundness
 
 Logical organization, well-defined terms, mechanisms named where causation is asserted,
 visible chain from evidence to claim.
 Focuses on the document’s logical structure; multiple-perspective consideration is
-scored under §17 Fairness.
+scored under §19 Fairness.
 
 - **0:** Cannot assess.
   Content missing or fewer than 3 sentences.
@@ -772,7 +820,7 @@ scored under §17 Fairness.
   document engaged, asserted claims either argued or marked as assertions subject to
   falsifiable conditions.
 
-#### §15 Precision
+#### §16 Precision
 
 Claims and terms specified at the right granularity for the domain and audience.
 Generic vocabulary in place of available specific vocabulary is imprecision, even when
@@ -801,9 +849,63 @@ completeness, section development): Precision scores granularity *within* each c
   precision matches measurement precision; no vague placeholders for countable items
   (either counted: “12”, or named: “AWS, Azure, GCP, OCI”).
 
+#### §17 Parsimony
+
+Is each load-bearing reasoning chain the cleanest, simplest sound argument possible
+for its conclusion?
+Length is not the metric; minimality given the per-step warrants in use is. A long
+chain of strong deductive steps (a formal proof, a multi-step regulatory cross-walk)
+is parsimonious when no shorter chain of the same warrant strength exists; a short
+chain of weak inductive gestures is non-parsimonious when it elides intermediates the
+conclusion requires.
+
+Parsimony presupposes Soundness (§15). When a step is unsound, a longer sound chain
+would do less damage to the conclusion, so the chain as written cannot be the most
+parsimonious sound argument. When Soundness fails materially on the headline claims,
+Parsimony is 0.
+
+Parsimony differs from §7 Concision (prose-level economy: words and paragraphs),
+from §13 Relevance (whether each source or section is on-task), from §14 Inference
+Discipline (whether rungs are named), and from §15 Soundness (whether each step is
+valid). Parsimony asks specifically: given the warrants in use, is the chain shape
+the minimum sufficient?
+
+- **NA:** Not applicable.
+  The document makes no inferential claims (pure reference data, raw measurements, a
+  glossary, or a structured form). There is no reasoning chain whose minimality could
+  be evaluated.
+
+- **0:** Cannot assess; or Soundness (§15) has already failed materially on the
+  headline claims, so the chain cannot be the minimum sound argument.
+
+- **1:** Obviously extraneous elements throughout the chains of reasoning:
+  citable facts re-derived, weaker warrants substituted where stronger ones were
+  available, or non-load-bearing rungs piled into chains that the conclusion does
+  not require. The argument bears little resemblance to a minimum sufficient sound
+  chain.
+
+- **2:** Obviously extraneous elements in multiple load-bearing chains, or on the
+  chains that carry headline claims. Substantial re-derivation, padding, or weaker-
+  warrant substitution where direct evidence existed.
+
+- **3:** Workable; the chains are roughly the right shape and the headline claims
+  survive a minimum-sufficiency test, but several arguments could be tightened
+  without loss of soundness or precision.
+
+- **4:** A few arguments could be simplified but maintain the same level of
+  soundness and precision; otherwise tight. A single re-derivation that could have
+  been a citation, one chain using inductive language where a deductive step is
+  available, or one redundant rung in an otherwise-tight chain.
+
+- **5:** Every line of inference or argument appears to be the most clean and simple
+  argument possible to a sound conclusion. Long chains appear only where the warrant
+  strengths in use require them; short chains appear only where per-step warrants
+  are strong enough to support them. No rung is extraneous; no citable fact is
+  re-derived; no weaker warrant is substituted where a stronger one was available.
+
 ### Judgment
 
-#### §16 Calibration
+#### §18 Calibration
 
 Claim strength must match evidence strength in both directions.
 Overconfidence (strong claims on thin evidence) and underconfidence (hedging on solid
@@ -832,7 +934,7 @@ forecast claims.
   written before research and revisited post-research; deltas quantified; scenario
   probabilities sum to 100% and are checked.
 
-#### §17 Fairness
+#### §19 Fairness
 
 Are opposing positions (a case for and a case against, or any oppositional framings)
 argued at depth proportional to their plausibility, materiality, and strength?
@@ -867,10 +969,10 @@ and the document says why) is not.
   Counterintuitive findings audited for confirmation bias (count of findings favoring,
   challenging, and neutral on the central claim).
 
-#### §18 Robustness
+#### §20 Robustness
 
 Do key claims survive plausible alternative interpretations of the same evidence?
-Calibration (§16) asks whether claim strength matches evidence strength; Fairness (§17)
+Calibration (§18) asks whether claim strength matches evidence strength; Fairness (§19)
 asks whether opposing positions are argued at proportional depth.
 Robustness asks the further question: granting the evidence and the framing, would a
 *different reasonable lens* on the same evidence change the claim?
@@ -895,7 +997,7 @@ Robustness asks the further question: granting the evidence and the framing, wou
 
 ## Contextual modifier: Tone / Reader Respect
 
-The 18 dimensions above are the scored axes.
+The 20 dimensions above are the scored axes.
 For human-facing documents, one further quality is worth checking but is not scored as a
 dimension because it invites subjective evaluation:
 
@@ -922,7 +1024,7 @@ operationalizes them.
 | --- | --- | --- | --- |
 | Lint | Surface defects | §8 Organization, §9 Style Consistency, §10 Formatting, §5 Clarity (banned-register and vague-word checks) | `practical_prose_metrics.py`, linters, deterministic checks |
 | Claim audit | Every quantitative claim against its cited source | §11 Verifiability, §12 Factuality | Source lookups, calculation re-runs |
-| Reasoning audit | Mechanisms, assumptions, counter-evidence, alternative lenses | §13 Inference Discipline, §14 Soundness, §17 Fairness, §18 Robustness | Subject-matter expert or fresh-context agent |
+| Reasoning audit | Mechanisms, assumptions, counter-evidence, alternative lenses | §14 Inference Discipline, §15 Soundness, §19 Fairness, §20 Robustness | Subject-matter expert or fresh-context agent |
 | Purpose audit | Output shape vs task shape; scope; skim-recoverability | §1 Suitability, §2 Scope, §3 Breadth, §4 Depth | Reader simulation; subject-matter expert |
 
 The pass separation is **required** for high-stakes documents (audits, decision memos,
@@ -955,15 +1057,15 @@ Cross-references to the guidelines:
 
 - **Factual** and **AI-generated** rows operationalize §11.5 Verifiability ("name what
   would invalidate the claim").
-- **Causal** row operationalizes §14.8 Soundness (the counterfactual test).
+- **Causal** row operationalizes §15.8 Soundness (the counterfactual test).
 - **Quantitative** row operationalizes §12.2 Factuality (rounding/aggregation/unit
   conversion disclosure).
-- **Forecast** row operationalizes §16 Calibration (base-rate anchoring).
-- **Recommendation** row operationalizes §14.3 Soundness (surface unstated assumptions)
-  and §18 Robustness (test against alternative interpretive lens).
+- **Forecast** row operationalizes §18 Calibration (base-rate anchoring).
+- **Recommendation** row operationalizes §15.3 Soundness (surface unstated assumptions)
+  and §20 Robustness (test against alternative interpretive lens).
 - **Summary** row operationalizes §1 Suitability and §4 Depth (what the document doesn’t
   do; section depth matches importance).
-- **Fairness** row operationalizes §17 Fairness (proportional representation; not equal
+- **Fairness** row operationalizes §19 Fairness (proportional representation; not equal
   airtime).
 
 These are diagnostic prompts for evaluators, not new rules for writers; the rules they
@@ -987,7 +1089,7 @@ invoke live in the guidelines.
 - **Scores are reductive.** A single dimension’s score is a summary, not a full review.
   Always pair scores with the parenthetical reason to preserve diagnostic information.
 - **Right score depends on context.** A short status update doesn’t need to score 5 on
-  §3 Breadth or §4 Depth; a security advisory shouldn’t score low on §16 Calibration
+  §3 Breadth or §4 Depth; a security advisory shouldn’t score low on §18 Calibration
   even when brief. Don’t aggregate dimensions to a single number unless the use case
   calls for it (and then state the weighting).
   When aggregating, `NA` dimensions are excluded from the mean rather than treated as
@@ -995,19 +1097,19 @@ invoke live in the guidelines.
 
 ## Versioning
 
-Current revision: **`18-dim-v1`**. Eval YAMLs produced under it set
-`metadata.rubric_version: 18-dim-v1`. The `from-metrics` subcommand of
+Current revision: **`20-dim-v1`**. Eval YAMLs produced under it set
+`metadata.rubric_version: 20-dim-v1`. The `from-metrics` subcommand of
 `../scripts/eval_report.py` writes this automatically.
 
-The previous revision `15-dim-v1` covered 15 dimensions in five groups; `18-dim-v1` adds
+The previous revision `15-dim-v1` covered 15 dimensions in five groups; `20-dim-v1` adds
 three dimensions (Breadth + Depth split from Coverage; Style Consistency; Formatting),
 renames Structure → Organization, and introduces the `NA` value distinct from `0`.
 Score-anchor language was tightened in several dimensions.
 
 Bump the version on substantive changes:
 
-- New dimension added or removed: bump the dim count (e.g., `18-dim-v1` → `19-dim-v1`).
-- Anchor language changed in a way that could shift scores: bump the rev (`18-dim-v1` →
+- New dimension added or removed: bump the dim count (e.g., `20-dim-v1` → `19-dim-v1`).
+- Anchor language changed in a way that could shift scores: bump the rev (`20-dim-v1` →
   `18-dim-v2`). The rubric schema in `../scripts/rubric_schema.yaml` is the canonical
   source for the current version string; bumping the rubric here means bumping `version`
   there too.
@@ -1015,13 +1117,13 @@ Bump the version on substantive changes:
 `../scripts/eval_compare.py` warns when comparing across rubric versions.
 Pinned regression fixtures (`../scripts/fixtures/rev{1,2}-net.eval.yaml`,
 `../scripts/fixtures/{guidelines,runbook}-self.eval.yaml`) were scored under `15-dim-v1`
-and must be re-scored before they can be reused under `18-dim-v1`.
+and must be re-scored before they can be reused under `20-dim-v1`.
 
 ## Related docs
 
 - [../README.md](../README.md): how the practical-prose layers fit together.
 - [practical-prose-guidelines.md](practical-prose-guidelines.md): prescriptive rules for
-  the same 18 dimensions.
+  the same 20 dimensions.
 - [practical-prose-metrics.md](practical-prose-metrics.md): quantitative metrics and
   qualitative checks per dimension; recommended frontmatter schema.
 - [practical-prose-principles.md](practical-prose-principles.md): the seven principles

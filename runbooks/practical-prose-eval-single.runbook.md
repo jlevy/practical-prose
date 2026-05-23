@@ -135,7 +135,7 @@ Useful flags:
 **Manual path:**
 
 Read the artifact end to end.
-For each of the 18 dimensions, assign a score 0-5 (or `NA`) per the anchors in
+For each of the 20 dimensions, assign a score 0-5 (or `NA`) per the anchors in
 `practical-prose-rubric.md`. Use the `SCORE (REASON)` shape internally before composing
 the eval report.
 
@@ -219,14 +219,14 @@ If the audit fails, revise scores or violations until consistent.
 ## Calibration set
 
 `../tools/prose-eval/tests/fixtures/` ships a small calibration set with **agreed scores
-and violations under `18-dim-v1`** so future agent or human evaluators can be tested for
+and violations under `20-dim-v1`** so future agent or human evaluators can be tested for
 drift and self-eval overrating against a fixed reference:
 
 | Fixture | Artifact | Type | Overall mean | NA dims |
 | --- | --- | --- | ---: | ---: |
 | `rev1-net.eval.md` | External deep-research artifact (rev1) | strong baseline (deep_research) | ~4.1 | 0 |
 | `rev2-net.eval.md` | External deep-research artifact (rev2 dry-run) | weaker baseline (deep_research) | ~3.1 | 0 |
-| `guidelines-self.eval.md` | `practical-prose-guidelines.md` itself | self-eval (guidelines doc) | ~4.1 | 4 (Inference Discipline, Calibration, Fairness, Robustness) |
+| `guidelines-self.eval.md` | `practical-prose-guidelines.md` itself | self-eval (guidelines doc) | ~4.1 | 5 (Inference Discipline, Parsimony, Calibration, Fairness, Robustness) |
 
 Use this set to calibrate model-scoring runs:
 
@@ -239,8 +239,8 @@ prose-eval score path/to/your-artifact.eval.md --model sonnet
 
 The 6 `figma-*.eval.md` fixtures are comparison-renderer test data, not calibration
 baselines: many dimensions are scored 0 because the original 12-dim eval did not
-enumerate per-dim violations satisfying the 18-dim-v1 alignment property.
-To restore those scores, re-eval the underlying artifact under 18-dim-v1.
+enumerate per-dim violations satisfying the 20-dim-v1 alignment property.
+To restore those scores, re-eval the underlying artifact under 20-dim-v1.
 
 Bump the calibration set whenever the rubric is bumped (`practical-prose-rubric.md`
 §Versioning explains the trigger).

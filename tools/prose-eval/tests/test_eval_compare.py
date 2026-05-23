@@ -277,8 +277,13 @@ def _make_report(
                 "formatting": 0,
             },
             "purpose": {"suitability": 4, "breadth": 4, "depth": 4},
-            "grounding": {"verifiability": 5, "factuality": 4},
-            "reasoning": {"inference_discipline": 4, "soundness": 5, "precision": 4},
+            "grounding": {"verifiability": 5, "factuality": 4, "relevance": 5},
+            "reasoning": {
+                "inference_discipline": 4,
+                "soundness": 5,
+                "precision": 4,
+                "parsimony": 5,
+            },
             "judgment": (
                 {"calibration": "NA", "fairness": "NA", "robustness": "NA"}
                 if judgment_na
@@ -406,8 +411,13 @@ def _make_report_with_scope(label: str, scope_class: str | None) -> EvalReport:
                 "formatting": 0,
             },
             "purpose": {"suitability": 4, "breadth": 4, "depth": 4},
-            "grounding": {"verifiability": 5, "factuality": 4},
-            "reasoning": {"inference_discipline": 4, "soundness": 5, "precision": 4},
+            "grounding": {"verifiability": 5, "factuality": 4, "relevance": 5},
+            "reasoning": {
+                "inference_discipline": 4,
+                "soundness": 5,
+                "precision": 4,
+                "parsimony": 5,
+            },
             "judgment": {"calibration": 5, "fairness": 5, "robustness": 4},
         },
         "metadata": {"eval_date": "2026-05-09", "evaluator": "test", "rubric_version": "15-dim-v1"},
@@ -489,8 +499,13 @@ def test_collect_density_concerns_returns_only_flagged():
                 "formatting": 0,
             },
             "purpose": {"suitability": 4, "breadth": 4, "depth": 4},
-            "grounding": {"verifiability": 5, "factuality": 4},
-            "reasoning": {"inference_discipline": 4, "soundness": 5, "precision": 4},
+            "grounding": {"verifiability": 5, "factuality": 4, "relevance": 5},
+            "reasoning": {
+                "inference_discipline": 4,
+                "soundness": 5,
+                "precision": 4,
+                "parsimony": 5,
+            },
             "judgment": {"calibration": 5, "fairness": 5, "robustness": 4},
         },
         "metadata": {"eval_date": "2026-05-09", "evaluator": "test", "rubric_version": "15-dim-v1"},

@@ -25,8 +25,8 @@ You will be given, in order:
    violation. Cite:
    - the dimension by its canonical name (the exact label used in the rubric:
      Suitability, Scope, Breadth, Depth, Clarity, Coherence, Concision, Organization,
-     Style Consistency, Formatting, Verifiability, Factuality, Inference Discipline,
-     Soundness, Precision, Calibration, Fairness, Robustness),
+     Style Consistency, Formatting, Verifiability, Factuality, Relevance, Inference
+     Discipline, Soundness, Precision, Parsimony, Calibration, Fairness, Robustness),
    - the `rule_number` (the integer in `practical-prose-guidelines.md` for that
      dimension’s rule),
    - a one-line description,
@@ -65,9 +65,11 @@ derived from the canonical label by lowercasing and replacing spaces with unders
     "formatting":           {"score": 0, "reason": "..."},
     "verifiability":        {"score": 0, "reason": "..."},
     "factuality":           {"score": 0, "reason": "..."},
+    "relevance":            {"score": 0, "reason": "..."},
     "inference_discipline": {"score": 0, "reason": "..."},
     "soundness":            {"score": 0, "reason": "..."},
     "precision":            {"score": 0, "reason": "..."},
+    "parsimony":            {"score": 0, "reason": "..."},
     "calibration":          {"score": 0, "reason": "..."},
     "fairness":             {"score": 0, "reason": "..."},
     "robustness":           {"score": 0, "reason": "..."}
@@ -80,7 +82,7 @@ derived from the canonical label by lowercasing and replacing spaces with unders
 
 Hard requirements:
 
-- One score entry per dimension defined in the rubric, all 18 keys present, snake_case.
+- One score entry per dimension defined in the rubric, all 20 keys present, snake_case.
 - Each `score` is either an integer 0-5 or the literal string `"NA"`.
 - Each `reason` is a short string (under 200 chars).
 - `violations` may be empty only if every dimension scored 5, 0, or `NA`.

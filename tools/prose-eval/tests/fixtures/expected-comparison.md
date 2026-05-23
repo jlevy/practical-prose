@@ -14,16 +14,18 @@
 |  |  | *Mean* | 4.50 | 4.00 | 4.25 | **4.67** | 4.00 | 4.50 |
 |  | Grounding | Verifiability | 0 | 0 | **5** | 0 | 0 | **5** |
 |  |  | Factuality | 0 | 4 | **5** | 4 | 4 | **5** |
+|  |  | Relevance | 0 | 0 | **5** | 0 | 0 | **5** |
 |  |  | *Mean* | 0.00 | 4.00 | **5.00** | 4.00 | 4.00 | **5.00** |
 |  | Reasoning | Inference Discipline | 0 | 0 | 0 | 0 | 0 | 0 |
 |  |  | Soundness | 0 | 0 | **5** | 0 | 0 | **5** |
 |  |  | Precision | 0 | 0 | 0 | 0 | 0 | 0 |
+|  |  | Parsimony | 0 | 0 | 0 | 0 | 0 | 0 |
 |  |  | *Mean* | 0.00 | 0.00 | **5.00** | 0.00 | 0.00 | **5.00** |
 |  | Judgment | Calibration | 3 | 3 | **5** | 3 | 3 | **5** |
 |  |  | Fairness | 4 | 4 | **5** | 4 | 4 | **5** |
 |  |  | Robustness | 0 | 0 | 0 | 0 | 0 | 0 |
 |  |  | *Mean* | 3.50 | 3.50 | **5.00** | 3.50 | 3.50 | **5.00** |
-|  | Overall | *Mean (18 dims)* | 4.00 | 3.83 | 4.60 | 4.17 | 3.83 | **4.70** |
+|  | Overall | *Mean (20 dims)* | 4.00 | 3.83 | 4.64 | 4.17 | 3.83 | **4.73** |
 | **Quantitative** | Size | Words | 9,742 | 11,347 | 12,512 | 9,065 | 10,736 | 7,143 |
 |  |  | Sentences | 468 | 495 | 538 | 417 | 502 | 345 |
 |  |  | Paragraphs | 260 | 290 | 297 | 188 | 271 | 188 |
@@ -69,13 +71,15 @@
 | Formatting | 0 |
 | Verifiability | +5 |
 | Factuality | +5 |
+| Relevance | +5 |
 | Inference Discipline | 0 |
 | Soundness | +5 |
 | Precision | 0 |
+| Parsimony | 0 |
 | Calibration | +2 |
 | Fairness | +1 |
 | Robustness | 0 |
-| **Mean** | **+0.60** |
+| **Mean** | **+0.64** |
 
 ### Delta: NET-r1 → NET-r4
 
@@ -93,13 +97,15 @@
 | Formatting | 0 |
 | Verifiability | +5 |
 | Factuality | +1 |
+| Relevance | +5 |
 | Inference Discipline | 0 |
 | Soundness | +5 |
 | Precision | 0 |
+| Parsimony | 0 |
 | Calibration | +2 |
 | Fairness | +1 |
 | Robustness | 0 |
-| **Mean** | **+0.53** |
+| **Mean** | **+0.56** |
 
 ### Delta: DDOG-r2 → DDOG-r4
 
@@ -117,13 +123,15 @@
 | Formatting | 0 |
 | Verifiability | +5 |
 | Factuality | +1 |
+| Relevance | +5 |
 | Inference Discipline | 0 |
 | Soundness | +5 |
 | Precision | 0 |
+| Parsimony | 0 |
 | Calibration | +2 |
 | Fairness | +1 |
 | Robustness | 0 |
-| **Mean** | **+0.77** |
+| **Mean** | **+0.80** |
 
 ### Delta: NET-r2 → NET-r4
 
@@ -141,10 +149,12 @@
 | Formatting | 0 |
 | Verifiability | +5 |
 | Factuality | +1 |
+| Relevance | +5 |
 | Inference Discipline | 0 |
 | Soundness | +5 |
 | Precision | 0 |
+| Parsimony | 0 |
 | Calibration | +2 |
 | Fairness | +1 |
 | Robustness | 0 |
-| **Mean** | **+0.87** |
+| **Mean** | **+0.89** |

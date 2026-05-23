@@ -13,6 +13,7 @@ import pytest
 import yaml
 from pydantic import ValidationError
 
+from prose_eval import rubric_schema as rs  # noqa: E402
 from prose_eval.eval_report import (  # noqa: E402
     EvalReport,
     QualScores,
@@ -81,11 +82,13 @@ def _minimal_qual() -> dict:
         "grounding": {
             "verifiability": 5,
             "factuality": 4,
+            "relevance": 5,
         },
         "reasoning": {
             "inference_discipline": 4,
             "soundness": 5,
             "precision": 4,
+            "parsimony": 5,
         },
         "judgment": {"calibration": 5, "fairness": 5, "robustness": 4},
     }
@@ -112,10 +115,10 @@ def test_load_minimal_yaml_populates_derived():
     assert report.derived.rubric_rollup.expression_mean == pytest.approx(4.5, abs=0.01)
     # Purpose: 4+4+4+4 = 16 / 4 = 4.0
     assert report.derived.rubric_rollup.purpose_mean == pytest.approx(4.0, abs=0.01)
-    # Grounding: 5+4 = 9 / 2 = 4.5
-    assert report.derived.rubric_rollup.grounding_mean == pytest.approx(4.5, abs=0.01)
-    # Reasoning: 4+5+4 = 13 / 3 ≈ 4.333
-    assert report.derived.rubric_rollup.reasoning_mean == pytest.approx(13 / 3, abs=0.01)
+    # Grounding: 5+4+5 = 14 / 3 ≈ 4.667
+    assert report.derived.rubric_rollup.grounding_mean == pytest.approx(14 / 3, abs=0.01)
+    # Reasoning: 4+5+4+5 = 18 / 4 = 4.5
+    assert report.derived.rubric_rollup.reasoning_mean == pytest.approx(4.5, abs=0.01)
     # Judgment: 5+5+4 = 14 / 3 ≈ 4.667
     assert report.derived.rubric_rollup.judgment_mean == pytest.approx(14 / 3, abs=0.01)
 
@@ -170,8 +173,8 @@ def test_score_zero_excluded_from_rollup_means():
     # formatting (clarity excluded).
     assert rollup.expression_mean == 5.0
     assert rollup.overall_mean == 5.0
-    # 17 of 18 dimensions were assessed (clarity dropped to 0).
-    assert rollup.assessed_dimensions == 17
+    # All but one dimension were assessed (clarity dropped to 0).
+    assert rollup.assessed_dimensions == rs.dimension_count() - 1
 
 
 def test_all_zero_stub_has_zero_assessed_dimensions():
@@ -800,11 +803,12 @@ class TestB10_AlignmentProperty:
                 "breadth": "clean",
                 "depth": "clean",
             },
-            "grounding": {"verifiability": "clean", "factuality": "clean"},
+            "grounding": {"verifiability": "clean", "factuality": "clean", "relevance": "clean"},
             "reasoning": {
                 "inference_discipline": "clean",
                 "soundness": "clean",
                 "precision": "clean",
+                "parsimony": "clean",
             },
             "judgment": {
                 "calibration": "clean",

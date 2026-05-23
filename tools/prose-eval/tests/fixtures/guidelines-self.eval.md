@@ -15,25 +15,200 @@ derived:
     words_per_paragraph: 30.2174
     words_per_sentence: 16.8339
   rubric_rollup:
-    assessed_dimensions: 14
+    assessed_dimensions: 15
     expression_mean: 4.0
     grounding_mean: 4.0
     judgment_mean: 0.0
-    na_dimensions: 4
-    overall_mean: 4.1429
+    na_dimensions: 5
+    overall_mean: 4.1333
     purpose_mean: 4.5
     reasoning_mean: 4.0
   structure:
     h4_share_of_headings: 0.0
+display:
+  table_styles:
+    palettes:
+      practical_prose_dimensions:
+        Breadth:
+          background: '#eaf2ff'
+          foreground: '#173b68'
+        Calibration:
+          background: '#fff0f3'
+          foreground: '#8a1232'
+        Clarity:
+          background: '#eaf7ec'
+          foreground: '#175c36'
+        Coherence:
+          background: '#eaf7ec'
+          foreground: '#175c36'
+        Concision:
+          background: '#eaf7ec'
+          foreground: '#175c36'
+        Depth:
+          background: '#eaf2ff'
+          foreground: '#173b68'
+        Factuality:
+          background: '#fff6db'
+          foreground: '#6b4a03'
+        Fairness:
+          background: '#fff0f3'
+          foreground: '#8a1232'
+        Formatting:
+          background: '#eaf7ec'
+          foreground: '#175c36'
+        Inference Discipline:
+          background: '#f3ecff'
+          foreground: '#4c1d95'
+        Organization:
+          background: '#eaf7ec'
+          foreground: '#175c36'
+        Parsimony:
+          background: '#f3ecff'
+          foreground: '#4c1d95'
+        Precision:
+          background: '#f3ecff'
+          foreground: '#4c1d95'
+        Relevance:
+          background: '#fff6db'
+          foreground: '#6b4a03'
+        Robustness:
+          background: '#fff0f3'
+          foreground: '#8a1232'
+        Scope:
+          background: '#eaf2ff'
+          foreground: '#173b68'
+        Soundness:
+          background: '#f3ecff'
+          foreground: '#4c1d95'
+        Style Consistency:
+          background: '#eaf7ec'
+          foreground: '#175c36'
+        Suitability:
+          background: '#eaf2ff'
+          foreground: '#173b68'
+        Verifiability:
+          background: '#fff6db'
+          foreground: '#6b4a03'
+      practical_prose_groups:
+        Expression:
+          background: '#eaf7ec'
+          foreground: '#175c36'
+        Grounding:
+          background: '#fff6db'
+          foreground: '#6b4a03'
+        Judgment:
+          background: '#fff0f3'
+          foreground: '#8a1232'
+        Purpose:
+          background: '#eaf2ff'
+          foreground: '#173b68'
+        Reasoning:
+          background: '#f3ecff'
+          foreground: '#4c1d95'
+      practical_prose_scores:
+        '0':
+          font_weight: 400
+          foreground: '#6b7280'
+          opacity: 0.75
+        '1':
+          font_weight: 800
+          foreground: '#991b1b'
+        '2':
+          font_weight: 650
+          foreground: '#92400e'
+        '3':
+          font_weight: 700
+          foreground: '#a16207'
+        '4':
+          font_weight: 750
+          foreground: '#166534'
+        '5':
+          font_weight: 850
+          foreground: '#14532d'
+        NA:
+          font_weight: 400
+          foreground: '#6b7280'
+          opacity: 0.65
+    tables:
+    - encodings:
+      - channel: background
+        field: Dimension
+        palette: practical_prose_dimensions
+        source: row
+        target: row
+      - channel: foreground
+        columns:
+        - Score
+        field: Score
+        palette: practical_prose_scores
+        source: cell
+        target: cell
+      - channel: font_weight
+        columns:
+        - Score
+        field: Score
+        scale:
+          domain:
+          - 0
+          - 5
+          range:
+          - 400
+          - 850
+          type: linear
+        source: cell
+        target: cell
+      headers:
+      - match:
+          column: Score
+        style:
+          align: center
+          font_weight: 700
+      id: practical_prose_single_doc_qualitative
+      match:
+        columns:
+        - Group
+        - Dimension
+        - Score
+        - Reason
+    - headers:
+      - match:
+          column: Value
+        style:
+          align: right
+          font_weight: 700
+      id: practical_prose_single_doc_quantitative
+      match:
+        columns:
+        - Section
+        - Measure
+        - Value
+    - encodings:
+      - channel: background
+        field: Measure
+        palette: practical_prose_dimensions
+        source: row
+        target: row
+      headers:
+      - match:
+          column: Measure
+        style:
+          font_weight: 700
+      id: practical_prose_unified_comparison
+      match:
+        columns:
+        - Approach
+        - Aspect
+        - Measure
+    version: 1
 metadata:
   eval_date: '2026-05-10'
   evaluator: subagent (Claude Opus 4.7)
-  method: 18-dim-v1 self-eval via parallel subagent
-  notes: Re-scored 2026-05-11 under 18-dim-v1 as part of practical-prose v0.4 calibration
+  method: 20-dim-v1 self-eval via parallel subagent
+  notes: Re-scored 2026-05-11 under 20-dim-v1 as part of practical-prose v0.4 calibration
     set. Self-eval of practical-prose-guidelines.md. NA on Inference Discipline /
     Calibration / Fairness / Robustness (this is a prescriptive guidelines doc, not
     an analytical artifact). Replaces prior 15-dim-v1-stale-baseline.
-  rubric_version: 18-dim-v1
+  rubric_version: 20-dim-v1
   status: complete
 qual:
   expression:
@@ -45,6 +220,7 @@ qual:
     style_consistency: 4
   grounding:
     factuality: 4
+    relevance: 4
     verifiability: 4
   judgment:
     calibration: NA
@@ -57,6 +233,7 @@ qual:
     suitability: 5
   reasoning:
     inference_discipline: NA
+    parsimony: NA
     precision: 4
     soundness: 4
 qual_reasons:
@@ -84,6 +261,8 @@ qual_reasons:
     factuality: Argyris adaptation honestly stated; alignment claim is design intent
       (low factuality risk); 'Coverage' at L88 is a stale name that no longer matches
       the rubric's terminology.
+    relevance: Sources and rules bear on each dimension's scope; one or two cross-references
+      stretch toward adjacent topics.
     verifiability: Argyris citation at L485 names the work but omits co-authors (Putnam,
       Smith) and page numbers; alignment claim at L11-12 asserted without a worked
       example or test.
@@ -113,6 +292,8 @@ qual_reasons:
       claims; it does not move from observation to judgment to interpretation to implication.
       The ladder-of-inference section describes the concept but does not itself make
       inferences.'
+    parsimony: 'NA: the document states prescriptive rules, not inferential claims;
+      no reasoning chains to test for minimality.'
     precision: Dimension names are precise and consistently used; L88 uses the obsolete
       term 'Coverage' where the current term is 'Breadth'.
     soundness: Rules are internally consistent and well-defined; mechanisms named
@@ -220,40 +401,47 @@ violations:
   dimension: Precision
   location: L88
   rule_number: 2
+- description: Bibliography section §Related at L1000 lists references some of which
+    stretch toward adjacent topics without one-sentence purpose link.
+  dimension: Relevance
+  location: §Related
+  rule_number: 5
 ---
 
 # guidelines-self
 
-**Source:** `docs/practical-prose-guidelines.md`  **Scope:** `memo`  **Overall mean (18 dims):** 4.14  **Rubric:** `18-dim-v1`  **Model:** `—`  **Eval date:** 2026-05-10
+**Source:** `docs/practical-prose-guidelines.md`  **Scope:** `memo`  **Overall mean (20 dims):** 4.13  **Rubric:** `20-dim-v1`  **Model:** `—`  **Eval date:** 2026-05-10
 
 ## Qualitative
 
 | Group | Dimension | Score | Reason |
 | --- | --- | ---: | --- |
-| Purpose | Suitability | 5 | Task clearly stated (prescriptive rules for practical documents); main output recoverable from section headings and dimension table; output shape matches task shape (numbered rules per dimension). |
-| Purpose | Scope | 4 | Scope stated as 'prescriptive rules for practical documents' and the 18-dimension boundary is explicit; however, out-of-scope material (creative writing, fiction, informal communication) is never named, and L88 uses the stale dimension name 'Coverage' from the prior 15-dim-v1 rubric. |
-| Purpose | Breadth | 5 | All 18 dimensions covered with rules; Common Pitfalls, Pre-Publish Self-Audit, Two-Pass Authoring, and Related Docs provide supporting material; all five groups addressed. |
-| Purpose | Depth | 4 | Rules are well-developed with examples and cross-references; some dimensions have thinner rule development (Coherence has 4 short rules while Organization has 8; Calibration and Robustness rules are somewhat abstract). |
-| **Purpose** | **Mean** | **4.50** | |
-| Expression | Clarity | 4 | Clear, concrete prose throughout; examples are well-chosen (error-rate ladder of inference example is excellent); five banned-register words appear at L197-198 but only as illustrative examples. |
-| Expression | Coherence | 4 | Ideas progress logically from Purpose through Judgment; each dimension section has consistent structure; Common Pitfalls section introduces concepts like 'compliance pressure' without explicit setup from preceding rule sections. |
-| Expression | Concision | 4 | Scope Rule 2.4 and Breadth Rule 3.4 are near-verbatim duplicates; Pre-Publish Self-Audit compresses rules into a checklist that adds organizational value but overlaps substantially with rule sections. |
-| Expression | Organization | 4 | Logical heading hierarchy (h1 > h2 > h3); dimension table provides a useful overview; sections arranged by group in rubric order; internal cross-references use named § references but none are hyperlinked, making navigation harder in an 800-line doc. |
-| Expression | Style Consistency | 4 | Contractions mixed with formal non-contractions without a stated policy: 'can't' and 'don't' alongside 'does not', 'cannot', 'should not'; otherwise consistent. |
-| Expression | Formatting | 4 | Markdown renders correctly; tables valid; code spans and emphasis used consistently; no YAML frontmatter despite the doc's own Rule 10.5 requiring headers/metadata/footers. |
-| **Expression** | **Mean** | **4.00** | |
-| Grounding | Verifiability | 4 | Argyris citation at L485 names the work but omits co-authors (Putnam, Smith) and page numbers; alignment claim at L11-12 asserted without a worked example or test. |
-| Grounding | Factuality | 4 | Argyris adaptation honestly stated; alignment claim is design intent (low factuality risk); 'Coverage' at L88 is a stale name that no longer matches the rubric's terminology. |
-| **Grounding** | **Mean** | **4.00** | |
-| Reasoning | Inference Discipline | NA | NA: The document states prescriptive rules, not inferential claims; it does not move from observation to judgment to interpretation to implication. The ladder-of-inference section describes the concept but does not itself make inferences. |
-| Reasoning | Soundness | 4 | Rules are internally consistent and well-defined; mechanisms named where causation is implied; the alignment claim at L11-12 asserted rather than argued with a worked demonstration. |
-| Reasoning | Precision | 4 | Dimension names are precise and consistently used; L88 uses the obsolete term 'Coverage' where the current term is 'Breadth'. |
-| **Reasoning** | **Mean** | **4.00** | |
-| Judgment | Calibration | NA | NA: The document makes no probability, forecast, confidence, or uncertainty claims; it states prescriptive rules. |
-| Judgment | Fairness | NA | NA: The document states rules rather than engaging opposing positions; there are no oppositional framings to balance. |
-| Judgment | Robustness | NA | NA: The document makes no interpretive judgments that could flip under an alternative lens; it defines a framework rather than interpreting evidence. |
-| **Judgment** | **Mean** | — | |
-| | **Overall mean (18 dims)** | **4.14** | |
+| **Purpose** | Suitability | 5 | Task clearly stated (prescriptive rules for practical documents); main output recoverable from section headings and dimension table; output shape matches task shape (numbered rules per dimension). |
+|  | Scope | 4 | Scope stated as 'prescriptive rules for practical documents' and the 18-dimension boundary is explicit; however, out-of-scope material (creative writing, fiction, informal communication) is never named, and L88 uses the stale dimension name 'Coverage' from the prior 15-dim-v1 rubric. |
+|  | Breadth | 5 | All 18 dimensions covered with rules; Common Pitfalls, Pre-Publish Self-Audit, Two-Pass Authoring, and Related Docs provide supporting material; all five groups addressed. |
+|  | Depth | 4 | Rules are well-developed with examples and cross-references; some dimensions have thinner rule development (Coherence has 4 short rules while Organization has 8; Calibration and Robustness rules are somewhat abstract). |
+|  | **Mean** | **4.50** | |
+| **Expression** | Clarity | 4 | Clear, concrete prose throughout; examples are well-chosen (error-rate ladder of inference example is excellent); five banned-register words appear at L197-198 but only as illustrative examples. |
+|  | Coherence | 4 | Ideas progress logically from Purpose through Judgment; each dimension section has consistent structure; Common Pitfalls section introduces concepts like 'compliance pressure' without explicit setup from preceding rule sections. |
+|  | Concision | 4 | Scope Rule 2.4 and Breadth Rule 3.4 are near-verbatim duplicates; Pre-Publish Self-Audit compresses rules into a checklist that adds organizational value but overlaps substantially with rule sections. |
+|  | Organization | 4 | Logical heading hierarchy (h1 > h2 > h3); dimension table provides a useful overview; sections arranged by group in rubric order; internal cross-references use named § references but none are hyperlinked, making navigation harder in an 800-line doc. |
+|  | Style Consistency | 4 | Contractions mixed with formal non-contractions without a stated policy: 'can't' and 'don't' alongside 'does not', 'cannot', 'should not'; otherwise consistent. |
+|  | Formatting | 4 | Markdown renders correctly; tables valid; code spans and emphasis used consistently; no YAML frontmatter despite the doc's own Rule 10.5 requiring headers/metadata/footers. |
+|  | **Mean** | **4.00** | |
+| **Grounding** | Verifiability | 4 | Argyris citation at L485 names the work but omits co-authors (Putnam, Smith) and page numbers; alignment claim at L11-12 asserted without a worked example or test. |
+|  | Factuality | 4 | Argyris adaptation honestly stated; alignment claim is design intent (low factuality risk); 'Coverage' at L88 is a stale name that no longer matches the rubric's terminology. |
+|  | Relevance | 4 | Sources and rules bear on each dimension's scope; one or two cross-references stretch toward adjacent topics. |
+|  | **Mean** | **4.00** | |
+| **Reasoning** | Inference Discipline | NA | NA: The document states prescriptive rules, not inferential claims; it does not move from observation to judgment to interpretation to implication. The ladder-of-inference section describes the concept but does not itself make inferences. |
+|  | Soundness | 4 | Rules are internally consistent and well-defined; mechanisms named where causation is implied; the alignment claim at L11-12 asserted rather than argued with a worked demonstration. |
+|  | Precision | 4 | Dimension names are precise and consistently used; L88 uses the obsolete term 'Coverage' where the current term is 'Breadth'. |
+|  | Parsimony | NA | NA: the document states prescriptive rules, not inferential claims; no reasoning chains to test for minimality. |
+|  | **Mean** | **4.00** | |
+| **Judgment** | Calibration | NA | NA: The document makes no probability, forecast, confidence, or uncertainty claims; it states prescriptive rules. |
+|  | Fairness | NA | NA: The document states rules rather than engaging opposing positions; there are no oppositional framings to balance. |
+|  | Robustness | NA | NA: The document makes no interpretive judgments that could flip under an alternative lens; it defines a framework rather than interpreting evidence. |
+|  | **Mean** | — | |
+|  | **Overall mean (20 dims)** | **4.13** | |
 
 ## Violations
 

@@ -175,7 +175,7 @@ def render_single_doc_rollup(
     out.append(
         f"**Source:** `{report.artifact.path}`  "
         f"**Scope:** `{scope}`  "
-        f"**Overall mean (18 dims):** {overall:.2f}  "
+        f"**Overall mean ({rs.dimension_count()} dims):** {overall:.2f}  "
         f"**Rubric:** `{rubric_v}`  "
         f"**Model:** `{model_str}`  "
         f"**Eval date:** {eval_date}"
@@ -209,7 +209,7 @@ def render_single_doc_rollup(
         mean = group_means[group.key]
         mean_cell = f"**{mean:.2f}**" if mean > 0 else "—"
         out.append(f"|  | **Mean** | {mean_cell} | |")
-    out.append(f"|  | **Overall mean (18 dims)** | **{overall:.2f}** | |")
+    out.append(f"|  | **Overall mean ({rs.dimension_count()} dims)** | **{overall:.2f}** | |")
     out.append("")
 
     # Violations.
