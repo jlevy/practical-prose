@@ -157,7 +157,9 @@ groups:
       unit conversion, or derivation
     - Entity, date, and scope of citations match the claim
     - Sources represent the cited entity, not its inverse
-    - No hallucinated sources
+    - >-
+      No hallucinated or invented sources or claims; anything that reads as a fact but is
+      detached from a source or supporting logic counts against Factuality
     - >-
       Calibrated uncertainty satisfies Factuality; uncalibrated certainty fails it
   - key: relevance

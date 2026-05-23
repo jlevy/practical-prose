@@ -661,7 +661,9 @@ penalize the document for them.
 
 - **1:** Major claims are contradicted by reasonable corroboration: cited sources do not
   contain the cited content, or external lookup finds the claim is false.
-  Hallucinated sources, authors, or document IDs.
+  Hallucinated or invented sources, authors, or document IDs, or invented claims:
+  anything that reads as a fact but is detached from a source or supporting logic (a
+  fabricated statistic, an invented specific) counts here even when no source is cited.
   Multiple claims that the reviewer cannot corroborate or refute despite reasonable
   effort, with no acknowledgement in the document that they are uncorroborated.
 
@@ -683,8 +685,9 @@ penalize the document for them.
   effort. Numbers in prose match cited or corroborating sources, or disclose rounding,
   aggregation, unit conversion, or derivation explicitly.
   Entity, date, and scope of claims match the supporting evidence.
-  No hallucinated URLs, document IDs, or authors; every reference resolves to a real
-  artifact that contains the cited content.
+  No hallucinated or invented sources or claims: every reference resolves to a real
+  artifact that contains the cited content, and no assertion reads as a fact while
+  detached from a source or supporting logic.
   Where a claim cannot be corroborated from available evidence, the document
   acknowledges this explicitly (e.g., “we have not been able to verify this”) and states
   the basis on which the claim is made anyway.

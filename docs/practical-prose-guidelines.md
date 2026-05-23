@@ -635,10 +635,14 @@ the audit.
    commentary quoted as if it were the underlying data all fail accuracy even when the
    citation is technically verifiable.
 
-6. **No hallucinated sources.** Every cited URL, document ID, transcript reference, or
-   author resolves to a real artifact that contains the cited content.
-   Confidence in this is harder to self-audit than the other rules; pair high-stakes
-   citations with quoted excerpts when feasible.
+6. **No hallucinated or invented sources or claims.** Every cited URL, document ID,
+   transcript reference, or author resolves to a real artifact that contains the cited
+   content. The same bar applies to the claims themselves: anything that reads as a fact
+   but is detached from a source or from supporting logic—an invented statistic, a
+   fabricated detail, an asserted specific presented as settled—counts against
+   Factuality even when no source is cited at all. Confidence in this is harder to
+   self-audit than the other rules; pair high-stakes citations with quoted excerpts when
+   feasible.
 
 7. **Calibrated uncertainty satisfies Factuality; uncalibrated certainty fails it.**
    When a claim cannot be corroborated from available evidence, the document
