@@ -50,7 +50,7 @@ for pre-publish audit of an already-drafted doc.
 - [ ] **§8 Organization** — Heading hierarchy logical?
   Tables earn their tabular shape?
   Figures captioned? Links resolve?
-- [ ] **§9 Style Consistency** — Dialect, casing, parallel-list syntax, citation style,
+- [ ] **§9 Consistency** — Dialect, casing, parallel-list syntax, citation style,
   register all consistent?
 - [ ] **§10 Formatting** — Markdown renders correctly?
   Frontmatter and footer present and well-placed?
@@ -70,7 +70,7 @@ for pre-publish audit of an already-drafted doc.
 
 ## Reasoning (§14-§17)
 
-- [ ] **§14 Inference Discipline** — Observation, judgment, interpretation, implication
+- [ ] **§14 Discipline** — Observation, judgment, interpretation, implication
   kept distinct? Each rung carries its own evidence?
 - [ ] **§15 Soundness** — Mechanisms named where causation is asserted?
   Assumptions surfaced?
@@ -98,7 +98,7 @@ for pre-publish audit of an already-drafted doc.
 If the document is high-stakes, run the four audit passes separately rather than one
 broad pass:
 
-1. **Lint pass** — Cosmetic / deterministic: §8 Organization, §9 Style Consistency, §10
+1. **Lint pass** — Cosmetic / deterministic: §8 Organization, §9 Consistency, §10
    Formatting, §5 banned-register and vague-word checks.
    Use `prose-eval metrics`.
 2. **Claim audit** — Every quantitative claim against its cited source.
@@ -106,7 +106,7 @@ broad pass:
    Re-run calculations.
 3. **Reasoning audit** — Assumptions, mechanisms, counter-evidence, parsimony,
    alternative lenses.
-   §14 Inference Discipline, §15 Soundness, §17 Parsimony, §19 Fairness, §20 Robustness.
+   §14 Discipline, §15 Soundness, §17 Parsimony, §19 Fairness, §20 Robustness.
    Best with a fresh-context agent.
 4. **Purpose audit** — Output shape vs task shape; scope; skim-recoverability.
    §1 Suitability, §2 Scope, §3 Breadth, §4 Depth.

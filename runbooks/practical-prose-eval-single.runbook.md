@@ -226,7 +226,7 @@ drift and self-eval overrating against a fixed reference:
 | --- | --- | --- | ---: | ---: |
 | `rev1-net.eval.md` | External deep-research artifact (rev1) | strong baseline (deep_research) | ~4.1 | 0 |
 | `rev2-net.eval.md` | External deep-research artifact (rev2 dry-run) | weaker baseline (deep_research) | ~3.1 | 0 |
-| `guidelines-self.eval.md` | `practical-prose-guidelines.md` itself | self-eval (guidelines doc) | ~4.1 | 5 (Inference Discipline, Parsimony, Calibration, Fairness, Robustness) |
+| `guidelines-self.eval.md` | `practical-prose-guidelines.md` itself | self-eval (guidelines doc) | ~4.1 | 5 (Discipline, Parsimony, Calibration, Fairness, Robustness) |
 
 Use this set to calibrate model-scoring runs:
 

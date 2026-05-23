@@ -56,7 +56,7 @@ display:
         Formatting:
           background: '#eaf7ec'
           foreground: '#175c36'
-        Inference Discipline:
+        Discipline:
           background: '#f3ecff'
           foreground: '#4c1d95'
         Organization:
@@ -80,7 +80,7 @@ display:
         Soundness:
           background: '#f3ecff'
           foreground: '#4c1d95'
-        Style Consistency:
+        Consistency:
           background: '#eaf7ec'
           foreground: '#175c36'
         Suitability:
@@ -205,7 +205,7 @@ metadata:
   evaluator: subagent (Claude Opus 4.7)
   method: 20-dim-v1 self-eval via parallel subagent
   notes: Re-scored 2026-05-11 under 20-dim-v1 as part of practical-prose v0.4 calibration
-    set. Self-eval of practical-prose-guidelines.md. NA on Inference Discipline /
+    set. Self-eval of practical-prose-guidelines.md. NA on Discipline /
     Calibration / Fairness / Robustness (this is a prescriptive guidelines doc, not
     an analytical artifact). Replaces prior 15-dim-v1-stale-baseline.
   rubric_version: 20-dim-v1
@@ -217,7 +217,7 @@ qual:
     concision: 4
     formatting: 4
     organization: 4
-    style_consistency: 4
+    consistency: 4
   grounding:
     factuality: 4
     relevance: 4
@@ -232,7 +232,7 @@ qual:
     scope: 4
     suitability: 5
   reasoning:
-    inference_discipline: NA
+    discipline: NA
     parsimony: NA
     precision: 4
     soundness: 4
@@ -254,7 +254,7 @@ qual_reasons:
       a useful overview; sections arranged by group in rubric order; internal cross-references
       use named § references but none are hyperlinked, making navigation harder in
       an 800-line doc.
-    style_consistency: 'Contractions mixed with formal non-contractions without a
+    consistency: 'Contractions mixed with formal non-contractions without a
       stated policy: ''can''t'' and ''don''t'' alongside ''does not'', ''cannot'',
       ''should not''; otherwise consistent.'
   grounding:
@@ -288,7 +288,7 @@ qual_reasons:
       main output recoverable from section headings and dimension table; output shape
       matches task shape (numbered rules per dimension).
   reasoning:
-    inference_discipline: 'NA: The document states prescriptive rules, not inferential
+    discipline: 'NA: The document states prescriptive rules, not inferential
       claims; it does not move from observation to judgment to interpretation to implication.
       The ladder-of-inference section describes the concept but does not itself make
       inferences.'
@@ -341,7 +341,7 @@ violations:
   location: L88
   rule_number: 1
 - description: Calibration rules (§16) and Robustness rules (§18) are more abstract
-    and less developed with worked examples than Clarity (§5) or Inference Discipline
+    and less developed with worked examples than Clarity (§5) or Discipline
     (§13)
   dimension: Depth
   location: §16 and §18
@@ -370,7 +370,7 @@ violations:
   rule_number: 7
 - description: Contractions ('can't', 'don't', 'doesn't') mixed freely with formal
     equivalents ('cannot', 'does not') with no stated register convention
-  dimension: Style Consistency
+  dimension: Consistency
   location: L58, L64, L70, L88, L150, L212, L340
   rule_number: 5
 - description: No YAML frontmatter despite the doc's own Rule 10.5 requiring 'required
@@ -425,14 +425,14 @@ violations:
 |  | Coherence | 4 | Ideas progress logically from Purpose through Judgment; each dimension section has consistent structure; Common Pitfalls section introduces concepts like 'compliance pressure' without explicit setup from preceding rule sections. |
 |  | Concision | 4 | Scope Rule 2.4 and Breadth Rule 3.4 are near-verbatim duplicates; Pre-Publish Self-Audit compresses rules into a checklist that adds organizational value but overlaps substantially with rule sections. |
 |  | Organization | 4 | Logical heading hierarchy (h1 > h2 > h3); dimension table provides a useful overview; sections arranged by group in rubric order; internal cross-references use named § references but none are hyperlinked, making navigation harder in an 800-line doc. |
-|  | Style Consistency | 4 | Contractions mixed with formal non-contractions without a stated policy: 'can't' and 'don't' alongside 'does not', 'cannot', 'should not'; otherwise consistent. |
+|  | Consistency | 4 | Contractions mixed with formal non-contractions without a stated policy: 'can't' and 'don't' alongside 'does not', 'cannot', 'should not'; otherwise consistent. |
 |  | Formatting | 4 | Markdown renders correctly; tables valid; code spans and emphasis used consistently; no YAML frontmatter despite the doc's own Rule 10.5 requiring headers/metadata/footers. |
 |  | **Mean** | **4.00** | |
 | **Grounding** | Verifiability | 4 | Argyris citation at L485 names the work but omits co-authors (Putnam, Smith) and page numbers; alignment claim at L11-12 asserted without a worked example or test. |
 |  | Factuality | 4 | Argyris adaptation honestly stated; alignment claim is design intent (low factuality risk); 'Coverage' at L88 is a stale name that no longer matches the rubric's terminology. |
 |  | Relevance | 4 | Sources and rules bear on each dimension's scope; one or two cross-references stretch toward adjacent topics. |
 |  | **Mean** | **4.00** | |
-| **Reasoning** | Inference Discipline | NA | NA: The document states prescriptive rules, not inferential claims; it does not move from observation to judgment to interpretation to implication. The ladder-of-inference section describes the concept but does not itself make inferences. |
+| **Reasoning** | Discipline | NA | NA: The document states prescriptive rules, not inferential claims; it does not move from observation to judgment to interpretation to implication. The ladder-of-inference section describes the concept but does not itself make inferences. |
 |  | Soundness | 4 | Rules are internally consistent and well-defined; mechanisms named where causation is implied; the alignment claim at L11-12 asserted rather than argued with a worked demonstration. |
 |  | Precision | 4 | Dimension names are precise and consistently used; L88 uses the obsolete term 'Coverage' where the current term is 'Breadth'. |
 |  | Parsimony | NA | NA: the document states prescriptive rules, not inferential claims; no reasoning chains to test for minimality. |
@@ -446,12 +446,12 @@ violations:
 ## Violations
 
 1. **Scope** (rule 1) — Stale dimension name 'Coverage' from the prior 15-dim-v1 rubric used instead of current 'Breadth' *Location:* L88.
-2. **Depth** (rule 1) — Calibration rules (§16) and Robustness rules (§18) are more abstract and less developed with worked examples than Clarity (§5) or Inference Discipline (§13) *Location:* §16 and §18.
+2. **Depth** (rule 1) — Calibration rules (§16) and Robustness rules (§18) are more abstract and less developed with worked examples than Clarity (§5) or Discipline (§13) *Location:* §16 and §18.
 3. **Clarity** (rule 4) — Five banned-register words (incontrovertibly, monumental, seismic, paradigm-shifting, structurally outmaneuvered) appear in prose; though used as illustrative examples, a lint pass fires on them *Location:* L197-198.
 4. **Coherence** (rule 4) — Common Pitfalls section introduces 'compliance pressure crowding out self-regulation' and 'anchoring on a source document' without setup from preceding rule sections *Location:* L707-728.
 5. **Concision** (rule 2) — Scope Rule 2.4 and Breadth Rule 3.4 are near-verbatim duplicates: both state 'out-of-scope omissions are not breadth failures' with the same elaboration *Location:* L105-108 and L136-138.
 6. **Organization** (rule 7) — 35 internal § cross-references are not hyperlinked, forcing manual navigation in an 800-line document *Location:* Throughout.
-7. **Style Consistency** (rule 5) — Contractions ('can't', 'don't', 'doesn't') mixed freely with formal equivalents ('cannot', 'does not') with no stated register convention *Location:* L58, L64, L70, L88, L150, L212, L340.
+7. **Consistency** (rule 5) — Contractions ('can't', 'don't', 'doesn't') mixed freely with formal equivalents ('cannot', 'does not') with no stated register convention *Location:* L58, L64, L70, L88, L150, L212, L340.
 8. **Formatting** (rule 5) — No YAML frontmatter despite the doc's own Rule 10.5 requiring 'required headers, metadata, and footers present' and the companion rubric having frontmatter *Location:* L1 (document opening).
 9. **Verifiability** (rule 2) — Argyris citation omits co-authors (Putnam, Smith), page numbers, and publisher; 'Action Science (1985)' is not specific enough to verify the exact passage *Location:* L485-486.
 10. **Factuality** (rule 3) — L88 refers to 'Coverage' as though it is a current dimension name, but 18-dim-v1 replaced Coverage with Breadth and Depth; entity reference does not match current rubric *Location:* L88.

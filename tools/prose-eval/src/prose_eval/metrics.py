@@ -428,7 +428,7 @@ Lint (§5 Clarity rule 4 — banned register from common-doc-guidelines §4.2; m
   banned hits     {m.banned_register_hits:>4}
   examples        {banned_examples}
 
-Lint (§9 Style Consistency rule 7 — em-dash discipline):
+Lint (§9 Consistency rule 7 — em-dash discipline):
   spaced em " — " {m.spaced_em_dash_count:>4}    (common agent failure mode; prefer "—" or other punctuation)
   em dashes total {m.em_dashes_total:>4}
   density /1k wds {m.em_dash_density_per_1000_words:>4.2f}

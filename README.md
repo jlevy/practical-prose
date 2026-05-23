@@ -103,12 +103,12 @@ looking at specific qualities or dimensions.
 |  | Coherence | Do the ideas progress smoothly? |
 |  | Concision | Does every section earn its place? |
 |  | Organization | Are sections, headings, sequence, tables, figures, links, and cross-references arranged for navigation? |
-|  | Style Consistency | Does the document follow the chosen style guide or house style consistently? |
+|  | Consistency | Does the document follow the chosen style guide or house style consistently? |
 |  | Formatting | Is the document visually and syntactically clean in its medium? |
 | **Grounding** | Verifiability | Are claims traceable to sources or calculations? |
 |  | Factuality | Do cited sources support the claims as asserted? |
 |  | Relevance | Do sources, citations, and reasoning chains bear on the document's stated purpose? |
-| **Reasoning** | Inference Discipline | Are observation, judgment, interpretation, and implication kept distinct? |
+| **Reasoning** | Discipline | Are observation, judgment, interpretation, and implication kept distinct? |
 |  | Soundness | Do claims follow from evidence through valid mechanisms? |
 |  | Precision | Are claims and terms specified at the right granularity? |
 |  | Parsimony | Is each load-bearing reasoning chain the cleanest, simplest sound argument possible for its conclusion? |

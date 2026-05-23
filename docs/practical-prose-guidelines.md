@@ -38,12 +38,12 @@ context, evidence, or maintainability is friction.
 |  | Coherence | Do the ideas progress smoothly? |
 |  | Concision | Does every section earn its place? |
 |  | Organization | Are sections, headings, sequence, tables, figures, links, and cross-references arranged for navigation? |
-|  | Style Consistency | Does the document follow the chosen style guide or house style consistently? |
+|  | Consistency | Does the document follow the chosen style guide or house style consistently? |
 |  | Formatting | Is the document visually and syntactically clean in its medium? |
 | **Grounding** | Verifiability | Are claims traceable to specific sources, observations, or calculations? |
 |  | Factuality | Are the verifiable claims true and supported by cited evidence? |
 |  | Relevance | Do sources, citations, and reasoning chains bear on the document's stated purpose? |
-| **Reasoning** | Inference Discipline | Are the rungs of the ladder of inference kept distinct? |
+| **Reasoning** | Discipline | Are the rungs of the ladder of inference kept distinct? |
 |  | Soundness | Do claims follow from evidence through valid mechanisms and explicit assumptions? |
 |  | Precision | Are claims and terms specified at the right granularity? |
 |  | Parsimony | Is each load-bearing reasoning chain the cleanest, simplest sound argument possible for its conclusion? |
@@ -100,7 +100,7 @@ The table below shows how its clauses relate to this layer:
 | §4.1 Respect reader’s intelligence | Absorbed under the Humane principle and §1 Suitability / §4 Depth |
 | §4.2 Banned extravagant words list | Canonical list lives in common-doc-guidelines; referenced from §5 Clarity rule 4 |
 | §4.3 Cut pompousness, meta-commentary, pedantry | Absorbed into §5 Clarity rules 3 and 6 |
-| §5 Em-dash discipline | Absorbed into §9 Style Consistency rule 7 |
+| §5 Em-dash discipline | Absorbed into §9 Consistency rule 7 |
 | §6 Guideline Footer | Operational marker; not scored by this rubric |
 
 ## Purpose Dimensions
@@ -377,7 +377,7 @@ links, and cross-references help readers navigate the material.
 
 This dimension is about *arrangement*. Whether the markup renders correctly and follows
 medium conventions is §10 Formatting; whether terminology and house style are consistent
-is §9 Style Consistency.
+is §9 Consistency.
 
 Visual elements aren’t required.
 A tightly written prose document with no tables or figures can be excellent.
@@ -433,12 +433,12 @@ But when these elements are present, they should be well-arranged.
    subheadings, not left as-is.
    (Cross-references common-doc-guidelines §3.3.)
 
-### 9. Style Consistency
+### 9. Consistency
 
 *Description:* The document follows the chosen style guide or house style consistently.
 A document can be perfectly understandable and still stylistically inconsistent;
 conversely, a document can be style-guide compliant but unclear, overlong, or wrong.
-Style Consistency isolates the editorial-polish question from the readability question
+Consistency isolates the editorial-polish question from the readability question
 (§5 Clarity) and the markup-validity question (§10 Formatting).
 
 **Rules:**
@@ -482,7 +482,7 @@ Style Consistency isolates the editorial-polish question from the readability qu
 
 *Description:* The document’s markup and visual presentation are clean, valid, and
 compatible with the chosen medium.
-Distinct from §8 Organization (are the parts arranged well) and §9 Style Consistency
+Distinct from §8 Organization (are the parts arranged well) and §9 Consistency
 (does the document follow house style consistently).
 Formatting is the most deterministic of the three — most rules here are lintable.
 
@@ -696,14 +696,14 @@ Distinguished from neighbors:
 
 ## Reasoning Dimensions
 
-### 14. Inference Discipline
+### 14. Discipline
 
 *Description:* The practice of moving rung by rung up the ladder of inference
 (observation → judgment → interpretation → implication).
 Each rung is named on its own terms; none is skipped, none is blended into its neighbor.
 
-Inference Discipline is distinct from Soundness (§15). Soundness tests whether the chain
-of reasoning is sound; Inference Discipline tests whether the rungs exist as distinct
+Discipline is distinct from Soundness (§15). Soundness tests whether the chain
+of reasoning is sound; Discipline tests whether the rungs exist as distinct
 rungs at all. Both can fail independently: a sound chain can still be fused into one
 sentence, and a well-stepped chain can still be unsound.
 
@@ -854,7 +854,7 @@ Distinguished from neighbors:
   Parsimony is argument-level economy (rungs in the inferential chain).
 - **§13 Relevance** asks whether each source or section is on-task. Parsimony asks
   whether the reasoning *within* an on-task chain uses the minimum sound steps.
-- **§14 Inference Discipline** asks whether rungs are named on their own terms.
+- **§14 Discipline** asks whether rungs are named on their own terms.
   Parsimony asks whether the chain is the minimum.
 - **§15 Soundness** asks whether each step is valid in itself. Parsimony asks whether
   the chain *shape* is minimum given the per-step warrants.

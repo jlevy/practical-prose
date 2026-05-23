@@ -42,8 +42,8 @@ groups:
         question:
           Are sections, headings, sequence, tables, figures, links, and cross-references
           arranged for navigation?
-      - key: style_consistency
-        label: Style Consistency
+      - key: consistency
+        label: Consistency
         section: 9
         question: Does the document follow the chosen style guide or house style consistently?
       - key: formatting
@@ -70,8 +70,8 @@ groups:
   - key: reasoning
     label: Reasoning
     dimensions:
-      - key: inference_discipline
-        label: Inference Discipline
+      - key: discipline
+        label: Discipline
         section: 14
         question: Are the rungs of the ladder of inference kept distinct?
       - key: soundness
@@ -121,12 +121,12 @@ score_values:
 na_applicable_dimensions:
   - breadth
   - depth
-  - style_consistency
+  - consistency
   - formatting
   - verifiability
   - factuality
   - relevance
-  - inference_discipline
+  - discipline
   - parsimony
   - calibration
   - fairness
@@ -140,12 +140,12 @@ rule_counts:
   coherence: 4
   concision: 5
   organization: 9
-  style_consistency: 7
+  consistency: 7
   formatting: 6
   verifiability: 6
   factuality: 7
   relevance: 5
-  inference_discipline: 9
+  discipline: 9
   soundness: 8
   precision: 5
   parsimony: 6

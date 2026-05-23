@@ -138,8 +138,8 @@ def test_pair_deltas_compute_correctly():
     text = render_per_pair_deltas(reports, [("DDOG-r1", "DDOG-r4")])
     assert "Delta: DDOG-r1 → DDOG-r4" in text
     assert "| Calibration | +2 |" in text
-    # Inference Discipline = old Discipline; unchanged in the figma mechanical migration.
-    assert "| Inference Discipline | 0 |" in text
+    # Discipline = old Discipline; unchanged in the figma mechanical migration.
+    assert "| Discipline | 0 |" in text
     # Mean delta sign is the regression-test signal (DDOG-r4 still higher than DDOG-r1).
     assert "**Mean** | **+" in text
 
@@ -273,13 +273,13 @@ def _make_report(
                 "coherence": 5,
                 "concision": 4,
                 "organization": 5,
-                "style_consistency": 0,
+                "consistency": 0,
                 "formatting": 0,
             },
             "purpose": {"suitability": 4, "breadth": 4, "depth": 4},
             "grounding": {"verifiability": 5, "factuality": 4, "relevance": 5},
             "reasoning": {
-                "inference_discipline": 4,
+                "discipline": 4,
                 "soundness": 5,
                 "precision": 4,
                 "parsimony": 5,
@@ -407,13 +407,13 @@ def _make_report_with_scope(label: str, scope_class: str | None) -> EvalReport:
                 "coherence": 5,
                 "concision": 4,
                 "organization": 5,
-                "style_consistency": 0,
+                "consistency": 0,
                 "formatting": 0,
             },
             "purpose": {"suitability": 4, "breadth": 4, "depth": 4},
             "grounding": {"verifiability": 5, "factuality": 4, "relevance": 5},
             "reasoning": {
-                "inference_discipline": 4,
+                "discipline": 4,
                 "soundness": 5,
                 "precision": 4,
                 "parsimony": 5,
@@ -495,13 +495,13 @@ def test_collect_density_concerns_returns_only_flagged():
                 "coherence": 5,
                 "concision": 4,
                 "organization": 5,
-                "style_consistency": 0,
+                "consistency": 0,
                 "formatting": 0,
             },
             "purpose": {"suitability": 4, "breadth": 4, "depth": 4},
             "grounding": {"verifiability": 5, "factuality": 4, "relevance": 5},
             "reasoning": {
-                "inference_discipline": 4,
+                "discipline": 4,
                 "soundness": 5,
                 "precision": 4,
                 "parsimony": 5,

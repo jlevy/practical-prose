@@ -55,7 +55,7 @@ display:
         Formatting:
           background: '#eaf7ec'
           foreground: '#175c36'
-        Inference Discipline:
+        Discipline:
           background: '#f3ecff'
           foreground: '#4c1d95'
         Organization:
@@ -79,7 +79,7 @@ display:
         Soundness:
           background: '#f3ecff'
           foreground: '#4c1d95'
-        Style Consistency:
+        Consistency:
           background: '#eaf7ec'
           foreground: '#175c36'
         Suitability:
@@ -209,7 +209,7 @@ metadata:
     repo).
 
     STALE BASELINE under 20-dim-v1: split coverage -> breadth+depth (same score copied
-    as placeholder); structure -> organization (rename only); style_consistency and
+    as placeholder); structure -> organization (rename only); consistency and
     formatting added as 0 (cannot assess). Re-score before reuse for regression. Original
     rubric_version: 15-dim-v1.
 
@@ -217,7 +217,7 @@ metadata:
     CLEANUP 2026-05-11 (post 20-dim-v1 migration): 8 dim(s) demoted from sub-5 to
     0 (applicable-but-unassessable) because the original 12-dim eval did not enumerate
     per-dim violations satisfying the 20-dim-v1 alignment property: Suitability(4->0),
-    Depth(4->0), Clarity(4->0), Verifiability(4->0), Inference Discipline(4->0), Soundness(4->0),
+    Depth(4->0), Clarity(4->0), Verifiability(4->0), Discipline(4->0), Soundness(4->0),
     Precision(4->0), Robustness(4->0). To restore scores, re-eval under 20-dim-v1
     with proper violation citations.'
   rubric_version: 18-dim-v1-stale-baseline
@@ -229,7 +229,7 @@ qual:
     concision: 3
     formatting: 0
     organization: 4
-    style_consistency: 0
+    consistency: 0
   grounding:
     factuality: 4
     relevance: 0
@@ -244,7 +244,7 @@ qual:
     scope: 0
     suitability: 0
   reasoning:
-    inference_discipline: 0
+    discipline: 0
     parsimony: 0
     precision: 0
     soundness: 0
@@ -328,14 +328,14 @@ violations:
 |  | Coherence | 5 |  |
 |  | Concision | 3 |  |
 |  | Organization | 4 |  |
-|  | Style Consistency | 0 |  |
+|  | Consistency | 0 |  |
 |  | Formatting | 0 |  |
 |  | **Mean** | **4.00** | |
 | **Grounding** | Verifiability | 0 |  |
 |  | Factuality | 4 |  |
 |  | Relevance | 0 | Applicable but unassessable in this rebaseline pass; not scored in r2 round. |
 |  | **Mean** | **4.00** | |
-| **Reasoning** | Inference Discipline | 0 |  |
+| **Reasoning** | Discipline | 0 |  |
 |  | Soundness | 0 |  |
 |  | Precision | 0 |  |
 |  | Parsimony | 0 | Applicable but unassessable in this rebaseline pass; not scored in r2 round. |

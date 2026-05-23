@@ -56,7 +56,7 @@ display:
         Formatting:
           background: '#eaf7ec'
           foreground: '#175c36'
-        Inference Discipline:
+        Discipline:
           background: '#f3ecff'
           foreground: '#4c1d95'
         Organization:
@@ -80,7 +80,7 @@ display:
         Soundness:
           background: '#f3ecff'
           foreground: '#4c1d95'
-        Style Consistency:
+        Consistency:
           background: '#eaf7ec'
           foreground: '#175c36'
         Suitability:
@@ -216,7 +216,7 @@ qual:
     concision: 3
     formatting: 3
     organization: 3
-    style_consistency: 3
+    consistency: 3
   grounding:
     factuality: 3
     relevance: 3
@@ -231,7 +231,7 @@ qual:
     scope: 4
     suitability: 4
   reasoning:
-    inference_discipline: 3
+    discipline: 3
     parsimony: 3
     precision: 3
     soundness: 3
@@ -251,7 +251,7 @@ qual_reasons:
     organization: Phase 1/Phase 2 structure logical, but several tables should be
       prose (§1.7, §2.9), Mermaid timeline at §1.4 lacks a caption, and zero cross-reference
       links in a 17.8K-word document.
-    style_consistency: Register mostly holds but 'crystallized/crystallizes' is extravagant
+    consistency: Register mostly holds but 'crystallized/crystallizes' is extravagant
       register inconsistent with the otherwise analytical tone; citation style varies
       between [VERIFIED via X] and bare prose-embedded references.
   grounding:
@@ -288,7 +288,7 @@ qual_reasons:
       tree and recommendations), but central thesis answer and scenario tree buried
       in §2.8, not recoverable from a skim of intro + headings.
   reasoning:
-    inference_discipline: 'Several sentences blend observation and judgment in single
+    discipline: 'Several sentences blend observation and judgment in single
       clauses; most sections keep rungs distinct but blending recurs in §2.1 Q1 narrative
       and §2.12 finding #3.'
     parsimony: Multiple intermediate steps could be cut without weakening the conclusion;
@@ -421,12 +421,12 @@ violations:
   rule_number: 3
 - description: Register drifts between analytical and extravagant ('crystallized',
     'essential control plane') without consistent house-style enforcement
-  dimension: Style Consistency
+  dimension: Consistency
   location: §2.1 L1266; §2.1 L1309
   rule_number: 5
 - description: 'Citation style inconsistent: some claims use [VERIFIED via X] bracket
     tags, others use bare prose references'
-  dimension: Style Consistency
+  dimension: Consistency
   location: §1.7 L820 vs §1.9 L898
   rule_number: 4
 - description: Zero reference-style or inline links means the document's link layer
@@ -465,12 +465,12 @@ violations:
   rule_number: 5
 - description: '''GM at peak, op margin at through — typical Q1 seasonality with year-start
     S&M reset'' fuses observed values with interpretive judgment'
-  dimension: Inference Discipline
+  dimension: Discipline
   location: §2.1 Q1 2024, L1107
   rule_number: 2
 - description: '''DBNRR re-acceleration and the AI product GA timeline align too tightly
     to be coincidence'' blends observation with interpretation'
-  dimension: Inference Discipline
+  dimension: Discipline
   location: '§2.12 finding #3, L1913-1920'
   rule_number: 2
 - description: AI-revenue triangulated estimate 5-15% stated without showing the triangulation
@@ -558,14 +558,14 @@ violations:
 |  | Coherence | 3 | Ideas generally progress well within sections, but verbatim paragraph duplication at L1326-1342 is a literal backtrack; §2.7 restates §1.7 findings without advancing argument. |
 |  | Concision | 3 | Beat-magnitude series ($6.6M to $25.5M) duplicated across five locations; §1.12 Macro [OPTIONAL] adds little beyond §2.10; frontmatter carries substantive framing claims. |
 |  | Organization | 3 | Phase 1/Phase 2 structure logical, but several tables should be prose (§1.7, §2.9), Mermaid timeline at §1.4 lacks a caption, and zero cross-reference links in a 17.8K-word document. |
-|  | Style Consistency | 3 | Register mostly holds but 'crystallized/crystallizes' is extravagant register inconsistent with the otherwise analytical tone; citation style varies between [VERIFIED via X] and bare prose-embedded references. |
+|  | Consistency | 3 | Register mostly holds but 'crystallized/crystallizes' is extravagant register inconsistent with the otherwise analytical tone; citation style varies between [VERIFIED via X] and bare prose-embedded references. |
 |  | Formatting | 3 | Markdown renders correctly; no broken fences or malformed frontmatter; however zero hyperlinks for any citation makes link-resolution vacuous. |
 |  | **Mean** | **3.00** | |
 | **Grounding** | Verifiability | 2 | Zero hyperlinks in a 17.8K-word deep-research document; [VERIFIED] tags used without filing dates or accession numbers; Vercel CEO benchmark claim has no tweet ID or URL. |
 |  | Factuality | 3 | Cannot externally verify sources; claims look well-formed and internally consistent, but Anthropic '$4B Amazon investment' is a simplified round number for a multi-tranche arrangement, and AI market-size figures cite 'Multiple' and 'AgentMarketCap' without URLs or dates. |
 |  | Relevance | 3 | Several cited sources address adjacent topics; the load-bearing thesis would survive removing them. |
 |  | **Mean** | **2.67** | |
-| **Reasoning** | Inference Discipline | 3 | Several sentences blend observation and judgment in single clauses; most sections keep rungs distinct but blending recurs in §2.1 Q1 narrative and §2.12 finding #3. |
+| **Reasoning** | Discipline | 3 | Several sentences blend observation and judgment in single clauses; most sections keep rungs distinct but blending recurs in §2.1 Q1 narrative and §2.12 finding #3. |
 |  | Soundness | 3 | AI-revenue triangulated estimate 5-15% stated without triangulation method; verbatim paragraph duplication is an internal-consistency failure; 'financial fingerprint of AI is in the gross margin' finding asserted without naming the mechanism. |
 |  | Precision | 3 | 'Anthropic ($4B Amazon investment)' uses a round umbrella figure; 'heavy hiring' and 'materially' used as vague placeholders in §1.9 and multiple §2.x sections. |
 |  | Parsimony | 3 | Multiple intermediate steps could be cut without weakening the conclusion; some chains are visibly padded. |
@@ -594,8 +594,8 @@ violations:
 14. **Organization** (rule 4) — Mermaid timeline code block at §1.4 is a figure without a caption explaining what it shows *Location:* §1.4, L477-495.
 15. **Organization** (rule 6) — Zero hyperlinks in a 17.8K-word document; all citations prose-embedded with no stable anchor targets *Location:* Document-wide.
 16. **Organization** (rule 3) — Several tables have too few meaningful columns to earn tabular shape (§1.7 2-row mega-deal table, §2.9 positioning metrics 2-column table) *Location:* §1.7 L802-809; §2.9 L1749-1758.
-17. **Style Consistency** (rule 5) — Register drifts between analytical and extravagant ('crystallized', 'essential control plane') without consistent house-style enforcement *Location:* §2.1 L1266; §2.1 L1309.
-18. **Style Consistency** (rule 4) — Citation style inconsistent: some claims use [VERIFIED via X] bracket tags, others use bare prose references *Location:* §1.7 L820 vs §1.9 L898.
+17. **Consistency** (rule 5) — Register drifts between analytical and extravagant ('crystallized', 'essential control plane') without consistent house-style enforcement *Location:* §2.1 L1266; §2.1 L1309.
+18. **Consistency** (rule 4) — Citation style inconsistent: some claims use [VERIFIED via X] bracket tags, others use bare prose references *Location:* §1.7 L820 vs §1.9 L898.
 19. **Formatting** (rule 2) — Zero reference-style or inline links means the document's link layer is entirely absent *Location:* Document-wide.
 20. **Formatting** (rule 3) — Inconsistent blank-line spacing around the verbatim-duplicated paragraph block at L1326-1342 *Location:* §2.1, L1325-1343.
 21. **Verifiability** (rule 1) — Zero hyperlinks in a deep-research document; no quantitative claim verifiable via a link despite [VERIFIED] tags *Location:* Document-wide.
@@ -603,8 +603,8 @@ violations:
 23. **Verifiability** (rule 2) — Vercel CEO benchmark claim (1.2-5x faster) has no tweet ID or URL *Location:* §1.10, L911-914.
 24. **Factuality** (rule 2) — Anthropic '$4B Amazon investment' at §2.8 is a simplified round number; actual investment is multi-tranche *Location:* §2.8, L1669.
 25. **Factuality** (rule 5) — AI market-size figures cite aggregator sources ('Multiple', 'AgentMarketCap') without URLs, dates, or verifiable identifiers *Location:* §1.8 AI adoption table.
-26. **Inference Discipline** (rule 2) — 'GM at peak, op margin at through — typical Q1 seasonality with year-start S&M reset' fuses observed values with interpretive judgment *Location:* §2.1 Q1 2024, L1107.
-27. **Inference Discipline** (rule 2) — 'DBNRR re-acceleration and the AI product GA timeline align too tightly to be coincidence' blends observation with interpretation *Location:* §2.12 finding #3, L1913-1920.
+26. **Discipline** (rule 2) — 'GM at peak, op margin at through — typical Q1 seasonality with year-start S&M reset' fuses observed values with interpretive judgment *Location:* §2.1 Q1 2024, L1107.
+27. **Discipline** (rule 2) — 'DBNRR re-acceleration and the AI product GA timeline align too tightly to be coincidence' blends observation with interpretation *Location:* §2.12 finding #3, L1913-1920.
 28. **Soundness** (rule 3) — AI-revenue triangulated estimate 5-15% stated without showing the triangulation method or naming the data points *Location:* §2.8, L1685-1687.
 29. **Soundness** (rule 7) — Verbatim paragraph duplication at L1326-1342 is an internal-consistency failure *Location:* §2.1, L1326-1342.
 30. **Soundness** (rule 5) — 'Financial fingerprint of AI is in the gross margin' asserted as finding without naming the mechanism distinguishing AI-mix-shift from R2/APAC effects *Location:* §2.12 finding #2, L1904-1911.

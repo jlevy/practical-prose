@@ -9,14 +9,14 @@
 |  |  | Coherence | 5 | 5 | 5 | 5 | 5 | 5 |
 |  |  | Concision | 0 | 3 | 4 | 0 | 3 | **5** |
 |  |  | Organization | 0 | 4 | 4 | **5** | 4 | 4 |
-|  |  | Style Consistency | 0 | 0 | 0 | 0 | 0 | 0 |
+|  |  | Consistency | 0 | 0 | 0 | 0 | 0 | 0 |
 |  |  | Formatting | 0 | 0 | 0 | 0 | 0 | 0 |
 |  |  | *Mean* | 4.50 | 4.00 | 4.25 | **4.67** | 4.00 | 4.50 |
 |  | Grounding | Verifiability | 0 | 0 | **5** | 0 | 0 | **5** |
 |  |  | Factuality | 0 | 4 | **5** | 4 | 4 | **5** |
 |  |  | Relevance | 0 | 0 | **5** | 0 | 0 | **5** |
 |  |  | *Mean* | 0.00 | 4.00 | **5.00** | 4.00 | 4.00 | **5.00** |
-|  | Reasoning | Inference Discipline | 0 | 0 | 0 | 0 | 0 | 0 |
+|  | Reasoning | Discipline | 0 | 0 | 0 | 0 | 0 | 0 |
 |  |  | Soundness | 0 | 0 | **5** | 0 | 0 | **5** |
 |  |  | Precision | 0 | 0 | 0 | 0 | 0 | 0 |
 |  |  | Parsimony | 0 | 0 | 0 | 0 | 0 | 0 |
@@ -67,12 +67,12 @@
 | Coherence | 0 |
 | Concision | +4 |
 | Organization | +4 |
-| Style Consistency | 0 |
+| Consistency | 0 |
 | Formatting | 0 |
 | Verifiability | +5 |
 | Factuality | +5 |
 | Relevance | +5 |
-| Inference Discipline | 0 |
+| Discipline | 0 |
 | Soundness | +5 |
 | Precision | 0 |
 | Parsimony | 0 |
@@ -93,12 +93,12 @@
 | Coherence | 0 |
 | Concision | +5 |
 | Organization | -1 |
-| Style Consistency | 0 |
+| Consistency | 0 |
 | Formatting | 0 |
 | Verifiability | +5 |
 | Factuality | +1 |
 | Relevance | +5 |
-| Inference Discipline | 0 |
+| Discipline | 0 |
 | Soundness | +5 |
 | Precision | 0 |
 | Parsimony | 0 |
@@ -119,12 +119,12 @@
 | Coherence | 0 |
 | Concision | +1 |
 | Organization | 0 |
-| Style Consistency | 0 |
+| Consistency | 0 |
 | Formatting | 0 |
 | Verifiability | +5 |
 | Factuality | +1 |
 | Relevance | +5 |
-| Inference Discipline | 0 |
+| Discipline | 0 |
 | Soundness | +5 |
 | Precision | 0 |
 | Parsimony | 0 |
@@ -145,12 +145,12 @@
 | Coherence | 0 |
 | Concision | +2 |
 | Organization | 0 |
-| Style Consistency | 0 |
+| Consistency | 0 |
 | Formatting | 0 |
 | Verifiability | +5 |
 | Factuality | +1 |
 | Relevance | +5 |
-| Inference Discipline | 0 |
+| Discipline | 0 |
 | Soundness | +5 |
 | Precision | 0 |
 | Parsimony | 0 |

@@ -115,12 +115,12 @@ headings. Each maps to one or more principles.
 | Coherence | Lucid; Humane |
 | Concision | Essential; Humane |
 | Organization | Lucid; Maintainable |
-| Style Consistency | Lucid; Maintainable |
+| Consistency | Lucid; Maintainable |
 | Formatting | Lucid; Maintainable |
 | Verifiability | Verifiable |
 | Factuality | Truthful; Verifiable |
 | Relevance | Purposeful; Essential |
-| Inference Discipline | Verifiable; Lucid |
+| Discipline | Verifiable; Lucid |
 | Soundness | Truthful; Verifiable |
 | Precision | Truthful; Lucid |
 | Parsimony | Essential; Verifiable |

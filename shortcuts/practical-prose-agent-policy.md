@@ -41,7 +41,7 @@ The order matters. When two priorities conflict, the earlier one wins.
    Each load-bearing reasoning chain is the cleanest, simplest sound argument
    possible: no citable fact re-derived, no non-load-bearing rungs, no weaker warrant
    where a stronger one was available.
-   (§14 Inference Discipline, §15 Soundness, §17 Parsimony.)
+   (§14 Discipline, §15 Soundness, §17 Parsimony.)
 
 5. **Use concrete language and specific terms.** Most specific word the audience can
    parse. No vague magnitudes; no umbrella nouns where sub-distinctions matter;

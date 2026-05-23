@@ -56,7 +56,7 @@ display:
         Formatting:
           background: '#eaf7ec'
           foreground: '#175c36'
-        Inference Discipline:
+        Discipline:
           background: '#f3ecff'
           foreground: '#4c1d95'
         Organization:
@@ -80,7 +80,7 @@ display:
         Soundness:
           background: '#f3ecff'
           foreground: '#4c1d95'
-        Style Consistency:
+        Consistency:
           background: '#eaf7ec'
           foreground: '#175c36'
         Suitability:
@@ -216,7 +216,7 @@ qual:
     concision: 4
     formatting: 4
     organization: 4
-    style_consistency: 4
+    consistency: 4
   grounding:
     factuality: 4
     relevance: 4
@@ -231,7 +231,7 @@ qual:
     scope: 5
     suitability: 5
   reasoning:
-    inference_discipline: 4
+    discipline: 4
     parsimony: 4
     precision: 4
     soundness: 4
@@ -248,7 +248,7 @@ qual_reasons:
     organization: Logical heading hierarchy; tables earn their shape; 26 internal
       links to data files; cross-references to data files name only the filename,
       not what the reader will find.
-    style_consistency: Consistent American English, consistent bold conventions; date
+    consistency: Consistent American English, consistent bold conventions; date
       formats mix ISO (2024-08-01) with abbreviated month (Aug 2026) within the same
       sections.
   grounding:
@@ -284,7 +284,7 @@ qual_reasons:
       with scenario tree, recommendations, workplan); main answer recoverable from
       section headings and §2.9 exec summary.
   reasoning:
-    inference_discipline: Rungs generally well-separated; Phase 1 observation vs Phase
+    discipline: Rungs generally well-separated; Phase 1 observation vs Phase
       2 interpretation cleanly structured; one fusion at §2.6 L982-983 where 'GitHub
       data was a leading indicator' blends observation with interpretation.
     parsimony: Reasoning chains are mostly tight; one re-derivation at §2.2 restates
@@ -358,7 +358,7 @@ violations:
   rule_number: 7
 - description: Date formats mix ISO (2024-08-01) with abbreviated month (Aug 2026,
     Feb 2026) within the same sections
-  dimension: Style Consistency
+  dimension: Consistency
   location: §1.2, §2.3
   rule_number: 1
 - description: Table footnote at §1.3 uses bare asterisk rather than a proper footnote
@@ -383,7 +383,7 @@ violations:
   rule_number: 2
 - description: Observation (commit cadence preceded earnings narrative) and interpretation
     (leading indicator status) fused in one sentence
-  dimension: Inference Discipline
+  dimension: Discipline
   location: §2.6 L982-983
   rule_number: 2
 - description: 5-15% AI-revenue estimate asserted as 'triangulated' without showing
@@ -445,14 +445,14 @@ violations:
 |  | Coherence | 5 | Seamless two-phase structure; each paragraph has one job; transitions bridge cleanly between Phase 1 fact-gathering and Phase 2 analysis; no backtracking. |
 |  | Concision | 4 | Mostly tight; beat-magnitude series ($6.6M to $25.5M) appears in full at §1.3 and is referenced at §2.1, §2.2, §2.8 — redundant across four sections. |
 |  | Organization | 4 | Logical heading hierarchy; tables earn their shape; 26 internal links to data files; cross-references to data files name only the filename, not what the reader will find. |
-|  | Style Consistency | 4 | Consistent American English, consistent bold conventions; date formats mix ISO (2024-08-01) with abbreviated month (Aug 2026) within the same sections. |
+|  | Consistency | 4 | Consistent American English, consistent bold conventions; date formats mix ISO (2024-08-01) with abbreviated month (Aug 2026) within the same sections. |
 |  | Formatting | 4 | Markdown renders correctly; tables well-formed; the §1.3 table footnote uses a bare asterisk rather than a proper footnote anchor. |
 |  | **Mean** | **4.17** | |
 | **Grounding** | Verifiability | 4 | Most quantitative claims cite specific sources (earnings releases, 10-Qs); Vercel CEO benchmark at §1.7 has no post ID or URL; CF '20% of the web' at §1.8 has no source URL. |
 |  | Factuality | 4 | Cannot fully verify externally; citations look well-formed; 'Multiple' as source for $12.8B AI coding market at §1.8 is not a verifiable citation; Anthropic '$4B Amazon investment' is a rounded aggregate without disclosure. |
 |  | Relevance | 4 | Cited sources support the financial analysis directly; one or two references at §1.8 are tangential to the headline thesis. |
 |  | **Mean** | **4.00** | |
-| **Reasoning** | Inference Discipline | 4 | Rungs generally well-separated; Phase 1 observation vs Phase 2 interpretation cleanly structured; one fusion at §2.6 L982-983 where 'GitHub data was a leading indicator' blends observation with interpretation. |
+| **Reasoning** | Discipline | 4 | Rungs generally well-separated; Phase 1 observation vs Phase 2 interpretation cleanly structured; one fusion at §2.6 L982-983 where 'GitHub data was a leading indicator' blends observation with interpretation. |
 |  | Soundness | 4 | Mechanisms named for key claims (DBNRR-to-growth, GM compression from GPU inference); the 5-15% AI-revenue estimate at §2.7 is stated as 'triangulated' but the method is not shown. |
 |  | Precision | 4 | Domain entities named precisely (specific product names, versioned models, filing dates); 'Multiple' and 'Reported' as source attributions at §1.8 are imprecise where specific publication names exist. |
 |  | Parsimony | 4 | Reasoning chains are mostly tight; one re-derivation at §2.2 restates the §1.3 series rather than citing it. |
@@ -470,12 +470,12 @@ violations:
 3. **Clarity** (rule 4) — Banned-register-adjacent phrasing 'thesis only crystallized' uses extravagant register for what is simply 'was first articulated' *Location:* §2.6 L983.
 4. **Concision** (rule 2) — Beat-magnitude series ($6.6M to $25.5M) duplicated across §1.3, §2.1, §2.2, and §2.8 *Location:* §1.3 L262, §2.1 L835, §2.2 L878, §2.8 L1109.
 5. **Organization** (rule 7) — Cross-references to data files name only the filename, not what the reader will find *Location:* §1.7 L651.
-6. **Style Consistency** (rule 1) — Date formats mix ISO (2024-08-01) with abbreviated month (Aug 2026, Feb 2026) within the same sections *Location:* §1.2, §2.3.
+6. **Consistency** (rule 1) — Date formats mix ISO (2024-08-01) with abbreviated month (Aug 2026, Feb 2026) within the same sections *Location:* §1.2, §2.3.
 7. **Formatting** (rule 2) — Table footnote at §1.3 uses bare asterisk rather than a proper footnote anchor that round-trips *Location:* L576.
 8. **Verifiability** (rule 2) — Vercel CEO Rauch benchmark claim and X quote at §1.7 has no post ID or URL; CF '20% of the web' at §1.8 has no source URL *Location:* §1.7 L668-672, §1.8 L785.
 9. **Factuality** (rule 1) — 'Multiple' as source for $12.8B AI coding assistant market size is not a verifiable citation *Location:* §1.8 L710.
 10. **Factuality** (rule 2) — Anthropic '$4B Amazon investment' is a rounded aggregate across multiple tranches without disclosure of rounding or aggregation *Location:* §2.7 L1050.
-11. **Inference Discipline** (rule 2) — Observation (commit cadence preceded earnings narrative) and interpretation (leading indicator status) fused in one sentence *Location:* §2.6 L982-983.
+11. **Discipline** (rule 2) — Observation (commit cadence preceded earnings narrative) and interpretation (leading indicator status) fused in one sentence *Location:* §2.6 L982-983.
 12. **Soundness** (rule 5) — 5-15% AI-revenue estimate asserted as 'triangulated' without showing the triangulation method or contributing data points *Location:* §2.7 L1062.
 13. **Precision** (rule 2) — 'Multiple' and 'Reported' used as source attributions where specific publication names exist *Location:* §1.8 L710, L704.
 14. **Calibration** (rule 1) — 30/50/20 scenario probabilities not anchored in empirical base rates for SaaS earnings outcomes *Location:* §2.8 L1163-1170.

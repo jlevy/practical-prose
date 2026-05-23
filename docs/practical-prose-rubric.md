@@ -154,12 +154,12 @@ are not justified.
 | 6 |  | Coherence | Do the ideas progress smoothly? |
 | 7 |  | Concision | Does every section earn its place? |
 | 8 |  | Organization | Are sections, headings, sequence, tables, figures, links, and cross-references arranged for navigation? |
-| 9 |  | Style Consistency | Does the document follow the chosen style guide or house style consistently? |
+| 9 |  | Consistency | Does the document follow the chosen style guide or house style consistently? |
 | 10 |  | Formatting | Is the document visually and syntactically clean in its medium? |
 | 11 | Grounding | Verifiability | Are claims traceable to sources or calculations? |
 | 12 |  | Factuality | Do cited sources support the claims as asserted? |
 | 13 |  | Relevance | Do sources, citations, and reasoning chains bear on the document's stated purpose? |
-| 14 | Reasoning | Inference Discipline | Are observation, judgment, interpretation, and implication kept distinct? |
+| 14 | Reasoning | Discipline | Are observation, judgment, interpretation, and implication kept distinct? |
 | 15 |  | Soundness | Do claims follow from evidence through valid mechanisms? |
 | 16 |  | Precision | Are claims and terms specified at the right granularity? |
 | 17 |  | Parsimony | Is each load-bearing reasoning chain the cleanest, simplest sound argument possible for its conclusion? |
@@ -211,8 +211,8 @@ Suggested primary assignments:
 | Replacement-history narration in a non-history genre ("previously named X"; “under the new layout”) | §7 Concision | §5 Clarity |
 | Generic templated heading as sole section signal ("Overview," “Background,” “Notes”) | §8 Organization | §5 Clarity |
 | Heading-level skip, table that should be prose, broken link | §8 Organization | — |
-| Inconsistent dialect, casing, or parallel-list syntax | §9 Style Consistency | §5 Clarity |
-| Spaced em-dash overuse (" — “ instead of ”—") | §9 Style Consistency | §5 Clarity |
+| Inconsistent dialect, casing, or parallel-list syntax | §9 Consistency | §5 Clarity |
+| Spaced em-dash overuse (" — “ instead of ”—") | §9 Consistency | §5 Clarity |
 | Malformed Markdown table, broken footnote anchor, misplaced footer | §10 Formatting | §8 Organization |
 | Duplicated table / list content across sections | §7 Concision | §8 Organization |
 | Undeclared or drifting scope on a multi-topic document | §2 Scope | §3 Breadth |
@@ -221,7 +221,7 @@ Suggested primary assignments:
 | Missing inline citation for a quantitative claim | §11 Verifiability | §10 Formatting |
 | Number in prose doesn’t match source (silent rounding) | §12 Factuality | §11 Verifiability |
 | Cited source doesn’t support the claim as asserted | §12 Factuality | §11 Verifiability |
-| Mixed observation + interpretation in one sentence | §14 Inference Discipline | §15 Soundness |
+| Mixed observation + interpretation in one sentence | §14 Discipline | §15 Soundness |
 | Probability claim without base-rate anchor | §18 Calibration | §15 Soundness |
 | One-sided argument with no counter-evidence engaged | §19 Fairness | §18 Calibration |
 | Key claim brittle under a different reasonable interpretive lens | §20 Robustness | §19 Fairness |
@@ -360,7 +360,7 @@ Section depth matches section importance.
 Sentence-level readability: spelling, grammar, register, word choice.
 Errors covered by spell-checkers, Grammarly, Vale, and the language-use parts of AP /
 CMS. Concision is scored separately under §7; copyediting consistency (dialect,
-parallel-list syntax, citation style) is scored under §9 Style Consistency; markup
+parallel-list syntax, citation style) is scored under §9 Consistency; markup
 validity is scored under §10 Formatting.
 
 - **0:** Cannot assess.
@@ -451,7 +451,7 @@ Markup validity is scored under §10 Formatting; style consistency is scored und
   name what they point to ("see §2.8 (named cruxes)" over “see §2.8”); visual elements
   deployed where they help, absent where prose is clearer.
 
-#### §9 Style Consistency
+#### §9 Consistency
 
 Does the document follow the chosen style guide or house style consistently across
 syntax, terminology, capitalization, punctuation, spelling, dates, numbers, units,
@@ -489,7 +489,7 @@ validity).
 
 Is the document’s markup and visual presentation clean, valid, and compatible with the
 chosen medium? Most rules under this dimension are deterministically lintable.
-Distinct from §8 Organization (arrangement) and §9 Style Consistency (editorial polish).
+Distinct from §8 Organization (arrangement) and §9 Consistency (editorial polish).
 
 - **NA:** Not applicable.
   The document is plain text with no markup, or a format where formatting concerns are
@@ -737,15 +737,15 @@ sections rather than words and paragraphs.
 
 ### Reasoning
 
-#### §14 Inference Discipline
+#### §14 Discipline
 
 Moving rung by rung up the ladder of inference (observation → judgment → interpretation
 → implication). Each rung named on its own terms; none skipped, none blended into its
 neighbor. Sister of Soundness (§15): Soundness asks whether the chain holds together;
-Inference Discipline asks whether the rungs exist as distinct rungs at all.
+Discipline asks whether the rungs exist as distinct rungs at all.
 
 - **NA:** Not applicable.
-  Inference Discipline tests whether the document moves rung by rung up the ladder
+  Discipline tests whether the document moves rung by rung up the ladder
   (observation → judgment → interpretation → implication).
   The dimension is engaged when the document moves between *any two* rungs at all —
   including a single observation that leads to a single implication.
@@ -1022,9 +1022,9 @@ operationalizes them.
 
 | Pass | Scope | Primary dimensions | Stack |
 | --- | --- | --- | --- |
-| Lint | Surface defects | §8 Organization, §9 Style Consistency, §10 Formatting, §5 Clarity (banned-register and vague-word checks) | `practical_prose_metrics.py`, linters, deterministic checks |
+| Lint | Surface defects | §8 Organization, §9 Consistency, §10 Formatting, §5 Clarity (banned-register and vague-word checks) | `practical_prose_metrics.py`, linters, deterministic checks |
 | Claim audit | Every quantitative claim against its cited source | §11 Verifiability, §12 Factuality | Source lookups, calculation re-runs |
-| Reasoning audit | Mechanisms, assumptions, counter-evidence, alternative lenses | §14 Inference Discipline, §15 Soundness, §19 Fairness, §20 Robustness | Subject-matter expert or fresh-context agent |
+| Reasoning audit | Mechanisms, assumptions, counter-evidence, alternative lenses | §14 Discipline, §15 Soundness, §19 Fairness, §20 Robustness | Subject-matter expert or fresh-context agent |
 | Purpose audit | Output shape vs task shape; scope; skim-recoverability | §1 Suitability, §2 Scope, §3 Breadth, §4 Depth | Reader simulation; subject-matter expert |
 
 The pass separation is **required** for high-stakes documents (audits, decision memos,
@@ -1102,7 +1102,7 @@ Current revision: **`20-dim-v1`**. Eval YAMLs produced under it set
 `../scripts/eval_report.py` writes this automatically.
 
 The previous revision `15-dim-v1` covered 15 dimensions in five groups; `20-dim-v1` adds
-three dimensions (Breadth + Depth split from Coverage; Style Consistency; Formatting),
+three dimensions (Breadth + Depth split from Coverage; Consistency; Formatting),
 renames Structure → Organization, and introduces the `NA` value distinct from `0`.
 Score-anchor language was tightened in several dimensions.
 

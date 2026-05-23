@@ -25,8 +25,8 @@ You will be given, in order:
    violation. Cite:
    - the dimension by its canonical name (the exact label used in the rubric:
      Suitability, Scope, Breadth, Depth, Clarity, Coherence, Concision, Organization,
-     Style Consistency, Formatting, Verifiability, Factuality, Relevance, Inference
-     Discipline, Soundness, Precision, Parsimony, Calibration, Fairness, Robustness),
+     Consistency, Formatting, Verifiability, Factuality, Relevance, Discipline,
+     Soundness, Precision, Parsimony, Calibration, Fairness, Robustness),
    - the `rule_number` (the integer in `practical-prose-guidelines.md` for that
      dimension’s rule),
    - a one-line description,
@@ -46,9 +46,7 @@ You will be given, in order:
 Print a brief reasoning paragraph (under 200 words) summarizing your overall read of the
 artifact. Then emit a single JSON code fence with the shape below.
 Use the exact dimension keys listed in the rubric’s “Dimensions” table (snake_case,
-derived from the canonical label by lowercasing and replacing spaces with underscores:
-`Inference Discipline` → `inference_discipline`, `Style Consistency` →
-`style_consistency`).
+derived from the canonical label by lowercasing).
 
 ```json
 {
@@ -61,12 +59,12 @@ derived from the canonical label by lowercasing and replacing spaces with unders
     "coherence":            {"score": 0, "reason": "..."},
     "concision":            {"score": 0, "reason": "..."},
     "organization":         {"score": 0, "reason": "..."},
-    "style_consistency":    {"score": 0, "reason": "..."},
+    "consistency":          {"score": 0, "reason": "..."},
     "formatting":           {"score": 0, "reason": "..."},
     "verifiability":        {"score": 0, "reason": "..."},
     "factuality":           {"score": 0, "reason": "..."},
     "relevance":            {"score": 0, "reason": "..."},
-    "inference_discipline": {"score": 0, "reason": "..."},
+    "discipline":           {"score": 0, "reason": "..."},
     "soundness":            {"score": 0, "reason": "..."},
     "precision":            {"score": 0, "reason": "..."},
     "parsimony":            {"score": 0, "reason": "..."},
@@ -86,6 +84,6 @@ Hard requirements:
 - Each `score` is either an integer 0-5 or the literal string `"NA"`.
 - Each `reason` is a short string (under 200 chars).
 - `violations` may be empty only if every dimension scored 5, 0, or `NA`.
-- `dimension` in each violation matches one of the canonical names exactly.
-  Two-word names use a single space (e.g. “Inference Discipline”, “Style Consistency”).
+- `dimension` in each violation matches one of the canonical names exactly (all
+  single-word labels: e.g. “Discipline”, “Consistency”).
 - Output exactly one JSON code fence; the parser extracts the first ```json block.
