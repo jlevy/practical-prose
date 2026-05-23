@@ -13,7 +13,7 @@ Joshua Levy (github.com/jlevy)
 ## Purpose
 
 End-to-end operational steps for evaluating one practical writing artifact: run
-quantitative metrics, score the 18 qualitative dimensions, cite guideline-rule
+quantitative metrics, score the 20 qualitative dimensions, cite guideline-rule
 violations, produce a validated `<artifact>.eval.md` report.
 
 The substance of *how* to score lives in `practical-prose-rubric.md` (anchors per
@@ -24,7 +24,7 @@ For comparing N evaluated artifacts, see `practical-prose-eval-compare.runbook.m
 
 ## Inputs and outputs
 
-- **Input:** one Markdown artifact + the rubric (`practical-prose-rubric.md`) + the
+- **Input:** one Markdown artifact, the rubric (`practical-prose-rubric.md`), and the
   prescriptive guidelines (`practical-prose-guidelines.md`).
 - **Output:** one `<artifact-name>.eval.md` validated against the schema in
   `prose-eval report` (`EvalReport`).
@@ -104,7 +104,7 @@ For one-off raw metrics inspection without producing an eval report:
 prose-eval metrics path/to/artifact.md --format=yaml
 ```
 
-### 2. Score the 18 qualitative dimensions
+### 2. Score the 20 qualitative dimensions
 
 Two paths. The model-scoring path is the default and is what the compare workflow
 consumes; use the manual path for the first reviewer-level pass on a new doc class or
@@ -117,8 +117,8 @@ prose-eval score path/to/artifact.eval.md
 ```
 
 This calls the Anthropic SDK with the rubric, guidelines, and artifact, parses the
-structured JSON response, and fills the `qual` + `violations` blocks of the eval report
-in place. The rubric + guidelines block is sent with prompt-caching enabled, so
+structured JSON response, and fills the `qual` and `violations` blocks of the eval report
+in place. The rubric and guidelines block is sent with prompt-caching enabled, so
 subsequent calls (and `--batch` runs) reuse the cache and cost ~10× less than the first
 call.
 Useful flags:
@@ -135,11 +135,11 @@ Useful flags:
 **Manual path:**
 
 Read the artifact end to end.
-For each of the 18 dimensions, assign a score 0-5 (or `NA`) per the anchors in
+For each of the 20 dimensions, assign a score 0-5 (or `NA`) per the anchors in
 `practical-prose-rubric.md`. Use the `SCORE (REASON)` shape internally before composing
 the eval report.
 
-`NA` is reserved for dimensions the artifact’s task genuinely does not require — for
+`NA` is reserved for dimensions the artifact’s task genuinely does not require. For
 example, Calibration on a document that makes no probability or forecast claims, or
 Fairness on a reference doc that surfaces no opposing positions.
 A score of 0 means the dimension is applicable but content is missing or unassessable;
@@ -165,7 +165,7 @@ If manual: open the eval report produced in step 1 and edit:
   optional `method` and `notes`. `eval_date` is pre-filled.
 
 The `quant`, `derived`, and `artifact` blocks were generated in step 1; do not edit them
-by hand. The schema validator recomputes `derived` from `quant` + `qual`.
+by hand. The schema validator recomputes `derived` from `quant` and `qual`.
 
 ### 4. Validate
 
@@ -219,14 +219,14 @@ If the audit fails, revise scores or violations until consistent.
 ## Calibration set
 
 `../tools/prose-eval/tests/fixtures/` ships a small calibration set with **agreed scores
-and violations under `18-dim-v1`** so future agent or human evaluators can be tested for
+and violations under `20-dim-v1`** so future agent or human evaluators can be tested for
 drift and self-eval overrating against a fixed reference:
 
 | Fixture | Artifact | Type | Overall mean | NA dims |
 | --- | --- | --- | ---: | ---: |
 | `rev1-net.eval.md` | External deep-research artifact (rev1) | strong baseline (deep_research) | ~4.1 | 0 |
 | `rev2-net.eval.md` | External deep-research artifact (rev2 dry-run) | weaker baseline (deep_research) | ~3.1 | 0 |
-| `guidelines-self.eval.md` | `practical-prose-guidelines.md` itself | self-eval (guidelines doc) | ~4.1 | 4 (Inference Discipline, Calibration, Fairness, Robustness) |
+| `guidelines-self.eval.md` | `practical-prose-guidelines.md` itself | self-eval (guidelines doc) | ~4.1 | 5 (Discipline, Parsimony, Calibration, Fairness, Robustness) |
 
 Use this set to calibrate model-scoring runs:
 
@@ -239,8 +239,8 @@ prose-eval score path/to/your-artifact.eval.md --model sonnet
 
 The 6 `figma-*.eval.md` fixtures are comparison-renderer test data, not calibration
 baselines: many dimensions are scored 0 because the original 12-dim eval did not
-enumerate per-dim violations satisfying the 18-dim-v1 alignment property.
-To restore those scores, re-eval the underlying artifact under 18-dim-v1.
+enumerate per-dim violations satisfying the 20-dim-v1 alignment property.
+To restore those scores, re-eval the underlying artifact under 20-dim-v1.
 
 Bump the calibration set whenever the rubric is bumped (`practical-prose-rubric.md`
 §Versioning explains the trigger).
@@ -259,7 +259,7 @@ change.
   validator, `from-metrics` stub generator.
 - [eval_score.py](../tools/prose-eval/src/prose_eval/eval_score.py): model-scoring
   runner that fills
-  `qual` + `violations`.
+  `qual` and `violations`.
 - [metrics.py](../tools/prose-eval/src/prose_eval/metrics.py): quantitative metrics
   tool.
 

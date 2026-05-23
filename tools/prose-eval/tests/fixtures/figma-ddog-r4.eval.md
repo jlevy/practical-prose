@@ -14,16 +14,191 @@ derived:
     words_per_paragraph: 42.1279
     words_per_sentence: 23.2565
   rubric_rollup:
-    assessed_dimensions: 10
+    assessed_dimensions: 11
     expression_mean: 4.25
     grounding_mean: 5.0
     judgment_mean: 5.0
     na_dimensions: 0
-    overall_mean: 4.6
+    overall_mean: 4.6364
     purpose_mean: 4.0
     reasoning_mean: 5.0
   structure:
     h4_share_of_headings: 0.3333
+display:
+  table_styles:
+    palettes:
+      practical_prose_dimensions:
+        Breadth:
+          background: '#eaf2ff'
+          foreground: '#173b68'
+        Calibration:
+          background: '#fff0f3'
+          foreground: '#8a1232'
+        Clarity:
+          background: '#eaf7ec'
+          foreground: '#175c36'
+        Coherence:
+          background: '#eaf7ec'
+          foreground: '#175c36'
+        Concision:
+          background: '#eaf7ec'
+          foreground: '#175c36'
+        Depth:
+          background: '#eaf2ff'
+          foreground: '#173b68'
+        Factuality:
+          background: '#fff6db'
+          foreground: '#6b4a03'
+        Fairness:
+          background: '#fff0f3'
+          foreground: '#8a1232'
+        Formatting:
+          background: '#eaf7ec'
+          foreground: '#175c36'
+        Discipline:
+          background: '#f3ecff'
+          foreground: '#4c1d95'
+        Organization:
+          background: '#eaf7ec'
+          foreground: '#175c36'
+        Parsimony:
+          background: '#f3ecff'
+          foreground: '#4c1d95'
+        Precision:
+          background: '#f3ecff'
+          foreground: '#4c1d95'
+        Relevance:
+          background: '#fff6db'
+          foreground: '#6b4a03'
+        Robustness:
+          background: '#fff0f3'
+          foreground: '#8a1232'
+        Scope:
+          background: '#eaf2ff'
+          foreground: '#173b68'
+        Soundness:
+          background: '#f3ecff'
+          foreground: '#4c1d95'
+        Consistency:
+          background: '#eaf7ec'
+          foreground: '#175c36'
+        Suitability:
+          background: '#eaf2ff'
+          foreground: '#173b68'
+        Verifiability:
+          background: '#fff6db'
+          foreground: '#6b4a03'
+      practical_prose_groups:
+        Expression:
+          background: '#eaf7ec'
+          foreground: '#175c36'
+        Grounding:
+          background: '#fff6db'
+          foreground: '#6b4a03'
+        Judgment:
+          background: '#fff0f3'
+          foreground: '#8a1232'
+        Purpose:
+          background: '#eaf2ff'
+          foreground: '#173b68'
+        Reasoning:
+          background: '#f3ecff'
+          foreground: '#4c1d95'
+      practical_prose_scores:
+        '0':
+          font_weight: 400
+          foreground: '#6b7280'
+          opacity: 0.75
+        '1':
+          font_weight: 800
+          foreground: '#991b1b'
+        '2':
+          font_weight: 650
+          foreground: '#92400e'
+        '3':
+          font_weight: 700
+          foreground: '#a16207'
+        '4':
+          font_weight: 750
+          foreground: '#166534'
+        '5':
+          font_weight: 850
+          foreground: '#14532d'
+        NA:
+          font_weight: 400
+          foreground: '#6b7280'
+          opacity: 0.65
+    tables:
+    - encodings:
+      - channel: background
+        field: Dimension
+        palette: practical_prose_dimensions
+        source: row
+        target: row
+      - channel: foreground
+        columns:
+        - Score
+        field: Score
+        palette: practical_prose_scores
+        source: cell
+        target: cell
+      - channel: font_weight
+        columns:
+        - Score
+        field: Score
+        scale:
+          domain:
+          - 0
+          - 5
+          range:
+          - 400
+          - 850
+          type: linear
+        source: cell
+        target: cell
+      headers:
+      - match:
+          column: Score
+        style:
+          align: center
+          font_weight: 700
+      id: practical_prose_single_doc_qualitative
+      match:
+        columns:
+        - Group
+        - Dimension
+        - Score
+        - Reason
+    - headers:
+      - match:
+          column: Value
+        style:
+          align: right
+          font_weight: 700
+      id: practical_prose_single_doc_quantitative
+      match:
+        columns:
+        - Section
+        - Measure
+        - Value
+    - encodings:
+      - channel: background
+        field: Measure
+        palette: practical_prose_dimensions
+        source: row
+        target: row
+      headers:
+      - match:
+          column: Measure
+        style:
+          font_weight: 700
+      id: practical_prose_unified_comparison
+      match:
+        columns:
+        - Approach
+        - Aspect
+        - Measure
+    version: 1
 metadata:
   eval_date: '2026-05-07'
   evaluator: figma-eval (Claude Opus 4.7)
@@ -33,17 +208,17 @@ metadata:
   notes: 'Scores 1-9 verbatim from a prior 12-dim eval (source not present in this
     repo).
 
-    STALE BASELINE under 18-dim-v1: split coverage -> breadth+depth (same score copied
-    as placeholder); structure -> organization (rename only); style_consistency and
+    STALE BASELINE under 20-dim-v1: split coverage -> breadth+depth (same score copied
+    as placeholder); structure -> organization (rename only); consistency and
     formatting added as 0 (cannot assess). Re-score before reuse for regression. Original
     rubric_version: 15-dim-v1.
 
 
-    CLEANUP 2026-05-11 (post 18-dim-v1 migration): 4 dim(s) demoted from sub-5 to
+    CLEANUP 2026-05-11 (post 20-dim-v1 migration): 4 dim(s) demoted from sub-5 to
     0 (applicable-but-unassessable) because the original 12-dim eval did not enumerate
-    per-dim violations satisfying the 18-dim-v1 alignment property: Suitability(4->0),
-    Inference Discipline(4->0), Precision(4->0), Robustness(4->0). To restore scores,
-    re-eval under 18-dim-v1 with proper violation citations.'
+    per-dim violations satisfying the 20-dim-v1 alignment property: Suitability(4->0),
+    Discipline(4->0), Precision(4->0), Robustness(4->0). To restore scores,
+    re-eval under 20-dim-v1 with proper violation citations.'
   rubric_version: 18-dim-v1-stale-baseline
   status: complete
 qual:
@@ -53,9 +228,10 @@ qual:
     concision: 4
     formatting: 0
     organization: 4
-    style_consistency: 0
+    consistency: 0
   grounding:
     factuality: 5
+    relevance: 5
     verifiability: 5
   judgment:
     calibration: 5
@@ -67,15 +243,20 @@ qual:
     scope: 0
     suitability: 0
   reasoning:
-    inference_discipline: 0
+    discipline: 0
+    parsimony: 0
     precision: 0
     soundness: 5
 qual_reasons:
   expression: {}
-  grounding: {}
+  grounding:
+    relevance: Sources tied directly to the operational task; no extraneous citations
+      identified.
   judgment: {}
   purpose: {}
-  reasoning: {}
+  reasoning:
+    parsimony: Applicable but unassessable; soundness scored in r4 but parsimony not
+      reviewed.
 quant:
   bracket_tag_examples: []
   headings:
@@ -129,36 +310,38 @@ violations:
 
 # DDOG-r4
 
-**Source:** `<external artifact not in this repo>`  **Scope:** `—`  **Overall mean (18 dims):** 4.60  **Rubric:** `18-dim-v1-stale-baseline`  **Model:** `—`  **Eval date:** 2026-05-07
+**Source:** `<external artifact not in this repo>`  **Scope:** `—`  **Overall mean (20 dims):** 4.64  **Rubric:** `18-dim-v1-stale-baseline`  **Model:** `—`  **Eval date:** 2026-05-07
 
 ## Qualitative
 
 | Group | Dimension | Score | Reason |
 | --- | --- | ---: | --- |
-| Purpose | Suitability | 0 |  |
-| Purpose | Scope | 0 |  |
-| Purpose | Breadth | 0 |  |
-| Purpose | Depth | 4 |  |
-| **Purpose** | **Mean** | **4.00** | |
-| Expression | Clarity | 4 |  |
-| Expression | Coherence | 5 |  |
-| Expression | Concision | 4 |  |
-| Expression | Organization | 4 |  |
-| Expression | Style Consistency | 0 |  |
-| Expression | Formatting | 0 |  |
-| **Expression** | **Mean** | **4.25** | |
-| Grounding | Verifiability | 5 |  |
-| Grounding | Factuality | 5 |  |
-| **Grounding** | **Mean** | **5.00** | |
-| Reasoning | Inference Discipline | 0 |  |
-| Reasoning | Soundness | 5 |  |
-| Reasoning | Precision | 0 |  |
-| **Reasoning** | **Mean** | **5.00** | |
-| Judgment | Calibration | 5 |  |
-| Judgment | Fairness | 5 |  |
-| Judgment | Robustness | 0 |  |
-| **Judgment** | **Mean** | **5.00** | |
-| | **Overall mean (18 dims)** | **4.60** | |
+| **Purpose** | Suitability | 0 |  |
+|  | Scope | 0 |  |
+|  | Breadth | 0 |  |
+|  | Depth | 4 |  |
+|  | **Mean** | **4.00** | |
+| **Expression** | Clarity | 4 |  |
+|  | Coherence | 5 |  |
+|  | Concision | 4 |  |
+|  | Organization | 4 |  |
+|  | Consistency | 0 |  |
+|  | Formatting | 0 |  |
+|  | **Mean** | **4.25** | |
+| **Grounding** | Verifiability | 5 |  |
+|  | Factuality | 5 |  |
+|  | Relevance | 5 | Sources tied directly to the operational task; no extraneous citations identified. |
+|  | **Mean** | **5.00** | |
+| **Reasoning** | Discipline | 0 |  |
+|  | Soundness | 5 |  |
+|  | Precision | 0 |  |
+|  | Parsimony | 0 | Applicable but unassessable; soundness scored in r4 but parsimony not reviewed. |
+|  | **Mean** | **5.00** | |
+| **Judgment** | Calibration | 5 |  |
+|  | Fairness | 5 |  |
+|  | Robustness | 0 |  |
+|  | **Mean** | **5.00** | |
+|  | **Overall mean (20 dims)** | **4.64** | |
 
 ## Violations
 

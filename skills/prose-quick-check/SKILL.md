@@ -1,6 +1,6 @@
 ---
 name: prose-quick-check
-description: Audit a practical document against the 18-dimension checklist; read-only. Use when asked to audit, review, self-audit, quality-check, or pre-publish-check.
+description: Audit a practical document against the 20-dimension checklist; read-only. Use when asked to audit, review, self-audit, quality-check, or pre-publish-check.
 ---
 # Quick Check Practical Prose
 

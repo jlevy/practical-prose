@@ -166,6 +166,32 @@ def _rule_bounds_appendix() -> str:
     return "\n".join(lines)
 
 
+def _canonical_names() -> str:
+    """Comma-separated canonical dimension labels, in schema order."""
+    return ", ".join(d.label for d in rs.DIMENSIONS)
+
+
+def _scores_json_skeleton() -> str:
+    """The JSON output example, with one entry per dimension key, schema-derived."""
+    key_fields = [f'"{d.key}":' for d in rs.DIMENSIONS]
+    width = max(len(k) for k in key_fields)
+    entries = [f'    {k:<{width}} {{"score": 0, "reason": "..."}}' for k in key_fields]
+    body = ",\n".join(entries)
+    return (
+        "```json\n"
+        "{\n"
+        '  "scores": {\n'
+        f"{body}\n"
+        "  },\n"
+        '  "violations": [\n'
+        '    {"dimension": "Clarity", "rule_number": 4, "description": "...", '
+        '"location": "L412-418"}\n'
+        "  ]\n"
+        "}\n"
+        "```"
+    )
+
+
 def _cached_block_text() -> str:
     """The invariant block: instructions + rule-bounds appendix + rubric + guidelines.
 
@@ -179,12 +205,18 @@ def _cached_block_text() -> str:
         raise FileNotFoundError(f"rubric missing: {RUBRIC_PATH}")
     if not GUIDELINES_PATH.is_file():
         raise FileNotFoundError(f"guidelines missing: {GUIDELINES_PATH}")
+    template = PROMPT_TEMPLATE_PATH.read_text(encoding="utf-8")
+    template = (
+        template.replace("{{CANONICAL_NAMES}}", _canonical_names())
+        .replace("{{SCORES_JSON}}", _scores_json_skeleton())
+        .replace("{{DIMENSION_COUNT}}", str(rs.dimension_count()))
+    )
     parts = [
         "# Inputs",
         "",
         "## Instructions and output format",
         "",
-        PROMPT_TEMPLATE_PATH.read_text(encoding="utf-8"),
+        template,
         "",
         _rule_bounds_appendix(),
         "",

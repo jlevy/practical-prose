@@ -1,6 +1,6 @@
 ---
 title: Practical Prose Metrics and Frontmatter
-description: Operational appendix to the practical-prose system; maps each of the 18 review dimensions to quantitative metrics and qualitative checks, and documents the recommended frontmatter schema for practical-prose documents.
+description: Operational appendix to the practical-prose system; maps each of the 20 review dimensions to quantitative metrics and qualitative checks, and documents the recommended frontmatter schema for practical-prose documents.
 date: 2026-05-11
 status: active
 ---
@@ -36,30 +36,32 @@ denotes a human reviewer.
 | 2 | Scope | Presence of `scope` and optionally `out_of_scope` fields; count of headings outside declared scope | Does the body honor the declared boundary? | frontmatter check; manual |
 | 3 | Breadth | Count of relevant case classes addressed (out of a domain-specific expected set) | Are the obvious affected areas covered? | manual; SME |
 | 4 | Depth | Count of vague magnitude words (“rapid,” “large”) not paired with quantification; count of endpoints cited where a series exists | Is section depth proportional to section importance? | banned-register lint (metrics.py); manual |
-| 5 | Clarity | Banned-register hits (count + examples; full common-doc-guidelines §4.2 list); pedantic-marker hits (canonicality declarations, word-choice justifications, reading-order instructions); vague-word hits; sentence length distribution; mean and p95 sentence length | Does prose read cleanly aloud; is the document free of self-referential pedantry? | metrics.py; manual |
+| 5 | Clarity | Banned-register hits (count and examples; full common-doc-guidelines §4.2 list); pedantic-marker hits (canonicality declarations, word-choice justifications, reading-order instructions); vague-word hits; sentence length distribution; mean and p95 sentence length | Does prose read cleanly aloud; is the document free of self-referential pedantry? | metrics.py; manual |
 | 6 | Coherence | Paragraph length distribution; presence of stub transitions (“As shown above” without recap) | Does each paragraph have one job; do transitions bridge? | manual; LLM-assist |
 | 7 | Concision | Word count vs target by doc type; repeated n-gram count; low-information paragraph flag; replacement-history phrase hits (regex set: “previously named,” “formerly,” “under the new layout,” “removed,” etc.) | Does removing a section lose information; is replacement history absent outside history-genre exceptions? | metrics.py words/paragraphs; manual cut test |
 | 8 | Organization | Heading-level skip count (h1→h3 without h2); generic-heading hits (“Overview,” “Background,” “Notes,” “Details”); table count and column densities; figure-caption presence; link-target stability (no commit-less URLs to mutable refs) | Are sections sequenced for the task; do tables earn their tabular shape; do headings cleave to subject contours? | metrics.py headings/tables; manual |
-| 9 | Style Consistency | Acronym casing variance; dialect mixing; date-format variance; parallel-list violations; spaced em-dash count and em-dash density per 1000 words | Does the document follow the chosen style guide; are em dashes used sparingly and in American style? | linter; manual |
+| 9 | Consistency | Acronym casing variance; dialect mixing; date-format variance; parallel-list violations; spaced em-dash count and em-dash density per 1000 words | Does the document follow the chosen style guide; are em dashes used sparingly and in American style? | linter; manual |
 | 10 | Formatting | Markdown lint pass/fail; frontmatter present and valid; footer present | Renders correctly across mediums? | flowmark / md-lint; metrics.py footnote round-trip |
-| 11 | Verifiability | % quantitative claims with source pointer; bracket-tag count by type (`[VERIFIED]`, `[UNVERIFIED]`, `[ESTIMATED]`, `[DERIVED:]`, `[ASSUMING:]`); footnote/citation count | Can a competent reader trace claims to evidence without external lookup? | metrics.py bracket tags + footnotes; manual claim audit |
+| 11 | Verifiability | % quantitative claims with source pointer; bracket-tag count by type (`[VERIFIED]`, `[UNVERIFIED]`, `[ESTIMATED]`, `[DERIVED:]`, `[ASSUMING:]`); footnote/citation count | Can a competent reader trace claims to evidence without external lookup? | metrics.py bracket tags and footnotes; manual claim audit |
 | 12 | Factuality | Broken-link rate; stale-source count; numeric discrepancies vs cited source | Do cited sources actually support the claim at the asserted strength? | link checker; manual / SME audit |
-| 13 | Inference Discipline | Rung-tag count (`[observed]`, `[judged]`, `[interpreted]`, `[implied]`) in audit/eval modes; multi-rung-per-sentence flag | Are observation, judgment, interpretation, implication kept distinct? | metrics.py bracket tags (audit mode); LLM-assist; manual |
-| 14 | Soundness | `[ASSUMING:]` tag count where assumptions are load-bearing; count of unbridged “signal → outcome” leaps | Are mechanisms named where causation is asserted; is counter-evidence engaged? | metrics.py bracket tags; manual / SME |
-| 15 | Precision | Vague-countable hits (“several,” “various,” “many”); umbrella-term hits (“users,” “latency”) where domain sub-distinctions matter | Is the most specific term the audience can parse used throughout? | banned-register / linter extension; manual |
-| 16 | Calibration | Count of probability claims; count of those with cited base rate; small-sample shrinkage explicit; scenario probabilities sum check | Does claim strength match evidence strength? | LLM-assist; manual |
-| 17 | Fairness | Opposing-vs-supporting paragraph count *(flag only; see note below)*; depth asymmetry ratio; risk-inventory class coverage | Are opposing positions argued at proportional evidentiary depth? | LLM-assist; manual / SME |
-| 18 | Robustness | Count of explicit interpretive-lens statements; count of alternative-lens tests | Do key claims survive plausible alternative interpretations? | manual; LLM-assist |
+| 13 | Relevance | Count of cited sources flagged as ancillary or tangential to the document's purpose; count of sections marked as digression/background that load-bear on a headline claim (mislabel); count of unmarked digressions exceeding the length threshold for the doc type | For each source and each section, does it bear on the document's stated purpose? | LLM-assist; manual |
+| 14 | Discipline | Rung-tag count (`[observed]`, `[judged]`, `[interpreted]`, `[implied]`) in audit/eval modes; multi-rung-per-sentence flag | Are observation, judgment, interpretation, and implication worked through in order, each higher rung supported by the prior? | metrics.py bracket tags (audit mode); LLM-assist; manual |
+| 15 | Soundness | `[ASSUMING:]` tag count where assumptions are load-bearing; count of unbridged “signal → outcome” leaps | Are mechanisms named where causation is asserted; is counter-evidence engaged? | metrics.py bracket tags; manual / SME |
+| 16 | Precision | Vague-countable hits (“several,” “various,” “many”); umbrella-term hits (“users,” “latency”) where domain sub-distinctions matter | Is the most specific term the audience can parse used throughout? | banned-register / linter extension; manual |
+| 17 | Parsimony | Count of chains where a shorter sound chain exists (citable fact re-derived without adding inspectability or confidence; weaker warrant where a stronger one is available); count of non-load-bearing rungs flagged within load-bearing chains; per-doc parsimony-gap flag count | For each load-bearing chain, is it the minimum sufficient given its purpose and per-step warrants? | LLM-assist; manual |
+| 18 | Calibration | Count of probability claims; count of those with cited base rate; small-sample shrinkage explicit; scenario probabilities sum check | Does claim strength match evidence strength? | LLM-assist; manual |
+| 19 | Fairness | Opposing-vs-supporting paragraph count *(flag only; see note below)*; depth asymmetry ratio; risk-inventory class coverage | Are opposing positions argued at proportional evidentiary depth? | LLM-assist; manual / SME |
+| 20 | Robustness | Count of explicit interpretive-lens statements; count of alternative-lens tests | Do key claims survive plausible alternative interpretations? | manual; LLM-assist |
 
 Most rows have a deterministic component and a judgment component.
 The deterministic component runs in CI and catches regressions cheaply; the judgment
 component runs at review time and catches substantive failures the lint will never
 notice.
 
-**Note on §17 Fairness.** The opposing-vs-supporting paragraph count and depth-ratio
+**Note on §19 Fairness.** The opposing-vs-supporting paragraph count and depth-ratio
 metrics are review flags, not measures of fairness.
 The guidelines define fairness as proportional representation by plausibility,
-materiality, and evidence strength (§17.1), not equal airtime.
+materiality, and evidence strength (§19.1), not equal airtime.
 Symmetric paragraph counts can be a sign of false balance, not fairness; treat the count
 as a prompt to inspect the underlying evidence, never as proof that the document is
 fair.
@@ -78,7 +80,7 @@ fair.
 - [scripts/eval_compare.py](../scripts/eval_compare.py): compare N eval reports across
   versions or variants.
 - [scripts/rubric_schema.yaml](../scripts/rubric_schema.yaml): canonical
-  machine-readable schema for the 18 dimensions, the five groups, allowed score values,
+  machine-readable schema for the 20 dimensions, the five groups, allowed score values,
   and `NA`-eligible dimensions.
 
 ## Recommended Frontmatter Schema
@@ -104,7 +106,7 @@ agent-evaluable; optional fields apply when their condition is relevant.
 | `source_policy` | Optional | enum | `primary-required`, `secondary-ok`, `internal-only`. Sets the strictness for §11 Verifiability. |
 | `update_triggers` | Optional | list | Events that should prompt re-review (release cuts, regulatory changes, dependency upgrades). |
 | `evaluation_mode` | Optional | enum | `self`, `external`, `tooling-only`. Records whether the rubric is being applied by the author, by an external reviewer, or by deterministic tooling only. Cross-checks the rubric’s self-eval-overrate note. |
-| `rubric_version` | Required for eval YAMLs | string | Pinned rubric revision (e.g., `18-dim-v1`). Set automatically by `eval_report.py from-metrics`. Not required on the underlying artifact. |
+| `rubric_version` | Required for eval YAMLs | string | Pinned rubric revision (e.g., `20-dim-v1`). Set automatically by `eval_report.py from-metrics`. Not required on the underlying artifact. |
 
 Minimum agent-evaluable set: `title`, `description`, `date`, `status`, `purpose`,
 `audience`, `scope`, `owner`, `last_reviewed`, `risk_level`.
@@ -115,7 +117,7 @@ otherwise.
 
 ## Applicability Profiles
 
-The full 18-dimension rubric is sized for high-stakes documents (decision memos, audits,
+The full 20-dimension rubric is sized for high-stakes documents (decision memos, audits,
 deep research). Applying it uniformly to a short status note produces performative-rigor
 failure: more scoring, less reader value.
 The profiles below tell agents and reviewers which dimensions are *required*,
@@ -124,10 +126,10 @@ The profiles below tell agents and reviewers which dimensions are *required*,
 
 | Profile | `risk_level` | Required dimensions | Conditional dimensions | Typically NA |
 | --- | --- | --- | --- | --- |
-| **Low-stakes note** (status update, standup, brief progress note) | `low` | §1 Suitability, §5 Clarity, §7 Concision, §10 Formatting | §11 Verifiability only for material claims | §13-§18 (Inference Discipline, Soundness, Precision, Calibration, Fairness, Robustness) |
-| **Standard internal doc** (memo, brief, internal report) | `standard` | All Purpose (§1-§4); all Expression (§5-§10); §11 Verifiability; §12 Factuality; §14 Soundness | §13 Inference Discipline, §16 Calibration, §17 Fairness, §18 Robustness when the doc makes those kinds of claims | §15 Precision unless terminology is contested |
-| **Decision memo / audit / deep research** | `high` | All 18 unless explicitly NA | Four-pass audit (lint / claim / reasoning / purpose; see [rubric](practical-prose-rubric.md) §Audit passes for high-stakes evals) | None by default; NA only when explicitly stated and justified |
-| **Reference / runbook** | `standard` (override) | §1 Suitability, §2 Scope, §8 Organization, §10 Formatting, §15 Precision; plus the Maintainable principle | §11-§12 if the reference makes verifiable claims; §6 Coherence on extended explanations | §17 Fairness, §18 Robustness unless interpretive claims appear |
+| **Low-stakes note** (status update, standup, brief progress note) | `low` | §1 Suitability, §5 Clarity, §7 Concision, §10 Formatting | §11 Verifiability only for material claims | §13 Relevance, §14-§17 (Discipline, Soundness, Precision, Parsimony), §18-§20 (Calibration, Fairness, Robustness) |
+| **Standard internal doc** (memo, brief, internal report) | `standard` | All Purpose (§1-§4); all Expression (§5-§10); §11 Verifiability; §12 Factuality; §15 Soundness | §13 Relevance, §14 Discipline, §17 Parsimony, §18 Calibration, §19 Fairness, §20 Robustness when the doc makes those kinds of claims | §16 Precision unless terminology is contested |
+| **Decision memo / audit / deep research** | `high` | All 20 unless explicitly NA | Four-pass audit (lint / claim / reasoning / purpose; see [rubric](practical-prose-rubric.md) §Audit passes for high-stakes evals) | None by default; NA only when explicitly stated and justified |
+| **Reference / runbook** | `standard` (override) | §1 Suitability, §2 Scope, §8 Organization, §10 Formatting, §16 Precision; plus the Maintainable principle | §11-§13 if the reference cites sources or makes verifiable claims; §6 Coherence on extended explanations | §19 Fairness, §20 Robustness unless interpretive claims appear |
 
 Two operational notes:
 

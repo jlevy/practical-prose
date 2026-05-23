@@ -103,13 +103,15 @@ looking at specific qualities or dimensions.
 |  | Coherence | Do the ideas progress smoothly? |
 |  | Concision | Does every section earn its place? |
 |  | Organization | Are sections, headings, sequence, tables, figures, links, and cross-references arranged for navigation? |
-|  | Style Consistency | Does the document follow the chosen style guide or house style consistently? |
+|  | Consistency | Does the document follow the chosen style guide or house style consistently? |
 |  | Formatting | Is the document visually and syntactically clean in its medium? |
 | **Grounding** | Verifiability | Are claims traceable to sources or calculations? |
 |  | Factuality | Do cited sources support the claims as asserted? |
-| **Reasoning** | Inference Discipline | Are observation, judgment, interpretation, and implication kept distinct? |
+|  | Relevance | Do sources, citations, and reasoning chains bear on the document's stated purpose? |
+| **Reasoning** | Discipline | Are observation, judgment, interpretation, and implication worked through in order, with each higher rung supported by the prior? |
 |  | Soundness | Do claims follow from evidence through valid mechanisms? |
 |  | Precision | Are claims and terms specified at the right granularity? |
+|  | Parsimony | Is each load-bearing reasoning chain the cleanest, simplest sound argument possible for its conclusion? |
 | **Judgment** | Calibration | Does claim strength match evidence strength? |
 |  | Fairness | Are opposing positions argued at proportional evidentiary depth? |
 |  | Robustness | Do key claims survive plausible alternative interpretations? |
@@ -128,12 +130,12 @@ Each layer answers a different question.
 | Layer | Doc | Answers |
 | --- | --- | --- |
 | Common | [docs/common-doc-guidelines.md](docs/common-doc-guidelines.md) | What general document standards do all docs (practical or otherwise) follow? |
-| Principles | [docs/practical-prose-principles.md](docs/practical-prose-principles.md) | Why these rules — what seven principles do they descend from? |
-| Guidelines | [docs/practical-prose-guidelines.md](docs/practical-prose-guidelines.md) | What should the writer do — prescriptive rules for the 18 dimensions? |
-| Rubric | [docs/practical-prose-rubric.md](docs/practical-prose-rubric.md) | How is a document scored — descriptive 0-5 anchors for the same 18 dimensions? |
-| Bibliography | [docs/practical-prose-bibliography.md](docs/practical-prose-bibliography.md) | Where do these ideas come from — what works ground each tradition? |
+| Principles | [docs/practical-prose-principles.md](docs/practical-prose-principles.md) | Why these rules: what seven principles do they descend from? |
+| Guidelines | [docs/practical-prose-guidelines.md](docs/practical-prose-guidelines.md) | What should the writer do: prescriptive rules for the 20 dimensions? |
+| Rubric | [docs/practical-prose-rubric.md](docs/practical-prose-rubric.md) | How is a document scored: descriptive 0-5 anchors for the same 20 dimensions? |
+| Bibliography | [docs/practical-prose-bibliography.md](docs/practical-prose-bibliography.md) | Where do these ideas come from: what works ground each tradition? |
 | Metrics | [docs/practical-prose-metrics.md](docs/practical-prose-metrics.md) | Which quantitative metrics and qualitative checks map to which dimensions; recommended frontmatter schema. |
-| Shortcut | [shortcuts/practical-prose-quick-checklist.md](shortcuts/practical-prose-quick-checklist.md) | One-page pre-publish self-audit across the 18 dimensions. |
+| Shortcut | [shortcuts/practical-prose-quick-checklist.md](shortcuts/practical-prose-quick-checklist.md) | One-page pre-publish self-audit across the 20 dimensions. |
 | Runbook | [runbooks/](runbooks/) | Operational steps for single-document evals and N-way comparisons. |
 
 The Common layer is the base substrate.
@@ -141,7 +143,7 @@ The Common layer is the base substrate.
 formatting rules that apply to *any* document—technical docs, READMEs, internal memos,
 specifications—not just practical prose.
 The practical-prose layers (Principles, Guidelines, Rubric) build on top of it with the
-seven principles and 18 dimensions specific to evaluating practical writing.
+seven principles and 20 dimensions specific to evaluating practical writing.
 Principles, Guidelines, and Rubric form a tight triple: same seven principles, same 18
 dimensions, same five groups (Purpose, Expression, Grounding, Reasoning, Judgment).
 The bibliography supplies the intellectual basis; the shortcuts and runbooks are how the

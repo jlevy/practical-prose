@@ -13,7 +13,7 @@ Joshua Levy (github.com/jlevy)
 ## Purpose
 
 Produce a unified comparison Markdown from N evaluated artifacts: unified table
-(qualitative scores + quantitative metrics + derived ratios), optional per-section
+(qualitative scores, quantitative metrics, and derived ratios), optional per-section
 drilldowns, and per-pair deltas.
 The deterministic generator is `prose-eval compare`; this runbook wraps it with the
 alignment audit and the analytical-prose layer the generator cannot produce.
@@ -57,7 +57,7 @@ This fans out the SDK calls under `gather_limited` (an `asyncio.Semaphore`
 + `aiolimiter` leaky bucket).
   Defaults: `--max-concurrent 8`, `--max-rps 4`.
 
-**Prompt caching**: the rubric + guidelines + instructions block is marked
+**Prompt caching**: the rubric, guidelines, and instructions block is marked
 `cache_control: ephemeral`, so once one call has written the cache, others within ~5
 minutes read it at ~0.1× the input cost.
 Observed batch run on 12 docs (this repo’s self-eval-v0.2): **~1m33s wall-clock** vs ~4
@@ -125,7 +125,7 @@ and revise.
 
 ### 5. Append cross-artifact analysis prose
 
-The generator stops at the table + delta blocks.
+The generator stops at the table and delta blocks.
 Author the analytical prose on top, in this order (matches the reference report):
 
 1. **Scope and method:** what artifacts are being compared and why, what is reused vs

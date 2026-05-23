@@ -26,7 +26,7 @@ Practical writing serves a purpose.
 Anything that adds distance between the reader and that purpose without adding necessary
 context, evidence, or maintainability is friction.
 
-## Five Groups, Eighteen Dimensions
+## Five Groups, Twenty Dimensions
 
 | Group | Dimension | Question it answers |
 | --- | --- | --- |
@@ -38,13 +38,15 @@ context, evidence, or maintainability is friction.
 |  | Coherence | Do the ideas progress smoothly? |
 |  | Concision | Does every section earn its place? |
 |  | Organization | Are sections, headings, sequence, tables, figures, links, and cross-references arranged for navigation? |
-|  | Style Consistency | Does the document follow the chosen style guide or house style consistently? |
+|  | Consistency | Does the document follow the chosen style guide or house style consistently? |
 |  | Formatting | Is the document visually and syntactically clean in its medium? |
 | **Grounding** | Verifiability | Are claims traceable to specific sources, observations, or calculations? |
 |  | Factuality | Are the verifiable claims true and supported by cited evidence? |
-| **Reasoning** | Inference Discipline | Are the rungs of the ladder of inference kept distinct? |
+|  | Relevance | Do sources, citations, and reasoning chains bear on the document's stated purpose? |
+| **Reasoning** | Discipline | Are observation, judgment, interpretation, and implication worked through in order, with each higher rung supported by the prior? |
 |  | Soundness | Do claims follow from evidence through valid mechanisms and explicit assumptions? |
 |  | Precision | Are claims and terms specified at the right granularity? |
+|  | Parsimony | Is each load-bearing reasoning chain the cleanest, simplest sound argument possible for its conclusion? |
 | **Judgment** | Calibration | Does claim strength match evidence strength? |
 |  | Fairness | Are opposing positions argued at depth proportional to their plausibility and strength? |
 |  | Robustness | Do key claims survive plausible alternative interpretations? |
@@ -61,17 +63,19 @@ A good practical document does these things; the prescriptive rules below say ho
 3. **Reads cleanly.** Concrete words; one-job paragraphs; earned register; visible
    structure; consistent style; valid markup (§5–§10).
 4. **Makes important claims checkable.** Source-traceable, faithful to the cited
-   evidence, with the strictness of the bar scaled to stakes (§11, §12).
-5. **Reasons in distinct steps.** Observation, judgment, interpretation, and implication
-   kept on separate rungs; mechanisms named where causation is asserted; precision
-   matched to measurement (§13–§15).
+   evidence, and tied to the document's purpose; the strictness of the bar scaled to
+   stakes (§11–§13).
+5. **Reasons in distinct steps, by the shortest sound path.** Observation, judgment,
+   interpretation, and implication kept on separate rungs; mechanisms named where
+   causation is asserted; precision matched to measurement; each load-bearing chain the
+   minimum sufficient sound argument (§14–§17).
 6. **Matches confidence to evidence.** Claim strength tracks evidence strength; opposing
    positions argued proportionally; key claims tested against alternative interpretive
-   lenses (§16–§18).
+   lenses (§18–§20).
 7. **Is easy to maintain.** Owner, status, dates, dependencies, and open questions per
    [common-doc-guidelines.md](common-doc-guidelines.md).
 
-The 18 sections below give the prescriptive rules; the companion
+The 20 sections below give the prescriptive rules; the companion
 [practical-prose-rubric.md](practical-prose-rubric.md) provides the descriptive 0-5
 scoring anchors. A review-time checklist organized the same way appears at the end of
 this document under *Pre-Publish Self-Audit*.
@@ -90,13 +94,13 @@ The table below shows how its clauses relate to this layer:
 | §2.4 Avoid duplication | Absorbed into §7 Concision rule 2 |
 | §2.5 Describe present state, not what it replaced | Absorbed into §7 Concision rule 5 (common agent failure mode) |
 | §3.1 Be clear and concise | Absorbed into §5 Clarity and §7 Concision |
-| §3.2 Be detailed and specific | Absorbed into §4 Depth, §11 Verifiability, §15 Precision |
+| §3.2 Be detailed and specific | Absorbed into §4 Depth, §11 Verifiability, §16 Precision |
 | §3.3 Headings cleave to subject contours | Absorbed into §8 Organization rule 9 |
 | §3.4 Be engaging and warm | Referenced as Tone / Reader Respect contextual modifier in the rubric |
 | §4.1 Respect reader’s intelligence | Absorbed under the Humane principle and §1 Suitability / §4 Depth |
 | §4.2 Banned extravagant words list | Canonical list lives in common-doc-guidelines; referenced from §5 Clarity rule 4 |
 | §4.3 Cut pompousness, meta-commentary, pedantry | Absorbed into §5 Clarity rules 3 and 6 |
-| §5 Em-dash discipline | Absorbed into §9 Style Consistency rule 7 |
+| §5 Em-dash discipline | Absorbed into §9 Consistency rule 7 |
 | §6 Guideline Footer | Operational marker; not scored by this rubric |
 
 ## Purpose Dimensions
@@ -232,7 +236,7 @@ Depth answers *how thoroughly* once Breadth has answered *what is covered*.
 3. **Quantify “small,” “large,” “rapid,” “slow.”** Vague magnitude words in a scoped
    factual claim are depth failures, not just clarity failures.
    (Vague words in ordinary prose without a quantitative claim are scored under §5
-   Clarity; vague countables where a specific term exists are scored under §15
+   Clarity; vague countables where a specific term exists are scored under §16
    Precision.)
 
 4. **Name the instances when you cite a count.** “13 endpoints affected” should be
@@ -302,7 +306,7 @@ correct spelling and grammar?
 
 *Description:* How well can the reader follow the progression of ideas across the whole
 work? This metric reflects only the prose-level flow; it does not include logical
-coherence (covered under §14 Soundness) or scaffolding like heading hierarchy, tables,
+coherence (covered under §15 Soundness) or scaffolding like heading hierarchy, tables,
 figures, and links (covered under §8 Organization and §10 Formatting).
 Coherence here is about whether ideas progress smoothly when read sentence to sentence.
 
@@ -373,7 +377,7 @@ links, and cross-references help readers navigate the material.
 
 This dimension is about *arrangement*. Whether the markup renders correctly and follows
 medium conventions is §10 Formatting; whether terminology and house style are consistent
-is §9 Style Consistency.
+is §9 Consistency.
 
 Visual elements aren’t required.
 A tightly written prose document with no tables or figures can be excellent.
@@ -404,7 +408,7 @@ But when these elements are present, they should be well-arranged.
 5. **Lists earn their place.** Lists are right when items are parallel and discrete.
    If list items vary in scope or depth, paragraphs are clearer.
 
-6. **Links target stable anchors.** Prefer permalinks, filename + section anchors, or
+6. **Links target stable anchors.** Prefer permalinks, filename and section anchors, or
    commit-pinned URLs over links that may rot.
    In internal docs, prefer filename-only references when they are unique.
 
@@ -429,12 +433,12 @@ But when these elements are present, they should be well-arranged.
    subheadings, not left as-is.
    (Cross-references common-doc-guidelines §3.3.)
 
-### 9. Style Consistency
+### 9. Consistency
 
 *Description:* The document follows the chosen style guide or house style consistently.
 A document can be perfectly understandable and still stylistically inconsistent;
 conversely, a document can be style-guide compliant but unclear, overlong, or wrong.
-Style Consistency isolates the editorial-polish question from the readability question
+Consistency isolates the editorial-polish question from the readability question
 (§5 Clarity) and the markup-validity question (§10 Formatting).
 
 **Rules:**
@@ -478,9 +482,9 @@ Style Consistency isolates the editorial-polish question from the readability qu
 
 *Description:* The document’s markup and visual presentation are clean, valid, and
 compatible with the chosen medium.
-Distinct from §8 Organization (are the parts arranged well) and §9 Style Consistency
+Distinct from §8 Organization (are the parts arranged well) and §9 Consistency
 (does the document follow house style consistently).
-Formatting is the most deterministic of the three — most rules here are lintable.
+Formatting is the most deterministic of the three; most rules here are lintable.
 
 **Rules:**
 
@@ -515,8 +519,8 @@ Formatting is the most deterministic of the three — most rules here are lintab
 specific sources, observations, calculations, or explicit assumptions.
 A document scores high on Verifiability when a competent reader could check its claims
 from what the document provides, before any external lookup.
-Verifiability is text-internal — it tests how well the document equips the reader to
-audit. **Factuality (§12)** is world-aware — it tests whether the audit, when performed,
+Verifiability is text-internal: it tests how well the document equips the reader to
+audit. **Factuality (§12)** is world-aware: it tests whether the audit, when performed,
 passes.
 
 A claim that is too vague to check is a Verifiability defect even when sources are
@@ -530,15 +534,15 @@ Specificity is the precondition for source-traceability.
    principle confirm or refute by consulting sources, observations, or calculations.
    Vague magnitude words ("rapid," “many,” "in greater volume," “increasingly”) without
    a stated referent or comparison fail this rule even when the underlying assertion
-   might be true — the document has not made a checkable claim.
-   Score §15 Precision for terminology specificity; this rule covers the claim-level
+   might be true; the document has not made a checkable claim.
+   Score §16 Precision for terminology specificity; this rule covers the claim-level
    bar.
 
 2. **Quantitative claims are source-traceable; the bar scales with stakes.** For
    high-stakes, external, or decision-bearing documents (research reports, audits,
    decision memos, deep research), every quantitative claim has at least one primary
-   source — official documentation, filings, press releases, transcripts, source code,
-   datasets, or first-party measurements.
+   source (official documentation, filings, press releases, transcripts, source code,
+   datasets, or first-party measurements).
    Secondary sources (news aggregators, blog summaries, third-party analyses) can
    corroborate but don’t substitute.
    For low-stakes operational notes and lightweight status updates, cite the source when
@@ -579,8 +583,8 @@ Specificity is the precondition for source-traceability.
 
 *Description:* The document’s verifiable claims hold up when checked against the world,
 at the asserted strength, for the asserted entity, date, and scope.
-Verifiability (§11) is text-internal — does the document let the reader audit?
-Factuality is world-aware — does the audit, when performed, pass?
+Verifiability (§11) is text-internal: does the document let the reader audit?
+Factuality is world-aware: does the audit, when performed, pass?
 
 Truth here means: **the assertion strength matches the available evidence.** A claim
 asserted as certain when the evidence is uncertain is a Factuality defect.
@@ -597,7 +601,7 @@ with a stated basis.
 
 Reviewer access limits are not document defects.
 A claim with a reachable primary source that the reviewer happens to be unable to access
-— paywalled, in a language the reviewer doesn’t read, or in a private system — counts as
+(paywalled, in a language the reviewer doesn’t read, or in a private system) counts as
 neutral, not a Factuality slip.
 The reason note records the access limit so a later reviewer with access can complete
 the audit.
@@ -641,20 +645,70 @@ the audit.
    acknowledges this explicitly and states the basis on which the claim is made anyway.
    A speculative claim labelled speculative, with its basis stated, is factually
    correct. An unhedged claim made as if it were settled, where the evidence does not
-   settle it, is a Factuality defect — even if the claim happens to be true.
+   settle it, is a Factuality defect, even if the claim happens to be true.
+
+### 13. Relevance
+
+*Description:* Sources, citations, and intermediate reasoning chains relate directly
+to the document's stated purpose. Material that doesn't bear on the main task,
+including tangential sources, performative citations, and digressive arguments,
+should be cut or marked as background. Relevance tests whether each piece of evidence
+and each section does work toward the purpose declared in §1 Suitability and §2 Scope.
+
+Distinguished from neighbors:
+
+- **§2 Scope** declares what the document covers; Relevance tests whether the content
+  inside that boundary earns its place.
+- **§7 Concision** is prose-level economy (words, paragraphs, redundant phrasing).
+  Relevance is content-level economy (sources, sections, points).
+- **§11 Verifiability** asks whether claims trace to sources. Relevance asks whether
+  the traced sources connect to the document's purpose.
+- **§12 Factuality** asks whether sources support the claims made. Relevance asks
+  whether those claims matter for what the document is for.
+- **§17 Parsimony** asks whether each load-bearing reasoning chain uses the minimum
+  sound argument. Relevance asks the same question one level up: whether each source
+  and section is load-bearing at all.
+
+**Rules:**
+
+1. **Cite only sources that bear on the purpose.** A source supplying tangential
+   context can be referenced inline but should not be anchored as evidence for a
+   headline claim. Performative citations, where sources are cited to demonstrate
+   diligence rather than to support a claim, dilute the audit trail and obscure
+   which sources actually load-bear.
+
+2. **Cut sections that don't load-bear on the task.** Test each section by removing
+   it and asking whether any headline conclusion, recommendation, or actionable step
+   changes. If nothing material moves, the section is extraneous and belongs in a
+   separate background document, a marked appendix, or not at all.
+
+3. **Mark digressions as digressions.** When a section is included for completeness
+   but is not load-bearing, signal it with a `Background`, `Related work`, `Aside`,
+   or `Historical note` header so the reader can skip without losing the main thread.
+
+4. **Each source passes the one-sentence test.** For every cited source, the writer
+   should be able to say in one sentence: *this source supports claim X, which bears
+   on purpose Y*. Sources that fail this test are either misused or unnecessary.
+
+5. **Don't pad bibliographies for performative-rigor reasons.** A long reference list
+   is not evidence of thoroughness; it is evidence of thoroughness only when each
+   entry earns its place. Cite the sources that load-bear; cut the rest.
 
 ## Reasoning Dimensions
 
-### 13. Inference Discipline
+### 14. Discipline
 
-*Description:* The practice of moving rung by rung up the ladder of inference
-(observation → judgment → interpretation → implication).
-Each rung is named on its own terms; none is skipped, none is blended into its neighbor.
+*Description:* The practice of climbing the ladder of inference rung by rung in
+order (observation → judgment → interpretation → implication), with each higher
+rung supported by the rung below it. Each rung is named on its own terms; none is
+skipped, none is blended into its neighbor. Implications rest on sound
+interpretations, which rest on sound judgments, which rest on sound observations.
 
-Inference Discipline is distinct from Soundness (§14). Soundness tests whether the chain
-of reasoning is sound; Inference Discipline tests whether the rungs exist as distinct
-rungs at all. Both can fail independently: a sound chain can still be fused into one
-sentence, and a well-stepped chain can still be unsound.
+Discipline is distinct from Soundness (§15). Soundness tests whether each step in
+the chain is itself valid; Discipline tests whether the rungs are climbed in order
+and exist as distinct rungs at all. Both can fail independently: a sound chain can
+still be fused into one sentence or its rungs can be presented out of order, and a
+well-ordered chain can still be unsound.
 
 The four rungs, with one example carried through them:
 
@@ -701,12 +755,12 @@ above are an adaptation for analytical writing.)
    we interpret as…”, “which implies…”). The reader should always know which rung the
    sentence is on.
 
-### 14. Soundness
+### 15. Soundness
 
 *Description:* Content is logically organized, with terms and statements well-defined,
 reasoning sound, and the chain from evidence to claim visible.
 Soundness focuses on the document’s logical structure; the “multiple perspectives
-considered” dimension is broken out as Fairness (§17).
+considered” dimension is broken out as Fairness (§19).
 
 **Rules:**
 
@@ -732,7 +786,7 @@ considered” dimension is broken out as Fairness (§17).
    counter-evidence in your own document is a soundness failure.
 
 5. **Asserted ≠ argued.** If the claim is complex, either argue for it (with named
-   primitives + numerical comparisons) or say it’s an assertion subject to falsifiable
+   primitives and numerical comparisons) or say it’s an assertion subject to falsifiable
    conditions. Bare assertions of complex claims fail soundness.
 
 6. **Define terms when they carry weight.** A term the document depends on gets a
@@ -748,7 +802,7 @@ considered” dimension is broken out as Fairness (§17).
    See the *Failure-Mode Questions* table in
    [practical-prose-rubric.md](practical-prose-rubric.md) for prompts by claim type.
 
-### 15. Precision
+### 16. Precision
 
 *Description:* Claims and terms are specified at the right granularity for the domain
 and audience. Generic vocabulary in place of available specific vocabulary is
@@ -783,6 +837,67 @@ Precision is the granularity *within* each individual claim.
    of,” and “many” with either a count (“12”) or named items (“AWS, Azure, GCP, OCI”).
    Vague countables are breadth/depth failures *and* precision failures.
 
+### 17. Parsimony
+
+*Description:* The chain from cited evidence to the document's headline claims uses
+the cleanest, simplest sound argument available. Length is not the metric; minimality
+given the per-step warrants in use is. A long chain of strong deductive steps (a
+formal proof, a multi-step regulatory cross-walk) is parsimonious when no shorter
+chain of the same warrant strength exists; a short chain of weak inductive gestures
+is non-parsimonious when it elides intermediates the conclusion requires.
+
+Parsimony presupposes Soundness (§15): when a step is unsound, a longer sound chain
+would do less damage to the conclusion, so the chain as written cannot be the most
+parsimonious sound argument. When Soundness fails materially on the headline claims,
+Parsimony is scored 0.
+
+Distinguished from neighbors:
+
+- **§7 Concision** is prose-level economy (words, paragraphs, redundant phrasing).
+  Parsimony is argument-level economy (rungs in the inferential chain).
+- **§13 Relevance** asks whether each source or section is on-task. Parsimony asks
+  whether the reasoning *within* an on-task chain uses the minimum sound steps.
+- **§14 Discipline** asks whether the rungs are climbed in order and named on
+  their own terms. Parsimony asks whether the chain is the minimum.
+- **§15 Soundness** asks whether each step is valid in itself. Parsimony asks whether
+  the chain *shape* is minimum given the per-step warrants.
+
+**Rules:**
+
+1. **Prefer citation over re-derivation when both serve the same purpose.** Where
+   direct evidence is available (a published result, a measured value, a settled
+   definition), citing it is usually shorter than re-deriving it. Re-derivation is
+   warranted when it adds inspectability (showing the math), confidence (letting the
+   reader audit the step), or pedagogy (explaining for the audience); it is padding
+   when none of those apply and the cited result would do the same work.
+
+2. **Cut non-load-bearing steps.** Each rung in a load-bearing chain should be
+   necessary; if removing it leaves the argument intact, remove it. Steps that restate
+   the preceding rung in different words, add illustrative color, or re-conclude what
+   was already concluded are padding.
+
+3. **Match chain length to warrant strength.** Long chains of strong, deductive steps
+   (a formal proof, a derivation from named axioms, a regulatory cross-walk) are
+   parsimonious when no shorter chain of the same warrant type exists. Short chains
+   of weak, inductive steps are not parsimonious when their brevity was achieved by
+   skipping rungs the conclusion requires.
+
+4. **Don't truncate required intermediates.** Where a claim requires N intermediate
+   inferences to reach with the warrants in use, all N must appear. A 2-step gesture
+   substituted for a 5-step required chain is a Parsimony failure (and typically a
+   Soundness failure as well).
+
+5. **Prefer the most direct warrant available.** Where deduction will work, use
+   deduction; where a measurement exists, cite it; where the mechanism is known, name
+   it. Substituting a weaker warrant (“X plausibly causes Y”) when a stronger one is
+   available (“X causes Y via [mechanism], see [source]”) makes the chain longer than
+   it needs to be.
+
+6. **Parsimony applies to load-bearing chains.** Illustrative examples, motivational
+   background, and worked-out edge cases are exempt. The test runs on the chain from
+   cited evidence to the document's headline claims, not on every inference in the
+   document.
+
 ## Judgment Dimensions
 
 Calibration matches claim strength to evidence strength.
@@ -790,7 +905,7 @@ Fairness engages opposing positions at proportional evidentiary depth.
 Robustness tests whether key claims survive alternative interpretations of the same
 evidence. All three fail when a directional view crowds out the underlying evidence.
 
-### 16. Calibration
+### 18. Calibration
 
 *Description:* The strength of a claim must match the strength of the underlying
 evidence in both directions.
@@ -831,7 +946,7 @@ evidence) both fail calibration.
    discipline overconfident claims; honest force on strong evidence is part of
    calibration, not a violation of it.
 
-### 17. Fairness
+### 19. Fairness
 
 *Description:* Opposing positions (a case for and a case against, or any oppositional
 framings) are argued at depth proportional to their plausibility, materiality, and
@@ -849,7 +964,7 @@ position as comparable to a strong one without saying so).
 
 1. **Engage opposing positions at proportional evidentiary depth.** If the case for has
    three named primitives plus numerical comparisons, the case against deserves
-   comparable depth — three named mechanisms plus numerical thresholds — unless the
+   comparable depth (three named mechanisms plus numerical thresholds) unless the
    evidence is genuinely asymmetric.
    When one side receives much less depth, the document explains why (low plausibility,
    low materiality, well-trodden ground).
@@ -876,7 +991,7 @@ position as comparable to a strong one without saying so).
    “If Y happens, the claim holds” is a confirmation condition.
    Don’t substitute one for the other.
 
-### 18. Robustness
+### 20. Robustness
 
 *Description:* Key claims survive plausible alternative interpretations of the same
 evidence. Even granting the evidence and the chosen framing, would a *different
@@ -905,7 +1020,7 @@ interpretive frame that a competent reader would dispute.
    claim is brittle to interpretation.
    State that explicitly.
 
-5. **Distinguish Robustness from Fairness.** Fairness (§17) engages opposing positions
+5. **Distinguish Robustness from Fairness.** Fairness (§19) engages opposing positions
    at proportional evidentiary depth.
    Robustness asks whether the chosen reading survives a different reading of the same
    evidence the opposing cases share.
@@ -948,14 +1063,16 @@ For a tight self-check before publishing, walk the five groups in order and ask:
   Heading hierarchy logical and sections arranged for the task?
   Style consistent (dialect, casing, parallel lists)?
   Markup valid and footer/frontmatter in place?
-- **Grounding (§11-§12):** Every quantitative claim source-traceable to a specific
+- **Grounding (§11-§13):** Every quantitative claim source-traceable to a specific
   citation (with stakes-appropriate strictness)?
   Cited sources support the claim at the asserted strength?
-- **Reasoning (§13-§15):** Observation / judgment / interpretation / implication kept
-  distinct? Mechanisms named where causation is asserted?
+  Sources and sections bear on the document's purpose?
+- **Reasoning (§14-§17):** Observation, judgment, interpretation, and implication
+  worked through in order, each higher rung supported by the prior?
+  Mechanisms named where causation is asserted?
   Domain entities referred to by proper name; quantitative precision matches
-  measurement?
-- **Judgment (§16-§18):** Probability claims anchored in base rates?
+  measurement? Load-bearing chains the minimum sufficient sound argument?
+- **Judgment (§18-§20):** Probability claims anchored in base rates?
   Opposing positions engaged at proportional depth, with any asymmetry declared?
   Key claims tested against the strongest alternative interpretive lens?
 
@@ -993,7 +1110,7 @@ a different cognitive load and a different tool stack:
 The pass separation is **required** for high-stakes documents (audits, decision memos,
 external research, security advisories), **recommended** for standard internal docs, and
 **optional** for low-stakes drafts and operational notes where a single review pass fits
-the risk. Where the discipline applies, do not combine passes — running them in parallel
+the risk. Where the discipline applies, do not combine passes; running them in parallel
 by the same agent in the same context loses the cognitive separation that the four-pass
 structure depends on.
 
@@ -1003,7 +1120,7 @@ structure depends on.
 - [practical-prose-principles.md](practical-prose-principles.md): the seven principles
   these rules derive from.
 - [practical-prose-rubric.md](practical-prose-rubric.md): descriptive 0-5 scoring
-  anchors for the same 18 dimensions.
+  anchors for the same 20 dimensions.
 - [practical-prose-bibliography.md](practical-prose-bibliography.md): full citations for
   works referenced in these guidelines, with publication details and stable URLs.
 - [practical-prose-metrics.md](practical-prose-metrics.md): quantitative metrics and

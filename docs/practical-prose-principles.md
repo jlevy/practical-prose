@@ -102,7 +102,7 @@ These principles underlie `practical-prose-guidelines.md` and the dimensions use
 
 ## Mapping Principles to Measurable Attributes
 
-`practical-prose-guidelines.md` defines eighteen review dimensions grouped under five
+`practical-prose-guidelines.md` defines twenty review dimensions grouped under five
 headings. Each maps to one or more principles.
 
 | Dimension | Principles |
@@ -115,13 +115,15 @@ headings. Each maps to one or more principles.
 | Coherence | Lucid; Humane |
 | Concision | Essential; Humane |
 | Organization | Lucid; Maintainable |
-| Style Consistency | Lucid; Maintainable |
+| Consistency | Lucid; Maintainable |
 | Formatting | Lucid; Maintainable |
 | Verifiability | Verifiable |
 | Factuality | Truthful; Verifiable |
-| Inference Discipline | Verifiable; Lucid |
+| Relevance | Purposeful; Essential |
+| Discipline | Verifiable; Lucid |
 | Soundness | Truthful; Verifiable |
 | Precision | Truthful; Lucid |
+| Parsimony | Essential; Verifiable |
 | Calibration | Truthful; Humane |
 | Fairness | Truthful |
 | Robustness | Truthful; Verifiable |
@@ -147,7 +149,7 @@ headings. Each maps to one or more principles.
    humans) will optimize the rubric: more tags, more citations, more caveats, more
    structure, more words.
    None of these *makes* a document better; they make it more *compliant*. The Humane
-   principle exists to flag this failure mode — a document that scores high on every
+   principle exists to flag this failure mode: a document that scores high on every
    dimension but adds visible rigor without making its claims more inspectable,
    accurate, useful, or humane has gamed the metric.
    See “metrics are evidence, not quality” in

@@ -30,6 +30,7 @@ class Dimension:
     label: str
     section: int
     question: str
+    rules: tuple[str, ...]
     group_key: str
     group_label: str
 
@@ -44,6 +45,7 @@ class Group:
 def _load() -> tuple[str, tuple[Group, ...], dict[str, int], frozenset[str]]:
     data = yaml.safe_load(_SCHEMA_PATH.read_text(encoding="utf-8"))
     groups: list[Group] = []
+    rule_counts: dict[str, int] = {}
     for g in data["groups"]:
         dims = tuple(
             Dimension(
@@ -51,14 +53,17 @@ def _load() -> tuple[str, tuple[Group, ...], dict[str, int], frozenset[str]]:
                 label=d["label"],
                 section=d["section"],
                 question=d["question"],
+                rules=tuple(d.get("rules", [])),
                 group_key=g["key"],
                 group_label=g["label"],
             )
             for d in g["dimensions"]
         )
+        for d in dims:
+            rule_counts[d.key] = len(d.rules)
         groups.append(Group(key=g["key"], label=g["label"], dimensions=dims))
     na_applicable = frozenset(data.get("na_applicable_dimensions", []))
-    return data["version"], tuple(groups), dict(data["rule_counts"]), na_applicable
+    return data["version"], tuple(groups), rule_counts, na_applicable
 
 
 # Sentinel for the "not applicable" score value.

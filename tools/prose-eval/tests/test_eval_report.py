@@ -13,6 +13,7 @@ import pytest
 import yaml
 from pydantic import ValidationError
 
+from prose_eval import rubric_schema as rs  # noqa: E402
 from prose_eval.eval_report import (  # noqa: E402
     EvalReport,
     QualScores,
@@ -69,7 +70,7 @@ def _minimal_qual() -> dict:
             "coherence": 5,
             "concision": 4,
             "organization": 5,
-            "style_consistency": 4,
+            "consistency": 4,
             "formatting": 5,
         },
         "purpose": {
@@ -81,11 +82,13 @@ def _minimal_qual() -> dict:
         "grounding": {
             "verifiability": 5,
             "factuality": 4,
+            "relevance": 5,
         },
         "reasoning": {
-            "inference_discipline": 4,
+            "discipline": 4,
             "soundness": 5,
             "precision": 4,
+            "parsimony": 5,
         },
         "judgment": {"calibration": 5, "fairness": 5, "robustness": 4},
     }
@@ -112,10 +115,10 @@ def test_load_minimal_yaml_populates_derived():
     assert report.derived.rubric_rollup.expression_mean == pytest.approx(4.5, abs=0.01)
     # Purpose: 4+4+4+4 = 16 / 4 = 4.0
     assert report.derived.rubric_rollup.purpose_mean == pytest.approx(4.0, abs=0.01)
-    # Grounding: 5+4 = 9 / 2 = 4.5
-    assert report.derived.rubric_rollup.grounding_mean == pytest.approx(4.5, abs=0.01)
-    # Reasoning: 4+5+4 = 13 / 3 ≈ 4.333
-    assert report.derived.rubric_rollup.reasoning_mean == pytest.approx(13 / 3, abs=0.01)
+    # Grounding: 5+4+5 = 14 / 3 ≈ 4.667
+    assert report.derived.rubric_rollup.grounding_mean == pytest.approx(14 / 3, abs=0.01)
+    # Reasoning: 4+5+4+5 = 18 / 4 = 4.5
+    assert report.derived.rubric_rollup.reasoning_mean == pytest.approx(4.5, abs=0.01)
     # Judgment: 5+5+4 = 14 / 3 ≈ 4.667
     assert report.derived.rubric_rollup.judgment_mean == pytest.approx(14 / 3, abs=0.01)
 
@@ -129,7 +132,7 @@ def test_score_too_high_rejected():
 
 def test_missing_dimension_rejected():
     data = _minimal_report_dict()
-    del data["qual"]["reasoning"]["inference_discipline"]
+    del data["qual"]["reasoning"]["discipline"]
     with pytest.raises(Exception):
         EvalReport.model_validate(data)
 
@@ -166,12 +169,12 @@ def test_score_zero_excluded_from_rollup_means():
     report = EvalReport.model_validate(data)
     assert report.derived is not None
     rollup = report.derived.rubric_rollup
-    # Expression mean is over coherence/concision/organization/style_consistency/
+    # Expression mean is over coherence/concision/organization/consistency/
     # formatting (clarity excluded).
     assert rollup.expression_mean == 5.0
     assert rollup.overall_mean == 5.0
-    # 17 of 18 dimensions were assessed (clarity dropped to 0).
-    assert rollup.assessed_dimensions == 17
+    # All but one dimension were assessed (clarity dropped to 0).
+    assert rollup.assessed_dimensions == rs.dimension_count() - 1
 
 
 def test_all_zero_stub_has_zero_assessed_dimensions():
@@ -614,19 +617,19 @@ class TestB10_AlignmentProperty:
     def test_score_below_5_with_matching_violation_is_aligned(self):
         data = _minimal_report_dict()
         # Minimal has clarity=4, coherence=5, concision=4, organization=5,
-        # style_consistency=4, formatting=5, suitability=4, scope=4, breadth=4, depth=4,
-        # verifiability=5, factuality=4, inference_discipline=4, soundness=5,
+        # consistency=4, formatting=5, suitability=4, scope=4, breadth=4, depth=4,
+        # verifiability=5, factuality=4, discipline=4, soundness=5,
         # precision=4, calibration=5, fairness=5, robustness=4. Add a violation per <5 dim.
         sub5_dims = [
             "Clarity",
             "Concision",
-            "Style Consistency",
+            "Consistency",
             "Suitability",
             "Scope",
             "Breadth",
             "Depth",
             "Factuality",
-            "Inference Discipline",
+            "Discipline",
             "Precision",
             "Robustness",
         ]
@@ -676,10 +679,10 @@ class TestB10_AlignmentProperty:
             {"dimension": "Breadth", "rule_number": 1, "description": "x"},
             {"dimension": "Depth", "rule_number": 1, "description": "x"},
             {"dimension": "Organization", "rule_number": 1, "description": "x"},
-            {"dimension": "Style Consistency", "rule_number": 1, "description": "x"},
+            {"dimension": "Consistency", "rule_number": 1, "description": "x"},
             {"dimension": "Formatting", "rule_number": 1, "description": "x"},
             {"dimension": "Factuality", "rule_number": 1, "description": "x"},
-            {"dimension": "Inference Discipline", "rule_number": 1, "description": "x"},
+            {"dimension": "Discipline", "rule_number": 1, "description": "x"},
             {"dimension": "Precision", "rule_number": 1, "description": "x"},
             {"dimension": "Robustness", "rule_number": 1, "description": "x"},
         ]
@@ -791,7 +794,7 @@ class TestB10_AlignmentProperty:
                 "coherence": "clean",
                 "concision": "clean",
                 "organization": "clean",
-                "style_consistency": "clean",
+                "consistency": "clean",
                 "formatting": "clean",
             },
             "purpose": {
@@ -800,11 +803,12 @@ class TestB10_AlignmentProperty:
                 "breadth": "clean",
                 "depth": "clean",
             },
-            "grounding": {"verifiability": "clean", "factuality": "clean"},
+            "grounding": {"verifiability": "clean", "factuality": "clean", "relevance": "clean"},
             "reasoning": {
-                "inference_discipline": "clean",
+                "discipline": "clean",
                 "soundness": "clean",
                 "precision": "clean",
+                "parsimony": "clean",
             },
             "judgment": {
                 "calibration": "clean",

@@ -244,7 +244,7 @@ writing. We list these up front for those looking for a shortlist.
 - **Digital.gov, *Plain language guide series***[^digital-gov-plain]. US federal
   content-design and audience-testing guidance.
   Frames plain language as not only writing but also designing and testing content for
-  audience understanding — a usability discipline, not a style choice.
+  audience understanding: a usability discipline, not a style choice.
 
 ## Accessibility and Inclusive Design
 
@@ -472,7 +472,7 @@ legal-domain anchors specifically.
 - [practical-prose-guidelines.md](practical-prose-guidelines.md): prescriptive rules
   derived from the principles.
 - [practical-prose-rubric.md](practical-prose-rubric.md): descriptive 0-5 scoring
-  anchors for the 18 dimensions.
+  anchors for the 20 dimensions.
 - [common-doc-guidelines.md](common-doc-guidelines.md): general style, organization, and
   formatting.
 

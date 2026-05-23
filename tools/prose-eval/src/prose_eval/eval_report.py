@@ -167,7 +167,7 @@ class ExpressionScores(BaseModel):
     coherence: Score
     concision: Score
     organization: Score
-    style_consistency: Score
+    consistency: Score
     formatting: Score
 
 
@@ -175,13 +175,15 @@ class GroundingScores(BaseModel):
     model_config = ConfigDict(extra="forbid")
     verifiability: Score
     factuality: Score
+    relevance: Score
 
 
 class ReasoningScores(BaseModel):
     model_config = ConfigDict(extra="forbid")
-    inference_discipline: Score
+    discipline: Score
     soundness: Score
     precision: Score
+    parsimony: Score
 
 
 class JudgmentScores(BaseModel):
@@ -231,7 +233,7 @@ class ExpressionReasons(BaseModel):
     coherence: str | None = None
     concision: str | None = None
     organization: str | None = None
-    style_consistency: str | None = None
+    consistency: str | None = None
     formatting: str | None = None
 
 
@@ -239,13 +241,15 @@ class GroundingReasons(BaseModel):
     model_config = ConfigDict(extra="forbid")
     verifiability: str | None = None
     factuality: str | None = None
+    relevance: str | None = None
 
 
 class ReasoningReasons(BaseModel):
     model_config = ConfigDict(extra="forbid")
-    inference_discipline: str | None = None
+    discipline: str | None = None
     soundness: str | None = None
     precision: str | None = None
+    parsimony: str | None = None
 
 
 class JudgmentReasons(BaseModel):
@@ -733,11 +737,11 @@ def stub_qual() -> QualScores:
             coherence=0,
             concision=0,
             organization=0,
-            style_consistency=0,
+            consistency=0,
             formatting=0,
         ),
-        grounding=GroundingScores(verifiability=0, factuality=0),
-        reasoning=ReasoningScores(inference_discipline=0, soundness=0, precision=0),
+        grounding=GroundingScores(verifiability=0, factuality=0, relevance=0),
+        reasoning=ReasoningScores(discipline=0, soundness=0, precision=0, parsimony=0),
         judgment=JudgmentScores(calibration=0, fairness=0, robustness=0),
     )
 
