@@ -295,6 +295,25 @@ def test_build_prompt_includes_all_inputs():
     assert "```json" in prompt
 
 
+def test_build_prompt_is_schema_derived():
+    """The dimension list, JSON skeleton, and key count are generated from the
+    schema, not hard-coded in the template. Adding a dimension to the YAML must
+    flow into the prompt without editing the template."""
+    import prose_eval.rubric_schema as rs
+
+    prompt = build_prompt(FIXTURES / "all_headings.md")
+    # No unsubstituted placeholders leak into the rendered prompt.
+    for placeholder in ("{{CANONICAL_NAMES}}", "{{SCORES_JSON}}", "{{DIMENSION_COUNT}}"):
+        assert placeholder not in prompt, f"unsubstituted placeholder: {placeholder}"
+    # Every dimension key appears as a JSON score key, and every label appears in
+    # the canonical-name list.
+    for dim in rs.DIMENSIONS:
+        assert f'"{dim.key}":' in prompt, f"missing key {dim.key}"
+        assert dim.label in prompt, f"missing label {dim.label}"
+    # The hard-coded count matches the schema.
+    assert f"all {rs.dimension_count()} keys present" in prompt
+
+
 def test_build_prompt_missing_artifact_raises(tmp_path: Path):
     with pytest.raises(FileNotFoundError):
         build_prompt(tmp_path / "does-not-exist.md")

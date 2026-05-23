@@ -24,9 +24,7 @@ You will be given, in order:
 3. For every dimension scored 1-4, identify at least one specific guideline-rule
    violation. Cite:
    - the dimension by its canonical name (the exact label used in the rubric:
-     Suitability, Scope, Breadth, Depth, Clarity, Coherence, Concision, Organization,
-     Consistency, Formatting, Verifiability, Factuality, Relevance, Discipline,
-     Soundness, Precision, Parsimony, Calibration, Fairness, Robustness),
+     {{CANONICAL_NAMES}}),
    - the `rule_number` (the integer in `practical-prose-guidelines.md` for that
      dimension’s rule),
    - a one-line description,
@@ -48,39 +46,11 @@ artifact. Then emit a single JSON code fence with the shape below.
 Use the exact dimension keys listed in the rubric’s “Dimensions” table (snake_case,
 derived from the canonical label by lowercasing).
 
-```json
-{
-  "scores": {
-    "suitability":          {"score": 0, "reason": "..."},
-    "scope":                {"score": 0, "reason": "..."},
-    "breadth":              {"score": 0, "reason": "..."},
-    "depth":                {"score": 0, "reason": "..."},
-    "clarity":              {"score": 0, "reason": "..."},
-    "coherence":            {"score": 0, "reason": "..."},
-    "concision":            {"score": 0, "reason": "..."},
-    "organization":         {"score": 0, "reason": "..."},
-    "consistency":          {"score": 0, "reason": "..."},
-    "formatting":           {"score": 0, "reason": "..."},
-    "verifiability":        {"score": 0, "reason": "..."},
-    "factuality":           {"score": 0, "reason": "..."},
-    "relevance":            {"score": 0, "reason": "..."},
-    "discipline":           {"score": 0, "reason": "..."},
-    "soundness":            {"score": 0, "reason": "..."},
-    "precision":            {"score": 0, "reason": "..."},
-    "parsimony":            {"score": 0, "reason": "..."},
-    "calibration":          {"score": 0, "reason": "..."},
-    "fairness":             {"score": 0, "reason": "..."},
-    "robustness":           {"score": 0, "reason": "..."}
-  },
-  "violations": [
-    {"dimension": "Clarity", "rule_number": 4, "description": "...", "location": "L412-418"}
-  ]
-}
-```
+{{SCORES_JSON}}
 
 Hard requirements:
 
-- One score entry per dimension defined in the rubric, all 20 keys present, snake_case.
+- One score entry per dimension defined in the rubric, all {{DIMENSION_COUNT}} keys present, snake_case.
 - Each `score` is either an integer 0-5 or the literal string `"NA"`.
 - Each `reason` is a short string (under 200 chars).
 - `violations` may be empty only if every dimension scored 5, 0, or `NA`.
