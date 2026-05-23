@@ -218,8 +218,8 @@ writing. We list these up front for those looking for a shortlist.
 - **Nielsen Norman Group, “Concise, SCANNABLE, and Objective: How to Write for the
   Web”** (1997)[^nngroup-scannable]. Foundational web-writing research.
   Argues that web readers scan first, read second; recommends concise, scannable,
-  objective prose. Maps directly to the “skim recoverability” rule in §1 Suitability and
-  to §8 Organization in `practical-prose-guidelines.md`.
+  objective prose. Maps directly to the “skim recoverability” rule in P1 Suitability and
+  to E4 Organization in `practical-prose-guidelines.md`.
 - **Nielsen Norman Group ongoing research**[^nngroup-ongoing]. Continually updated body
   of usability research and writing guidance; UX-focused articles on scannable content,
   plain language for the web, accessibility, and information architecture.

@@ -19,20 +19,20 @@ Counts (all per-document):
   - Code blocks: count of fenced code blocks in the raw document
   - Banned-register hits: prose occurrences of strong-register / advocacy-register
     words from the canonical common-doc-guidelines §4.2 list referenced by
-    practical-prose-guidelines.md §5 Clarity rule 4 (e.g. incontrovertibly, monumental,
+    practical-prose-guidelines.md E1 Clarity rule 4 (e.g. incontrovertibly, monumental,
     paradigm-shifting). Override the default list with --banned-words-file.
   - Em-dash discipline: count of spaced em dashes (" — " — a common agent failure
-    mode prohibited by practical-prose-guidelines.md §9 rule 7) and total em-dash
+    mode prohibited by practical-prose-guidelines.md E5 rule 7) and total em-dash
     density per 1000 words.
   - Replacement-history hits: prose occurrences of phrases that narrate change
     ("previously named", "formerly", "under the new layout", "this design was changed",
-    "now uses"). §7 Concision rule 5 — flags only, since some genres legitimately
+    "now uses"). E3 Concision rule 5 — flags only, since some genres legitimately
     document history.
   - Pedantic-marker hits: prose occurrences of canonicality declarations and
     word-choice / reading-order justifications ("the canonical X", "we use the term Y
-    because", "start with section"). §5 Clarity rule 6.
+    because", "start with section"). E1 Clarity rule 6.
   - Generic-heading hits: ATX headings whose entire text is a single generic word
-    ("Overview", "Background", "Notes", "Details", "Misc"). §8 Organization rule 9 —
+    ("Overview", "Background", "Notes", "Details", "Misc"). E4 Organization rule 9 —
     flags only, since these can be appropriate at a section's outermost level.
   - Words, sentences, paragraphs, lines (prose-only — YAML frontmatter, fenced code
     blocks, and inline code are stripped before counting; sentence splitting via flowmark
@@ -173,7 +173,7 @@ EXTERNAL_SCHEMES = ("http://", "https://", "ftp://", "ftps://", "mailto:", "tel:
 
 # Default banned-register words. Canonical source:
 #   docs/common-doc-guidelines.md §4.2
-# Referenced from practical-prose-guidelines.md §5 Clarity rule 4 and applied by the
+# Referenced from practical-prose-guidelines.md E1 Clarity rule 4 and applied by the
 # `banned-register hits` metric below.
 #
 # The list combines:
@@ -424,24 +424,24 @@ Other:
   tables          {m.tables:>4}
   code blocks     {m.code_blocks:>4}
 
-Lint (§5 Clarity rule 4 — banned register from common-doc-guidelines §4.2; may be earned with a citation):
+Lint (E1 Clarity rule 4 — banned register from common-doc-guidelines §4.2; may be earned with a citation):
   banned hits     {m.banned_register_hits:>4}
   examples        {banned_examples}
 
-Lint (§9 Consistency rule 7 — em-dash discipline):
+Lint (E5 Consistency rule 7 — em-dash discipline):
   spaced em " — " {m.spaced_em_dash_count:>4}    (common agent failure mode; prefer "—" or other punctuation)
   em dashes total {m.em_dashes_total:>4}
   density /1k wds {m.em_dash_density_per_1000_words:>4.2f}
 
-Lint (§7 Concision rule 5 — replacement history; flag only, genre-dependent):
+Lint (E3 Concision rule 5 — replacement history; flag only, genre-dependent):
   rh hits         {m.replacement_history_hits:>4}
   examples        {rh_examples}
 
-Lint (§5 Clarity rule 6 — pedantic/pedagogical markers; flag only):
+Lint (E1 Clarity rule 6 — pedantic/pedagogical markers; flag only):
   pedantic hits   {m.pedantic_marker_hits:>4}
   examples        {pm_examples}
 
-Lint (§8 Organization rule 9 — generic templated headings; flag only):
+Lint (E4 Organization rule 9 — generic templated headings; flag only):
   generic-hd hits {m.generic_heading_hits:>4}
   examples        {gh_examples}
 """

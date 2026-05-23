@@ -95,26 +95,26 @@ looking at specific qualities or dimensions.
 
 | Area | Dimension | Question |
 | --- | --- | --- |
-| **Purpose** | Suitability | Does the document give the reader what they need, in the form the task requires? |
-|  | Scope | Is the scope stated, and does it fit the actual scope of the work? |
-|  | Breadth | Are the relevant areas within scope covered? |
-|  | Depth | Are the important areas developed enough? |
-| **Expression** | Clarity | Does the writing read well? |
-|  | Coherence | Do the ideas progress smoothly? |
-|  | Concision | Does every section earn its place? |
-|  | Organization | Are sections, headings, sequence, tables, figures, links, and cross-references arranged for navigation? |
-|  | Consistency | Does the document follow the chosen style guide or house style consistently? |
-|  | Formatting | Is the document visually and syntactically clean in its medium? |
-| **Grounding** | Verifiability | Are claims traceable to sources or calculations? |
-|  | Factuality | Do cited sources support the claims as asserted? |
-|  | Relevance | Do sources, citations, and reasoning chains bear on the document's stated purpose? |
-| **Reasoning** | Discipline | Are observation, judgment, interpretation, and implication worked through in order, with each higher rung supported by the prior? |
-|  | Soundness | Do claims follow from evidence through valid mechanisms? |
-|  | Precision | Are claims and terms specified at the right granularity? |
-|  | Parsimony | Is each load-bearing reasoning chain the cleanest, simplest sound argument possible for its conclusion? |
-| **Judgment** | Calibration | Does claim strength match evidence strength? |
-|  | Fairness | Are opposing positions argued at proportional evidentiary depth? |
-|  | Robustness | Do key claims survive plausible alternative interpretations? |
+| **Purpose** | P1. Suitability | Does the document give the reader what they need, in the form the task requires? |
+|  | P2. Scope | Is the scope stated, and does it fit the actual scope of the work? |
+|  | P3. Breadth | Are the relevant areas within scope covered? |
+|  | P4. Depth | Are the important areas developed enough? |
+| **Expression** | E1. Clarity | Does the writing read well? |
+|  | E2. Coherence | Do the ideas progress smoothly? |
+|  | E3. Concision | Does every section earn its place? |
+|  | E4. Organization | Are sections, headings, sequence, tables, figures, links, and cross-references arranged for navigation? |
+|  | E5. Consistency | Does the document follow the chosen style guide or house style consistently? |
+|  | E6. Formatting | Is the document visually and syntactically clean in its medium? |
+| **Grounding** | G1. Verifiability | Are claims traceable to sources or calculations? |
+|  | G2. Factuality | Do cited sources support the claims as asserted? |
+|  | G3. Relevance | Do sources, citations, and reasoning chains bear on the document's stated purpose? |
+| **Reasoning** | R1. Discipline | Are observation, judgment, interpretation, and implication worked through in order, with each higher rung supported by the prior? |
+|  | R2. Soundness | Do claims follow from evidence through valid mechanisms? |
+|  | R3. Precision | Are claims and terms specified at the right granularity? |
+|  | R4. Parsimony | Is each load-bearing reasoning chain the cleanest, simplest sound argument possible for its conclusion? |
+| **Judgment** | J1. Calibration | Does claim strength match evidence strength? |
+|  | J2. Fairness | Are opposing positions argued at proportional evidentiary depth? |
+|  | J3. Robustness | Do key claims survive plausible alternative interpretations? |
 
 Each dimension maps back to one or more principles in
 [practical-prose-principles.md](docs/practical-prose-principles.md); prescriptive
