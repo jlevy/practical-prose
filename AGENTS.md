@@ -38,12 +38,12 @@ which rule is set aside, what reader outcome it serves, and what risk it introdu
 
 ## Tooling
 
-The Python package lives in `tools/pprose/`. The distribution is `practical-prose`; the
-command is `pprose`. After publication, run it with no install (the command differs from
-the package, so `--from` is required):
+The Python package lives in `tools/pprose/`. The distribution and command are both
+`pprose`, so after publication agents can run it in any repo with `uvx` and no prior
+install:
 
 ```bash
-uvx --from practical-prose pprose <command> ...
+uvx pprose <command> ...
 ```
 
 **Evaluate** (action): `pprose metrics`, `pprose report`, `pprose score`,
@@ -55,10 +55,11 @@ uvx --from practical-prose pprose <command> ...
 the wheel, so these work in any repo without this source tree.
 
 **Setup**: `pprose install` writes the five Practical Prose skills into a repo’s
-`.claude/skills/`. The generated skills reference `pprose` with a pinned, local-first
-invocation: `pprose` if on PATH, else `uvx --from practical-prose@<version> pprose` (the
-version that ran install — a trusted pin, never an unpinned runner), else they tell the
-user to install uv or pprose.
+`.claude/skills/`. Use `pprose install --agents-md` when the target repo should also get
+an `AGENTS.md` routing block.
+The generated skills reference `pprose` with a pinned, local-first invocation: `pprose`
+if on PATH, else `uvx pprose@<version>` (the version that ran install — a trusted pin,
+never an unpinned runner), else they tell the user to install uv or pprose.
 
 For local development before publication, run from the package workspace:
 

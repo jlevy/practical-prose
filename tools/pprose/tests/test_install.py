@@ -47,7 +47,7 @@ def test_skill_compose_has_pinned_invocation_and_marker(capsys: pytest.CaptureFi
     assert cli.main(["skill", "pprose-full-edit"]) == 0
     out = capsys.readouterr().out
     assert "DO NOT EDIT" in out
-    assert f"uvx --from practical-prose@{install.pinned_version()} pprose" in out
+    assert f"uvx pprose@{install.pinned_version()}" in out
     # The local-first + tell-the-user fallback must be present.
     assert "if `pprose` is on the PATH" in out
     assert "pprose needs `uvx`" in out
@@ -63,7 +63,7 @@ def test_install_writes_pinned_skills(tmp_path: Path):
     for skill_md in skills_root.glob("*/SKILL.md"):
         text = skill_md.read_text(encoding="utf-8")
         assert "DO NOT EDIT" in text
-        assert f"uvx --from practical-prose@{pin} pprose" in text
+        assert f"uvx pprose@{pin}" in text
         assert "pprose needs `uvx`" in text
 
 
@@ -73,7 +73,7 @@ def test_install_agents_md_marker(tmp_path: Path):
     agents = (tmp_path / "AGENTS.md").read_text(encoding="utf-8")
     assert "User content." in agents  # preserved
     assert "<!-- BEGIN PPROSE -->" in agents and "<!-- END PPROSE -->" in agents
-    assert f"uvx --from practical-prose@{install.pinned_version()} pprose" in agents
+    assert f"uvx pprose@{install.pinned_version()}" in agents
 
 
 def test_install_print_writes_nothing(tmp_path: Path, capsys: pytest.CaptureFixture[str]):

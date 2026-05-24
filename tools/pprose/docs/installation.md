@@ -17,3 +17,9 @@ Then install a Python toolchain:
 ```shell
 uv python install 3.13  # or another version
 ```
+
+After publication, run Practical Prose without a project install:
+
+```shell
+uvx pprose --help
+```
