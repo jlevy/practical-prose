@@ -22,10 +22,9 @@ rewriting — never change factual meaning, claim strength, scope, or citations.
 
 ## Steps
 
-1. Read [../../shortcuts/shortcut-full-edit.md](../../shortcuts/shortcut-full-edit.md) —
-   the playbook, including the editorial-review structure.
-2. Follow it: per-group passes against
-   [../../docs/practical-prose-guidelines.md](../../docs/practical-prose-guidelines.md),
+1. Run `pprose shortcut shortcut-full-edit` — the playbook, including the
+   editorial-review structure.
+2. Follow it: per-group passes against `pprose guidelines practical-prose-guidelines`,
    apply the safe fixes, flag the substantive ones, and write the editorial review.
 
 ## Output

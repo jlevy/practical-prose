@@ -5,8 +5,9 @@ description: Apply the common Markdown documentation guidelines to any document;
 # Common Edit
 
 This is the basic, universal edit tier (an apply skill: it may modify the target
-document). It applies only [common-doc-guidelines.md](../../docs/common-doc-guidelines.md)
-— organization, structure, writing style, Markdown formatting, links, headings, lists,
+document). It applies only the common documentation guidelines (read them with
+`pprose guidelines common-doc-guidelines`) — organization, structure, writing style,
+Markdown formatting, links, headings, lists,
 frontmatter, and footer — so it is safe for almost any Markdown document, workflow, or
 repo, whether or not it is a Practical Prose artifact.
 
@@ -21,7 +22,7 @@ tier is a superset of the one before.
 
 ## Steps
 
-1. Read [../../docs/common-doc-guidelines.md](../../docs/common-doc-guidelines.md).
+1. Run `pprose guidelines common-doc-guidelines` and read it.
 2. Inspect the target against organization, structure, writing style, Markdown
    formatting, links, headings, lists, frontmatter, and footer rules.
 3. Apply fixes directly to the document while preserving its intended content and voice.

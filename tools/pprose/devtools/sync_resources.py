@@ -21,12 +21,18 @@ REPO_ROOT = Path(__file__).resolve().parents[3]  # repo root
 RESOURCES = PKG_DIR / "src" / "pprose" / "resources"
 
 # category -> list of (source_path, dest_filename)
+CATEGORIES = ("guidelines", "shortcuts", "runbooks", "skills")
+
+
 def _plan() -> dict[str, list[tuple[Path, str]]]:
-    plan: dict[str, list[tuple[Path, str]]] = {"guidelines": [], "shortcuts": [], "skills": []}
+    plan: dict[str, list[tuple[Path, str]]] = {c: [] for c in CATEGORIES}
     for p in sorted((REPO_ROOT / "docs").glob("*.md")):
         plan["guidelines"].append((p, p.name))
     for p in sorted((REPO_ROOT / "shortcuts").glob("*.md")):
         plan["shortcuts"].append((p, p.name))
+    for p in sorted((REPO_ROOT / "runbooks").glob("*.md")):
+        # Drop the ".runbook" infix so the command reads `pprose runbook <name>`.
+        plan["runbooks"].append((p, p.name.replace(".runbook.md", ".md")))
     for skill_md in sorted((REPO_ROOT / "skills").glob("*/SKILL.md")):
         plan["skills"].append((skill_md, f"{skill_md.parent.name}.md"))
     return plan
@@ -49,7 +55,7 @@ def check() -> list[str]:
         if not dest.is_file() or dest.read_text(encoding="utf-8") != content:
             drift.append(str(dest.relative_to(PKG_DIR)))
     # Stale files present in resources but no longer in the plan.
-    for category in ("guidelines", "shortcuts", "skills"):
+    for category in CATEGORIES:
         cat_dir = RESOURCES / category
         if cat_dir.is_dir():
             for existing in cat_dir.glob("*.md"):
@@ -64,7 +70,7 @@ def sync() -> None:
         dest.parent.mkdir(parents=True, exist_ok=True)
         dest.write_text(content, encoding="utf-8")
     # Remove stale files.
-    for category in ("guidelines", "shortcuts", "skills"):
+    for category in CATEGORIES:
         cat_dir = RESOURCES / category
         if cat_dir.is_dir():
             for existing in cat_dir.glob("*.md"):

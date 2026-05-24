@@ -7,8 +7,8 @@ author: Joshua Levy (github.com/jlevy) with agent assistance
 # Full-Edit Shortcut
 
 The deepest edit tier: a systematic pass across all five groups and 20 dimensions of
-[practical-prose-guidelines.md](../docs/practical-prose-guidelines.md). A superset of the
-[copy-edit shortcut](shortcut-copy-edit.md) (common substrate + Expression); full-edit
+`pprose guidelines practical-prose-guidelines`. A superset of the
+`pprose shortcut shortcut-copy-edit` (common substrate + Expression); full-edit
 adds the substantive dimensions and produces an editorial review.
 
 ## What it produces
@@ -30,12 +30,12 @@ adds the substantive dimensions and produces an editorial review.
 ## Procedure
 
 1. **Orient.** Read the document for task, scope, audience, risk level, and output shape.
-   Read [practical-prose-guidelines.md](../docs/practical-prose-guidelines.md); for the
+   Read `pprose guidelines practical-prose-guidelines`; for the
    review-time questions and applicability-by-risk-level, use
-   [practical-prose-quick-checklist.md](practical-prose-quick-checklist.md).
+   `pprose shortcut practical-prose-quick-checklist`.
 
 2. **Run the passes by group** (the four audit passes in
-   [practical-prose-quick-checklist.md](practical-prose-quick-checklist.md)
+   `pprose shortcut practical-prose-quick-checklist`
    §Audit-pass operationalization — required for high-stakes docs; keep them separate):
    - **Lint pass** — E4 Organization, E5 Consistency, E6 Formatting, E1 banned-register
      and vague-word checks. Use `pprose metrics`. *Auto-apply.*
@@ -99,7 +99,7 @@ formatting, …) so the author can scan the diff with context.
 Keep the review grounded in specific locations and claims. A flagged weakness may be a
 **justified deviation** rather than a defect: if the author documented the rule set
 aside, the reader outcome it serves, and the risk introduced, note it as accepted (see
-*Justified Deviations* in [practical-prose-rubric.md](../docs/practical-prose-rubric.md)).
+*Justified Deviations* in `pprose guidelines practical-prose-rubric`).
 
 ## Audit-only mode
 

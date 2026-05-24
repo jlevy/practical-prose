@@ -189,9 +189,12 @@ reportUnannotatedClassAttribute = false
 reportUnusedParameter = false
 
 [tool.codespell]
+# src/pprose/resources/ holds verbatim copies of the canonical repo docs (synced by
+# devtools/sync_resources.py); spell-checking is the source docs' concern, and the prose
+# intentionally uses domain terms (e.g. "SME") that codespell flags.
+skip = "src/pprose/resources/*,uv.lock"
 # Add here as needed:
 # ignore-words-list = "foo,bar"
-# skip = "foo.py,bar.py"
 
 [tool.pytest.ini_options]
 # Put the package root on sys.path so tests can import `devtools` helpers.

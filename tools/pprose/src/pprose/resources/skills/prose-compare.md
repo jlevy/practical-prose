@@ -15,17 +15,17 @@ Use it after each input document already has a validated Practical Prose eval re
 
 ## Steps
 
-1. Read `../../runbooks/practical-prose-eval-compare.runbook.md`.
+1. Run `pprose runbook practical-prose-eval-compare` for the full procedure.
 2. Validate each input:
 
    ```bash
-   uvx pprose report validate path/to/artifact.eval.md --complete
+   pprose report validate path/to/artifact.eval.md --complete
    ```
 
 3. Generate the comparison:
 
    ```bash
-   uvx pprose compare a.eval.md b.eval.md --format unified --pairs 'a=b' > comparison.md
+   pprose compare a.eval.md b.eval.md --format unified --pairs 'a=b' > comparison.md
    ```
 
    Add `--table-styles` only when generating a report for a browser that supports the
@@ -33,9 +33,6 @@ Use it after each input document already has a validated Practical Prose eval re
 
 4. Add human analytical prose only when the user asks for a full report, and ground it
    in specific table cells.
-
-For local development before publication, run the same subcommands with
-`cd tools/pprose && uv run pprose ...`.
 
 ## Output
 

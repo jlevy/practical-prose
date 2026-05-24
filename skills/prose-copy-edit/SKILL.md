@@ -18,12 +18,10 @@ review, use `prose-full-edit`.
 
 ## Steps
 
-1. Read [../../shortcuts/shortcut-copy-edit.md](../../shortcuts/shortcut-copy-edit.md).
-2. Apply the common substrate:
-   [../../docs/common-doc-guidelines.md](../../docs/common-doc-guidelines.md).
+1. Run `pprose shortcut shortcut-copy-edit` and follow it.
+2. Apply the common substrate: `pprose guidelines common-doc-guidelines`.
 3. Apply the Expression dimensions (E1–E6) from
-   [../../docs/practical-prose-guidelines.md](../../docs/practical-prose-guidelines.md)
-   (§Expression Dimensions).
+   `pprose guidelines practical-prose-guidelines` (§Expression Dimensions).
 4. Audit the document, track issues (project issue/bead tooling when available, else the
    agent's to-do/checklist), and apply edits directly.
 5. Preserve factual meaning, claim strength, citations, and intentional voice. Do not
