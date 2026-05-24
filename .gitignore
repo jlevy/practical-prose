@@ -232,11 +232,11 @@ Thumbs.db
 .claude/*
 !.claude/skills/
 .claude/skills/*
-!.claude/skills/prose-apply-common-guidelines
-!.claude/skills/prose-quick-check
-!.claude/skills/prose-copy-edit
-!.claude/skills/prose-eval
-!.claude/skills/prose-compare
+!.claude/skills/pprose-common-edit
+!.claude/skills/pprose-copy-edit
+!.claude/skills/pprose-full-edit
+!.claude/skills/pprose-eval
+!.claude/skills/pprose-compare
 .codex/
 .aider*
 

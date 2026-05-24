@@ -7,7 +7,7 @@ from collections.abc import Callable, Generator
 from contextlib import contextmanager
 from dataclasses import dataclass
 
-from pprose import eval_compare, eval_report, eval_score, metrics
+from pprose import eval_compare, eval_report, eval_score, install, metrics, reference
 
 CommandMain = Callable[[list[str] | None], int]
 
@@ -16,29 +16,57 @@ CommandMain = Callable[[list[str] | None], int]
 class CommandSpec:
     summary: str
     main: CommandMain
-    example: str
+    group: str
 
+
+# Groups print in this order.
+GROUPS = ("Evaluate", "Reference", "Setup")
 
 COMMANDS: dict[str, CommandSpec] = {
     "metrics": CommandSpec(
         "Compute deterministic metrics for one or more Markdown artifacts.",
         metrics.main,
-        "pprose metrics doc.md",
+        "Evaluate",
     ),
     "report": CommandSpec(
         "Create, validate, and recompute eval reports.",
         eval_report.main,
-        "pprose report from-metrics doc.md --out doc.eval.md",
+        "Evaluate",
     ),
     "score": CommandSpec(
         "Fill qualitative scores and violations in eval reports (needs ANTHROPIC_API_KEY).",
         eval_score.main,
-        "pprose score doc.eval.md",
+        "Evaluate",
     ),
     "compare": CommandSpec(
         "Compare multiple eval reports in Markdown tables.",
         eval_compare.main,
-        "pprose compare a.eval.md b.eval.md",
+        "Evaluate",
+    ),
+    "guidelines": CommandSpec(
+        "Print a bundled guideline doc (--list to see them).",
+        reference.guidelines_main,
+        "Reference",
+    ),
+    "shortcut": CommandSpec(
+        "Print a bundled workflow shortcut (--list to see them).",
+        reference.shortcut_main,
+        "Reference",
+    ),
+    "runbook": CommandSpec(
+        "Print a bundled runbook (--list to see them).",
+        reference.runbook_main,
+        "Reference",
+    ),
+    "skill": CommandSpec(
+        "Print a composed Practical Prose skill (--list to see them).",
+        install.skill_main,
+        "Reference",
+    ),
+    "install": CommandSpec(
+        "Install the Practical Prose skills into a repo's .claude/skills/.",
+        install.install_main,
+        "Setup",
     ),
 }
 
@@ -46,26 +74,24 @@ COMMANDS: dict[str, CommandSpec] = {
 def _print_help() -> None:
     command_width = max(len(name) for name in COMMANDS)
     lines = [
-        "pprose — Practical Prose evaluation tooling",
+        "pprose — Practical Prose evaluation and editing tooling",
         "",
         "Usage:",
         "  pprose <command> [args]",
-        "",
-        "Commands:",
     ]
-    for name, spec in COMMANDS.items():
-        lines.append(f"  {name:<{command_width}}  {spec.summary}")
-    lines.append("")
-    lines.append("Examples:")
-    for spec in COMMANDS.values():
-        lines.append(f"  {spec.example}")
+    for group in GROUPS:
+        lines.append("")
+        lines.append(f"{group}:")
+        for name, spec in COMMANDS.items():
+            if spec.group == group:
+                lines.append(f"  {name:<{command_width}}  {spec.summary}")
     lines.extend(
         [
             "",
             "Run `pprose <command> --help` for command-specific options.",
             "",
             "Getting started:",
-            "  uvx pprose <command> [args]   # zero-install run via uv",
+            "  uvx --from practical-prose@<version> pprose install   # zero-install; pins skills",
             "  `score` needs ANTHROPIC_API_KEY (auto-loads .env / .env.local).",
         ]
     )

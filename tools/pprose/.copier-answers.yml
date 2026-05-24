@@ -6,4 +6,4 @@ package_author_name: Joshua Levy
 package_description: "Practical Prose tooling: metrics, rubric scoring, evaluation reports, and comparisons"
 package_github_org: jlevy
 package_module: pprose
-package_name: pprose
+package_name: practical-prose

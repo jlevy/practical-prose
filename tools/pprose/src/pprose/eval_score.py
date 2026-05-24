@@ -29,6 +29,7 @@ from pathlib import Path
 
 from pydantic import BaseModel
 
+from pprose import resources
 from pprose import rubric_schema as rs
 from pprose.eval_render import render_single_doc_rollup
 from pprose.eval_report import (
@@ -52,20 +53,38 @@ PACKAGE_ROOT = Path(__file__).resolve().parent
 
 
 def _find_repo_root(start: Path) -> Path:
-    # Walk up from `start` looking for a .git marker. The package is installed
-    # under the practical-prose repo's tools/pprose/ subtree, so REPO_ROOT
-    # is the practical-prose repo root and holds the rubric / guidelines docs.
-    # Fall back to `start` so the tool keeps functioning outside a git tree.
+    # Walk up from `start` looking for a .git marker, used to resolve relative
+    # artifact paths and to prefer the repo's own docs when dogfooding inside the
+    # source tree. Fall back to `start` so the tool keeps functioning outside a
+    # git tree (e.g. an installed wheel).
     for p in [start, *start.parents]:
         if (p / ".git").exists():
             return p
     return start
 
 
+def _resolve_doc(name: str) -> Path:
+    """Resolve a guideline doc, preferring a repo copy (dogfooding) over the bundle.
+
+    Order: $PPROSE_DOCS_DIR/<name>.md, then REPO_ROOT/docs/<name>.md when the
+    package sits inside the source repo, then the copy bundled in the wheel — so
+    `pprose score` works standalone in any environment.
+    """
+    override = os.environ.get("PPROSE_DOCS_DIR")
+    if override:
+        p = Path(override) / f"{name}.md"
+        if p.is_file():
+            return p
+    repo_doc = REPO_ROOT / "docs" / f"{name}.md"
+    if repo_doc.is_file():
+        return repo_doc
+    return resources.doc_path("guidelines", name)
+
+
 REPO_ROOT = _find_repo_root(PACKAGE_ROOT)
 PROMPT_TEMPLATE_PATH = PACKAGE_ROOT / "prompts" / "eval-rubric-score.md"
-RUBRIC_PATH = REPO_ROOT / "docs" / "practical-prose-rubric.md"
-GUIDELINES_PATH = REPO_ROOT / "docs" / "practical-prose-guidelines.md"
+RUBRIC_PATH = _resolve_doc("practical-prose-rubric")
+GUIDELINES_PATH = _resolve_doc("practical-prose-guidelines")
 
 JSON_FENCE_RE = re.compile(r"```json\s*\n(.+?)\n```", re.DOTALL)
 

@@ -1,5 +1,5 @@
 ---
-name: prose-eval
+name: pprose-eval
 description: Score one practical document with metrics and rubric grading; read-only on source. Use when asked to score, evaluate, grade, rubric-check, or measure quality.
 ---
 # Evaluate One Practical Prose Document
@@ -9,9 +9,9 @@ It writes eval report files.
 
 Use it when the user wants a formal Practical Prose evaluation of one document.
 
-For the repo’s baseline batch evals, read
-`../../runbooks/practical-prose-baseline-evals.runbook.md` and default to running all
-third-party and self-eval artifacts unless the user asks for a subset.
+For the repo’s baseline batch evals, run `pprose runbook practical-prose-baseline-evals`
+and default to running all third-party and self-eval artifacts unless the user asks for a
+subset.
 
 ## Inputs
 
@@ -23,34 +23,31 @@ third-party and self-eval artifacts unless the user asks for a subset.
 
 ## Steps
 
-1. Read `../../runbooks/practical-prose-eval-single.runbook.md`.
+1. Run `pprose runbook practical-prose-eval-single` for the full procedure.
 
 2. Generate the eval stub:
 
    ```bash
-   uvx pprose report from-metrics path/to/artifact.md --label NAME --scope-class brief --out artifact.eval.md
+   pprose report from-metrics path/to/artifact.md --label NAME --scope-class brief --out artifact.eval.md
    ```
 
 3. Inspect deterministic metrics:
 
    ```bash
-   uvx pprose metrics path/to/artifact.md --format yaml
+   pprose metrics path/to/artifact.md --format yaml
    ```
 
 4. Score the qualitative dimensions:
 
    ```bash
-   uvx pprose score artifact.eval.md
+   pprose score artifact.eval.md
    ```
 
 5. Validate the result:
 
    ```bash
-   uvx pprose report validate artifact.eval.md --complete
+   pprose report validate artifact.eval.md --complete
    ```
-
-For local development before publication, run the same subcommands with
-`cd tools/pprose && uv run pprose ...`.
 
 ## Output
 

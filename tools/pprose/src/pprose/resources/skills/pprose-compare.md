@@ -1,0 +1,40 @@
+---
+name: pprose-compare
+description: Compare evaluated document versions or variants; read-only on source docs. Use when asked to compare drafts, A/B versions, quality-diff docs, or pick the best.
+---
+# Compare Practical Prose Evaluations
+
+This is read-only on source documents. It writes or prints comparison reports.
+
+Use it after each input document already has a validated Practical Prose eval report.
+
+## Inputs
+
+- Paths to two or more validated `*.eval.md` reports.
+- Optional labels or pair specs for deltas, such as `old=new`.
+
+## Steps
+
+1. Run `pprose runbook practical-prose-eval-compare` for the full procedure.
+2. Validate each input:
+
+   ```bash
+   pprose report validate path/to/artifact.eval.md --complete
+   ```
+
+3. Generate the comparison:
+
+   ```bash
+   pprose compare a.eval.md b.eval.md --format unified --pairs 'a=b' > comparison.md
+   ```
+
+   Add `--table-styles` only when generating a report for a browser that supports the
+   optional table-style microformat.
+
+4. Add human analytical prose only when the user asks for a full report, and ground it
+   in specific table cells.
+
+## Output
+
+Return the comparison path or table, validation status for each input, and any alignment
+or rubric-version warnings.

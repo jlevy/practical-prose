@@ -6,8 +6,8 @@ Repository = "https://github.com/jlevy/practical-prose"
 # Documentation = "https://..."
 
 [project]
-name = "pprose"
-description = "Practical Prose tooling: metrics, rubric scoring, evaluation reports, and comparisons"
+name = "practical-prose"
+description = "Practical Prose tooling (pprose CLI): metrics, rubric scoring, evaluation reports, and comparisons"
 authors = [
     { name="Joshua Levy", email="joshuadlevy@gmail.com" },
 ]
@@ -94,6 +94,7 @@ packages = ["src/pprose"]
 include = [
     "src/pprose/rubric_schema.yaml",
     "src/pprose/prompts/*.md",
+    "src/pprose/resources/**/*.md",
 ]
 
 
@@ -188,11 +189,16 @@ reportUnannotatedClassAttribute = false
 reportUnusedParameter = false
 
 [tool.codespell]
+# src/pprose/resources/ holds verbatim copies of the canonical repo docs (synced by
+# devtools/sync_resources.py); spell-checking is the source docs' concern, and the prose
+# intentionally uses domain terms (e.g. "SME") that codespell flags.
+skip = "src/pprose/resources/*,uv.lock"
 # Add here as needed:
 # ignore-words-list = "foo,bar"
-# skip = "foo.py,bar.py"
 
 [tool.pytest.ini_options]
+# Put the package root on sys.path so tests can import `devtools` helpers.
+pythonpath = ["."]
 python_files = ["test_*.py"]
 python_classes = ["Test*"]
 python_functions = ["test_*"]

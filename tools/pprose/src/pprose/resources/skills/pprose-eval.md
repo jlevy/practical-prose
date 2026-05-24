@@ -1,0 +1,55 @@
+---
+name: pprose-eval
+description: Score one practical document with metrics and rubric grading; read-only on source. Use when asked to score, evaluate, grade, rubric-check, or measure quality.
+---
+# Evaluate One Practical Prose Document
+
+This is read-only on the source document.
+It writes eval report files.
+
+Use it when the user wants a formal Practical Prose evaluation of one document.
+
+For the repo’s baseline batch evals, run `pprose runbook practical-prose-baseline-evals`
+and default to running all third-party and self-eval artifacts unless the user asks for a
+subset.
+
+## Inputs
+
+- Path to one Markdown artifact.
+- Artifact label.
+- Scope class: `status`, `memo`, `brief`, `deep_research`, or `design_doc`.
+- `ANTHROPIC_API_KEY` for model scoring, unless the user asks for dry-run or manual
+  scoring only.
+
+## Steps
+
+1. Run `pprose runbook practical-prose-eval-single` for the full procedure.
+
+2. Generate the eval stub:
+
+   ```bash
+   pprose report from-metrics path/to/artifact.md --label NAME --scope-class brief --out artifact.eval.md
+   ```
+
+3. Inspect deterministic metrics:
+
+   ```bash
+   pprose metrics path/to/artifact.md --format yaml
+   ```
+
+4. Score the qualitative dimensions:
+
+   ```bash
+   pprose score artifact.eval.md
+   ```
+
+5. Validate the result:
+
+   ```bash
+   pprose report validate artifact.eval.md --complete
+   ```
+
+## Output
+
+Return the eval report path, validation result, and any scoring or alignment issues that
+need human review.
