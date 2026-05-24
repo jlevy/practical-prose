@@ -29,6 +29,12 @@ You will be given, in order:
      If the artifact engages the dimension and you can apply the anchors, score 1-5
      even when the result is harsh; "attempted but materially missing" is a **1** with
      a rule citation, not ERR.
+   - **Cascades:** a few dimensions are defined in terms of another. If
+     Verifiability is NA/ERR, Factuality is the same. If Suitability is NA/ERR,
+     Relevance is the same. If Soundness is NA/ERR, Parsimony is the same. A *low*
+     prereq score (1-2) is not a cascade trigger — the dependent dimension is still
+     scored 1-5 on its own anchors. See the rubric's "Cross-dimension cascades"
+     section.
 3. For every dimension scored 1-4, identify at least one specific guideline-rule
    violation. Cite:
    - the dimension by its canonical name (the exact label used in the rubric:

@@ -135,6 +135,26 @@ separately in `na_dimensions` and `err_dimensions`) rather than treated as zero,
 that lightweight artifacts are not penalized for not needing every dimension and
 unscored dimensions do not silently distort the rollup.
 
+### Cross-dimension cascades
+
+A few dimensions are defined in terms of another (the *prereq*): you can’t score the
+dependent dimension without scoring the prereq first. The cascade rule is uniform —
+NA carries NA, ERR carries ERR, and 1-5 carries 1-5:
+
+| Prereq → Dependent | NA cascade | ERR cascade | 1-5 prereq |
+| --- | --- | --- | --- |
+| Verifiability → Factuality | Factuality NA | Factuality ERR | Factuality scored 1-5 on the same claim set Verifiability scored |
+| Suitability → Relevance | Relevance NA | Relevance ERR | Relevance scored 1-5 against the stated purpose |
+| Soundness → Parsimony | Parsimony NA | Parsimony ERR | Parsimony scored 1-5 on whatever sound chains remain |
+
+Read this as: when a prereq lands on a sentinel (NA or ERR), the dependent dimension
+inherits the same sentinel. A *low* prereq score (1 or 2) is not a cascade trigger —
+the dependent dimension is still scored on its own anchors, and the reason may cite
+the upstream weakness. Cascades exist because the dependent dimension's question
+literally cannot be asked without its prereq's basis (no verifiable claims → nothing
+to fact-check; no stated purpose → no target for relevance; no sound chain → no chain
+to be parsimonious about).
+
 ## Justified Deviations
 
 A deviation from a guideline rule is **justified** when following the rule would hurt
@@ -661,14 +681,15 @@ penalize the document for them.
 - **NA:** Not applicable.
   The document makes no verifiable assertions at all (see G1 Verifiability NA for the
   engagement test). Factuality engages on the same set of claims Verifiability engages
-  on; if Verifiability is NA, Factuality is NA. If Verifiability is 1-5, Factuality is
-  1-5.
+  on, so Factuality follows Verifiability's NA verdict (see *Cross-dimension cascades*
+  in the rubric front matter).
 
 - **ERR:** Cannot assess (process failure; re-run the eval).
-  The document attempts at least one verifiable assertion, but the claim is fragmentary
-  or truncated (a partial sentence, an unfinished paragraph, or a `[TODO]` marker)
-  leaving no claim to corroborate.
-  Rare. If the document’s claims are fully stated, score 1-5 even if corroboration is
+  Either the document attempts at least one verifiable assertion but the claim is
+  fragmentary or truncated (a partial sentence, an unfinished paragraph, or a `[TODO]`
+  marker) leaving no claim to corroborate, **or** Verifiability itself is ERR and the
+  cascade applies (Factuality ERR follows Verifiability ERR).
+  Rare. If the document's claims are fully stated, score 1-5 even if corroboration is
   incomplete (per the rule above).
 
 - **1:** Major claims are contradicted by reasonable corroboration: cited sources do not
@@ -720,16 +741,18 @@ the declared scope earns its place against the purpose, at the level of sources 
 sections rather than words and paragraphs.
 
 - **NA:** Not applicable.
-  The document makes no inferential claims and cites no sources (pure reference data,
-  raw measurements, a glossary, or a structured form). There is no audit trail to
-  evaluate for relevance.
+  Either the document makes no inferential claims and cites no sources (pure reference
+  data, raw measurements, a glossary, or a structured form — no audit trail to
+  evaluate for relevance), **or** Suitability is NA and the cascade applies (Relevance
+  NA follows Suitability NA; see *Cross-dimension cascades* in the rubric front matter).
 
 - **ERR:** Cannot assess (process failure; re-run the eval).
-  The document cites sources or builds reasoning chains, but its purpose is itself
-  unstated or contradictory enough that no relevance test can be applied. (When
-  Suitability P1 has failed materially, Relevance is ERR rather than 1: the
-  prerequisite for a relevance verdict is absent, so the issue is the eval setup,
-  not the document's relevance.)
+  Either a procedural failure prevents scoring (truncated artifact, tool failure),
+  **or** Suitability is ERR and the cascade applies (Relevance ERR follows Suitability
+  ERR — without a known purpose, the relevance question has no target). A low
+  Suitability score (1-2) is not an ERR trigger; in that case Relevance is still
+  scored 1-5 against whatever purpose the document does state, and the reason may cite
+  the upstream Suitability weakness.
 
 - **1:** Half or more of the cited sources or reasoning chains are irrelevant to the
   document's conclusions or purpose. Headline claims rest on tangential evidence, or
@@ -882,9 +905,9 @@ conclusion requires.
 
 Parsimony presupposes Soundness (R2). When a step is unsound, a longer sound chain
 would do less damage to the conclusion, so the chain as written cannot be the most
-parsimonious sound argument. When Soundness fails materially on the headline claims,
-Parsimony is ERR (the rubric's prerequisite is absent, so no parsimony verdict can be
-applied; fix Soundness, then re-score).
+parsimonious sound argument. The Soundness → Parsimony cascade (see the rubric front
+matter) carries NA and ERR through cleanly; a low Soundness score (1-2) still leaves
+Parsimony scorable 1-5 on whatever sound chains remain.
 
 Parsimony differs from E3 Concision (prose-level economy: words and paragraphs),
 from G3 Relevance (whether each source or section is on-task), from R1 Discipline
@@ -893,13 +916,18 @@ valid). Parsimony asks specifically: given the warrants in use, is the chain sha
 the minimum sufficient?
 
 - **NA:** Not applicable.
-  The document makes no inferential claims (pure reference data, raw measurements, a
-  glossary, or a structured form). There is no reasoning chain whose minimality could
-  be evaluated.
+  Either the document makes no inferential claims (pure reference data, raw
+  measurements, a glossary, or a structured form — no reasoning chain whose minimality
+  could be evaluated), **or** Soundness is NA and the cascade applies (Parsimony NA
+  follows Soundness NA; see *Cross-dimension cascades* in the rubric front matter).
 
-- **ERR:** Cannot assess (process failure; re-run the eval) — or Soundness (R2) has
-  already failed materially on the headline claims, so the chain cannot be the
-  minimum sound argument and the Parsimony prerequisite is absent.
+- **ERR:** Cannot assess (process failure; re-run the eval).
+  Either a procedural failure prevents scoring, **or** Soundness is ERR and the
+  cascade applies (Parsimony ERR follows Soundness ERR — Parsimony is defined as the
+  cleanest *sound* chain, so an unscored Soundness leaves nothing to be parsimonious
+  about). A low Soundness score (1-2) is not an ERR trigger; in that case Parsimony
+  is still scored 1-5 on whatever sound chains remain, and the reason may cite the
+  upstream Soundness weakness.
 
 - **1:** Obviously extraneous elements throughout the chains of reasoning:
   citable facts re-derived where the citation would have served the same purpose,
