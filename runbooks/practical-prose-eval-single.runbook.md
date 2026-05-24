@@ -204,10 +204,10 @@ If the audit fails, revise scores or violations until consistent.
 ## Calibration set
 
 `../tools/pprose/tests/fixtures/` ships a small calibration set with **agreed scores
-and violations under `20-dim-v2`** (legacy `20-dim-v1` reports are still loaded; the
-loader migrates `score: 0` to `ERR` automatically) so future agent or human
-evaluators can be tested for drift and self-eval overrating against a fixed
-reference:
+and violations under `pp20v1`** (legacy `20-dim-v1` / `18-dim-v1-stale-baseline`
+reports are still loaded; the eval loader migrates `score: 0` to `ERR` automatically)
+so future agent or human evaluators can be tested for drift and self-eval overrating
+against a fixed reference:
 
 | Fixture | Artifact | Type | Overall mean | NA dims |
 | --- | --- | --- | ---: | ---: |
@@ -228,7 +228,7 @@ The 6 `figma-*.eval.md` fixtures are comparison-renderer test data, not calibrat
 baselines: many dimensions were scored 0 on the original 12-dim eval because it did not
 enumerate per-dim violations satisfying the alignment property. The loader migrates
 those 0s to `ERR` on read of the legacy `rubric_version`.
-To restore real scores, re-eval the underlying artifact under `20-dim-v2`.
+To restore real scores, re-eval the underlying artifact under `pp20v1`.
 
 Bump the calibration set whenever the rubric is bumped (`practical-prose-rubric.md`
 §Versioning explains the trigger).

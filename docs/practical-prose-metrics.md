@@ -106,7 +106,7 @@ agent-evaluable; optional fields apply when their condition is relevant.
 | `source_policy` | Optional | enum | `primary-required`, `secondary-ok`, `internal-only`. Sets the strictness for G1 Verifiability. |
 | `update_triggers` | Optional | list | Events that should prompt re-review (release cuts, regulatory changes, dependency upgrades). |
 | `evaluation_mode` | Optional | enum | `self`, `external`, `tooling-only`. Records whether the rubric is being applied by the author, by an external reviewer, or by deterministic tooling only. Cross-checks the rubric’s self-eval-overrate note. |
-| `rubric_version` | Required for eval YAMLs | string | Pinned rubric revision (e.g., `20-dim-v1`). Set automatically by `eval_report.py from-metrics`. Not required on the underlying artifact. |
+| `rubric_version` | Required for eval YAMLs | string | Pinned rubric revision (e.g., `pp20v1`). Set automatically by `eval_report.py from-metrics`. Not required on the underlying artifact. |
 
 Minimum agent-evaluable set: `title`, `description`, `date`, `status`, `purpose`,
 `audience`, `scope`, `owner`, `last_reviewed`, `risk_level`.

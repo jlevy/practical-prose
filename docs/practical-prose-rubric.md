@@ -6,7 +6,7 @@ status: active
 ---
 # Practical Prose Rubric
 
-Version: v0.2 (rubric: `20-dim-v2`, last update 2026-05-23)\
+Version: v0.1 (rubric: `pp20v1`, last update 2026-05-23)\
 Joshua Levy (github.com/jlevy)
 
 A descriptive 1-5 rubric for assessing practical writing artifacts (articles, blog
@@ -55,14 +55,12 @@ same 20 dimensions in the same five groups, using the same names and section num
   truncated, an upstream tool failed, the assigned model refused, etc.).
   See the decision tree below.
 
-Numeric scores are always 1-5: there is no 0. This is deliberate. v1 of the rubric used
-0 to mean both "applicable but unassessable" (a substantive low score in the decision
-tree) and "Cannot assess" (a process failure in every per-dim anchor and the scoring
-prompt). The double meaning made 0 ambiguous to humans and undermined the rollup, since
-0 was silently excluded from group and overall means. Splitting it gives one meaning per
-value: numeric scores are *quality*, ERR is *process*, NA is *out of scope*. As a
-side benefit, numeric scores are always truthy, so `if score: ...` cannot accidentally
-treat an unscored dimension as a quality-zero swing.
+Numeric scores are always 1-5: there is no 0. One meaning per value — numeric scores
+are *quality*, ERR is *process*, NA is *out of scope* — keeps the scoring prompt, the
+per-dim anchors, and the rollup all aligned, and stops a single 0 from being read as
+both a low quality verdict and a silent excluded-from-mean sentinel. As a side benefit,
+numeric scores are always truthy, so `if score: ...` cannot accidentally treat an
+unscored dimension as a quality-zero swing.
 
 When you score below 5, cite the specific guideline rule that was missed in the
 parenthetical reason.
@@ -1126,32 +1124,23 @@ invoke live in the guidelines.
 
 ## Versioning
 
-Current revision: **`20-dim-v2`**. Eval YAMLs produced under it set
-`metadata.rubric_version: 20-dim-v2`. The `from-metrics` subcommand of
+Current revision: **`pp20v1`**. Eval YAMLs produced under it set
+`metadata.rubric_version: pp20v1`. The `from-metrics` subcommand of
 `../scripts/eval_report.py` writes this automatically.
 
-The previous revision `15-dim-v1` covered 15 dimensions in five groups; `20-dim-v1`
-added three dimensions (Breadth and Depth split from Coverage; Consistency;
-Formatting), renamed Structure → Organization, and introduced the `NA` value distinct
-from `0`. Score-anchor language was tightened in several dimensions. `20-dim-v2`
-removes `0` from the numeric scale (numeric scores are now 1-5) and replaces it with
-`ERR`, a process-failure sentinel distinct from `NA`: NA is a verdict about the
-document, ERR is a verdict about the eval. The eval loader migrates legacy `score: 0`
-entries to `ERR` automatically when `rubric_version` is anything other than the
-current value.
+The rubric is still under active development; the version tag is the identity stamp
+for "what schema this report was scored against," not a release-stability promise.
+Bump it on changes that could shift scores or break loaders:
 
-Bump the version on substantive changes:
+- Dimension added, removed, or renamed.
+- Score-anchor language tightened in a way that could move scores.
+- Score domain narrowed or widened.
 
-- New dimension added or removed: bump the dim count (e.g., `20-dim-v2` → `19-dim-v1`).
-- Anchor language changed in a way that could shift scores: bump the rev (`20-dim-v2` →
-  `20-dim-v3`). The rubric schema in `../scripts/rubric_schema.yaml` is the canonical
-  source for the current version string; bumping the rubric here means bumping `version`
-  there too.
-
-`../scripts/eval_compare.py` warns when comparing across rubric versions.
-Pinned regression fixtures (`../scripts/fixtures/rev{1,2}-net.eval.yaml`,
-`../scripts/fixtures/{guidelines,runbook}-self.eval.yaml`) were scored under `15-dim-v1`
-and must be re-scored before they can be reused under `20-dim-v2`.
+`../scripts/eval_compare.py` warns when comparing across rubric versions. The eval
+loader auto-coerces `score: 0` to `ERR` on any report whose `rubric_version` is not the
+current value, so pre-`pp20v1` reports (legacy `20-dim-v1`, `18-dim-v1-stale-baseline`,
+`15-dim-v1`, etc.) still load — but they should be re-scored against the current
+schema before being reused as calibration baselines.
 
 ## Related docs
 

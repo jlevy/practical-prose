@@ -500,14 +500,14 @@ def _migrate_legacy_scores(data: dict) -> dict:
     """In-place upgrade of legacy reports to the current rubric.
 
     On any report whose `metadata.rubric_version` is missing or not the current
-    version, coerce every `score: 0` in the qual block to `"ERR"`. v1 used 0 to
-    mean both "cannot assess" (per-dim anchors + prompt) and "attempted but
-    missing" (decision tree); LLM scorers in practice almost always emitted 0
-    with the "cannot assess" meaning, which is now "ERR" on v2+. Reports already
-    tagged with the current version are passed through unchanged so a stray 0 in
-    a v2+ report still fails validation as intended.
+    version, coerce every `score: 0` in the qual block to `"ERR"`. Older drafts
+    used 0 to mean both "cannot assess" (per-dim anchors + prompt) and "attempted
+    but missing" (decision tree); LLM scorers in practice almost always emitted 0
+    with the "cannot assess" meaning, which is now `"ERR"` on the current schema.
+    Reports already tagged with the current version are passed through unchanged
+    so a stray 0 in a current-version report still fails validation as intended.
 
-    Idempotent: a v2 report (or one already migrated in this call) is untouched.
+    Idempotent: a current-version report (or one already migrated) is untouched.
     """
     if not isinstance(data, dict):
         return data
