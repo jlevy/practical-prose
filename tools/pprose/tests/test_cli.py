@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import tomllib
 from pathlib import Path
 
 import pytest
@@ -19,9 +20,26 @@ def test_top_level_help_lists_subcommands(capsys: pytest.CaptureFixture[str]) ->
     captured = capsys.readouterr()
     assert rc == 0
     assert "pprose <command> [args]" in captured.out
+    assert "uvx pprose install --agents-md" in captured.out
     for command in ("metrics", "score", "report", "compare"):
         assert command in captured.out
     assert captured.err == ""
+
+
+def test_no_args_prints_help_successfully(capsys: pytest.CaptureFixture[str]) -> None:
+    rc = cli.main([])
+
+    captured = capsys.readouterr()
+    assert rc == 0
+    assert "pprose <command> [args]" in captured.out
+    assert captured.err == ""
+
+
+def test_pyproject_package_matches_console_script() -> None:
+    pyproject = tomllib.loads((Path(__file__).parents[1] / "pyproject.toml").read_text())
+
+    assert pyproject["project"]["name"] == "pprose"
+    assert pyproject["project"]["scripts"] == {"pprose": "pprose.cli:main"}
 
 
 @pytest.mark.parametrize("command", ["metrics", "score", "report", "compare"])

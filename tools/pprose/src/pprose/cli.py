@@ -21,6 +21,7 @@ class CommandSpec:
 
 # Groups print in this order.
 GROUPS = ("Evaluate", "Reference", "Setup")
+PROGRAM = "pprose"
 
 COMMANDS: dict[str, CommandSpec] = {
     "metrics": CommandSpec(
@@ -77,7 +78,7 @@ def _print_help() -> None:
         "pprose — Practical Prose evaluation and editing tooling",
         "",
         "Usage:",
-        "  pprose <command> [args]",
+        f"  {PROGRAM} <command> [args]",
     ]
     for group in GROUPS:
         lines.append("")
@@ -88,10 +89,10 @@ def _print_help() -> None:
     lines.extend(
         [
             "",
-            "Run `pprose <command> --help` for command-specific options.",
+            f"Run `{PROGRAM} <command> --help` for command-specific options.",
             "",
             "Getting started:",
-            "  uvx --from practical-prose@<version> pprose install   # zero-install; pins skills",
+            f"  uvx {PROGRAM} install --agents-md   # zero-install; installs skills",
             "  `score` needs ANTHROPIC_API_KEY (auto-loads .env / .env.local).",
         ]
     )
@@ -109,7 +110,7 @@ def _program_name(name: str) -> Generator[None]:
 
 
 def _run_with_prog(command: str, func: CommandMain, args: list[str]) -> int:
-    with _program_name(f"pprose {command}"):
+    with _program_name(f"{PROGRAM} {command}"):
         try:
             return func(args)
         except SystemExit as exc:
@@ -123,7 +124,7 @@ def main(argv: list[str] | None = None) -> int:
         return 0
     if not args:
         _print_help()
-        return 2
+        return 0
 
     command = args[0]
     spec = COMMANDS.get(command)
