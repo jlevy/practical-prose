@@ -333,7 +333,7 @@ metadata:
     Depth(4->0), Concision(4->0), Verifiability(4->0), Discipline(4->0), Soundness(4->0),
     Precision(4->0), Robustness(4->0). To restore scores, re-eval under 20-dim-v1
     with proper violation citations.'
-  rubric_version: pp20v2
+  rubric_version: pp20v1
   status: complete
 qual:
   expression:
@@ -429,7 +429,7 @@ violations:
 
 ## NET-r1
 
-**Source:** `<external artifact not in this repo>`  **Scope:** `—`  **Overall mean (20 dims):** 4.17  **Rubric:** `pp20v2`  **Model:** `—`  **Eval date:** 2026-05-07
+**Source:** `<external artifact not in this repo>`  **Scope:** `—`  **Overall mean (20 dims):** 4.17  **Rubric:** `pp20v1`  **Model:** `—`  **Eval date:** 2026-05-07
 
 ### Qualitative
 

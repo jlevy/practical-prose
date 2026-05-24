@@ -321,7 +321,7 @@ metadata:
     set. Self-eval of practical-prose-guidelines.md. NA on Discipline / Calibration
     / Fairness / Robustness (this is a prescriptive guidelines doc, not an analytical
     artifact). Replaces prior 15-dim-v1-stale-baseline.
-  rubric_version: pp20v2
+  rubric_version: pp20v1
   status: complete
 qual:
   expression:
@@ -524,7 +524,7 @@ violations:
 
 ## guidelines-self
 
-**Source:** `docs/practical-prose-guidelines.md`  **Scope:** `memo`  **Overall mean (20 dims):** 4.13  **Rubric:** `pp20v2`  **Model:** `—`  **Eval date:** 2026-05-10
+**Source:** `docs/practical-prose-guidelines.md`  **Scope:** `memo`  **Overall mean (20 dims):** 4.13  **Rubric:** `pp20v1`  **Model:** `—`  **Eval date:** 2026-05-10
 
 ### Qualitative
 

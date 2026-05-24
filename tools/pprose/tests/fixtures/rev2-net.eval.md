@@ -320,7 +320,7 @@ metadata:
   notes: Re-scored 2026-05-11 under 20-dim-v1 as part of practical-prose v0.4 calibration
     set. Weaker baseline (overall ~3.0); pervasive register issues, citation gaps,
     and verbatim duplication. Replaces prior 15-dim-v1-stale-baseline.
-  rubric_version: pp20v2
+  rubric_version: pp20v1
   status: complete
 qual:
   expression:
@@ -658,7 +658,7 @@ violations:
 
 ## rev2-net
 
-**Source:** `<external artifact not in this repo>`  **Scope:** `deep_research`  **Overall mean (20 dims):** 3.10  **Rubric:** `pp20v2`  **Model:** `—`  **Eval date:** 2026-05-10
+**Source:** `<external artifact not in this repo>`  **Scope:** `deep_research`  **Overall mean (20 dims):** 3.10  **Rubric:** `pp20v1`  **Model:** `—`  **Eval date:** 2026-05-10
 
 ### Qualitative
 

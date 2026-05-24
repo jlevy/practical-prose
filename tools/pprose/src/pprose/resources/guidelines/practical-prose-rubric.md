@@ -6,7 +6,7 @@ status: active
 ---
 # Practical Prose Rubric
 
-Version: v0.1 (rubric: `pp20v2`, last update 2026-05-24)\
+Version: v0.1 (rubric: `pp20v1`, last update 2026-05-24)\
 Joshua Levy (github.com/jlevy)
 
 A descriptive 1-5 rubric for assessing practical writing artifacts (articles, blog
@@ -1162,29 +1162,31 @@ invoke live in the guidelines.
 
 ## Versioning
 
-Current revision: **`pp20v2`**. Eval YAMLs produced under it set
-`metadata.rubric_version: pp20v2`. The `from-metrics` subcommand of
+Current revision: **`pp20v1`**. Eval YAMLs produced under it set
+`metadata.rubric_version: pp20v1`. The `from-metrics` subcommand of
 `../scripts/eval_report.py` writes this automatically.
 
-The rubric is still under active development; the version tag is the identity stamp for
-“what schema this report was scored against,” not a release-stability promise.
-Bump it on changes that could shift scores or break loaders:
+The rubric is still under active development; `pp20v1` is a pre-release definition that is
+still being refined in place rather than a frozen release. The version tag is the identity
+stamp for “what schema this report was scored against,” not a release-stability promise.
+Bump it on changes that could shift scores or break loaders once the definition stabilizes:
 
 - Dimension added, removed, renamed, or regrouped.
 - Score-anchor language tightened in a way that could move scores.
 - Score domain narrowed or widened.
 
-`pp20v2` regrouped the six Form dimensions: the former six-dimension Expression group was
-split into Expression (Clarity, Coherence, Concision) and Form (Organization, Consistency,
-Formatting). The dimensions and their anchors are unchanged; only the grouping moved.
+The six groups include **Form** (Organization, Consistency, Formatting), split out from the
+former six-dimension Expression group; Expression now holds Clarity, Coherence, and
+Concision. The dimensions and their anchors are unchanged; only the grouping moved, so the
+change is folded into `pp20v1` without a version bump.
 
 `../scripts/eval_compare.py` warns when comparing across rubric versions.
 On any report whose `rubric_version` is not the current value the eval loader auto-coerces
-`score: 0` to `ERR` and relocates the three Form dimensions out of the legacy `expression`
-block into a `form` block (dropping the stale derived rollup so it recomputes), so
-pre-`pp20v2` reports (legacy `pp20v1`, `20-dim-v1`, `18-dim-v1-stale-baseline`, `15-dim-v1`,
-etc.) still load — but they should be re-scored against the current schema before being
-reused as calibration baselines.
+`score: 0` to `ERR` and relocates the three Form dimensions out of a legacy `expression`
+block into a `form` block (dropping the stale derived rollup so it recomputes), so older
+reports (legacy `20-dim-v1`, `18-dim-v1-stale-baseline`, `15-dim-v1`, etc.) still load — but
+they should be re-scored against the current schema before being reused as calibration
+baselines.
 
 ## Related docs
 

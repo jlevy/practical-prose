@@ -54,7 +54,7 @@ def test_golden_six_way_unified_with_pairs(capsys: pytest.CaptureFixture[str]):
     #   uv run pprose compare tests/fixtures/figma-*.eval.md --format unified \
     #     --pairs DDOG-r1=DDOG-r4 NET-r1=NET-r4 DDOG-r2=DDOG-r4 NET-r2=NET-r4 \
     #     > tests/fixtures/expected-comparison.md
-    # The figma fixtures are native pp20v2: their qual blocks use the Expression +
+    # The figma fixtures are native pp20v1: their qual blocks use the Expression +
     # Form grouping, ERR for unassessable dimensions, and the 6-group palette, so
     # no on-load migration or --allow-misalignment is needed.
     args = [str(p) for p in ALL_FIXTURES] + [
@@ -138,9 +138,8 @@ def test_pair_deltas_compute_correctly():
     text = render_per_pair_deltas(reports, [("DDOG-r1", "DDOG-r4")])
     assert "Delta: DDOG-r1 → DDOG-r4" in text
     assert "| Calibration | +2 |" in text
-    # Discipline was 0 (cannot assess) on both DDOG-r1 and DDOG-r4 under v1; the
-    # loader migrates both to ERR on the current rubric, so the delta is "ERR",
-    # not a numeric 0 (matching ERR — ERR's no-numeric-comparison semantics).
+    # Discipline is ERR (cannot assess) on both DDOG-r1 and DDOG-r4, so the delta
+    # is "ERR", not a numeric 0 (ERR has no-numeric-comparison semantics).
     assert "| Discipline | ERR |" in text
     # Mean delta sign is the regression-test signal (DDOG-r4 still higher than DDOG-r1).
     assert "**Mean** | **+" in text
