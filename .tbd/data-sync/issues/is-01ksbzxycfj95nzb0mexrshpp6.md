@@ -3,9 +3,9 @@ type: is
 id: is-01ksbzxycfj95nzb0mexrshpp6
 title: Reshape rubric '0' score to 'ERR' sentinel; numeric range becomes 1-5
 kind: epic
-status: open
+status: closed
 priority: 2
-version: 16
+version: 17
 labels: []
 dependencies: []
 child_order_hints:
@@ -25,7 +25,9 @@ child_order_hints:
   - is-01ksbzzr90mr7hztqp2pmtzr6r
   - is-01ksbzzrdg2tp7k2ftqm10g7xh
 created_at: 2026-05-24T03:19:48.360Z
-updated_at: 2026-05-24T03:20:47.791Z
+updated_at: 2026-05-24T03:55:37.058Z
+closed_at: 2026-05-24T03:55:37.057Z
+close_reason: all 14 child beads implemented on rubric-zero-to-err branch; PR pending
 ---
 Today the rubric admits score 0 with two conflated meanings: (a) the top-level decision tree says 0 = 'attempted but missing' (a substantive low score), while (b) every per-dimension anchor and the scoring prompt say 0 = 'Cannot assess' (an evaluator/process failure). Score 0 is also silently excluded from group/overall means (eval_report.py:543), so a 0 carries no signal in the rollup but reads as a quality verdict to humans. LLM scorers in practice almost always emit 0 with the process-failure meaning.
 
