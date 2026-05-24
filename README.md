@@ -173,11 +173,11 @@ Agent Skills under [skills/](skills/). The eval skills use the
 
 | Skill | Kind | Use When |
 | --- | --- | --- |
-| [prose-common-edit](skills/prose-common-edit/SKILL.md) | Apply | Tidy, clean up, conform, fix formatting/structure, or add the documentation footer. The basic, universal tier. |
-| [prose-copy-edit](skills/prose-copy-edit/SKILL.md) | Apply | Copy edit, proofread, polish, tighten, or line edit — language and formatting (Expression). Superset of common-edit. |
-| [prose-full-edit](skills/prose-full-edit/SKILL.md) | Apply | Deep edit across all 20 dimensions; also writes an editorial review (strengths, weaknesses, suggested fixes). Superset of copy-edit; covers audit-only review. |
-| [prose-eval](skills/prose-eval/SKILL.md) | Evaluate | Score, grade, rubric-check, or measure the quality of one document. |
-| [prose-compare](skills/prose-compare/SKILL.md) | Evaluate | Compare drafts, A/B versions, quality-diff documents, or pick a best variant. |
+| [pprose-common-edit](skills/pprose-common-edit/SKILL.md) | Apply | Tidy, clean up, conform, fix formatting/structure, or add the documentation footer. The basic, universal tier. |
+| [pprose-copy-edit](skills/pprose-copy-edit/SKILL.md) | Apply | Copy edit, proofread, polish, tighten, or line edit — language and formatting (Expression). Superset of common-edit. |
+| [pprose-full-edit](skills/pprose-full-edit/SKILL.md) | Apply | Deep edit across all 20 dimensions; also writes an editorial review (strengths, weaknesses, suggested fixes). Superset of copy-edit; covers audit-only review. |
+| [pprose-eval](skills/pprose-eval/SKILL.md) | Evaluate | Score, grade, rubric-check, or measure the quality of one document. |
+| [pprose-compare](skills/pprose-compare/SKILL.md) | Evaluate | Compare drafts, A/B versions, quality-diff documents, or pick a best variant. |
 
 Install paths:
 
@@ -195,8 +195,9 @@ canonical source documents.
 ## Tooling
 
 [tools/pprose/](tools/pprose/) is a standalone modern-Python package
-(bootstrapped from [`simple-modern-uv`](https://github.com/jlevy/simple-modern-uv)) that
-installs a single `pprose` console-script entry point:
+(bootstrapped from [`simple-modern-uv`](https://github.com/jlevy/simple-modern-uv)). The
+distribution is `practical-prose`; it installs a single `pprose` console-script entry
+point:
 
 - `pprose metrics`: deterministic metrics over a document (banned-register hits,
   vague-word counts, link validity, frontmatter presence, etc.).
@@ -210,16 +211,18 @@ It also bundles the guidelines, shortcuts, runbooks, and rubric and serves them 
 reference subcommands (`pprose guidelines|shortcut|runbook|skill <name>`, `--list` to
 enumerate), so the skills work in any repo. `pprose install` writes the five Practical
 Prose skills into a repo's `.claude/skills/`, each referencing pprose with a pinned,
-local-first invocation (`pprose` if on PATH, else `uvx pprose@<version>` — the trusted
-version that ran install — else a message telling the user to install uv or pprose).
+local-first invocation (`pprose` if on PATH, else `uvx --from practical-prose@<version>
+pprose` — the trusted version that ran install — else a message telling the user to
+install uv or pprose).
 
 Quick start:
 
 ```bash
 # Run with no install via uv (https://docs.astral.sh/uv/). `score` needs ANTHROPIC_API_KEY.
-uvx pprose report from-metrics path/to/doc.md --label my-doc --scope-class brief --out my-doc.eval.md
-uvx pprose score my-doc.eval.md
-uvx pprose report validate my-doc.eval.md
+# The package is practical-prose; the command is pprose, so zero-install uses --from.
+uvx --from practical-prose pprose report from-metrics path/to/doc.md --label my-doc --scope-class brief --out my-doc.eval.md
+uvx --from practical-prose pprose score my-doc.eval.md
+uvx --from practical-prose pprose report validate my-doc.eval.md
 ```
 
 See the runbooks for end-to-end operation and

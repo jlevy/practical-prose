@@ -2,7 +2,7 @@
 """Sync canonical repo docs into the packaged pprose resources.
 
 The repo root holds the source of truth (docs/, shortcuts/, skills/). The wheel
-must be self-contained so `uvx pprose` works in any repo, so we copy those files
+must be self-contained so pprose works standalone in any repo, so we copy those files
 into src/pprose/resources/. Run this whenever the canonical files change;
 tests/test_resources_sync.py fails if the bundled copies drift.
 

@@ -13,11 +13,11 @@ def test_resources_list_and_read():
     assert "common-doc-guidelines" in resources.list_names("guidelines")
     assert "shortcut-full-edit" in resources.list_names("shortcuts")
     assert set(resources.list_names("skills")) >= {
-        "prose-common-edit",
-        "prose-copy-edit",
-        "prose-full-edit",
-        "prose-eval",
-        "prose-compare",
+        "pprose-common-edit",
+        "pprose-copy-edit",
+        "pprose-full-edit",
+        "pprose-eval",
+        "pprose-compare",
     }
     assert "# Practical Prose Guidelines" in resources.read_doc(
         "guidelines", "practical-prose-guidelines"
@@ -44,10 +44,10 @@ def test_unknown_reference_name_errors(capsys: pytest.CaptureFixture[str]):
 
 
 def test_skill_compose_has_pinned_invocation_and_marker(capsys: pytest.CaptureFixture[str]):
-    assert cli.main(["skill", "prose-full-edit"]) == 0
+    assert cli.main(["skill", "pprose-full-edit"]) == 0
     out = capsys.readouterr().out
     assert "DO NOT EDIT" in out
-    assert f"uvx pprose@{install.pinned_version()}" in out
+    assert f"uvx --from practical-prose@{install.pinned_version()} pprose" in out
     # The local-first + tell-the-user fallback must be present.
     assert "if `pprose` is on the PATH" in out
     assert "pprose needs `uvx`" in out
@@ -63,7 +63,7 @@ def test_install_writes_pinned_skills(tmp_path: Path):
     for skill_md in skills_root.glob("*/SKILL.md"):
         text = skill_md.read_text(encoding="utf-8")
         assert "DO NOT EDIT" in text
-        assert f"uvx pprose@{pin}" in text
+        assert f"uvx --from practical-prose@{pin} pprose" in text
         assert "pprose needs `uvx`" in text
 
 
@@ -73,7 +73,7 @@ def test_install_agents_md_marker(tmp_path: Path):
     agents = (tmp_path / "AGENTS.md").read_text(encoding="utf-8")
     assert "User content." in agents  # preserved
     assert "<!-- BEGIN PPROSE -->" in agents and "<!-- END PPROSE -->" in agents
-    assert f"uvx pprose@{install.pinned_version()}" in agents
+    assert f"uvx --from practical-prose@{install.pinned_version()} pprose" in agents
 
 
 def test_install_print_writes_nothing(tmp_path: Path, capsys: pytest.CaptureFixture[str]):

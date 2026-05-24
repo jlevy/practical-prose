@@ -1,7 +1,7 @@
 """Access to the docs/shortcuts/skill bodies bundled in the wheel.
 
 The canonical files live at the repo root (docs/, shortcuts/, skills/);
-devtools/sync_resources.py copies them here so `uvx pprose` is self-contained
+devtools/sync_resources.py copies them here so the wheel is self-contained
 and works in any repo. See tests/test_resources_sync.py for the drift check.
 """
 

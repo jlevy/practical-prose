@@ -19,12 +19,12 @@ repo. The default run evaluates **all baseline artifacts**:
 
 Use the subset commands only when you are debugging one side of the baseline set.
 
-## Using the `prose-eval` Skill
+## Using the `pprose-eval` Skill
 
-When asking an agent to run this workflow, invoke the local `prose-eval` skill and point
+When asking an agent to run this workflow, invoke the local `pprose-eval` skill and point
 it at this runbook:
 
-> Use `prose-eval` and run `runbooks/practical-prose-baseline-evals.runbook.md`.
+> Use `pprose-eval` and run `runbooks/practical-prose-baseline-evals.runbook.md`.
 
 Unless the request names a subset, run **Default: Run All Baselines**. Subset runs are
 available for debugging, but the ordinary baseline process should regenerate third-party

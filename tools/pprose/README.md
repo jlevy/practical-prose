@@ -10,16 +10,17 @@ maintain something.
 
 ## Install
 
-Run with no install using [uv](https://docs.astral.sh/uv/):
+The distribution is `practical-prose`; the command is `pprose`. Run with no install using
+[uv](https://docs.astral.sh/uv/) (the command differs from the package, so use `--from`):
 
 ```bash
-uvx pprose <command> ...
+uvx --from practical-prose pprose <command> ...
 ```
 
 Or install it:
 
 ```bash
-uv tool install pprose
+uv tool install practical-prose
 ```
 
 ## Commands
@@ -36,8 +37,8 @@ pprose install                                     # install the Practical Prose
 ```
 
 `pprose install` writes skills that invoke pprose with a pinned, local-first runner
-(`pprose` if on PATH, else `uvx pprose@<version>`), so they work in any repo. Run
-`pprose --help` or `pprose <command> --help` for full options.
+(`pprose` if on PATH, else `uvx --from practical-prose@<version> pprose`), so they work in
+any repo. Run `pprose --help` or `pprose <command> --help` for full options.
 
 `score` requires `ANTHROPIC_API_KEY`; the package auto-loads `.env` and `.env.local` from
 the current directory hierarchy and `$HOME`.

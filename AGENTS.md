@@ -11,11 +11,11 @@ than copying the full guidelines into every context.
 
 | User intent | Use | Source |
 | --- | --- | --- |
-| Apply the common Markdown documentation standards (basic, universal) | [prose-common-edit](skills/prose-common-edit/SKILL.md) | [common-doc-guidelines.md](docs/common-doc-guidelines.md) |
-| Copy edit for language and formatting (the Expression dimensions) | [prose-copy-edit](skills/prose-copy-edit/SKILL.md) | [shortcut-copy-edit.md](shortcuts/shortcut-copy-edit.md) |
-| Full editorial pass across all 20 dimensions + editorial review (also covers audit-only review) | [prose-full-edit](skills/prose-full-edit/SKILL.md) | [shortcut-full-edit.md](shortcuts/shortcut-full-edit.md) |
-| Score one document with metrics and rubric grading | [prose-eval](skills/prose-eval/SKILL.md) | [practical-prose-eval-single.runbook.md](runbooks/practical-prose-eval-single.runbook.md) |
-| Compare multiple evaluated drafts or variants | [prose-compare](skills/prose-compare/SKILL.md) | [practical-prose-eval-compare.runbook.md](runbooks/practical-prose-eval-compare.runbook.md) |
+| Apply the common Markdown documentation standards (basic, universal) | [pprose-common-edit](skills/pprose-common-edit/SKILL.md) | [common-doc-guidelines.md](docs/common-doc-guidelines.md) |
+| Copy edit for language and formatting (the Expression dimensions) | [pprose-copy-edit](skills/pprose-copy-edit/SKILL.md) | [shortcut-copy-edit.md](shortcuts/shortcut-copy-edit.md) |
+| Full editorial pass across all 20 dimensions + editorial review (also covers audit-only review) | [pprose-full-edit](skills/pprose-full-edit/SKILL.md) | [shortcut-full-edit.md](shortcuts/shortcut-full-edit.md) |
+| Score one document with metrics and rubric grading | [pprose-eval](skills/pprose-eval/SKILL.md) | [practical-prose-eval-single.runbook.md](runbooks/practical-prose-eval-single.runbook.md) |
+| Compare multiple evaluated drafts or variants | [pprose-compare](skills/pprose-compare/SKILL.md) | [practical-prose-eval-compare.runbook.md](runbooks/practical-prose-eval-compare.runbook.md) |
 
 ## Authoring Principles
 
@@ -37,11 +37,12 @@ which rule is set aside, what reader outcome it serves, and what risk it introdu
 
 ## Tooling
 
-The Python eval package lives in `tools/pprose/`.
-After publication, use the package through the single command:
+The Python package lives in `tools/pprose/`. The distribution is `practical-prose`; the
+command is `pprose`. After publication, run it with no install (the command differs from
+the package, so `--from` is required):
 
 ```bash
-uvx pprose <command> ...
+uvx --from practical-prose pprose <command> ...
 ```
 
 **Evaluate** (action): `pprose metrics`, `pprose report`, `pprose score`, `pprose compare`.
@@ -53,9 +54,9 @@ wheel, so these work in any repo without this source tree.
 
 **Setup**: `pprose install` writes the five Practical Prose skills into a repo's
 `.claude/skills/`. The generated skills reference `pprose` with a pinned, local-first
-invocation: `pprose` if on PATH, else `uvx pprose@<version>` (the version that ran
-install — a trusted pin, never an unpinned runner), else they tell the user to install
-uv or pprose.
+invocation: `pprose` if on PATH, else `uvx --from practical-prose@<version> pprose` (the
+version that ran install — a trusted pin, never an unpinned runner), else they tell the
+user to install uv or pprose.
 
 For local development before publication, run from the package workspace:
 

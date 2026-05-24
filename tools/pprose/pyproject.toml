@@ -6,8 +6,8 @@ Repository = "https://github.com/jlevy/practical-prose"
 # Documentation = "https://..."
 
 [project]
-name = "pprose"
-description = "Practical Prose tooling: metrics, rubric scoring, evaluation reports, and comparisons"
+name = "practical-prose"
+description = "Practical Prose tooling (pprose CLI): metrics, rubric scoring, evaluation reports, and comparisons"
 authors = [
     { name="Joshua Levy", email="joshuadlevy@gmail.com" },
 ]

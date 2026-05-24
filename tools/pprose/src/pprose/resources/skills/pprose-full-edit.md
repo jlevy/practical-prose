@@ -1,11 +1,11 @@
 ---
-name: prose-full-edit
-description: Full editorial pass over a practical document across all 20 Practical Prose dimensions; modifies the doc AND writes an editorial-review side document. A superset of prose-copy-edit. Use when asked for a deep or full edit, an editorial review, a substantive edit, or a strengths-and-weaknesses review with suggested fixes.
+name: pprose-full-edit
+description: Full editorial pass over a practical document across all 20 Practical Prose dimensions; modifies the doc AND writes an editorial-review side document. A superset of pprose-copy-edit. Use when asked for a deep or full edit, an editorial review, a substantive edit, or a strengths-and-weaknesses review with suggested fixes.
 ---
 # Full Edit
 
 This is the deepest edit tier (an apply skill: it may modify the target document) and a
-**superset of `prose-copy-edit`**. It works the document across all five groups and 20
+**superset of `pprose-copy-edit`**. It works the document across all five groups and 20
 dimensions of the Practical Prose guidelines (Purpose, Expression, Grounding, Reasoning,
 Judgment), and it writes an **editorial-review side document** with strengths,
 weaknesses, and suggested fixes for the author or other editors.

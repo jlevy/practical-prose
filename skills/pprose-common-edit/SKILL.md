@@ -1,5 +1,5 @@
 ---
-name: prose-common-edit
+name: pprose-common-edit
 description: Apply the common Markdown documentation guidelines to any document; modifies the doc. The basic, universal edit tier. Use when asked to tidy, clean up, conform, fix formatting/structure, or add the footer.
 ---
 # Common Edit
@@ -12,7 +12,7 @@ frontmatter, and footer — so it is safe for almost any Markdown document, work
 repo, whether or not it is a Practical Prose artifact.
 
 For a deeper language-and-formatting pass (the Expression dimensions) use
-`prose-copy-edit`; for a full all-dimension editorial pass use `prose-full-edit`. Each
+`pprose-copy-edit`; for a full all-dimension editorial pass use `pprose-full-edit`. Each
 tier is a superset of the one before.
 
 ## Inputs

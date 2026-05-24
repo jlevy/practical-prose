@@ -1,5 +1,5 @@
 ---
-name: prose-compare
+name: pprose-compare
 description: Compare evaluated document versions or variants; read-only on source docs. Use when asked to compare drafts, A/B versions, quality-diff docs, or pick the best.
 ---
 # Compare Practical Prose Evaluations

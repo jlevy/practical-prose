@@ -91,7 +91,7 @@ def _print_help() -> None:
             "Run `pprose <command> --help` for command-specific options.",
             "",
             "Getting started:",
-            "  uvx pprose@<version> install   # zero-install; pins skills to that version",
+            "  uvx --from practical-prose@<version> pprose install   # zero-install; pins skills",
             "  `score` needs ANTHROPIC_API_KEY (auto-loads .env / .env.local).",
         ]
     )

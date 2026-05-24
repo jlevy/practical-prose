@@ -21,12 +21,14 @@ _INVOCATION = """\
 
 Run pprose with the first available option:
 
-1. `pprose <command>` — if `pprose` is on the PATH (local dev, or `uv tool install pprose`).
-2. `uvx pprose@{version} <command>` — zero-install via uv, pinned to a trusted version.
+1. `pprose <command>` — if `pprose` is on the PATH (local dev, or
+   `uv tool install practical-prose`).
+2. `uvx --from practical-prose@{version} pprose <command>` — zero-install via uv, pinned
+   to a trusted version (the package is `practical-prose`; the command is `pprose`).
 
 If neither `pprose` nor `uvx` is available, stop and tell the user: "pprose needs `uvx`
 (from Astral's uv) or `pprose` on the PATH — install uv (https://docs.astral.sh/uv/) or
-run `uv tool install pprose`."
+run `uv tool install practical-prose`."
 """
 
 BEGIN_MARKER = "<!-- BEGIN PPROSE -->"
@@ -41,7 +43,7 @@ def pinned_version() -> str:
     only used once a real version is installed.
     """
     try:
-        return version("pprose")
+        return version("practical-prose")
     except PackageNotFoundError:
         return "0.0.0"
 
@@ -107,7 +109,8 @@ def _agents_md_section(pin: str, skills: list[str]) -> str:
         BEGIN_MARKER,
         "## Practical Prose (pprose)",
         "",
-        f"Run pprose as `pprose <command>` if on PATH, else `uvx pprose@{pin} <command>`.",
+        f"Run pprose as `pprose <command>` if on PATH, else "
+        f"`uvx --from practical-prose@{pin} pprose <command>`.",
         "Installed skills:",
         "",
     ]
@@ -141,7 +144,7 @@ def install_main(argv: list[str] | None = None) -> int:
         dest = skills_root / name / "SKILL.md"
         dest.parent.mkdir(parents=True, exist_ok=True)
         dest.write_text(compose_skill(name, pin), encoding="utf-8")
-    print(f"installed {len(skills)} skills into {skills_root} (pinned pprose@{pin})")
+    print(f"installed {len(skills)} skills into {skills_root} (pinned practical-prose@{pin})")
 
     if args.agents_md:
         agents = target / "AGENTS.md"

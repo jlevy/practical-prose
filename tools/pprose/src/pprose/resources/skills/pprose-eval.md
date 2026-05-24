@@ -1,5 +1,5 @@
 ---
-name: prose-eval
+name: pprose-eval
 description: Score one practical document with metrics and rubric grading; read-only on source. Use when asked to score, evaluate, grade, rubric-check, or measure quality.
 ---
 # Evaluate One Practical Prose Document
