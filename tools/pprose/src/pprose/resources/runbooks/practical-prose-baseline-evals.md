@@ -35,7 +35,7 @@ and self-eval reports together so the comparison files stay aligned.
 | Set | Artifact | Label | Scope class | Output |
 | --- | --- | --- | --- | --- |
 | third-party | `example-texts/sqlite-appropriate-uses.md` | `SQLite: Appropriate Uses` | `brief` | `evals/baselines/third-party/sqlite-appropriate-uses.eval.md` |
-| third-party | `example-texts/nasa-stakeholder-expectations-definition.md` | `NASA SHE: Stakeholder Expectations` | `design_doc` | `evals/baselines/third-party/nasa-stakeholder-expectations-definition.eval.md` |
+| third-party | `example-texts/nasa-stakeholder-expectations-definition.md` | `NASA SEH: Stakeholder Expectations` | `design_doc` | `evals/baselines/third-party/nasa-stakeholder-expectations-definition.eval.md` |
 | third-party | `example-texts/irs-1040-filing-requirements.md` | `IRS 1040: Filing Requirements` | `brief` | `evals/baselines/third-party/irs-1040-filing-requirements.eval.md` |
 | self | `docs/practical-prose-guidelines.md` | `Practical Prose Guidelines` | `design_doc` | `evals/baselines/self/practical-prose-guidelines.eval.md` |
 | self | `docs/practical-prose-rubric.md` | `Practical Prose Rubric` | `design_doc` | `evals/baselines/self/practical-prose-rubric.eval.md` |
@@ -79,7 +79,7 @@ pprose report from-metrics \
 
 pprose report from-metrics \
   "$REPO_ROOT/example-texts/nasa-stakeholder-expectations-definition.md" \
-  --label "NASA SHE: Stakeholder Expectations" \
+  --label "NASA SEH: Stakeholder Expectations" \
   --scope-class design_doc \
   --commit-sha "$COMMIT_SHA" \
   --evaluator "model:claude-sonnet-4-5" \

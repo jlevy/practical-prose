@@ -44,15 +44,20 @@ After publication, use the package through the single command:
 uvx pprose <command> ...
 ```
 
-Primary subcommands:
+**Evaluate** (action): `pprose metrics`, `pprose report`, `pprose score`, `pprose compare`.
 
-- `uvx pprose metrics ...`
-- `uvx pprose report ...`
-- `uvx pprose score ...`
-- `uvx pprose compare ...`
+**Reference** (print bundled docs the agent follows; `--list` to enumerate):
+`pprose guidelines <name>`, `pprose shortcut <name>`, `pprose runbook <name>`,
+`pprose skill <name>`. The guidelines, shortcuts, runbooks, and rubric are bundled in the
+wheel, so these work in any repo without this source tree.
 
-For local development before publication, run the same entry point from the package
-workspace:
+**Setup**: `pprose install` writes the five Practical Prose skills into a repo's
+`.claude/skills/`. The generated skills reference `pprose` with a pinned, local-first
+invocation: `pprose` if on PATH, else `uvx pprose@<version>` (the version that ran
+install — a trusted pin, never an unpinned runner), else they tell the user to install
+uv or pprose.
+
+For local development before publication, run from the package workspace:
 
 ```bash
 cd tools/pprose

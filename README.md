@@ -206,6 +206,13 @@ installs a single `pprose` console-script entry point:
   compute-derived, and from-metrics subcommands.
 - `pprose compare`: compare N eval reports across versions or variants.
 
+It also bundles the guidelines, shortcuts, runbooks, and rubric and serves them as
+reference subcommands (`pprose guidelines|shortcut|runbook|skill <name>`, `--list` to
+enumerate), so the skills work in any repo. `pprose install` writes the five Practical
+Prose skills into a repo's `.claude/skills/`, each referencing pprose with a pinned,
+local-first invocation (`pprose` if on PATH, else `uvx pprose@<version>` — the trusted
+version that ran install — else a message telling the user to install uv or pprose).
+
 Quick start:
 
 ```bash
