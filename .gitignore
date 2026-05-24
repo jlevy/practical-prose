@@ -228,16 +228,10 @@ Thumbs.db
 *.swo
 *~
 
-# Agent / assistant local state
-.claude/*
-!.claude/skills/
-.claude/skills/*
-!.claude/skills/pprose-common-edit
-!.claude/skills/pprose-copy-edit
-!.claude/skills/pprose-full-edit
-!.claude/skills/pprose-eval
-!.claude/skills/pprose-compare
-.codex/
+# Agent / assistant local state — track integration files by default;
+# only exclude per-user local overrides.
+.claude/settings.local.json
+.codex/settings.local.*
 .aider*
 
 # Local self-eval runs (in flux; not yet ready to track)
