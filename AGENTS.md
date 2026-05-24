@@ -11,9 +11,9 @@ than copying the full guidelines into every context.
 
 | User intent | Use | Source |
 | --- | --- | --- |
-| Apply common documentation standards or fix Markdown structure | [prose-apply-common-guidelines](skills/prose-apply-common-guidelines/SKILL.md) | [common-doc-guidelines.md](docs/common-doc-guidelines.md) |
-| Run a pre-publish Practical Prose audit without editing | [prose-quick-check](skills/prose-quick-check/SKILL.md) | [practical-prose-quick-checklist.md](shortcuts/practical-prose-quick-checklist.md) |
-| Copy edit, proofread, polish, or tighten a Markdown document | [prose-copy-edit](skills/prose-copy-edit/SKILL.md) | [shortcut-copy-edit.md](shortcuts/shortcut-copy-edit.md) |
+| Apply the common Markdown documentation standards (basic, universal) | [prose-common-edit](skills/prose-common-edit/SKILL.md) | [common-doc-guidelines.md](docs/common-doc-guidelines.md) |
+| Copy edit for language and formatting (the Expression dimensions) | [prose-copy-edit](skills/prose-copy-edit/SKILL.md) | [shortcut-copy-edit.md](shortcuts/shortcut-copy-edit.md) |
+| Full editorial pass across all 20 dimensions + editorial review (also covers audit-only review) | [prose-full-edit](skills/prose-full-edit/SKILL.md) | [shortcut-full-edit.md](shortcuts/shortcut-full-edit.md) |
 | Score one document with metrics and rubric grading | [prose-eval](skills/prose-eval/SKILL.md) | [practical-prose-eval-single.runbook.md](runbooks/practical-prose-eval-single.runbook.md) |
 | Compare multiple evaluated drafts or variants | [prose-compare](skills/prose-compare/SKILL.md) | [practical-prose-eval-compare.runbook.md](runbooks/practical-prose-eval-compare.runbook.md) |
 

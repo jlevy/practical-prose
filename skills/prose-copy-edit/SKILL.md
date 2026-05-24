@@ -1,12 +1,15 @@
 ---
 name: prose-copy-edit
-description: Copy-edit a Markdown document against Practical Prose style; modifies the doc. Use when asked to copy edit, proofread, polish, tighten, rewrite, or line edit.
+description: Copy-edit a Markdown document for language and formatting (the Expression dimensions); modifies the doc. A superset of prose-common-edit. Use when asked to copy edit, proofread, polish, tighten, rewrite, or line edit.
 ---
-# Copy Edit Practical Prose
+# Copy Edit
 
-This is an apply skill: it may modify the target document.
-
-Use it when the user wants the document improved, not only audited.
+This is an apply skill: it may modify the target document. It is a **superset of
+`prose-common-edit`**: it applies the common documentation substrate *and* the
+Expression dimensions (E1–E6: clarity, coherence, concision, organization, consistency,
+formatting) of the Practical Prose guidelines. It stops short of the substantive
+dimensions — for a full all-dimension editorial pass that also writes an editorial
+review, use `prose-full-edit`.
 
 ## Inputs
 
@@ -15,17 +18,20 @@ Use it when the user wants the document improved, not only audited.
 
 ## Steps
 
-1. Read `../../shortcuts/shortcut-copy-edit.md`.
-2. Read `../../docs/common-doc-guidelines.md`.
-3. For Practical Prose artifacts, also consult
-   `../../docs/practical-prose-guidelines.md` only for sections relevant to the edit.
-4. Audit the document, track issues, and apply edits directly.
-5. Use external issue or bead tooling only when it is available in the project; otherwise
-   track issues with the agent's normal to-do or checklist tooling.
-6. Preserve factual meaning, claim strength, citations, and intentional voice.
-7. Re-scan the diff for regressions before reporting.
+1. Read [../../shortcuts/shortcut-copy-edit.md](../../shortcuts/shortcut-copy-edit.md).
+2. Apply the common substrate:
+   [../../docs/common-doc-guidelines.md](../../docs/common-doc-guidelines.md).
+3. Apply the Expression dimensions (E1–E6) from
+   [../../docs/practical-prose-guidelines.md](../../docs/practical-prose-guidelines.md)
+   (§Expression Dimensions).
+4. Audit the document, track issues (project issue/bead tooling when available, else the
+   agent's to-do/checklist), and apply edits directly.
+5. Preserve factual meaning, claim strength, citations, and intentional voice. Do not
+   edit the substantive dimensions (Purpose, Grounding, Reasoning, Judgment); if those
+   need work, note it and recommend `prose-full-edit`.
+6. Re-scan the diff for regressions before reporting.
 
 ## Output
 
-Report the changed file, the main issue classes fixed, and any unresolved issues that
-need author judgment.
+Report the changed file, the Expression issue classes fixed, and any substantive
+(Purpose / Grounding / Reasoning / Judgment) issues you noticed but did not edit.

@@ -1,33 +1,38 @@
 ---
 title: Copy Edit Document
-description: Copy-edit and proofread a document against common-doc-guidelines; track and fix all issues with available task tooling
+description: Language-and-formatting edit pass — the common documentation substrate plus the Expression dimensions (E1-E6); track and fix all issues with available task tooling
 category: documentation
 author: Joshua Levy (github.com/jlevy) with agent assistance
 ---
 # Copy-Edit Shortcut
 
+A language-and-formatting pass: the common documentation substrate plus the Expression
+dimensions of the Practical Prose guidelines. It is a superset of common-edit and stops
+short of the substantive dimensions (use the full-edit playbook for those).
+
 ## Instructions
 
-Apply the standard documentation guidelines to a document:
+1. Read `common-doc-guidelines.md` fully — the common substrate: organization,
+   structure, writing style, formatting, links, headings, lists, frontmatter, footer.
 
-1. Read `common-doc-guidelines.md` fully.
+2. Read the Expression dimensions of `practical-prose-guidelines.md` (§Expression
+   Dimensions, E1-E6): E1 Clarity (banned-register words, vague magnitudes,
+   meta-commentary, parallel-structure padding), E2 Coherence, E3 Concision,
+   E4 Organization, E5 Consistency, E6 Formatting.
 
-2. Audit the target against every rule.
+3. Audit the target against every rule in both.
    Be thorough; small issues count.
-   - **If you find more than 5 issues and project issue tooling is available:** File an
-     epic or parent issue with one child issue per fix. Use `tbd` beads when available;
-     otherwise use the repo's equivalent tracker.
-   - **If no external issue tracker is available:** Use the agent's normal to-do or
-     checklist tooling.
-   - **If you find 5 or fewer issues:** Use the agent's normal to-do or checklist tooling
-     unless the user asked for external issue tracking.
+   - **More than 5 issues and project issue tooling is available:** file an epic/parent
+     issue with one child per fix (`tbd` beads when available; else the repo's tracker).
+   - **Otherwise:** use the agent's normal to-do or checklist tooling.
 
-3. Apply all fixes.
-   Close or update any external issues you created as you fix them.
+4. Apply all fixes. **Preserve factual meaning, claim strength, citations, and
+   intentional voice.** Do not edit the substantive dimensions (Purpose, Grounding,
+   Reasoning, Judgment) — if those need work, note it and recommend `prose-full-edit`.
+   Close or update any external issues as you fix them.
 
-4. Verify:
+5. Verify:
    - Check git diff and re-scan for regressions.
-   - If external issues were used, confirm the relevant child issues and parent issue are
-     closed or updated.
+   - If external issues were used, confirm the child issues and parent are closed/updated.
 
-5. Report issues found, changes made, and any external issue or bead IDs.
+6. Report issues found, changes made, and any external issue or bead IDs.

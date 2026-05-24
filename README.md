@@ -173,9 +173,9 @@ Agent Skills under [skills/](skills/). The eval skills use the
 
 | Skill | Kind | Use When |
 | --- | --- | --- |
-| [prose-apply-common-guidelines](skills/prose-apply-common-guidelines/SKILL.md) | Apply | Tidy, clean up, conform, fix formatting, or add the documentation footer. |
-| [prose-quick-check](skills/prose-quick-check/SKILL.md) | Audit | Review, self-audit, quality-check, or pre-publish-check a practical document. |
-| [prose-copy-edit](skills/prose-copy-edit/SKILL.md) | Apply | Copy edit, proofread, polish, tighten, line edit, or style-edit a document. |
+| [prose-common-edit](skills/prose-common-edit/SKILL.md) | Apply | Tidy, clean up, conform, fix formatting/structure, or add the documentation footer. The basic, universal tier. |
+| [prose-copy-edit](skills/prose-copy-edit/SKILL.md) | Apply | Copy edit, proofread, polish, tighten, or line edit — language and formatting (Expression). Superset of common-edit. |
+| [prose-full-edit](skills/prose-full-edit/SKILL.md) | Apply | Deep edit across all 20 dimensions; also writes an editorial review (strengths, weaknesses, suggested fixes). Superset of copy-edit; covers audit-only review. |
 | [prose-eval](skills/prose-eval/SKILL.md) | Evaluate | Score, grade, rubric-check, or measure the quality of one document. |
 | [prose-compare](skills/prose-compare/SKILL.md) | Evaluate | Compare drafts, A/B versions, quality-diff documents, or pick a best variant. |
 
