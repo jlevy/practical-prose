@@ -136,28 +136,138 @@ The local SVGs are inlined verbatim with attribution in a leading XML comment.
 | Reasoning | `mdi:ruler` | [reasoning.svg](assets/icons/reasoning.svg) | inference, measurement, rigor |
 | Judgment | `mdi:scale-balance` | [judgment.svg](assets/icons/judgment.svg) | weighing claims, calibration |
 
-### Resolving names per medium
+### Presentation modes
 
-- **HTML / Markdown**: inline the corresponding SVG from
-  [`assets/icons/`](assets/icons/). All five use `fill="currentColor"`, so they inherit
-  the surrounding CSS color and pair with the group’s ink color via a single `color:`
-  declaration.
+Three canonical presentations.
+Stay inside this set unless the design system grows a new one.
 
-- **External-file reference** (when inlining is not possible): use
-  `<img src="…/purpose.svg">`. Note that `<img>` cannot recolor a `currentColor` SVG; if
-  you need recoloring, use CSS `mask-image` instead:
+1. **Inline** — icon-as-glyph in flowing text, sized to the surrounding type.
+   The default, used in body copy, table cells, and chart legends.
+2. **Outlined badge** — icon framed in a thin square, rounded square, or hairline
+   circle. Used for column headers, group cards, and section bugs where a frame helps the
+   icon read as a label rather than as decoration.
+3. **Solid stamp** — a filled circle (or rounded square) in the group’s ink color, with
+   the icon rendered in the page’s surface color so it appears cut out.
+   The wax-seal treatment.
+   Used for the strongest visual anchors: report headers, navigation chips, dimension
+   medallions in summary visualizations.
 
-  ```css
-  .icon-purpose {
-    width: 1em; height: 1em;
-    background-color: hsl(214 55% 25%);
-    mask-image: url("assets/icons/purpose.svg");
-    mask-size: contain; mask-repeat: no-repeat;
-  }
-  ```
+#### Inline
 
-- **Terminal / plain text**: maintain a small lookup that maps each name to a Unicode
-  glyph, with a two-letter group abbreviation as final fallback.
+Inline the SVG from [`assets/icons/`](assets/icons/) directly.
+All five use `fill="currentColor"`, so they inherit the surrounding CSS color.
+Pair with the group’s ink color via one `color:` declaration:
+
+```html
+<span class="dim dim--purpose">
+  <!-- contents of assets/icons/purpose.svg -->
+  <svg viewBox="0 0 24 24" width="1em" height="1em"><path fill="currentColor" d="…"/></svg>
+  Purpose
+</span>
+```
+
+```css
+.dim         { display: inline-flex; align-items: center; gap: 0.35em; }
+.dim--purpose    { color: hsl(214 55% 25%); }
+.dim--expression { color: hsl(140 55% 22%); }
+.dim--grounding  { color: hsl(38 80% 22%); }
+.dim--reasoning  { color: hsl(265 65% 32%); }
+.dim--judgment   { color: hsl(348 55% 30%); }
+```
+
+#### Outlined badge
+
+A frame around the inline icon.
+The frame border picks up the same ink color via `currentColor`:
+
+```html
+<span class="dim-badge dim--purpose">
+  <svg viewBox="0 0 24 24" width="1em" height="1em"><path fill="currentColor" d="…"/></svg>
+</span>
+```
+
+```css
+.dim-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2em; height: 2em;
+  border: 1.5px solid currentColor;
+  border-radius: 25%;        /* square: 0; rounded square: 18-25%; circle: 50% */
+  box-sizing: border-box;
+  padding: 0.25em;
+}
+.dim-badge svg { width: 100%; height: 100%; }
+```
+
+#### Solid stamp (filled circle, cut-out icon)
+
+The wax-seal treatment.
+The container fills with the group’s ink color, and the inline SVG is set to the page’s
+surface color so it reads as a cut-out:
+
+```html
+<span class="dim-stamp dim--purpose">
+  <svg viewBox="0 0 24 24" width="1em" height="1em"><path fill="currentColor" d="…"/></svg>
+</span>
+```
+
+```css
+.dim-stamp {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.25em; height: 2.25em;
+  border-radius: 50%;          /* circle; use 22% for rounded-square stamp */
+  padding: 0.45em;
+  box-sizing: border-box;
+}
+.dim-stamp svg { width: 100%; height: 100%; color: var(--paper, #ffffff); }
+
+/* Background uses the group ink color; the SVG color is the paper color. */
+.dim-stamp.dim--purpose    { background: hsl(214 55% 25%); }
+.dim-stamp.dim--expression { background: hsl(140 55% 22%); }
+.dim-stamp.dim--grounding  { background: hsl(38 80% 22%); }
+.dim-stamp.dim--reasoning  { background: hsl(265 65% 32%); }
+.dim-stamp.dim--judgment   { background: hsl(348 55% 30%); }
+```
+
+Sizing rule: the icon should occupy roughly 55-65% of the stamp’s diameter (set via
+`padding` on the container, not by sizing the SVG). At small sizes (< 24px diameter)
+prefer the rounded-square variant (`border-radius: 22%`) for legibility.
+
+The `--paper` variable should resolve to the page or card surface color, so the cut-out
+matches the medium the stamp sits on (default: `#ffffff`; on the cream-paper demo
+surface, `hsl(38 80% 95%)` or similar).
+If a renderer cannot resolve a custom property, hard-code the surface color used by that
+medium.
+
+#### External-file reference (`<img>` or CSS `mask`)
+
+When the icon must be loaded as a separate file (e.g. email, Markdown renderers that
+strip inline SVG), use `<img>` for fixed-color cases or CSS `mask-image` for recolorable
+cases:
+
+```html
+<img src="assets/icons/purpose.svg" width="20" height="20" alt="Purpose">
+```
+
+`<img>` cannot recolor a `currentColor` SVG. For recoloring without inlining, use
+`mask-image`:
+
+```css
+.icon-purpose {
+  width: 1em; height: 1em;
+  background-color: hsl(214 55% 25%);
+  mask-image: url("assets/icons/purpose.svg");
+  mask-size: contain; mask-repeat: no-repeat;
+}
+```
+
+#### Terminal / plain text
+
+Maintain a small lookup that maps each name to a Unicode glyph, with a two-letter group
+abbreviation as final fallback (`Pu`, `Ex`, `Gr`, `Re`, `Ju`).
 
 ## Adding or Changing Colors
 
