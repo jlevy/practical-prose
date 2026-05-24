@@ -45,7 +45,8 @@ pprose report from-metrics path/to/artifact.md --label NAME \
 ```
 
 This runs the metrics script internally, populates the `quant` block in schema-correct
-shape, and stubs `qual` (all zeros = “cannot assess”), `violations`, and `metadata`.
+shape, and stubs `qual` (all ERR = scorer-could-not-assess), `violations`, and
+`metadata`.
 
 **Pick a `--scope-class`** so the comparison generator can flag density problems
 relative to genre expectations.
@@ -116,15 +117,17 @@ Useful flags:
 **Manual path:**
 
 Read the artifact end to end.
-For each of the 20 dimensions, assign a score 0-5 (or `NA`) per the anchors in
+For each of the 20 dimensions, assign a score 1-5 (or `NA` / `ERR`) per the anchors in
 `practical-prose-rubric.md`. Use the `SCORE (REASON)` shape internally before composing
 the eval report.
 
 `NA` is reserved for dimensions the artifact’s task genuinely does not require. For
 example, Calibration on a document that makes no probability or forecast claims, or
 Fairness on a reference doc that surfaces no opposing positions.
-A score of 0 means the dimension is applicable but content is missing or unassessable;
-do not confuse the two.
+`ERR` is reserved for procedural failures — the artifact is truncated mid-claim, an
+upstream tool failed, the assigned model refused to score the dimension. Do not use
+ERR to register a quality complaint; an attempted-but-empty dimension is a score of 1
+with a rule citation, not ERR.
 
 For any score below 5, identify at least one specific guideline-rule violation from
 `practical-prose-guidelines.md`. Capture: the dimension by name, the rule number, a
@@ -137,9 +140,9 @@ If you ran the model-scoring path in step 2, this is already done; skip to step 
 
 If manual: open the eval report produced in step 1 and edit:
 
-- `qual`: replace the all-zero stubs with real 0-5 scores per group (`expression`,
-  `purpose`, `grounding`, `reasoning`, `judgment`). Score 0 means “cannot assess”; leave
-  0 only for genuinely-missing-content cases.
+- `qual`: replace the all-ERR stubs with real 1-5 scores per group (`expression`,
+  `purpose`, `grounding`, `reasoning`, `judgment`). Use `NA` where the dimension does
+  not engage; leave `ERR` only when a procedural failure prevents scoring.
 - `violations`: one entry per cited guideline-rule violation (dimension, rule_number,
   description, location).
 - `metadata`: replace `evaluator: TODO` with the human or model-scoring identity; add
@@ -156,14 +159,14 @@ pprose report validate path/to/artifact.eval.md
 
 Expected: `OK: path/to/artifact.eval.md`. Common failures:
 
-- Score outside 0-5
+- Score outside 1-5 (and not `NA` / `ERR`)
 - Missing dimension under `qual`
 - `headings.total` doesn’t equal sum of `h1..h6`
 - Unknown field (typos like `discipline:` misspelled)
 - Unknown dimension or rule_number out of range under `violations`
 
 Validation enforces the alignment principle: every score below 5 needs a matching cited
-violation, and every score-5 (or score-0 = “cannot assess”) needs none.
+violation, and every score-5 (and every `NA` / `ERR`) needs none.
 
 For the publish gate before feeding into a multi-doc comparison, add `--complete`:
 
@@ -172,8 +175,9 @@ pprose report validate path/to/artifact.eval.md --complete
 ```
 
 `--complete` additionally requires `metadata.status='complete'`, evaluator set (not
-`TODO`), `rubric_version` present, no all-zero stubs, and a reason in `qual_reasons` for
-every dimension scored 1-5. The model-scoring path (step 2) sets these automatically.
+`TODO`), `rubric_version` present, at least one dimension actually scored (not all
+NA/ERR), and a reason in `qual_reasons` for every dimension scored 1-5. The
+model-scoring path (step 2) sets these automatically.
 `pprose compare` rejects draft / alignment-invalid inputs by default so the gate
 effectively runs there too.
 
@@ -191,7 +195,7 @@ This produces a 1-column “comparison” against just the one artifact.
 ## Alignment audit (before declaring the eval done)
 
 - [ ] Every dimension scored below 5 has at least one violation cited.
-- [ ] Every score-5, score-0, and `NA` has no violation in the read pass.
+- [ ] Every score-5, `NA`, and `ERR` has no violation in the read pass.
 - [ ] Quantitative outliers from step 1 correlate with rubric findings.
 - [ ] `pprose report validate` passes.
 
@@ -200,8 +204,10 @@ If the audit fails, revise scores or violations until consistent.
 ## Calibration set
 
 `../tools/pprose/tests/fixtures/` ships a small calibration set with **agreed scores
-and violations under `20-dim-v1`** so future agent or human evaluators can be tested for
-drift and self-eval overrating against a fixed reference:
+and violations under `pp20v1`** (legacy `20-dim-v1` / `18-dim-v1-stale-baseline`
+reports are still loaded; the eval loader migrates `score: 0` to `ERR` automatically)
+so future agent or human evaluators can be tested for drift and self-eval overrating
+against a fixed reference:
 
 | Fixture | Artifact | Type | Overall mean | NA dims |
 | --- | --- | --- | ---: | ---: |
@@ -219,9 +225,10 @@ pprose score path/to/your-artifact.eval.md --model sonnet
 ```
 
 The 6 `figma-*.eval.md` fixtures are comparison-renderer test data, not calibration
-baselines: many dimensions are scored 0 because the original 12-dim eval did not
-enumerate per-dim violations satisfying the 20-dim-v1 alignment property.
-To restore those scores, re-eval the underlying artifact under 20-dim-v1.
+baselines: many dimensions were scored 0 on the original 12-dim eval because it did not
+enumerate per-dim violations satisfying the alignment property. The loader migrates
+those 0s to `ERR` on read of the legacy `rubric_version`.
+To restore real scores, re-eval the underlying artifact under `pp20v1`.
 
 Bump the calibration set whenever the rubric is bumped (`practical-prose-rubric.md`
 §Versioning explains the trigger).
@@ -231,7 +238,7 @@ change.
 ## Related docs
 
 - [practical-prose-rubric.md](../docs/practical-prose-rubric.md): per-dimension
-  0-5 anchors and scoring rules.
+  1-5 anchors (with `NA` / `ERR` sentinels) and scoring rules.
 - [practical-prose-guidelines.md](../docs/practical-prose-guidelines.md):
   prescriptive rules cited by `violations`.
 - [practical-prose-eval-compare.runbook.md](practical-prose-eval-compare.runbook.md):
