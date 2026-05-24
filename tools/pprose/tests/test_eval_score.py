@@ -181,8 +181,8 @@ def test_single_doc_rollup_coalesces_qualitative_groups(tmp_path: Path):
     stub = _stub_report(tmp_path)
     body = render_single_doc_rollup(stub, heading_level=1)
 
-    assert "| **Purpose** | Suitability | 0 |" in body
-    assert "|  | Scope | 0 |" in body
+    assert "| **Purpose** | Suitability | ERR |" in body
+    assert "|  | Scope | ERR |" in body
     assert "| Purpose | Scope |" not in body
     assert "|  | **Mean** |" in body
     assert "| **Purpose** | **Mean** |" not in body
@@ -192,7 +192,7 @@ def test_merge_replaces_qual_and_violations(tmp_path: Path):
     stub = _stub_report(tmp_path)
     qual = QualScores(
         expression=ExpressionScores(
-            clarity=5, coherence=5, concision=5, organization=5, consistency=0, formatting=0
+            clarity=5, coherence=5, concision=5, organization=5, consistency="ERR", formatting="ERR"
         ),
         purpose=PurposeScores(suitability=5, breadth=5, depth=5),
         grounding=GroundingScores(verifiability=5, factuality=5, relevance=5),
@@ -222,7 +222,7 @@ def test_merge_preserves_existing_method(tmp_path: Path):
 
     qual = QualScores(
         expression=ExpressionScores(
-            clarity=5, coherence=5, concision=5, organization=5, consistency=0, formatting=0
+            clarity=5, coherence=5, concision=5, organization=5, consistency="ERR", formatting="ERR"
         ),
         purpose=PurposeScores(suitability=5, breadth=5, depth=5),
         grounding=GroundingScores(verifiability=5, factuality=5, relevance=5),
@@ -240,7 +240,7 @@ def test_merge_alignment_clean_passes_strict_validate(tmp_path: Path):
     stub = _stub_report(tmp_path)
     qual = QualScores(
         expression=ExpressionScores(
-            clarity=5, coherence=5, concision=5, organization=5, consistency=0, formatting=0
+            clarity=5, coherence=5, concision=5, organization=5, consistency="ERR", formatting="ERR"
         ),
         purpose=PurposeScores(suitability=5, breadth=5, depth=5),
         grounding=GroundingScores(verifiability=5, factuality=5, relevance=5),
@@ -258,7 +258,7 @@ def test_merge_with_proper_violations_passes_alignment(tmp_path: Path):
     stub = _stub_report(tmp_path)
     qual = QualScores(
         expression=ExpressionScores(
-            clarity=4, coherence=5, concision=5, organization=5, consistency=0, formatting=0
+            clarity=4, coherence=5, concision=5, organization=5, consistency="ERR", formatting="ERR"
         ),
         purpose=PurposeScores(suitability=5, breadth=5, depth=5),
         grounding=GroundingScores(verifiability=5, factuality=5, relevance=5),
@@ -401,7 +401,7 @@ def test_merge_populates_reproducibility_metadata(tmp_path: Path):
     stub = _stub_report(tmp_path)
     qual = QualScores(
         expression=ExpressionScores(
-            clarity=5, coherence=5, concision=5, organization=5, consistency=0, formatting=0
+            clarity=5, coherence=5, concision=5, organization=5, consistency="ERR", formatting="ERR"
         ),
         purpose=PurposeScores(suitability=5, breadth=5, depth=5),
         grounding=GroundingScores(verifiability=5, factuality=5, relevance=5),

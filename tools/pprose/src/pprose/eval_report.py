@@ -3,7 +3,7 @@ Pydantic schema for practical-writing eval reports.
 
 Defines the canonical YAML shape for a single-document eval report that combines:
   - quantitative metrics (mirrors the `pprose metrics` Metrics)
-  - qualitative rubric scores (one per dimension defined in rubric_schema.yaml, 0-5 scale)
+  - qualitative rubric scores (one per dimension defined in rubric_schema.yaml, 1-5 scale)
   - cited guideline-rule violations
   - derived rollups (density ratios, category means, overall mean)
   - eval metadata (date, evaluator, method)
@@ -35,16 +35,23 @@ from pprose import rubric_schema as rs
 from pprose.eval_render import render_single_doc_rollup
 from pprose.table_styles import with_practical_prose_display_metadata
 
-# Score = integer 0-5 or the literal "NA" (not applicable to this artifact).
-# 0 means "applicable but unassessable" (content missing); "NA" means the dimension
-# does not apply to this artifact at all.
-# When aggregating, "NA" is excluded from any mean; 0 is also excluded so that
-# unassessable dimensions don't drag the rollup down.
-Score = Annotated[int, Field(ge=0, le=5)] | Literal["NA"]
+# Score = integer 1-5, or one of the two sentinels "NA" / "ERR".
+#   1-5  = quality score per the rubric anchors. Always truthy, so a numeric score
+#          can never be confused with "no score" by accident (`if score: ...`).
+#   "NA" = the dimension does not engage this artifact (e.g. Calibration on a doc
+#          that makes no probability claims). Decided by the per-dim NA anchor.
+#   "ERR" = the scorer could not assess the dimension (a process failure, never a
+#          document-quality verdict). Use sparingly; "attempted but materially missing"
+#          is a score of 1 with a rule citation, not ERR.
+# When aggregating, both "NA" and "ERR" are excluded from any mean; they are counted
+# separately (na_dimensions vs err_dimensions) so a reader can tell apart "doesn't
+# apply" from "couldn't be scored". See docs/practical-prose-rubric.md.
+Score = Annotated[int, Field(ge=1, le=5)] | Literal["NA", "ERR"]
 
 # Re-export from the canonical schema. Bumping the rubric (renaming a dimension,
 # adding one, reordering groups) happens in rubric_schema.yaml — never here.
 CURRENT_RUBRIC_VERSION = rs.RUBRIC_VERSION
+
 
 ScopeClass = Literal["status", "brief", "memo", "deep_research", "design_doc"]
 
@@ -149,9 +156,9 @@ class QuantMetrics(BaseModel):
 class PurposeScores(BaseModel):
     model_config = ConfigDict(extra="forbid")
     suitability: Score
-    # Scope is a newer addition; default 0 ("cannot assess") lets fixtures predating
-    # this dimension validate. Re-score to a non-zero value before publication.
-    scope: Score = 0
+    # Scope is a newer addition; default ERR ("cannot assess") lets fixtures predating
+    # this dimension validate. Re-score to a 1-5 value before publication.
+    scope: Score = "ERR"
     breadth: Score
     depth: Score
 
@@ -311,15 +318,16 @@ class RubricRollup(BaseModel):
     reasoning_mean: float
     judgment_mean: float
     overall_mean: float
-    # Count of dimensions actually scored (1-5). Score 0 means "applicable but
-    # unassessable" and "NA" means "not applicable"; both are excluded from rollup
-    # means. This field surfaces how many of the rubric's dimensions contributed
-    # to overall_mean.
+    # Count of dimensions actually scored (1-5). NA and ERR are both excluded from
+    # rollup means. This field surfaces how many of the rubric's dimensions
+    # contributed to overall_mean.
     assessed_dimensions: int = Field(default_factory=rs.dimension_count)
-    # Number of dimensions marked NA. Useful for distinguishing "we couldn't assess
-    # this" (score 0, raises a flag) from "this dimension genuinely doesn't apply"
-    # (NA, no flag).
+    # Number of dimensions marked NA (dimension does not engage this artifact).
     na_dimensions: int = 0
+    # Number of dimensions marked ERR (scorer could not assess). Distinguishing this
+    # from na_dimensions lets a reader see "we couldn't score X dims" instead of
+    # treating those dims as silently dropped.
+    err_dimensions: int = 0
 
 
 class Tally(BaseModel):
@@ -427,7 +435,8 @@ class EvalReport(BaseModel):
         The alignment property (per practical-prose-rubric.md):
           - score 1-4: at least one Violation must cite the same dimension
           - score 5:   no Violation may cite that dimension
-          - score 0:   no constraint (cannot-assess; outside the alignment scope)
+          - NA / ERR:  no constraint (dimension doesn't engage / scorer couldn't
+                       assess; outside the alignment scope)
 
         An empty list means the report is alignment-valid.
         """
@@ -439,8 +448,8 @@ class EvalReport(BaseModel):
         for dim in rs.DIMENSIONS:
             score = getattr(getattr(self.qual, dim.group_key), dim.key)
             cited = violations_by_dim.get(dim.label.lower(), [])
-            if score == 0 or score == "NA":
-                continue  # cannot-assess or not-applicable; outside alignment scope
+            if score in ("NA", "ERR"):
+                continue  # not-applicable or cannot-assess; outside alignment scope
             if 1 <= score <= 4 and not cited:
                 errors.append(f"{dim.label}: score={score} but no violation cites this dimension")
             elif score == 5 and cited:
@@ -454,6 +463,7 @@ class EvalReport(BaseModel):
     def from_yaml(cls, source: str | Path) -> EvalReport:
         text = source.read_text(encoding="utf-8") if isinstance(source, Path) else source
         data = yaml.safe_load(text)
+        data = _migrate_legacy_scores(data)
         return cls.model_validate(data)
 
     def to_yaml(self, *, include_table_styles: bool = False) -> str:
@@ -473,6 +483,7 @@ class EvalReport(BaseModel):
         """Load an `.eval.md` file: YAML frontmatter (delimited by ---) + body."""
         text = source.read_text(encoding="utf-8") if isinstance(source, Path) else source
         data = _parse_frontmatter(text)
+        data = _migrate_legacy_scores(data)
         return cls.model_validate(data)
 
     def to_eval_md(self, body: str, *, include_table_styles: bool = True) -> str:
@@ -483,6 +494,37 @@ class EvalReport(BaseModel):
         """
         frontmatter = self.to_yaml(include_table_styles=include_table_styles)
         return f"---\n{frontmatter}---\n\n{body.rstrip()}\n"
+
+
+def _migrate_legacy_scores(data: dict) -> dict:
+    """In-place upgrade of legacy reports to the current rubric.
+
+    On any report whose `metadata.rubric_version` is missing or not the current
+    version, coerce every `score: 0` in the qual block to `"ERR"`. v1 used 0 to
+    mean both "cannot assess" (per-dim anchors + prompt) and "attempted but
+    missing" (decision tree); LLM scorers in practice almost always emitted 0
+    with the "cannot assess" meaning, which is now "ERR" on v2+. Reports already
+    tagged with the current version are passed through unchanged so a stray 0 in
+    a v2+ report still fails validation as intended.
+
+    Idempotent: a v2 report (or one already migrated in this call) is untouched.
+    """
+    if not isinstance(data, dict):
+        return data
+    metadata = data.get("metadata")
+    if not isinstance(metadata, dict):
+        return data
+    if metadata.get("rubric_version") == CURRENT_RUBRIC_VERSION:
+        return data
+    qual = data.get("qual")
+    if isinstance(qual, dict):
+        for group_dict in qual.values():
+            if not isinstance(group_dict, dict):
+                continue
+            for dim_key, score in list(group_dict.items()):
+                if score == 0:
+                    group_dict[dim_key] = "ERR"
+    return data
 
 
 def _parse_frontmatter(text: str) -> dict:
@@ -533,12 +575,12 @@ def compute_derived(quant: QuantMetrics, qual: QualScores) -> DerivedRollups:
         h4_share_of_headings=_round(headings.h4 / headings_total),
     )
 
-    # Score 0 = "applicable but unassessable"; "NA" = "not applicable to this artifact".
+    # "NA" = not applicable to this artifact; "ERR" = scorer could not assess.
     # Both are excluded from group/overall means so they don't drag the rollup down,
-    # but they are counted separately (assessed_dimensions vs na_dimensions) so a
-    # reader can tell apart "couldn't measure" from "doesn't apply."
+    # but they are counted separately (assessed_dimensions, na_dimensions,
+    # err_dimensions) so a reader can tell "doesn't apply" from "couldn't be scored".
     def _is_scored(value: int | str) -> bool:
-        return isinstance(value, int) and value != 0
+        return isinstance(value, int)
 
     def _mean_scored(scores: list[int | str]) -> float:
         scored = [s for s in scores if _is_scored(s)]
@@ -556,6 +598,7 @@ def compute_derived(quant: QuantMetrics, qual: QualScores) -> DerivedRollups:
     overall_mean = _mean_scored(all_scores)
     assessed_dimensions = sum(1 for s in all_scores if _is_scored(s))
     na_dimensions = sum(1 for s in all_scores if s == "NA")
+    err_dimensions = sum(1 for s in all_scores if s == "ERR")
 
     rollup = RubricRollup(
         purpose_mean=group_means["purpose"],
@@ -566,6 +609,7 @@ def compute_derived(quant: QuantMetrics, qual: QualScores) -> DerivedRollups:
         overall_mean=overall_mean,
         assessed_dimensions=assessed_dimensions,
         na_dimensions=na_dimensions,
+        err_dimensions=err_dimensions,
     )
 
     return DerivedRollups(
@@ -655,25 +699,27 @@ def quant_from_metrics(metrics: pwm.Metrics, *, bytes_kb: float | None = None) -
 
 
 def stub_qual() -> QualScores:
-    """A 0-everywhere qual block. Score 0 means 'applicable but unassessable' per
-    the rubric.
+    """An ERR-everywhere qual block. ERR means 'scorer could not assess' per the
+    rubric; the stub is unscored placeholder content.
 
-    The user must replace these with real scores (or NA where the dimension does
-    not apply to the artifact) before the YAML is meaningful.
+    The user must replace these with real 1-5 scores (or NA where the dimension does
+    not engage the artifact) before the YAML is meaningful.
     """
     return QualScores(
-        purpose=PurposeScores(suitability=0, scope=0, breadth=0, depth=0),
+        purpose=PurposeScores(suitability="ERR", scope="ERR", breadth="ERR", depth="ERR"),
         expression=ExpressionScores(
-            clarity=0,
-            coherence=0,
-            concision=0,
-            organization=0,
-            consistency=0,
-            formatting=0,
+            clarity="ERR",
+            coherence="ERR",
+            concision="ERR",
+            organization="ERR",
+            consistency="ERR",
+            formatting="ERR",
         ),
-        grounding=GroundingScores(verifiability=0, factuality=0, relevance=0),
-        reasoning=ReasoningScores(discipline=0, soundness=0, precision=0, parsimony=0),
-        judgment=JudgmentScores(calibration=0, fairness=0, robustness=0),
+        grounding=GroundingScores(verifiability="ERR", factuality="ERR", relevance="ERR"),
+        reasoning=ReasoningScores(
+            discipline="ERR", soundness="ERR", precision="ERR", parsimony="ERR"
+        ),
+        judgment=JudgmentScores(calibration="ERR", fairness="ERR", robustness="ERR"),
     )
 
 
@@ -683,7 +729,7 @@ def completeness_errors(report: EvalReport) -> list[str]:
     Used by `validate --complete` and (downstream) by eval_compare to reject draft
     inputs by default. A complete eval has all of: status=complete, evaluator set
     (not "TODO"), rubric_version present, at least one dimension actually scored
-    (not all zeros), and a non-null reason for every dimension scored 1-5.
+    (not all NA/ERR), and a non-null reason for every dimension scored 1-5.
     """
     errors: list[str] = []
     if report.metadata.status != "complete":
@@ -695,9 +741,9 @@ def completeness_errors(report: EvalReport) -> list[str]:
         errors.append("metadata.evaluator='TODO' (set the human or model identity)")
     if report.metadata.rubric_version is None:
         errors.append("metadata.rubric_version missing")
-    if all(s == 0 or s == "NA" for s in report.qual.all_scores()):
+    if all(s in ("NA", "ERR") for s in report.qual.all_scores()):
         errors.append(
-            "qual has no scored dimensions (all 0 or NA); run eval_score.py or fill manually"
+            "qual has no scored dimensions (all NA or ERR); run eval_score.py or fill manually"
         )
     scores = report.qual.all_scores()
     reasons = report.qual_reasons.all_reasons()
@@ -788,7 +834,7 @@ def cmd_from_metrics(args: argparse.Namespace) -> int:
             evaluator=args.evaluator or "TODO",
             status="draft",
             method=args.method,
-            notes="Stub — qual scores are 0 (cannot-assess); fill in before validating downstream.",
+            notes="Stub — qual scores are ERR (cannot-assess); fill in before validating downstream.",
             rubric_version=args.rubric_version or CURRENT_RUBRIC_VERSION,
         ),
     )
