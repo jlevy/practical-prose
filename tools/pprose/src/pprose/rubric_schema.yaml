@@ -79,6 +79,9 @@ groups:
     - Each section earns its place
     - Frontmatter is for machine-readable fields
     - Describe the present state, not what it replaced
+- key: form
+  label: Form
+  dimensions:
   - key: organization
     label: Organization
     section: 8

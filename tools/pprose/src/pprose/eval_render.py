@@ -191,6 +191,7 @@ def render_single_doc_rollup(
     group_means: dict[str, float] = {
         "purpose": rollup.purpose_mean,
         "expression": rollup.expression_mean,
+        "form": rollup.form_mean,
         "grounding": rollup.grounding_mean,
         "reasoning": rollup.reasoning_mean,
         "judgment": rollup.judgment_mean,

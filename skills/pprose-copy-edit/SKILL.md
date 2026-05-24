@@ -1,13 +1,13 @@
 ---
 name: pprose-copy-edit
-description: Copy-edit a Markdown document for language and formatting (the Expression dimensions); modifies the doc. A superset of pprose-common-edit. Use when asked to copy edit, proofread, polish, tighten, rewrite, or line edit.
+description: Copy-edit a Markdown document for language and formatting (the Expression and Form dimensions); modifies the doc. A superset of pprose-common-edit. Use when asked to copy edit, proofread, polish, tighten, rewrite, or line edit.
 ---
 # Copy Edit
 
 This is an apply skill: it may modify the target document. It is a **superset of
 `pprose-common-edit`**: it applies the common documentation substrate *and* the
-Expression dimensions (E1–E6: clarity, coherence, concision, organization, consistency,
-formatting) of the Practical Prose guidelines. It stops short of the substantive
+Expression and Form dimensions (E1–E3 and F1–F3: clarity, coherence, concision,
+organization, consistency, formatting) of the Practical Prose guidelines. It stops short of the substantive
 dimensions — for a full all-dimension editorial pass that also writes an editorial
 review, use `pprose-full-edit`.
 
@@ -20,8 +20,8 @@ review, use `pprose-full-edit`.
 
 1. Run `pprose shortcut shortcut-copy-edit` and follow it.
 2. Apply the common substrate: `pprose guidelines common-doc-guidelines`.
-3. Apply the Expression dimensions (E1–E6) from
-   `pprose guidelines practical-prose-guidelines` (§Expression Dimensions).
+3. Apply the Expression and Form dimensions (E1–E3, F1–F3) from
+   `pprose guidelines practical-prose-guidelines` (§Expression Dimensions, §Form Dimensions).
 4. Audit the document, track issues (project issue/bead tooling when available, else the
    agent's to-do/checklist), and apply edits directly.
 5. Preserve factual meaning, claim strength, citations, and intentional voice. Do not

@@ -16,7 +16,9 @@ derived:
     words_per_sentence: 19.9906
   rubric_rollup:
     assessed_dimensions: 20
-    expression_mean: 4.1667
+    err_dimensions: 0
+    expression_mean: 4.3333
+    form_mean: 4.0
     grounding_mean: 4.0
     judgment_mean: 3.6667
     na_dimensions: 0
@@ -30,104 +32,211 @@ display:
     palettes:
       practical_prose_dimensions:
         Breadth:
-          background: '#eaf2ff'
-          foreground: '#173b68'
+          background: hsl(72 62% 92%)
+          foreground: hsl(72 62% 44%)
         Calibration:
-          background: '#fff0f3'
-          foreground: '#8a1232'
+          background: hsl(278 30% 92%)
+          foreground: hsl(278 30% 55%)
         Clarity:
-          background: '#eaf7ec'
-          foreground: '#175c36'
+          background: hsl(206 59% 92%)
+          foreground: hsl(206 59% 44%)
         Coherence:
-          background: '#eaf7ec'
-          foreground: '#175c36'
+          background: hsl(206 59% 92%)
+          foreground: hsl(206 59% 44%)
         Concision:
-          background: '#eaf7ec'
-          foreground: '#175c36'
-        Depth:
-          background: '#eaf2ff'
-          foreground: '#173b68'
-        Factuality:
-          background: '#fff6db'
-          foreground: '#6b4a03'
-        Fairness:
-          background: '#fff0f3'
-          foreground: '#8a1232'
-        Formatting:
-          background: '#eaf7ec'
-          foreground: '#175c36'
-        Discipline:
-          background: '#f3ecff'
-          foreground: '#4c1d95'
-        Organization:
-          background: '#eaf7ec'
-          foreground: '#175c36'
-        Parsimony:
-          background: '#f3ecff'
-          foreground: '#4c1d95'
-        Precision:
-          background: '#f3ecff'
-          foreground: '#4c1d95'
-        Relevance:
-          background: '#fff6db'
-          foreground: '#6b4a03'
-        Robustness:
-          background: '#fff0f3'
-          foreground: '#8a1232'
-        Scope:
-          background: '#eaf2ff'
-          foreground: '#173b68'
-        Soundness:
-          background: '#f3ecff'
-          foreground: '#4c1d95'
+          background: hsl(206 59% 92%)
+          foreground: hsl(206 59% 44%)
         Consistency:
-          background: '#eaf7ec'
-          foreground: '#175c36'
+          background: hsl(30 60% 92%)
+          foreground: hsl(30 60% 38%)
+        Depth:
+          background: hsl(72 62% 92%)
+          foreground: hsl(72 62% 44%)
+        Discipline:
+          background: hsl(329 60% 92%)
+          foreground: hsl(329 60% 44%)
+        Factuality:
+          background: hsl(162 55% 92%)
+          foreground: hsl(162 55% 40%)
+        Fairness:
+          background: hsl(278 30% 92%)
+          foreground: hsl(278 30% 55%)
+        Formatting:
+          background: hsl(30 60% 92%)
+          foreground: hsl(30 60% 38%)
+        Organization:
+          background: hsl(30 60% 92%)
+          foreground: hsl(30 60% 38%)
+        Parsimony:
+          background: hsl(329 60% 92%)
+          foreground: hsl(329 60% 44%)
+        Precision:
+          background: hsl(329 60% 92%)
+          foreground: hsl(329 60% 44%)
+        Relevance:
+          background: hsl(162 55% 92%)
+          foreground: hsl(162 55% 40%)
+        Robustness:
+          background: hsl(278 30% 92%)
+          foreground: hsl(278 30% 55%)
+        Scope:
+          background: hsl(72 62% 92%)
+          foreground: hsl(72 62% 44%)
+        Soundness:
+          background: hsl(329 60% 92%)
+          foreground: hsl(329 60% 44%)
         Suitability:
-          background: '#eaf2ff'
-          foreground: '#173b68'
+          background: hsl(72 62% 92%)
+          foreground: hsl(72 62% 44%)
         Verifiability:
-          background: '#fff6db'
-          foreground: '#6b4a03'
+          background: hsl(162 55% 92%)
+          foreground: hsl(162 55% 40%)
+      practical_prose_dimensions_dark:
+        Breadth:
+          background: hsl(72 62% 18%)
+          foreground: hsl(72 62% 68%)
+        Calibration:
+          background: hsl(278 30% 18%)
+          foreground: hsl(278 30% 72%)
+        Clarity:
+          background: hsl(206 59% 18%)
+          foreground: hsl(206 59% 68%)
+        Coherence:
+          background: hsl(206 59% 18%)
+          foreground: hsl(206 59% 68%)
+        Concision:
+          background: hsl(206 59% 18%)
+          foreground: hsl(206 59% 68%)
+        Consistency:
+          background: hsl(30 60% 18%)
+          foreground: hsl(30 60% 68%)
+        Depth:
+          background: hsl(72 62% 18%)
+          foreground: hsl(72 62% 68%)
+        Discipline:
+          background: hsl(329 60% 18%)
+          foreground: hsl(329 60% 68%)
+        Factuality:
+          background: hsl(162 55% 16%)
+          foreground: hsl(162 55% 62%)
+        Fairness:
+          background: hsl(278 30% 18%)
+          foreground: hsl(278 30% 72%)
+        Formatting:
+          background: hsl(30 60% 18%)
+          foreground: hsl(30 60% 68%)
+        Organization:
+          background: hsl(30 60% 18%)
+          foreground: hsl(30 60% 68%)
+        Parsimony:
+          background: hsl(329 60% 18%)
+          foreground: hsl(329 60% 68%)
+        Precision:
+          background: hsl(329 60% 18%)
+          foreground: hsl(329 60% 68%)
+        Relevance:
+          background: hsl(162 55% 16%)
+          foreground: hsl(162 55% 62%)
+        Robustness:
+          background: hsl(278 30% 18%)
+          foreground: hsl(278 30% 72%)
+        Scope:
+          background: hsl(72 62% 18%)
+          foreground: hsl(72 62% 68%)
+        Soundness:
+          background: hsl(329 60% 18%)
+          foreground: hsl(329 60% 68%)
+        Suitability:
+          background: hsl(72 62% 18%)
+          foreground: hsl(72 62% 68%)
+        Verifiability:
+          background: hsl(162 55% 16%)
+          foreground: hsl(162 55% 62%)
       practical_prose_groups:
         Expression:
-          background: '#eaf7ec'
-          foreground: '#175c36'
+          background: hsl(206 59% 92%)
+          foreground: hsl(206 59% 44%)
+        Form:
+          background: hsl(30 60% 92%)
+          foreground: hsl(30 60% 38%)
         Grounding:
-          background: '#fff6db'
-          foreground: '#6b4a03'
+          background: hsl(162 55% 92%)
+          foreground: hsl(162 55% 40%)
         Judgment:
-          background: '#fff0f3'
-          foreground: '#8a1232'
+          background: hsl(278 30% 92%)
+          foreground: hsl(278 30% 55%)
         Purpose:
-          background: '#eaf2ff'
-          foreground: '#173b68'
+          background: hsl(72 62% 92%)
+          foreground: hsl(72 62% 44%)
         Reasoning:
-          background: '#f3ecff'
-          foreground: '#4c1d95'
+          background: hsl(329 60% 92%)
+          foreground: hsl(329 60% 44%)
+      practical_prose_groups_dark:
+        Expression:
+          background: hsl(206 59% 18%)
+          foreground: hsl(206 59% 68%)
+        Form:
+          background: hsl(30 60% 18%)
+          foreground: hsl(30 60% 68%)
+        Grounding:
+          background: hsl(162 55% 16%)
+          foreground: hsl(162 55% 62%)
+        Judgment:
+          background: hsl(278 30% 18%)
+          foreground: hsl(278 30% 72%)
+        Purpose:
+          background: hsl(72 62% 18%)
+          foreground: hsl(72 62% 68%)
+        Reasoning:
+          background: hsl(329 60% 18%)
+          foreground: hsl(329 60% 68%)
       practical_prose_scores:
         '0':
           font_weight: 400
-          foreground: '#6b7280'
+          foreground: hsl(220 10% 50%)
           opacity: 0.75
         '1':
           font_weight: 800
-          foreground: '#991b1b'
+          foreground: hsl(0 70% 35%)
         '2':
           font_weight: 650
-          foreground: '#92400e'
+          foreground: hsl(28 80% 30%)
         '3':
           font_weight: 700
-          foreground: '#a16207'
+          foreground: hsl(40 80% 32%)
         '4':
           font_weight: 750
-          foreground: '#166534'
+          foreground: hsl(140 60% 28%)
         '5':
           font_weight: 850
-          foreground: '#14532d'
+          foreground: hsl(140 60% 20%)
         NA:
           font_weight: 400
-          foreground: '#6b7280'
+          foreground: hsl(220 10% 50%)
+          opacity: 0.65
+      practical_prose_scores_dark:
+        '0':
+          font_weight: 400
+          foreground: hsl(220 10% 60%)
+          opacity: 0.75
+        '1':
+          font_weight: 800
+          foreground: hsl(0 70% 60%)
+        '2':
+          font_weight: 650
+          foreground: hsl(28 70% 60%)
+        '3':
+          font_weight: 700
+          foreground: hsl(40 70% 60%)
+        '4':
+          font_weight: 750
+          foreground: hsl(140 50% 55%)
+        '5':
+          font_weight: 850
+          foreground: hsl(140 50% 45%)
+        NA:
+          font_weight: 400
+          foreground: hsl(220 10% 60%)
           opacity: 0.65
     tables:
     - encodings:
@@ -199,6 +308,10 @@ display:
         - Approach
         - Aspect
         - Measure
+    theme_alternates:
+      practical_prose_dimensions: practical_prose_dimensions_dark
+      practical_prose_groups: practical_prose_groups_dark
+      practical_prose_scores: practical_prose_scores_dark
     version: 1
 metadata:
   eval_date: '2026-05-10'
@@ -207,16 +320,17 @@ metadata:
   notes: Re-scored 2026-05-11 under 20-dim-v1 as part of practical-prose v0.4 calibration
     set. Strong baseline overall (overall ~4.0-4.5); Robustness=3 reflects bear-case
     under-treatment. Replaces prior 15-dim-v1-stale-baseline.
-  rubric_version: 20-dim-v1
+  rubric_version: pp20v1
   status: complete
 qual:
   expression:
     clarity: 4
     coherence: 5
     concision: 4
+  form:
+    consistency: 4
     formatting: 4
     organization: 4
-    consistency: 4
   grounding:
     factuality: 4
     relevance: 4
@@ -243,14 +357,14 @@ qual_reasons:
       bridge cleanly between Phase 1 fact-gathering and Phase 2 analysis; no backtracking.
     concision: Mostly tight; beat-magnitude series ($6.6M to $25.5M) appears in full
       at §1.3 and is referenced at §2.1, §2.2, §2.8 — redundant across four sections.
+  form:
+    consistency: Consistent American English, consistent bold conventions; date formats
+      mix ISO (2024-08-01) with abbreviated month (Aug 2026) within the same sections.
     formatting: Markdown renders correctly; tables well-formed; the §1.3 table footnote
       uses a bare asterisk rather than a proper footnote anchor.
     organization: Logical heading hierarchy; tables earn their shape; 26 internal
       links to data files; cross-references to data files name only the filename,
       not what the reader will find.
-    consistency: Consistent American English, consistent bold conventions; date
-      formats mix ISO (2024-08-01) with abbreviated month (Aug 2026) within the same
-      sections.
   grounding:
     factuality: Cannot fully verify externally; citations look well-formed; 'Multiple'
       as source for $12.8B AI coding market at §1.8 is not a verifiable citation;
@@ -284,9 +398,9 @@ qual_reasons:
       with scenario tree, recommendations, workplan); main answer recoverable from
       section headings and §2.9 exec summary.
   reasoning:
-    discipline: Rungs generally well-separated; Phase 1 observation vs Phase
-      2 interpretation cleanly structured; one fusion at §2.6 L982-983 where 'GitHub
-      data was a leading indicator' blends observation with interpretation.
+    discipline: Rungs generally well-separated; Phase 1 observation vs Phase 2 interpretation
+      cleanly structured; one fusion at §2.6 L982-983 where 'GitHub data was a leading
+      indicator' blends observation with interpretation.
     parsimony: Reasoning chains are mostly tight; one re-derivation at §2.2 restates
       the §1.3 series rather than citing it.
     precision: Domain entities named precisely (specific product names, versioned
@@ -428,11 +542,11 @@ violations:
   rule_number: 1
 ---
 
-# rev1-net
+## rev1-net
 
-**Source:** `<external artifact not in this repo>`  **Scope:** `deep_research`  **Overall mean (20 dims):** 4.10  **Rubric:** `20-dim-v1`  **Model:** `—`  **Eval date:** 2026-05-10
+**Source:** `<external artifact not in this repo>`  **Scope:** `deep_research`  **Overall mean (20 dims):** 4.10  **Rubric:** `pp20v1`  **Model:** `—`  **Eval date:** 2026-05-10
 
-## Qualitative
+### Qualitative
 
 | Group | Dimension | Score | Reason |
 | --- | --- | ---: | --- |
@@ -444,10 +558,11 @@ violations:
 | **Expression** | Clarity | 4 | Clear, precise prose throughout; one banned-register phrase at §2.6 L983 'thesis only crystallized'; otherwise strong. |
 |  | Coherence | 5 | Seamless two-phase structure; each paragraph has one job; transitions bridge cleanly between Phase 1 fact-gathering and Phase 2 analysis; no backtracking. |
 |  | Concision | 4 | Mostly tight; beat-magnitude series ($6.6M to $25.5M) appears in full at §1.3 and is referenced at §2.1, §2.2, §2.8 — redundant across four sections. |
-|  | Organization | 4 | Logical heading hierarchy; tables earn their shape; 26 internal links to data files; cross-references to data files name only the filename, not what the reader will find. |
+|  | **Mean** | **4.33** | |
+| **Form** | Organization | 4 | Logical heading hierarchy; tables earn their shape; 26 internal links to data files; cross-references to data files name only the filename, not what the reader will find. |
 |  | Consistency | 4 | Consistent American English, consistent bold conventions; date formats mix ISO (2024-08-01) with abbreviated month (Aug 2026) within the same sections. |
 |  | Formatting | 4 | Markdown renders correctly; tables well-formed; the §1.3 table footnote uses a bare asterisk rather than a proper footnote anchor. |
-|  | **Mean** | **4.17** | |
+|  | **Mean** | **4.00** | |
 | **Grounding** | Verifiability | 4 | Most quantitative claims cite specific sources (earnings releases, 10-Qs); Vercel CEO benchmark at §1.7 has no post ID or URL; CF '20% of the web' at §1.8 has no source URL. |
 |  | Factuality | 4 | Cannot fully verify externally; citations look well-formed; 'Multiple' as source for $12.8B AI coding market at §1.8 is not a verifiable citation; Anthropic '$4B Amazon investment' is a rounded aggregate without disclosure. |
 |  | Relevance | 4 | Cited sources support the financial analysis directly; one or two references at §1.8 are tangential to the headline thesis. |
@@ -463,7 +578,7 @@ violations:
 |  | **Mean** | **3.67** | |
 |  | **Overall mean (20 dims)** | **4.10** | |
 
-## Violations
+### Violations
 
 1. **Breadth** (rule 3) — §1.5d Application Services changelog deferred at P3 without standalone treatment; WAF/DDoS/CDN feature releases only partially captured *Location:* §1.5d.
 2. **Depth** (rule 1) — AI revenue triangulated estimate 5-15% stated without showing the inputs or method, leaving a key claim thin relative to its importance *Location:* §2.7 L1062.
@@ -482,8 +597,10 @@ violations:
 15. **Fairness** (rule 1) — Bear case receives one table row at §2.7 while bull case is developed across multiple paragraphs with named mechanisms; asymmetry not declared *Location:* §2.7 L1072-1078.
 16. **Robustness** (rule 2) — Bear-case 'all narrative' lens named but not tested at depth comparable to the bull case *Location:* §2.7 L1078, §2.9 L1228.
 17. **Robustness** (rule 1) — Interpretive lens for DBNRR-AI correlation (§2.9 finding 3) not stated explicitly; coincidence-vs-causation frame asserted without naming the lens *Location:* §2.9 L1206-1209.
+18. **Relevance** (rule 4) — References at §1.8 cited for completeness rather than clearly bearing on the headline thesis. *Location:* §1.8.
+19. **Parsimony** (rule 1) — Re-derivation of the §1.3 series in §2.2 where a back-reference would suffice. *Location:* §2.2.
 
-## Quantitative
+### Quantitative
 
 | Section | Measure | Value |
 | --- | --- | ---: |

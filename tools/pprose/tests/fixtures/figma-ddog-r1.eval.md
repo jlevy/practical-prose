@@ -15,7 +15,9 @@ derived:
     words_per_sentence: 20.8162
   rubric_rollup:
     assessed_dimensions: 4
+    err_dimensions: 16
     expression_mean: 4.5
+    form_mean: 0.0
     grounding_mean: 0.0
     judgment_mean: 3.5
     na_dimensions: 0
@@ -29,104 +31,211 @@ display:
     palettes:
       practical_prose_dimensions:
         Breadth:
-          background: '#eaf2ff'
-          foreground: '#173b68'
+          background: hsl(72 62% 92%)
+          foreground: hsl(72 62% 44%)
         Calibration:
-          background: '#fff0f3'
-          foreground: '#8a1232'
+          background: hsl(278 30% 92%)
+          foreground: hsl(278 30% 55%)
         Clarity:
-          background: '#eaf7ec'
-          foreground: '#175c36'
+          background: hsl(206 59% 92%)
+          foreground: hsl(206 59% 44%)
         Coherence:
-          background: '#eaf7ec'
-          foreground: '#175c36'
+          background: hsl(206 59% 92%)
+          foreground: hsl(206 59% 44%)
         Concision:
-          background: '#eaf7ec'
-          foreground: '#175c36'
-        Depth:
-          background: '#eaf2ff'
-          foreground: '#173b68'
-        Factuality:
-          background: '#fff6db'
-          foreground: '#6b4a03'
-        Fairness:
-          background: '#fff0f3'
-          foreground: '#8a1232'
-        Formatting:
-          background: '#eaf7ec'
-          foreground: '#175c36'
-        Discipline:
-          background: '#f3ecff'
-          foreground: '#4c1d95'
-        Organization:
-          background: '#eaf7ec'
-          foreground: '#175c36'
-        Parsimony:
-          background: '#f3ecff'
-          foreground: '#4c1d95'
-        Precision:
-          background: '#f3ecff'
-          foreground: '#4c1d95'
-        Relevance:
-          background: '#fff6db'
-          foreground: '#6b4a03'
-        Robustness:
-          background: '#fff0f3'
-          foreground: '#8a1232'
-        Scope:
-          background: '#eaf2ff'
-          foreground: '#173b68'
-        Soundness:
-          background: '#f3ecff'
-          foreground: '#4c1d95'
+          background: hsl(206 59% 92%)
+          foreground: hsl(206 59% 44%)
         Consistency:
-          background: '#eaf7ec'
-          foreground: '#175c36'
+          background: hsl(30 60% 92%)
+          foreground: hsl(30 60% 38%)
+        Depth:
+          background: hsl(72 62% 92%)
+          foreground: hsl(72 62% 44%)
+        Discipline:
+          background: hsl(329 60% 92%)
+          foreground: hsl(329 60% 44%)
+        Factuality:
+          background: hsl(162 55% 92%)
+          foreground: hsl(162 55% 40%)
+        Fairness:
+          background: hsl(278 30% 92%)
+          foreground: hsl(278 30% 55%)
+        Formatting:
+          background: hsl(30 60% 92%)
+          foreground: hsl(30 60% 38%)
+        Organization:
+          background: hsl(30 60% 92%)
+          foreground: hsl(30 60% 38%)
+        Parsimony:
+          background: hsl(329 60% 92%)
+          foreground: hsl(329 60% 44%)
+        Precision:
+          background: hsl(329 60% 92%)
+          foreground: hsl(329 60% 44%)
+        Relevance:
+          background: hsl(162 55% 92%)
+          foreground: hsl(162 55% 40%)
+        Robustness:
+          background: hsl(278 30% 92%)
+          foreground: hsl(278 30% 55%)
+        Scope:
+          background: hsl(72 62% 92%)
+          foreground: hsl(72 62% 44%)
+        Soundness:
+          background: hsl(329 60% 92%)
+          foreground: hsl(329 60% 44%)
         Suitability:
-          background: '#eaf2ff'
-          foreground: '#173b68'
+          background: hsl(72 62% 92%)
+          foreground: hsl(72 62% 44%)
         Verifiability:
-          background: '#fff6db'
-          foreground: '#6b4a03'
+          background: hsl(162 55% 92%)
+          foreground: hsl(162 55% 40%)
+      practical_prose_dimensions_dark:
+        Breadth:
+          background: hsl(72 62% 18%)
+          foreground: hsl(72 62% 68%)
+        Calibration:
+          background: hsl(278 30% 18%)
+          foreground: hsl(278 30% 72%)
+        Clarity:
+          background: hsl(206 59% 18%)
+          foreground: hsl(206 59% 68%)
+        Coherence:
+          background: hsl(206 59% 18%)
+          foreground: hsl(206 59% 68%)
+        Concision:
+          background: hsl(206 59% 18%)
+          foreground: hsl(206 59% 68%)
+        Consistency:
+          background: hsl(30 60% 18%)
+          foreground: hsl(30 60% 68%)
+        Depth:
+          background: hsl(72 62% 18%)
+          foreground: hsl(72 62% 68%)
+        Discipline:
+          background: hsl(329 60% 18%)
+          foreground: hsl(329 60% 68%)
+        Factuality:
+          background: hsl(162 55% 16%)
+          foreground: hsl(162 55% 62%)
+        Fairness:
+          background: hsl(278 30% 18%)
+          foreground: hsl(278 30% 72%)
+        Formatting:
+          background: hsl(30 60% 18%)
+          foreground: hsl(30 60% 68%)
+        Organization:
+          background: hsl(30 60% 18%)
+          foreground: hsl(30 60% 68%)
+        Parsimony:
+          background: hsl(329 60% 18%)
+          foreground: hsl(329 60% 68%)
+        Precision:
+          background: hsl(329 60% 18%)
+          foreground: hsl(329 60% 68%)
+        Relevance:
+          background: hsl(162 55% 16%)
+          foreground: hsl(162 55% 62%)
+        Robustness:
+          background: hsl(278 30% 18%)
+          foreground: hsl(278 30% 72%)
+        Scope:
+          background: hsl(72 62% 18%)
+          foreground: hsl(72 62% 68%)
+        Soundness:
+          background: hsl(329 60% 18%)
+          foreground: hsl(329 60% 68%)
+        Suitability:
+          background: hsl(72 62% 18%)
+          foreground: hsl(72 62% 68%)
+        Verifiability:
+          background: hsl(162 55% 16%)
+          foreground: hsl(162 55% 62%)
       practical_prose_groups:
         Expression:
-          background: '#eaf7ec'
-          foreground: '#175c36'
+          background: hsl(206 59% 92%)
+          foreground: hsl(206 59% 44%)
+        Form:
+          background: hsl(30 60% 92%)
+          foreground: hsl(30 60% 38%)
         Grounding:
-          background: '#fff6db'
-          foreground: '#6b4a03'
+          background: hsl(162 55% 92%)
+          foreground: hsl(162 55% 40%)
         Judgment:
-          background: '#fff0f3'
-          foreground: '#8a1232'
+          background: hsl(278 30% 92%)
+          foreground: hsl(278 30% 55%)
         Purpose:
-          background: '#eaf2ff'
-          foreground: '#173b68'
+          background: hsl(72 62% 92%)
+          foreground: hsl(72 62% 44%)
         Reasoning:
-          background: '#f3ecff'
-          foreground: '#4c1d95'
+          background: hsl(329 60% 92%)
+          foreground: hsl(329 60% 44%)
+      practical_prose_groups_dark:
+        Expression:
+          background: hsl(206 59% 18%)
+          foreground: hsl(206 59% 68%)
+        Form:
+          background: hsl(30 60% 18%)
+          foreground: hsl(30 60% 68%)
+        Grounding:
+          background: hsl(162 55% 16%)
+          foreground: hsl(162 55% 62%)
+        Judgment:
+          background: hsl(278 30% 18%)
+          foreground: hsl(278 30% 72%)
+        Purpose:
+          background: hsl(72 62% 18%)
+          foreground: hsl(72 62% 68%)
+        Reasoning:
+          background: hsl(329 60% 18%)
+          foreground: hsl(329 60% 68%)
       practical_prose_scores:
         '0':
           font_weight: 400
-          foreground: '#6b7280'
+          foreground: hsl(220 10% 50%)
           opacity: 0.75
         '1':
           font_weight: 800
-          foreground: '#991b1b'
+          foreground: hsl(0 70% 35%)
         '2':
           font_weight: 650
-          foreground: '#92400e'
+          foreground: hsl(28 80% 30%)
         '3':
           font_weight: 700
-          foreground: '#a16207'
+          foreground: hsl(40 80% 32%)
         '4':
           font_weight: 750
-          foreground: '#166534'
+          foreground: hsl(140 60% 28%)
         '5':
           font_weight: 850
-          foreground: '#14532d'
+          foreground: hsl(140 60% 20%)
         NA:
           font_weight: 400
-          foreground: '#6b7280'
+          foreground: hsl(220 10% 50%)
+          opacity: 0.65
+      practical_prose_scores_dark:
+        '0':
+          font_weight: 400
+          foreground: hsl(220 10% 60%)
+          opacity: 0.75
+        '1':
+          font_weight: 800
+          foreground: hsl(0 70% 60%)
+        '2':
+          font_weight: 650
+          foreground: hsl(28 70% 60%)
+        '3':
+          font_weight: 700
+          foreground: hsl(40 70% 60%)
+        '4':
+          font_weight: 750
+          foreground: hsl(140 50% 55%)
+        '5':
+          font_weight: 850
+          foreground: hsl(140 50% 45%)
+        NA:
+          font_weight: 400
+          foreground: hsl(220 10% 60%)
           opacity: 0.65
     tables:
     - encodings:
@@ -198,6 +307,10 @@ display:
         - Approach
         - Aspect
         - Measure
+    theme_alternates:
+      practical_prose_dimensions: practical_prose_dimensions_dark
+      practical_prose_groups: practical_prose_groups_dark
+      practical_prose_scores: practical_prose_scores_dark
     version: 1
 metadata:
   eval_date: '2026-05-07'
@@ -209,47 +322,49 @@ metadata:
     repo).
 
     STALE BASELINE under 20-dim-v1: split coverage -> breadth+depth (same score copied
-    as placeholder); structure -> organization (rename only); consistency and
-    formatting added as 0 (cannot assess). Re-score before reuse for regression. Original
-    rubric_version: 15-dim-v1.
+    as placeholder); structure -> organization (rename only); consistency and formatting
+    added as 0 (cannot assess). Re-score before reuse for regression. Original rubric_version:
+    15-dim-v1.
 
 
     CLEANUP 2026-05-11 (post 20-dim-v1 migration): 10 dim(s) demoted from sub-5 to
     0 (applicable-but-unassessable) because the original 12-dim eval did not enumerate
     per-dim violations satisfying the 20-dim-v1 alignment property: Suitability(4->0),
     Depth(4->0), Concision(4->0), Organization(4->0), Verifiability(4->0), Factuality(4->0),
-    Discipline(4->0), Soundness(4->0), Precision(4->0), Robustness(4->0).
-    To restore scores, re-eval under 20-dim-v1 with proper violation citations.'
-  rubric_version: 18-dim-v1-stale-baseline
+    Discipline(4->0), Soundness(4->0), Precision(4->0), Robustness(4->0). To restore
+    scores, re-eval under 20-dim-v1 with proper violation citations.'
+  rubric_version: pp20v1
   status: complete
 qual:
   expression:
     clarity: 4
     coherence: 5
-    concision: 0
-    formatting: 0
-    organization: 0
-    consistency: 0
+    concision: ERR
+  form:
+    consistency: ERR
+    formatting: ERR
+    organization: ERR
   grounding:
-    factuality: 0
-    relevance: 0
-    verifiability: 0
+    factuality: ERR
+    relevance: ERR
+    verifiability: ERR
   judgment:
     calibration: 3
     fairness: 4
-    robustness: 0
+    robustness: ERR
   purpose:
-    breadth: 0
-    depth: 0
-    scope: 0
-    suitability: 0
+    breadth: ERR
+    depth: ERR
+    scope: ERR
+    suitability: ERR
   reasoning:
-    discipline: 0
-    parsimony: 0
-    precision: 0
-    soundness: 0
+    discipline: ERR
+    parsimony: ERR
+    precision: ERR
+    soundness: ERR
 qual_reasons:
   expression: {}
+  form: {}
   grounding:
     relevance: Applicable but unassessable in this rebaseline pass; not scored in
       r1 round.
@@ -311,42 +426,43 @@ violations:
   rule_number: 4
 ---
 
-# DDOG-r1
+## DDOG-r1
 
-**Source:** `<external artifact not in this repo>`  **Scope:** `—`  **Overall mean (20 dims):** 4.00  **Rubric:** `18-dim-v1-stale-baseline`  **Model:** `—`  **Eval date:** 2026-05-07
+**Source:** `<external artifact not in this repo>`  **Scope:** `—`  **Overall mean (20 dims):** 4.00  **Rubric:** `pp20v1`  **Model:** `—`  **Eval date:** 2026-05-07
 
-## Qualitative
+### Qualitative
 
 | Group | Dimension | Score | Reason |
 | --- | --- | ---: | --- |
-| **Purpose** | Suitability | 0 |  |
-|  | Scope | 0 |  |
-|  | Breadth | 0 |  |
-|  | Depth | 0 |  |
+| **Purpose** | Suitability | ERR |  |
+|  | Scope | ERR |  |
+|  | Breadth | ERR |  |
+|  | Depth | ERR |  |
 |  | **Mean** | — | |
 | **Expression** | Clarity | 4 |  |
 |  | Coherence | 5 |  |
-|  | Concision | 0 |  |
-|  | Organization | 0 |  |
-|  | Consistency | 0 |  |
-|  | Formatting | 0 |  |
+|  | Concision | ERR |  |
 |  | **Mean** | **4.50** | |
-| **Grounding** | Verifiability | 0 |  |
-|  | Factuality | 0 |  |
-|  | Relevance | 0 | Applicable but unassessable in this rebaseline pass; not scored in r1 round. |
+| **Form** | Organization | ERR |  |
+|  | Consistency | ERR |  |
+|  | Formatting | ERR |  |
 |  | **Mean** | — | |
-| **Reasoning** | Discipline | 0 |  |
-|  | Soundness | 0 |  |
-|  | Precision | 0 |  |
-|  | Parsimony | 0 | Applicable but unassessable in this rebaseline pass; not scored in r1 round. |
+| **Grounding** | Verifiability | ERR |  |
+|  | Factuality | ERR |  |
+|  | Relevance | ERR | Applicable but unassessable in this rebaseline pass; not scored in r1 round. |
+|  | **Mean** | — | |
+| **Reasoning** | Discipline | ERR |  |
+|  | Soundness | ERR |  |
+|  | Precision | ERR |  |
+|  | Parsimony | ERR | Applicable but unassessable in this rebaseline pass; not scored in r1 round. |
 |  | **Mean** | — | |
 | **Judgment** | Calibration | 3 |  |
 |  | Fairness | 4 |  |
-|  | Robustness | 0 |  |
+|  | Robustness | ERR |  |
 |  | **Mean** | **3.50** | |
 |  | **Overall mean (20 dims)** | **4.00** | |
 
-## Violations
+### Violations
 
 1. **Clarity** (rule 4) — Extravagant register flourishes (e.g. 'transformative')
 2. **Calibration** (rule 2) — No pre-research priors; no Bayesian shrinkage on probabilities
@@ -354,7 +470,7 @@ violations:
 4. **Fairness** (rule 3) — Risk register missing 2 of 5 classes
 5. **Fairness** (rule 4) — Counterintuitive findings all bull-leaning with no tally
 
-## Quantitative
+### Quantitative
 
 | Section | Measure | Value |
 | --- | --- | ---: |

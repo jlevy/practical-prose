@@ -6,8 +6,8 @@ unified Markdown comparison table, with optional per-section drilldowns.
 
 Output shape (unified mode):
   - Columns: one per input artifact (labels from each YAML's `artifact.label`).
-  - Rows are grouped by rubric category (Purpose, Expression, Grounding, Reasoning,
-    Judgment) and follow rubric-schema dimension order. Each category section runs
+  - Rows are grouped by rubric category (Purpose, Expression, Form, Grounding,
+    Reasoning, Judgment) and follow rubric-schema dimension order. Each category section runs
     one row per qualitative dimension, then a "Mean" row, then the analogous
     quantitative rows (raw counts and density ratios).
   - Trailing rows: overall qualitative mean, overall density rollups, schema /

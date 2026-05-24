@@ -1,6 +1,6 @@
 ---
 title: Copy Edit Document
-description: Language-and-formatting edit pass — the common documentation substrate plus the Expression dimensions (E1-E6); track and fix all issues with available task tooling
+description: Language-and-formatting edit pass — the common documentation substrate plus the Expression and Form dimensions (E1-E3, F1-F3); track and fix all issues with available task tooling
 category: documentation
 author: Joshua Levy (github.com/jlevy) with agent assistance
 ---
@@ -15,10 +15,10 @@ short of the substantive dimensions (use the full-edit playbook for those).
 1. Read `common-doc-guidelines.md` fully — the common substrate: organization,
    structure, writing style, formatting, links, headings, lists, frontmatter, footer.
 
-2. Read the Expression dimensions of `practical-prose-guidelines.md` (§Expression
-   Dimensions, E1-E6): E1 Clarity (banned-register words, vague magnitudes,
+2. Read the Expression and Form dimensions of `practical-prose-guidelines.md`
+   (§Expression Dimensions, E1-E3, and §Form Dimensions, F1-F3): E1 Clarity (banned-register words, vague magnitudes,
    meta-commentary, parallel-structure padding), E2 Coherence, E3 Concision,
-   E4 Organization, E5 Consistency, E6 Formatting.
+   F1 Organization, F2 Consistency, F3 Formatting.
 
 3. Audit the target against every rule in both.
    Be thorough; small issues count.

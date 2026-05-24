@@ -36,6 +36,8 @@ from pprose.eval_report import (
     EvalReport,
     ExpressionReasons,
     ExpressionScores,
+    FormReasons,
+    FormScores,
     GroundingReasons,
     GroundingScores,
     JudgmentReasons,
@@ -128,6 +130,7 @@ def _load_env_files() -> None:
 _SCORES_CLS = {
     "purpose": PurposeScores,
     "expression": ExpressionScores,
+    "form": FormScores,
     "grounding": GroundingScores,
     "reasoning": ReasoningScores,
     "judgment": JudgmentScores,
@@ -135,6 +138,7 @@ _SCORES_CLS = {
 _REASONS_CLS = {
     "purpose": PurposeReasons,
     "expression": ExpressionReasons,
+    "form": FormReasons,
     "grounding": GroundingReasons,
     "reasoning": ReasoningReasons,
     "judgment": JudgmentReasons,

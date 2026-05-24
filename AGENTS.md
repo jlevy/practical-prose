@@ -13,7 +13,7 @@ guidelines into every context.
 | User intent | Use | Source |
 | --- | --- | --- |
 | Apply the common Markdown documentation standards (basic, universal) | [pprose-common-edit](skills/pprose-common-edit/SKILL.md) | [common-doc-guidelines.md](docs/common-doc-guidelines.md) |
-| Copy edit for language and formatting (the Expression dimensions) | [pprose-copy-edit](skills/pprose-copy-edit/SKILL.md) | [shortcut-copy-edit.md](shortcuts/shortcut-copy-edit.md) |
+| Copy edit for language and formatting (the Expression and Form dimensions) | [pprose-copy-edit](skills/pprose-copy-edit/SKILL.md) | [shortcut-copy-edit.md](shortcuts/shortcut-copy-edit.md) |
 | Full editorial pass across all 20 dimensions + editorial review (also covers audit-only review) | [pprose-full-edit](skills/pprose-full-edit/SKILL.md) | [shortcut-full-edit.md](shortcuts/shortcut-full-edit.md) |
 | Score one document with metrics and rubric grading | [pprose-eval](skills/pprose-eval/SKILL.md) | [practical-prose-eval-single.runbook.md](runbooks/practical-prose-eval-single.runbook.md) |
 | Compare multiple evaluated drafts or variants | [pprose-compare](skills/pprose-compare/SKILL.md) | [practical-prose-eval-compare.runbook.md](runbooks/practical-prose-eval-compare.runbook.md) |

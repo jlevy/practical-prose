@@ -6,7 +6,7 @@ status: active
 ---
 # Practical Prose Rubric
 
-Version: v0.1 (rubric: `pp20v1`, last update 2026-05-23)\
+Version: v0.1 (rubric: `pp20v1`, last update 2026-05-24)\
 Joshua Levy (github.com/jlevy)
 
 A descriptive 1-5 rubric for assessing practical writing artifacts (articles, blog
@@ -28,7 +28,7 @@ for the scope-class table and when to set each value.
 ## Alignment with the guidelines
 
 The rubric and [practical-prose-guidelines.md](practical-prose-guidelines.md) define the
-same 20 dimensions in the same five groups, using the same names and section numbers
+same 20 dimensions in the same six groups, using the same names and section numbers
 (P1-J3). They are designed as a tight bidirectional map:
 
 - A document scoring **5** on a dimension has no material unaddressed rule violations
@@ -186,7 +186,7 @@ are not justified.
 | 5 | Expression | Clarity | Does the writing read well? |
 | 6 |  | Coherence | Do the ideas progress smoothly? |
 | 7 |  | Concision | Does every section earn its place? |
-| 8 |  | Organization | Are sections, headings, sequence, tables, figures, links, and cross-references arranged for navigation? |
+| 8 | Form | Organization | Are sections, headings, sequence, tables, figures, links, and cross-references arranged for navigation? |
 | 9 |  | Consistency | Does the document follow the chosen style guide or house style consistently? |
 | 10 |  | Formatting | Is the document visually and syntactically clean in its medium? |
 | 11 | Grounding | Verifiability | Are claims traceable to sources or calculations? |
@@ -242,16 +242,16 @@ Suggested primary assignments:
 | Trite phrasing or banned-register hit | E1 Clarity | — |
 | Canonicality declaration or word-choice / naming justification ("this is the canonical X"; “we use the term Y because…”) | E1 Clarity | E3 Concision |
 | Replacement-history narration in a non-history genre ("previously named X"; “under the new layout”) | E3 Concision | E1 Clarity |
-| Generic templated heading as sole section signal ("Overview," “Background,” “Notes”) | E4 Organization | E1 Clarity |
-| Heading-level skip, table that should be prose, broken link | E4 Organization | — |
-| Inconsistent dialect, casing, or parallel-list syntax | E5 Consistency | E1 Clarity |
-| Spaced em-dash overuse (" — “ instead of ”—") | E5 Consistency | E1 Clarity |
-| Malformed Markdown table, broken footnote anchor, misplaced footer | E6 Formatting | E4 Organization |
-| Duplicated table / list content across sections | E3 Concision | E4 Organization |
+| Generic templated heading as sole section signal ("Overview," “Background,” “Notes”) | F1 Organization | E1 Clarity |
+| Heading-level skip, table that should be prose, broken link | F1 Organization | — |
+| Inconsistent dialect, casing, or parallel-list syntax | F2 Consistency | E1 Clarity |
+| Spaced em-dash overuse (" — “ instead of ”—") | F2 Consistency | E1 Clarity |
+| Malformed Markdown table, broken footnote anchor, misplaced footer | F3 Formatting | F1 Organization |
+| Duplicated table / list content across sections | E3 Concision | F1 Organization |
 | Undeclared or drifting scope on a multi-topic document | P2 Scope | P3 Breadth |
 | Missing case class within declared scope (e.g., risk type omitted) | P3 Breadth | J2 Fairness |
 | Thin development of a section the document’s purpose depends on | P4 Depth | P1 Suitability |
-| Missing inline citation for a quantitative claim | G1 Verifiability | E6 Formatting |
+| Missing inline citation for a quantitative claim | G1 Verifiability | F3 Formatting |
 | Number in prose doesn’t match source (silent rounding) | G2 Factuality | G1 Verifiability |
 | Cited source doesn’t support the claim as asserted | G2 Factuality | G1 Verifiability |
 | Mixed observation and interpretation in one sentence | R1 Discipline | R2 Soundness |
@@ -393,8 +393,8 @@ Section depth matches section importance.
 Sentence-level readability: spelling, grammar, register, word choice.
 Errors covered by spell-checkers, Grammarly, Vale, and the language-use parts of AP /
 CMS. Concision is scored separately under E3; copyediting consistency (dialect,
-parallel-list syntax, citation style) is scored under E5 Consistency; markup validity is
-scored under E6 Formatting.
+parallel-list syntax, citation style) is scored under F2 Consistency; markup validity is
+scored under F3 Formatting.
 
 - **ERR:** Cannot assess (process failure; re-run the eval).
   Content missing or fragmentary.
@@ -417,7 +417,7 @@ scored under E6 Formatting.
 Prose-level flow of ideas: paragraph cohesion, transitions, whether ideas progress
 smoothly sentence to sentence.
 Does not cover logical coherence (R2 Soundness) or arrangement of sections and visual
-elements (E4 Organization).
+elements (F1 Organization).
 
 - **ERR:** Cannot assess (process failure; re-run the eval).
   Content missing or fewer than 3 sentences.
@@ -448,17 +448,24 @@ clear.
 - **5:** Every section, paragraph, and sentence earns its place.
   Cuts would lose information about the subject.
   Frontmatter carries metadata only; visual elements appear only where their shape fits
-  the data (though *whether* their shape fits is scored under E4 Organization).
+  the data (though *whether* their shape fits is scored under F1 Organization).
   No replacement history outside genres that require it (per E3 rule 5): the document
   describes the present state, not what it replaced.
 
-#### E4. Organization
+### Form
+
+Arrangement, style discipline, and markup: the document as a structured artifact rather
+than as prose. Distinct from Expression (sentence- and paragraph-level language), these
+three dimensions descend from the Maintainable principle — they govern how a reader
+navigates and how the document survives editing.
+
+#### F1. Organization
 
 Sections, headings, sequence, tables, figures, lists, links, and cross-references:
 arrangement of the document.
 Visual elements are not required (a tight prose document can score 5), but when present
 they should be arranged well.
-Markup validity is scored under E6 Formatting; style consistency is scored under E5.
+Markup validity is scored under F3 Formatting; style consistency is scored under F2.
 
 - **ERR:** Cannot assess (process failure; re-run the eval).
   Content missing or fragmentary.
@@ -476,7 +483,7 @@ Markup validity is scored under E6 Formatting; style consistency is scored under
   doesn’t name what it points to.
 - **5:** Heading hierarchy logically nested with no skipped levels.
   Sections sized appropriately for their content and arranged in the order the task
-  requires. Headings cleave to the subject (per E4 rule 9): no generic templated headings
+  requires. Headings cleave to the subject (per F1 rule 9): no generic templated headings
   ("Overview," “Background,” “Notes,” “Details”) standing alone as the only signal of
   section contents. Every table earns its tabular shape (parallel rows with a fixed
   schema) and is placed near its referencing prose; every figure has a caption
@@ -484,12 +491,12 @@ Markup validity is scored under E6 Formatting; style consistency is scored under
   name what they point to ("see §2.8 (named cruxes)" over “see §2.8”); visual elements
   deployed where they help, absent where prose is clearer.
 
-#### E5. Consistency
+#### F2. Consistency
 
 Does the document follow the chosen style guide or house style consistently across
 syntax, terminology, capitalization, punctuation, spelling, dates, numbers, units,
 citations, and register?
-Distinct from E1 Clarity (sentence-level readability) and E6 Formatting (markup
+Distinct from E1 Clarity (sentence-level readability) and F3 Formatting (markup
 validity).
 
 - **NA:** Not applicable.
@@ -515,14 +522,14 @@ validity).
   Lists and headings use parallel syntax.
   Citation style consistent.
   Register holds. Domain-specific banned words and house-style conventions followed.
-  Em dashes used sparingly and in American style (no surrounding spaces), per E5 rule 7;
+  Em dashes used sparingly and in American style (no surrounding spaces), per F2 rule 7;
   spaced em-dash overuse is absent.
 
-#### E6. Formatting
+#### F3. Formatting
 
 Is the document’s markup and visual presentation clean, valid, and compatible with the
 chosen medium? Most rules under this dimension are deterministically lintable.
-Distinct from E4 Organization (arrangement) and E5 Consistency (editorial polish).
+Distinct from F1 Organization (arrangement) and F2 Consistency (editorial polish).
 
 - **NA:** Not applicable.
   The document is plain text with no markup, or a format where formatting concerns are
@@ -1080,7 +1087,7 @@ operationalizes them.
 
 | Pass | Scope | Primary dimensions | Stack |
 | --- | --- | --- | --- |
-| Lint | Surface defects | E4 Organization, E5 Consistency, E6 Formatting, E1 Clarity (banned-register and vague-word checks) | `practical_prose_metrics.py`, linters, deterministic checks |
+| Lint | Surface defects | F1 Organization, F2 Consistency, F3 Formatting, E1 Clarity (banned-register and vague-word checks) | `practical_prose_metrics.py`, linters, deterministic checks |
 | Claim audit | Every quantitative claim against its cited source | G1 Verifiability, G2 Factuality | Source lookups, calculation re-runs |
 | Reasoning audit | Mechanisms, assumptions, counter-evidence, alternative lenses | R1 Discipline, R2 Soundness, J2 Fairness, J3 Robustness | Subject-matter expert or fresh-context agent |
 | Purpose audit | Output shape vs task shape; scope; skim-recoverability | P1 Suitability, P2 Scope, P3 Breadth, P4 Depth | Reader simulation; subject-matter expert |
@@ -1159,20 +1166,27 @@ Current revision: **`pp20v1`**. Eval YAMLs produced under it set
 `metadata.rubric_version: pp20v1`. The `from-metrics` subcommand of
 `../scripts/eval_report.py` writes this automatically.
 
-The rubric is still under active development; the version tag is the identity stamp for
-“what schema this report was scored against,” not a release-stability promise.
-Bump it on changes that could shift scores or break loaders:
+The rubric is still under active development; `pp20v1` is a pre-release definition that is
+still being refined in place rather than a frozen release. The version tag is the identity
+stamp for “what schema this report was scored against,” not a release-stability promise.
+Bump it on changes that could shift scores or break loaders once the definition stabilizes:
 
-- Dimension added, removed, or renamed.
+- Dimension added, removed, renamed, or regrouped.
 - Score-anchor language tightened in a way that could move scores.
 - Score domain narrowed or widened.
 
+The six groups include **Form** (Organization, Consistency, Formatting), split out from the
+former six-dimension Expression group; Expression now holds Clarity, Coherence, and
+Concision. The dimensions and their anchors are unchanged; only the grouping moved, so the
+change is folded into `pp20v1` without a version bump.
+
 `../scripts/eval_compare.py` warns when comparing across rubric versions.
-The eval loader auto-coerces `score: 0` to `ERR` on any report whose `rubric_version` is
-not the current value, so pre-`pp20v1` reports (legacy `20-dim-v1`,
-`18-dim-v1-stale-baseline`, `15-dim-v1`, etc.)
-still load — but they should be re-scored against the current schema before being reused
-as calibration baselines.
+On any report whose `rubric_version` is not the current value the eval loader auto-coerces
+`score: 0` to `ERR` and relocates the three Form dimensions out of a legacy `expression`
+block into a `form` block (dropping the stale derived rollup so it recomputes), so older
+reports (legacy `20-dim-v1`, `18-dim-v1-stale-baseline`, `15-dim-v1`, etc.) still load — but
+they should be re-scored against the current schema before being reused as calibration
+baselines.
 
 ## Related docs
 

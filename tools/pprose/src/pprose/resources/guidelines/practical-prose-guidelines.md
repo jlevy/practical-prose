@@ -26,7 +26,7 @@ Practical writing serves a purpose.
 Anything that adds distance between the reader and that purpose without adding necessary
 context, evidence, or maintainability is friction.
 
-## Five Groups, Twenty Dimensions
+## Six Groups, Twenty Dimensions
 
 | Group | Dimension | Question it answers |
 | --- | --- | --- |
@@ -37,9 +37,9 @@ context, evidence, or maintainability is friction.
 | **Expression** | E1. Clarity | Does the writing read well? |
 |  | E2. Coherence | Do the ideas progress smoothly? |
 |  | E3. Concision | Does every section earn its place? |
-|  | E4. Organization | Are sections, headings, sequence, tables, figures, links, and cross-references arranged for navigation? |
-|  | E5. Consistency | Does the document follow the chosen style guide or house style consistently? |
-|  | E6. Formatting | Is the document visually and syntactically clean in its medium? |
+| **Form** | F1. Organization | Are sections, headings, sequence, tables, figures, links, and cross-references arranged for navigation? |
+|  | F2. Consistency | Does the document follow the chosen style guide or house style consistently? |
+|  | F3. Formatting | Is the document visually and syntactically clean in its medium? |
 | **Grounding** | G1. Verifiability | Are claims traceable to specific sources, observations, or calculations? |
 |  | G2. Factuality | Are the verifiable claims true and supported by cited evidence? |
 |  | G3. Relevance | Do sources, citations, and reasoning chains bear on the document's stated purpose? |
@@ -61,7 +61,7 @@ A good practical document does these things; the prescriptive rules below say ho
    standard sources the domain calls for; develops important sections to the depth the
    stakes require (P3, P4).
 3. **Reads cleanly.** Concrete words; one-job paragraphs; earned register; visible
-   structure; consistent style; valid markup (E1–E6).
+   structure; consistent style; valid markup (E1-E3, F1-F3).
 4. **Makes important claims checkable.** Source-traceable, faithful to the cited
    evidence, and tied to the document's purpose; the strictness of the bar scaled to
    stakes (G1–G3).
@@ -95,12 +95,12 @@ The table below shows how its clauses relate to this layer:
 | §2.5 Describe present state, not what it replaced | Absorbed into E3 Concision rule 5 (common agent failure mode) |
 | §3.1 Be clear and concise | Absorbed into E1 Clarity and E3 Concision |
 | §3.2 Be detailed and specific | Absorbed into P4 Depth, G1 Verifiability, R3 Precision |
-| §3.3 Headings cleave to subject contours | Absorbed into E4 Organization rule 9 |
+| §3.3 Headings cleave to subject contours | Absorbed into F1 Organization rule 9 |
 | §3.4 Be engaging and warm | Referenced as Tone / Reader Respect contextual modifier in the rubric |
 | §4.1 Respect reader’s intelligence | Absorbed under the Humane principle and P1 Suitability / P4 Depth |
 | §4.2 Banned extravagant words list | Canonical list lives in common-doc-guidelines; referenced from E1 Clarity rule 4 |
 | §4.3 Cut pompousness, meta-commentary, pedantry | Absorbed into E1 Clarity rules 3 and 6 |
-| E1 Em-dash discipline | Absorbed into E5 Consistency rule 7 |
+| E1 Em-dash discipline | Absorbed into F2 Consistency rule 7 |
 | E2 Guideline Footer | Operational marker; not scored by this rubric |
 
 ## Purpose Dimensions
@@ -307,7 +307,7 @@ correct spelling and grammar?
 *Description:* How well can the reader follow the progression of ideas across the whole
 work? This metric reflects only the prose-level flow; it does not include logical
 coherence (covered under R2 Soundness) or scaffolding like heading hierarchy, tables,
-figures, and links (covered under E4 Organization and E6 Formatting).
+figures, and links (covered under F1 Organization and F3 Formatting).
 Coherence here is about whether ideas progress smoothly when read sentence to sentence.
 
 **Rules:**
@@ -370,14 +370,20 @@ clear and the document coheres.
    history serves the reader’s task or merely records the author’s path.
    (Cross-references common-doc-guidelines §2.5.)
 
-### E4. Organization
+## Form Dimensions
+
+Form covers the document as a structured artifact — arrangement, style discipline, and
+markup — as distinct from the sentence- and paragraph-level language of the Expression
+dimensions. These three descend from the Maintainable principle.
+
+### F1. Organization
 
 *Description:* The document’s sections, headings, sequence, tables, figures, lists,
 links, and cross-references help readers navigate the material.
 
 This dimension is about *arrangement*. Whether the markup renders correctly and follows
-medium conventions is E6 Formatting; whether terminology and house style are consistent
-is E5 Consistency.
+medium conventions is F3 Formatting; whether terminology and house style are consistent
+is F2 Consistency.
 
 Visual elements aren’t required.
 A tightly written prose document with no tables or figures can be excellent.
@@ -433,13 +439,13 @@ But when these elements are present, they should be well-arranged.
    subheadings, not left as-is.
    (Cross-references common-doc-guidelines §3.3.)
 
-### E5. Consistency
+### F2. Consistency
 
 *Description:* The document follows the chosen style guide or house style consistently.
 A document can be perfectly understandable and still stylistically inconsistent;
 conversely, a document can be style-guide compliant but unclear, overlong, or wrong.
 Consistency isolates the editorial-polish question from the readability question
-(E1 Clarity) and the markup-validity question (E6 Formatting).
+(E1 Clarity) and the markup-validity question (F3 Formatting).
 
 **Rules:**
 
@@ -478,11 +484,11 @@ Consistency isolates the editorial-polish question from the readability question
    spaced variant readable.
    (Cross-references common-doc-guidelines E1.)
 
-### E6. Formatting
+### F3. Formatting
 
 *Description:* The document’s markup and visual presentation are clean, valid, and
 compatible with the chosen medium.
-Distinct from E4 Organization (are the parts arranged well) and E5 Consistency
+Distinct from F1 Organization (are the parts arranged well) and F2 Consistency
 (does the document follow house style consistently).
 Formatting is the most deterministic of the three; most rules here are lintable.
 
@@ -1056,15 +1062,15 @@ interpretive frame that a competent reader would dispute.
 ## Pre-Publish Self-Audit
 
 The dimension sections above are the full checklist.
-For a tight self-check before publishing, walk the five groups in order and ask:
+For a tight self-check before publishing, walk the six groups in order and ask:
 
 - **Purpose (P1-P4):** Is the task declared and the main answer recoverable from a skim?
   Scope explicit and matched by the body; relevant areas covered (Breadth); key sections
   developed at the depth the stakes require (Depth)?
-- **Expression (E1-E6):** Any banned-register hit, vague magnitude word,
+- **Expression (E1-E3):** Any banned-register hit, vague magnitude word,
   meta-commentary, parallel-structure padding?
   Each paragraph has one job?
-  Heading hierarchy logical and sections arranged for the task?
+- **Form (F1-F3):** Heading hierarchy logical and sections arranged for the task?
   Style consistent (dialect, casing, parallel lists)?
   Markup valid and footer/frontmatter in place?
 - **Grounding (G1-G3):** Every quantitative claim source-traceable to a specific

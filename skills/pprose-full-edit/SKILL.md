@@ -5,8 +5,8 @@ description: Full editorial pass over a practical document across all 20 Practic
 # Full Edit
 
 This is the deepest edit tier (an apply skill: it may modify the target document) and a
-**superset of `pprose-copy-edit`**. It works the document across all five groups and 20
-dimensions of the Practical Prose guidelines (Purpose, Expression, Grounding, Reasoning,
+**superset of `pprose-copy-edit`**. It works the document across all six groups and 20
+dimensions of the Practical Prose guidelines (Purpose, Expression, Form, Grounding, Reasoning,
 Judgment), and it writes an **editorial-review side document** with strengths,
 weaknesses, and suggested fixes for the author or other editors.
 

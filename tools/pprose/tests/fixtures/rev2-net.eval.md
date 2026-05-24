@@ -16,7 +16,9 @@ derived:
     words_per_sentence: 21.8433
   rubric_rollup:
     assessed_dimensions: 20
+    err_dimensions: 0
     expression_mean: 3.0
+    form_mean: 3.0
     grounding_mean: 2.6667
     judgment_mean: 3.0
     na_dimensions: 0
@@ -30,104 +32,211 @@ display:
     palettes:
       practical_prose_dimensions:
         Breadth:
-          background: '#eaf2ff'
-          foreground: '#173b68'
+          background: hsl(72 62% 92%)
+          foreground: hsl(72 62% 44%)
         Calibration:
-          background: '#fff0f3'
-          foreground: '#8a1232'
+          background: hsl(278 30% 92%)
+          foreground: hsl(278 30% 55%)
         Clarity:
-          background: '#eaf7ec'
-          foreground: '#175c36'
+          background: hsl(206 59% 92%)
+          foreground: hsl(206 59% 44%)
         Coherence:
-          background: '#eaf7ec'
-          foreground: '#175c36'
+          background: hsl(206 59% 92%)
+          foreground: hsl(206 59% 44%)
         Concision:
-          background: '#eaf7ec'
-          foreground: '#175c36'
-        Depth:
-          background: '#eaf2ff'
-          foreground: '#173b68'
-        Factuality:
-          background: '#fff6db'
-          foreground: '#6b4a03'
-        Fairness:
-          background: '#fff0f3'
-          foreground: '#8a1232'
-        Formatting:
-          background: '#eaf7ec'
-          foreground: '#175c36'
-        Discipline:
-          background: '#f3ecff'
-          foreground: '#4c1d95'
-        Organization:
-          background: '#eaf7ec'
-          foreground: '#175c36'
-        Parsimony:
-          background: '#f3ecff'
-          foreground: '#4c1d95'
-        Precision:
-          background: '#f3ecff'
-          foreground: '#4c1d95'
-        Relevance:
-          background: '#fff6db'
-          foreground: '#6b4a03'
-        Robustness:
-          background: '#fff0f3'
-          foreground: '#8a1232'
-        Scope:
-          background: '#eaf2ff'
-          foreground: '#173b68'
-        Soundness:
-          background: '#f3ecff'
-          foreground: '#4c1d95'
+          background: hsl(206 59% 92%)
+          foreground: hsl(206 59% 44%)
         Consistency:
-          background: '#eaf7ec'
-          foreground: '#175c36'
+          background: hsl(30 60% 92%)
+          foreground: hsl(30 60% 38%)
+        Depth:
+          background: hsl(72 62% 92%)
+          foreground: hsl(72 62% 44%)
+        Discipline:
+          background: hsl(329 60% 92%)
+          foreground: hsl(329 60% 44%)
+        Factuality:
+          background: hsl(162 55% 92%)
+          foreground: hsl(162 55% 40%)
+        Fairness:
+          background: hsl(278 30% 92%)
+          foreground: hsl(278 30% 55%)
+        Formatting:
+          background: hsl(30 60% 92%)
+          foreground: hsl(30 60% 38%)
+        Organization:
+          background: hsl(30 60% 92%)
+          foreground: hsl(30 60% 38%)
+        Parsimony:
+          background: hsl(329 60% 92%)
+          foreground: hsl(329 60% 44%)
+        Precision:
+          background: hsl(329 60% 92%)
+          foreground: hsl(329 60% 44%)
+        Relevance:
+          background: hsl(162 55% 92%)
+          foreground: hsl(162 55% 40%)
+        Robustness:
+          background: hsl(278 30% 92%)
+          foreground: hsl(278 30% 55%)
+        Scope:
+          background: hsl(72 62% 92%)
+          foreground: hsl(72 62% 44%)
+        Soundness:
+          background: hsl(329 60% 92%)
+          foreground: hsl(329 60% 44%)
         Suitability:
-          background: '#eaf2ff'
-          foreground: '#173b68'
+          background: hsl(72 62% 92%)
+          foreground: hsl(72 62% 44%)
         Verifiability:
-          background: '#fff6db'
-          foreground: '#6b4a03'
+          background: hsl(162 55% 92%)
+          foreground: hsl(162 55% 40%)
+      practical_prose_dimensions_dark:
+        Breadth:
+          background: hsl(72 62% 18%)
+          foreground: hsl(72 62% 68%)
+        Calibration:
+          background: hsl(278 30% 18%)
+          foreground: hsl(278 30% 72%)
+        Clarity:
+          background: hsl(206 59% 18%)
+          foreground: hsl(206 59% 68%)
+        Coherence:
+          background: hsl(206 59% 18%)
+          foreground: hsl(206 59% 68%)
+        Concision:
+          background: hsl(206 59% 18%)
+          foreground: hsl(206 59% 68%)
+        Consistency:
+          background: hsl(30 60% 18%)
+          foreground: hsl(30 60% 68%)
+        Depth:
+          background: hsl(72 62% 18%)
+          foreground: hsl(72 62% 68%)
+        Discipline:
+          background: hsl(329 60% 18%)
+          foreground: hsl(329 60% 68%)
+        Factuality:
+          background: hsl(162 55% 16%)
+          foreground: hsl(162 55% 62%)
+        Fairness:
+          background: hsl(278 30% 18%)
+          foreground: hsl(278 30% 72%)
+        Formatting:
+          background: hsl(30 60% 18%)
+          foreground: hsl(30 60% 68%)
+        Organization:
+          background: hsl(30 60% 18%)
+          foreground: hsl(30 60% 68%)
+        Parsimony:
+          background: hsl(329 60% 18%)
+          foreground: hsl(329 60% 68%)
+        Precision:
+          background: hsl(329 60% 18%)
+          foreground: hsl(329 60% 68%)
+        Relevance:
+          background: hsl(162 55% 16%)
+          foreground: hsl(162 55% 62%)
+        Robustness:
+          background: hsl(278 30% 18%)
+          foreground: hsl(278 30% 72%)
+        Scope:
+          background: hsl(72 62% 18%)
+          foreground: hsl(72 62% 68%)
+        Soundness:
+          background: hsl(329 60% 18%)
+          foreground: hsl(329 60% 68%)
+        Suitability:
+          background: hsl(72 62% 18%)
+          foreground: hsl(72 62% 68%)
+        Verifiability:
+          background: hsl(162 55% 16%)
+          foreground: hsl(162 55% 62%)
       practical_prose_groups:
         Expression:
-          background: '#eaf7ec'
-          foreground: '#175c36'
+          background: hsl(206 59% 92%)
+          foreground: hsl(206 59% 44%)
+        Form:
+          background: hsl(30 60% 92%)
+          foreground: hsl(30 60% 38%)
         Grounding:
-          background: '#fff6db'
-          foreground: '#6b4a03'
+          background: hsl(162 55% 92%)
+          foreground: hsl(162 55% 40%)
         Judgment:
-          background: '#fff0f3'
-          foreground: '#8a1232'
+          background: hsl(278 30% 92%)
+          foreground: hsl(278 30% 55%)
         Purpose:
-          background: '#eaf2ff'
-          foreground: '#173b68'
+          background: hsl(72 62% 92%)
+          foreground: hsl(72 62% 44%)
         Reasoning:
-          background: '#f3ecff'
-          foreground: '#4c1d95'
+          background: hsl(329 60% 92%)
+          foreground: hsl(329 60% 44%)
+      practical_prose_groups_dark:
+        Expression:
+          background: hsl(206 59% 18%)
+          foreground: hsl(206 59% 68%)
+        Form:
+          background: hsl(30 60% 18%)
+          foreground: hsl(30 60% 68%)
+        Grounding:
+          background: hsl(162 55% 16%)
+          foreground: hsl(162 55% 62%)
+        Judgment:
+          background: hsl(278 30% 18%)
+          foreground: hsl(278 30% 72%)
+        Purpose:
+          background: hsl(72 62% 18%)
+          foreground: hsl(72 62% 68%)
+        Reasoning:
+          background: hsl(329 60% 18%)
+          foreground: hsl(329 60% 68%)
       practical_prose_scores:
         '0':
           font_weight: 400
-          foreground: '#6b7280'
+          foreground: hsl(220 10% 50%)
           opacity: 0.75
         '1':
           font_weight: 800
-          foreground: '#991b1b'
+          foreground: hsl(0 70% 35%)
         '2':
           font_weight: 650
-          foreground: '#92400e'
+          foreground: hsl(28 80% 30%)
         '3':
           font_weight: 700
-          foreground: '#a16207'
+          foreground: hsl(40 80% 32%)
         '4':
           font_weight: 750
-          foreground: '#166534'
+          foreground: hsl(140 60% 28%)
         '5':
           font_weight: 850
-          foreground: '#14532d'
+          foreground: hsl(140 60% 20%)
         NA:
           font_weight: 400
-          foreground: '#6b7280'
+          foreground: hsl(220 10% 50%)
+          opacity: 0.65
+      practical_prose_scores_dark:
+        '0':
+          font_weight: 400
+          foreground: hsl(220 10% 60%)
+          opacity: 0.75
+        '1':
+          font_weight: 800
+          foreground: hsl(0 70% 60%)
+        '2':
+          font_weight: 650
+          foreground: hsl(28 70% 60%)
+        '3':
+          font_weight: 700
+          foreground: hsl(40 70% 60%)
+        '4':
+          font_weight: 750
+          foreground: hsl(140 50% 55%)
+        '5':
+          font_weight: 850
+          foreground: hsl(140 50% 45%)
+        NA:
+          font_weight: 400
+          foreground: hsl(220 10% 60%)
           opacity: 0.65
     tables:
     - encodings:
@@ -199,6 +308,10 @@ display:
         - Approach
         - Aspect
         - Measure
+    theme_alternates:
+      practical_prose_dimensions: practical_prose_dimensions_dark
+      practical_prose_groups: practical_prose_groups_dark
+      practical_prose_scores: practical_prose_scores_dark
     version: 1
 metadata:
   eval_date: '2026-05-10'
@@ -207,16 +320,17 @@ metadata:
   notes: Re-scored 2026-05-11 under 20-dim-v1 as part of practical-prose v0.4 calibration
     set. Weaker baseline (overall ~3.0); pervasive register issues, citation gaps,
     and verbatim duplication. Replaces prior 15-dim-v1-stale-baseline.
-  rubric_version: 20-dim-v1
+  rubric_version: pp20v1
   status: complete
 qual:
   expression:
     clarity: 3
     coherence: 3
     concision: 3
+  form:
+    consistency: 3
     formatting: 3
     organization: 3
-    consistency: 3
   grounding:
     factuality: 3
     relevance: 3
@@ -246,14 +360,15 @@ qual_reasons:
     concision: Beat-magnitude series ($6.6M to $25.5M) duplicated across five locations;
       §1.12 Macro [OPTIONAL] adds little beyond §2.10; frontmatter carries substantive
       framing claims.
+  form:
+    consistency: Register mostly holds but 'crystallized/crystallizes' is extravagant
+      register inconsistent with the otherwise analytical tone; citation style varies
+      between [VERIFIED via X] and bare prose-embedded references.
     formatting: Markdown renders correctly; no broken fences or malformed frontmatter;
       however zero hyperlinks for any citation makes link-resolution vacuous.
     organization: Phase 1/Phase 2 structure logical, but several tables should be
       prose (§1.7, §2.9), Mermaid timeline at §1.4 lacks a caption, and zero cross-reference
       links in a 17.8K-word document.
-    consistency: Register mostly holds but 'crystallized/crystallizes' is extravagant
-      register inconsistent with the otherwise analytical tone; citation style varies
-      between [VERIFIED via X] and bare prose-embedded references.
   grounding:
     factuality: Cannot externally verify sources; claims look well-formed and internally
       consistent, but Anthropic '$4B Amazon investment' is a simplified round number
@@ -288,9 +403,9 @@ qual_reasons:
       tree and recommendations), but central thesis answer and scenario tree buried
       in §2.8, not recoverable from a skim of intro + headings.
   reasoning:
-    discipline: 'Several sentences blend observation and judgment in single
-      clauses; most sections keep rungs distinct but blending recurs in §2.1 Q1 narrative
-      and §2.12 finding #3.'
+    discipline: 'Several sentences blend observation and judgment in single clauses;
+      most sections keep rungs distinct but blending recurs in §2.1 Q1 narrative and
+      §2.12 finding #3.'
     parsimony: Multiple intermediate steps could be cut without weakening the conclusion;
       some chains are visibly padded.
     precision: '''Anthropic ($4B Amazon investment)'' uses a round umbrella figure;
@@ -541,11 +656,11 @@ violations:
   rule_number: 2
 ---
 
-# rev2-net
+## rev2-net
 
-**Source:** `<external artifact not in this repo>`  **Scope:** `deep_research`  **Overall mean (20 dims):** 3.10  **Rubric:** `20-dim-v1`  **Model:** `—`  **Eval date:** 2026-05-10
+**Source:** `<external artifact not in this repo>`  **Scope:** `deep_research`  **Overall mean (20 dims):** 3.10  **Rubric:** `pp20v1`  **Model:** `—`  **Eval date:** 2026-05-10
 
-## Qualitative
+### Qualitative
 
 | Group | Dimension | Score | Reason |
 | --- | --- | ---: | --- |
@@ -557,7 +672,8 @@ violations:
 | **Expression** | Clarity | 3 | Generally readable prose but contains banned-register hits ('crystallized' at §2.1 and §2.8a), meta-commentary at L44-46 narrating document lineage, and parallel-structure padding. |
 |  | Coherence | 3 | Ideas generally progress well within sections, but verbatim paragraph duplication at L1326-1342 is a literal backtrack; §2.7 restates §1.7 findings without advancing argument. |
 |  | Concision | 3 | Beat-magnitude series ($6.6M to $25.5M) duplicated across five locations; §1.12 Macro [OPTIONAL] adds little beyond §2.10; frontmatter carries substantive framing claims. |
-|  | Organization | 3 | Phase 1/Phase 2 structure logical, but several tables should be prose (§1.7, §2.9), Mermaid timeline at §1.4 lacks a caption, and zero cross-reference links in a 17.8K-word document. |
+|  | **Mean** | **3.00** | |
+| **Form** | Organization | 3 | Phase 1/Phase 2 structure logical, but several tables should be prose (§1.7, §2.9), Mermaid timeline at §1.4 lacks a caption, and zero cross-reference links in a 17.8K-word document. |
 |  | Consistency | 3 | Register mostly holds but 'crystallized/crystallizes' is extravagant register inconsistent with the otherwise analytical tone; citation style varies between [VERIFIED via X] and bare prose-embedded references. |
 |  | Formatting | 3 | Markdown renders correctly; no broken fences or malformed frontmatter; however zero hyperlinks for any citation makes link-resolution vacuous. |
 |  | **Mean** | **3.00** | |
@@ -576,7 +692,7 @@ violations:
 |  | **Mean** | **3.00** | |
 |  | **Overall mean (20 dims)** | **3.10** | |
 
-## Violations
+### Violations
 
 1. **Suitability** (rule 2) — Central thesis answer and scenario tree buried in §2.8; not recoverable from a skim of intro + section headings *Location:* Overview L29-47.
 2. **Scope** (rule 3) — §1.12 Macro context tagged [OPTIONAL] but included without flagging as mid-document scope expansion *Location:* §1.12, L1018-1043.
@@ -616,8 +732,10 @@ violations:
 36. **Fairness** (rule 1) — Bull case argued with three named primitives and numerical thresholds while bear case receives a single paragraph without comparable named mechanisms *Location:* §2.8, L1651-1675.
 37. **Robustness** (rule 2) — Base-to-bull lean not tested against most threatening alternative: 'all narrative' bear lens named in §2.8 but not run at comparable depth *Location:* §2.8, L1706-1712.
 38. **Robustness** (rule 1) — DBNRR-AI correlation finding treats temporal alignment as the obvious reading without naming alternative explanations (GTM rebuild, macro cycle) *Location:* §2.12 finding #3, L1913-1920.
+39. **Relevance** (rule 1) — Several cited sources address adjacent topics rather than the headline thesis. *Location:* throughout.
+40. **Parsimony** (rule 2) — Multiple intermediate inferences could be cut without weakening the conclusion. *Location:* throughout.
 
-## Quantitative
+### Quantitative
 
 | Section | Measure | Value |
 | --- | --- | ---: |

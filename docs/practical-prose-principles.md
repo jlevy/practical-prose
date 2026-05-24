@@ -102,7 +102,7 @@ These principles underlie `practical-prose-guidelines.md` and the dimensions use
 
 ## Mapping Principles to Measurable Attributes
 
-`practical-prose-guidelines.md` defines twenty review dimensions grouped under five
+`practical-prose-guidelines.md` defines twenty review dimensions grouped under six
 headings. Each maps to one or more principles.
 
 | Dimension | Principles |
