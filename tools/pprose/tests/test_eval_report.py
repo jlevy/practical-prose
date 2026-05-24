@@ -65,6 +65,8 @@ def _minimal_qual() -> dict:
             "clarity": 4,
             "coherence": 5,
             "concision": 4,
+        },
+        "form": {
             "organization": 5,
             "consistency": 4,
             "formatting": 5,
@@ -107,8 +109,10 @@ def test_load_minimal_yaml_populates_derived():
         sum(report.qual.all_scores()) / len(report.qual.all_scores()), abs=0.01
     )
     # Group means recomputed correctly.
-    # Expression: 4+5+4+5+4+5 = 27 / 6 = 4.5
-    assert report.derived.rubric_rollup.expression_mean == pytest.approx(4.5, abs=0.01)
+    # Expression: 4+5+4 = 13 / 3 ≈ 4.333
+    assert report.derived.rubric_rollup.expression_mean == pytest.approx(13 / 3, abs=0.01)
+    # Form: 5+4+5 = 14 / 3 ≈ 4.667
+    assert report.derived.rubric_rollup.form_mean == pytest.approx(14 / 3, abs=0.01)
     # Purpose: 4+4+4+4 = 16 / 4 = 4.0
     assert report.derived.rubric_rollup.purpose_mean == pytest.approx(4.0, abs=0.01)
     # Grounding: 5+4+5 = 14 / 3 ≈ 4.667
@@ -167,8 +171,7 @@ def test_err_excluded_from_rollup_means():
     report = EvalReport.model_validate(data)
     assert report.derived is not None
     rollup = report.derived.rubric_rollup
-    # Expression mean is over coherence/concision/organization/consistency/
-    # formatting (clarity excluded).
+    # Expression mean is over coherence/concision (clarity excluded).
     assert rollup.expression_mean == 5.0
     assert rollup.overall_mean == 5.0
     # All but one dimension were assessed (clarity is ERR).
@@ -832,6 +835,8 @@ class TestB10_AlignmentProperty:
                 "clarity": "clean",
                 "coherence": "clean",
                 "concision": "clean",
+            },
+            "form": {
                 "organization": "clean",
                 "consistency": "clean",
                 "formatting": "clean",

@@ -8,10 +8,11 @@
 |  | Expression | Clarity | 4 | ERR | 4 | 4 | ERR | 4 |
 |  |  | Coherence | 5 | 5 | 5 | 5 | 5 | 5 |
 |  |  | Concision | ERR | 3 | 4 | ERR | 3 | **5** |
-|  |  | Organization | ERR | 4 | 4 | **5** | 4 | 4 |
+|  |  | *Mean* | 4.50 | 4.00 | 4.33 | 4.50 | 4.00 | **4.67** |
+|  | Form | Organization | ERR | 4 | 4 | **5** | 4 | 4 |
 |  |  | Consistency | ERR | ERR | ERR | ERR | ERR | ERR |
 |  |  | Formatting | ERR | ERR | ERR | ERR | ERR | ERR |
-|  |  | *Mean* | 4.50 | 4.00 | 4.25 | **4.67** | 4.00 | 4.50 |
+|  |  | *Mean* | — | 4.00 | 4.00 | **5.00** | 4.00 | 4.00 |
 |  | Grounding | Verifiability | ERR | ERR | 5 | ERR | ERR | 5 |
 |  |  | Factuality | ERR | 4 | **5** | 4 | 4 | **5** |
 |  |  | Relevance | ERR | ERR | 5 | ERR | ERR | 5 |

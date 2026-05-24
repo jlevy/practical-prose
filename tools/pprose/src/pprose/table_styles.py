@@ -35,44 +35,46 @@ TableStyleMetadata = dict[str, Any]
 # Group palette — light mode.  Background is the family surface tint; foreground
 # is the family ink.  Both share the same H and S; only L differs.
 _GROUP_STYLES_LIGHT: dict[str, dict[str, str]] = {
-    "Purpose":    {"background": "hsl(72 62% 92%)",  "foreground": "hsl(72 62% 44%)"},
+    "Purpose": {"background": "hsl(72 62% 92%)", "foreground": "hsl(72 62% 44%)"},
     "Expression": {"background": "hsl(206 59% 92%)", "foreground": "hsl(206 59% 44%)"},
-    "Grounding":  {"background": "hsl(162 55% 92%)", "foreground": "hsl(162 55% 40%)"},
-    "Reasoning":  {"background": "hsl(329 60% 92%)", "foreground": "hsl(329 60% 44%)"},
-    "Judgment":   {"background": "hsl(278 30% 92%)", "foreground": "hsl(278 30% 55%)"},
+    "Form": {"background": "hsl(30 60% 92%)", "foreground": "hsl(30 60% 38%)"},
+    "Grounding": {"background": "hsl(162 55% 92%)", "foreground": "hsl(162 55% 40%)"},
+    "Reasoning": {"background": "hsl(329 60% 92%)", "foreground": "hsl(329 60% 44%)"},
+    "Judgment": {"background": "hsl(278 30% 92%)", "foreground": "hsl(278 30% 55%)"},
 }
 
 # Group palette — dark mode.  Same H and S as light; L flips so the surface is
 # dim and the ink is light.
 _GROUP_STYLES_DARK: dict[str, dict[str, str]] = {
-    "Purpose":    {"background": "hsl(72 62% 18%)",  "foreground": "hsl(72 62% 68%)"},
+    "Purpose": {"background": "hsl(72 62% 18%)", "foreground": "hsl(72 62% 68%)"},
     "Expression": {"background": "hsl(206 59% 18%)", "foreground": "hsl(206 59% 68%)"},
-    "Grounding":  {"background": "hsl(162 55% 16%)", "foreground": "hsl(162 55% 62%)"},
-    "Reasoning":  {"background": "hsl(329 60% 18%)", "foreground": "hsl(329 60% 68%)"},
-    "Judgment":   {"background": "hsl(278 30% 18%)", "foreground": "hsl(278 30% 72%)"},
+    "Form": {"background": "hsl(30 60% 18%)", "foreground": "hsl(30 60% 68%)"},
+    "Grounding": {"background": "hsl(162 55% 16%)", "foreground": "hsl(162 55% 62%)"},
+    "Reasoning": {"background": "hsl(329 60% 18%)", "foreground": "hsl(329 60% 68%)"},
+    "Judgment": {"background": "hsl(278 30% 18%)", "foreground": "hsl(278 30% 72%)"},
 }
 
 # Score ramp — light mode.  Bad-to-good valence in red→amber→green, plus muted
 # variants for 0 (not applicable to this document) and NA (not assessed).
 _SCORE_STYLES_LIGHT: dict[str, dict[str, str | int | float]] = {
-    "0":  {"foreground": "hsl(220 10% 50%)", "font_weight": 400, "opacity": 0.75},
-    "1":  {"foreground": "hsl(0 70% 35%)",   "font_weight": 800},
-    "2":  {"foreground": "hsl(28 80% 30%)",  "font_weight": 650},
-    "3":  {"foreground": "hsl(40 80% 32%)",  "font_weight": 700},
-    "4":  {"foreground": "hsl(140 60% 28%)", "font_weight": 750},
-    "5":  {"foreground": "hsl(140 60% 20%)", "font_weight": 850},
+    "0": {"foreground": "hsl(220 10% 50%)", "font_weight": 400, "opacity": 0.75},
+    "1": {"foreground": "hsl(0 70% 35%)", "font_weight": 800},
+    "2": {"foreground": "hsl(28 80% 30%)", "font_weight": 650},
+    "3": {"foreground": "hsl(40 80% 32%)", "font_weight": 700},
+    "4": {"foreground": "hsl(140 60% 28%)", "font_weight": 750},
+    "5": {"foreground": "hsl(140 60% 20%)", "font_weight": 850},
     "NA": {"foreground": "hsl(220 10% 50%)", "font_weight": 400, "opacity": 0.65},
 }
 
 # Score ramp — dark mode.  Same hues, lighter L so the colors read against a
 # dark background.  Weight and opacity are mode-independent.
 _SCORE_STYLES_DARK: dict[str, dict[str, str | int | float]] = {
-    "0":  {"foreground": "hsl(220 10% 60%)", "font_weight": 400, "opacity": 0.75},
-    "1":  {"foreground": "hsl(0 70% 60%)",   "font_weight": 800},
-    "2":  {"foreground": "hsl(28 70% 60%)",  "font_weight": 650},
-    "3":  {"foreground": "hsl(40 70% 60%)",  "font_weight": 700},
-    "4":  {"foreground": "hsl(140 50% 55%)", "font_weight": 750},
-    "5":  {"foreground": "hsl(140 50% 45%)", "font_weight": 850},
+    "0": {"foreground": "hsl(220 10% 60%)", "font_weight": 400, "opacity": 0.75},
+    "1": {"foreground": "hsl(0 70% 60%)", "font_weight": 800},
+    "2": {"foreground": "hsl(28 70% 60%)", "font_weight": 650},
+    "3": {"foreground": "hsl(40 70% 60%)", "font_weight": 700},
+    "4": {"foreground": "hsl(140 50% 55%)", "font_weight": 750},
+    "5": {"foreground": "hsl(140 50% 45%)", "font_weight": 850},
     "NA": {"foreground": "hsl(220 10% 60%)", "font_weight": 400, "opacity": 0.65},
 }
 
@@ -118,17 +120,17 @@ def practical_prose_table_styles(
     return {
         "version": 1,
         "palettes": {
-            "practical_prose_groups":           deepcopy(_GROUP_STYLES_LIGHT),
-            "practical_prose_groups_dark":      deepcopy(_GROUP_STYLES_DARK),
-            "practical_prose_dimensions":       _dimension_styles(_GROUP_STYLES_LIGHT),
-            "practical_prose_dimensions_dark":  _dimension_styles(_GROUP_STYLES_DARK),
-            "practical_prose_scores":           deepcopy(_SCORE_STYLES_LIGHT),
-            "practical_prose_scores_dark":      deepcopy(_SCORE_STYLES_DARK),
+            "practical_prose_groups": deepcopy(_GROUP_STYLES_LIGHT),
+            "practical_prose_groups_dark": deepcopy(_GROUP_STYLES_DARK),
+            "practical_prose_dimensions": _dimension_styles(_GROUP_STYLES_LIGHT),
+            "practical_prose_dimensions_dark": _dimension_styles(_GROUP_STYLES_DARK),
+            "practical_prose_scores": deepcopy(_SCORE_STYLES_LIGHT),
+            "practical_prose_scores_dark": deepcopy(_SCORE_STYLES_DARK),
         },
         "theme_alternates": {
-            "practical_prose_groups":     "practical_prose_groups_dark",
+            "practical_prose_groups": "practical_prose_groups_dark",
             "practical_prose_dimensions": "practical_prose_dimensions_dark",
-            "practical_prose_scores":     "practical_prose_scores_dark",
+            "practical_prose_scores": "practical_prose_scores_dark",
         },
         "tables": [
             {

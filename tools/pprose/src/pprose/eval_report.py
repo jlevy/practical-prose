@@ -168,6 +168,10 @@ class ExpressionScores(BaseModel):
     clarity: Score
     coherence: Score
     concision: Score
+
+
+class FormScores(BaseModel):
+    model_config = ConfigDict(extra="forbid")
     organization: Score
     consistency: Score
     formatting: Score
@@ -199,6 +203,7 @@ class QualScores(BaseModel):
     model_config = ConfigDict(extra="forbid")
     purpose: PurposeScores
     expression: ExpressionScores
+    form: FormScores
     grounding: GroundingScores
     reasoning: ReasoningScores
     judgment: JudgmentScores
@@ -223,6 +228,10 @@ class ExpressionReasons(BaseModel):
     clarity: str | None = None
     coherence: str | None = None
     concision: str | None = None
+
+
+class FormReasons(BaseModel):
+    model_config = ConfigDict(extra="forbid")
     organization: str | None = None
     consistency: str | None = None
     formatting: str | None = None
@@ -254,6 +263,7 @@ class QualReasons(BaseModel):
     model_config = ConfigDict(extra="forbid")
     purpose: PurposeReasons = PurposeReasons()
     expression: ExpressionReasons = ExpressionReasons()
+    form: FormReasons = FormReasons()
     grounding: GroundingReasons = GroundingReasons()
     reasoning: ReasoningReasons = ReasoningReasons()
     judgment: JudgmentReasons = JudgmentReasons()
@@ -314,6 +324,7 @@ class RubricRollup(BaseModel):
     model_config = ConfigDict(extra="forbid")
     purpose_mean: float
     expression_mean: float
+    form_mean: float
     grounding_mean: float
     reasoning_mean: float
     judgment_mean: float
@@ -500,10 +511,18 @@ def _migrate_legacy_scores(data: dict) -> dict:
     """In-place upgrade of legacy reports to the current rubric.
 
     On any report whose `metadata.rubric_version` is missing or not the current
-    version, coerce every `score: 0` in the qual block to `"ERR"`. Older drafts
-    used 0 to mean both "cannot assess" (per-dim anchors + prompt) and "attempted
-    but missing" (decision tree); LLM scorers in practice almost always emitted 0
-    with the "cannot assess" meaning, which is now `"ERR"` on the current schema.
+    version, two upgrades run:
+
+    1. Coerce every `score: 0` in the qual block to `"ERR"`. Older drafts used 0
+       to mean both "cannot assess" (per-dim anchors + prompt) and "attempted but
+       missing" (decision tree); LLM scorers in practice almost always emitted 0
+       with the "cannot assess" meaning, which is now `"ERR"` on the current schema.
+    2. Split the legacy 6-dimension `expression` group into the current
+       `expression` (clarity/coherence/concision) + `form`
+       (organization/consistency/formatting) groups, in both `qual` and
+       `qual_reasons`. The stale `derived` rollup (which lacks `form_mean` and
+       carries a 6-dim expression mean) is dropped so it is recomputed on load.
+
     Reports already tagged with the current version are passed through unchanged
     so a stray 0 in a current-version report still fails validation as intended.
 
@@ -524,7 +543,37 @@ def _migrate_legacy_scores(data: dict) -> dict:
             for dim_key, score in list(group_dict.items()):
                 if score == 0:
                     group_dict[dim_key] = "ERR"
+    _split_expression_into_form(data.get("qual"))
+    _split_expression_into_form(data.get("qual_reasons"))
+    # The stored derived rollup predates the form group (no form_mean); drop it so
+    # the loader recomputes a current-schema rollup from quant + qual.
+    data.pop("derived", None)
     return data
+
+
+# Dimensions that moved out of the legacy 6-dim Expression group into Form.
+_FORM_DIMS = ("organization", "consistency", "formatting")
+
+
+def _split_expression_into_form(block: object) -> None:
+    """Relocate the three Form dimensions from a legacy `expression` block.
+
+    Operates in place on a qual or qual_reasons mapping. No-op when the block is
+    absent or already split (no Form dims under `expression`).
+    """
+    if not isinstance(block, dict):
+        return
+    expression = block.get("expression")
+    if not isinstance(expression, dict):
+        return
+    if not any(dim in expression for dim in _FORM_DIMS):
+        return
+    form = block.setdefault("form", {})
+    if not isinstance(form, dict):
+        return
+    for dim in _FORM_DIMS:
+        if dim in expression:
+            form.setdefault(dim, expression.pop(dim))
 
 
 def _parse_frontmatter(text: str) -> dict:
@@ -603,6 +652,7 @@ def compute_derived(quant: QuantMetrics, qual: QualScores) -> DerivedRollups:
     rollup = RubricRollup(
         purpose_mean=group_means["purpose"],
         expression_mean=group_means["expression"],
+        form_mean=group_means["form"],
         grounding_mean=group_means["grounding"],
         reasoning_mean=group_means["reasoning"],
         judgment_mean=group_means["judgment"],
@@ -636,6 +686,7 @@ def check_derived_consistency(
             (
                 "purpose_mean",
                 "expression_mean",
+                "form_mean",
                 "grounding_mean",
                 "reasoning_mean",
                 "judgment_mean",
@@ -711,6 +762,8 @@ def stub_qual() -> QualScores:
             clarity="ERR",
             coherence="ERR",
             concision="ERR",
+        ),
+        form=FormScores(
             organization="ERR",
             consistency="ERR",
             formatting="ERR",

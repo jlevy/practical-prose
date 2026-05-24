@@ -277,6 +277,8 @@ def _make_report(
                 "clarity": 4,
                 "coherence": 5,
                 "concision": 4,
+            },
+            "form": {
                 "organization": 5,
                 "consistency": "ERR",
                 "formatting": "ERR",

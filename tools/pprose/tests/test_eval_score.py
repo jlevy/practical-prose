@@ -10,6 +10,7 @@ from pprose.eval_render import render_single_doc_rollup
 from pprose.eval_report import (
     EvalReport,
     ExpressionScores,
+    FormScores,
     GroundingScores,
     JudgmentScores,
     PurposeScores,
@@ -191,9 +192,8 @@ def test_single_doc_rollup_coalesces_qualitative_groups(tmp_path: Path):
 def test_merge_replaces_qual_and_violations(tmp_path: Path):
     stub = _stub_report(tmp_path)
     qual = QualScores(
-        expression=ExpressionScores(
-            clarity=5, coherence=5, concision=5, organization=5, consistency="ERR", formatting="ERR"
-        ),
+        expression=ExpressionScores(clarity=5, coherence=5, concision=5),
+        form=FormScores(organization=5, consistency="ERR", formatting="ERR"),
         purpose=PurposeScores(suitability=5, breadth=5, depth=5),
         grounding=GroundingScores(verifiability=5, factuality=5, relevance=5),
         reasoning=ReasoningScores(discipline=5, soundness=5, precision=5, parsimony=5),
@@ -221,9 +221,8 @@ def test_merge_preserves_existing_method(tmp_path: Path):
     stub = EvalReport.model_validate(data)
 
     qual = QualScores(
-        expression=ExpressionScores(
-            clarity=5, coherence=5, concision=5, organization=5, consistency="ERR", formatting="ERR"
-        ),
+        expression=ExpressionScores(clarity=5, coherence=5, concision=5),
+        form=FormScores(organization=5, consistency="ERR", formatting="ERR"),
         purpose=PurposeScores(suitability=5, breadth=5, depth=5),
         grounding=GroundingScores(verifiability=5, factuality=5, relevance=5),
         reasoning=ReasoningScores(discipline=5, soundness=5, precision=5, parsimony=5),
@@ -239,9 +238,8 @@ def test_merge_alignment_clean_passes_strict_validate(tmp_path: Path):
     """Merging score-5-everywhere with no violations produces an alignment-clean report."""
     stub = _stub_report(tmp_path)
     qual = QualScores(
-        expression=ExpressionScores(
-            clarity=5, coherence=5, concision=5, organization=5, consistency="ERR", formatting="ERR"
-        ),
+        expression=ExpressionScores(clarity=5, coherence=5, concision=5),
+        form=FormScores(organization=5, consistency="ERR", formatting="ERR"),
         purpose=PurposeScores(suitability=5, breadth=5, depth=5),
         grounding=GroundingScores(verifiability=5, factuality=5, relevance=5),
         reasoning=ReasoningScores(discipline=5, soundness=5, precision=5, parsimony=5),
@@ -257,9 +255,8 @@ def test_merge_with_proper_violations_passes_alignment(tmp_path: Path):
     """A sub-5 score with a matching violation is alignment-valid after merge."""
     stub = _stub_report(tmp_path)
     qual = QualScores(
-        expression=ExpressionScores(
-            clarity=4, coherence=5, concision=5, organization=5, consistency="ERR", formatting="ERR"
-        ),
+        expression=ExpressionScores(clarity=4, coherence=5, concision=5),
+        form=FormScores(organization=5, consistency="ERR", formatting="ERR"),
         purpose=PurposeScores(suitability=5, breadth=5, depth=5),
         grounding=GroundingScores(verifiability=5, factuality=5, relevance=5),
         reasoning=ReasoningScores(discipline=5, soundness=5, precision=5, parsimony=5),
@@ -352,9 +349,8 @@ def test_main_missing_yaml_returns_error(tmp_path: Path):
 def test_round_trip_merge_then_load(tmp_path: Path):
     stub = _stub_report(tmp_path)
     qual = QualScores(
-        expression=ExpressionScores(
-            clarity=4, coherence=5, concision=4, organization=5, consistency=4, formatting=5
-        ),
+        expression=ExpressionScores(clarity=4, coherence=5, concision=4),
+        form=FormScores(organization=5, consistency=4, formatting=5),
         purpose=PurposeScores(suitability=4, breadth=4, depth=4),
         grounding=GroundingScores(verifiability=5, factuality=4, relevance=5),
         reasoning=ReasoningScores(discipline=4, soundness=5, precision=4, parsimony=5),
@@ -400,9 +396,8 @@ def test_merge_populates_reproducibility_metadata(tmp_path: Path):
 
     stub = _stub_report(tmp_path)
     qual = QualScores(
-        expression=ExpressionScores(
-            clarity=5, coherence=5, concision=5, organization=5, consistency="ERR", formatting="ERR"
-        ),
+        expression=ExpressionScores(clarity=5, coherence=5, concision=5),
+        form=FormScores(organization=5, consistency="ERR", formatting="ERR"),
         purpose=PurposeScores(suitability=5, breadth=5, depth=5),
         grounding=GroundingScores(verifiability=5, factuality=5, relevance=5),
         reasoning=ReasoningScores(discipline=5, soundness=5, precision=5, parsimony=5),
@@ -472,9 +467,8 @@ def test_repro_context_persists_sdk_fields(tmp_path: Path):
 
     stub = _stub_report(tmp_path)
     qual = QualScores(
-        expression=ExpressionScores(
-            clarity=5, coherence=5, concision=5, organization=5, consistency=5, formatting=5
-        ),
+        expression=ExpressionScores(clarity=5, coherence=5, concision=5),
+        form=FormScores(organization=5, consistency=5, formatting=5),
         purpose=PurposeScores(suitability=5, breadth=5, depth=5),
         grounding=GroundingScores(verifiability=5, factuality=5, relevance=5),
         reasoning=ReasoningScores(discipline=5, soundness=5, precision=5, parsimony=5),
