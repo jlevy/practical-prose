@@ -94,6 +94,7 @@ packages = ["src/pprose"]
 include = [
     "src/pprose/rubric_schema.yaml",
     "src/pprose/prompts/*.md",
+    "src/pprose/resources/**/*.md",
 ]
 
 
@@ -193,6 +194,8 @@ reportUnusedParameter = false
 # skip = "foo.py,bar.py"
 
 [tool.pytest.ini_options]
+# Put the package root on sys.path so tests can import `devtools` helpers.
+pythonpath = ["."]
 python_files = ["test_*.py"]
 python_classes = ["Test*"]
 python_functions = ["test_*"]
