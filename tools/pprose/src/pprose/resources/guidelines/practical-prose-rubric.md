@@ -1,15 +1,15 @@
 ---
 title: Practical Prose Rubric
-description: Descriptive 0-5 rubric for scoring a practical writing artifact across the 20 dimensions defined in practical-prose-guidelines.md.
-date: 2026-05-11
+description: Descriptive 1-5 rubric for scoring a practical writing artifact across the 20 dimensions defined in practical-prose-guidelines.md, with NA and ERR sentinels for dimensions outside the alignment scope.
+date: 2026-05-23
 status: active
 ---
 # Practical Prose Rubric
 
-Version: v0.1 (rubric: `20-dim-v1`, last update 2026-05-23)\
+Version: v0.2 (rubric: `20-dim-v2`, last update 2026-05-23)\
 Joshua Levy (github.com/jlevy)
 
-A descriptive 0-5 rubric for assessing practical writing artifacts (articles, blog
+A descriptive 1-5 rubric for assessing practical writing artifacts (articles, blog
 posts, research reports, design docs, specs, technical papers, decision memos) across
 the 20 dimensions defined in
 [practical-prose-guidelines.md](practical-prose-guidelines.md).
@@ -46,13 +46,23 @@ same 20 dimensions in the same five groups, using the same names and section num
 - **3** = multiple slips, or one severe slip that affects the document’s central claims.
 - **2** = frequent slips on key claims.
 - **1** = the dimension fails on most relevant content.
-- **0** = applicable but unassessable.
-  The dimension applies AND the artifact attempted to engage it, but the content needed
-  to score is materially absent or fragmentary.
-  Rare; see the decision tree below.
 - **NA** = not applicable.
   The dimension does not engage with this artifact at all. For example, Calibration on
   a document that makes no probability or forecast claims.
+- **ERR** = the scorer could not assess this dimension.
+  A *process* failure, never a quality verdict on the document.
+  Use when the rubric cannot be applied for a procedural reason (the artifact is
+  truncated, an upstream tool failed, the assigned model refused, etc.).
+  See the decision tree below.
+
+Numeric scores are always 1-5: there is no 0. This is deliberate. v1 of the rubric used
+0 to mean both "applicable but unassessable" (a substantive low score in the decision
+tree) and "Cannot assess" (a process failure in every per-dim anchor and the scoring
+prompt). The double meaning made 0 ambiguous to humans and undermined the rollup, since
+0 was silently excluded from group and overall means. Splitting it gives one meaning per
+value: numeric scores are *quality*, ERR is *process*, NA is *out of scope*. As a
+side benefit, numeric scores are always truthy, so `if score: ...` cannot accidentally
+treat an unscored dimension as a quality-zero swing.
 
 When you score below 5, cite the specific guideline rule that was missed in the
 parenthetical reason.
@@ -68,7 +78,7 @@ and the deviation is documented (see *Justified deviations* below).
 The rubric is a strong instrument for catching avoidable defects; it is not a substitute
 for asking whether the document worked.
 
-### Decision tree: NA, 0, or 1-5?
+### Decision tree: NA, ERR, or 1-5?
 
 This decision tree is binding.
 Apply the questions in order and stop at the first “yes”.
@@ -84,23 +94,25 @@ reach different answers, one of them has skipped a step.
      If the per-dim anchor’s NA condition fits, score **NA**. If the per-dim anchor
      instead says the artifact’s task class was *expected* to engage and didn’t (e.g., a
      decision memo with no fairness content), score per the **1-anchor** of that
-     dimension and cite the missing- coverage rule.
+     dimension and cite the missing-coverage rule.
      **Do not invent a “should-have” judgment that the per-dim NA anchor does not
      authorize.** Reasons must quote or paraphrase the per-dim NA anchor when scoring
      NA.
    - **Yes.** → continue.
 
-2. **Can the dimension be assessed from what the artifact provides?** Assessment means:
-   the content needed to apply the per-dim anchors is materially present.
-   - **No, because the artifact tried to engage but provides too little to score**
-     (e.g., sources cited but unreachable; fewer than three sentences of reasoning;
-     declared intent without content).
-     → **0.** Score 0 is for *attempted but missing*, not for *not present*. If unsure
-     between NA and 0, prefer NA.
-   - **Yes.** → continue.
-
-3. **Apply the 1-5 anchors for the dimension** below.
+2. **Apply the 1-5 anchors for the dimension** below.
    For any score 1-4, cite at least one guideline rule the document missed.
+   - The "attempted but materially missing" case (e.g., sources cited but unreachable;
+     fewer than three sentences of reasoning; declared intent without content) is a
+     score of **1** with a citation of the missed rule.
+     It is not ERR: the document engaged the dimension and the rubric’s 1-anchor fits.
+
+3. **Score ERR only if the scorer cannot apply the rubric for a procedural reason.**
+   The artifact is truncated, an upstream tool failed, the assigned model refused or
+   returned malformed output, the dimension was added after the eval was run, and so on.
+   Reasons must name the procedural cause; never use ERR to register a quality
+   complaint. Re-running the eval is the right fix; if the document is genuinely beyond
+   the rubric, the answer is NA, not ERR.
 
 **Tiebreaks:**
 
@@ -110,17 +122,20 @@ reach different answers, one of them has skipped a step.
   If the artifact contains no content the per-dim 1-5 anchors describe, it is NA, not
   5\. ("No problems found because there’s nothing to check" → NA. “No problems found
   because everything checks out” → 5.)
-- **NA and 0 are not interchangeable.** Score 0 requires evidence that the artifact
-  *tried* to engage the dimension but came up materially short.
-  If the artifact simply does not engage, the score is NA. Prefer NA when in doubt.
+- **NA and ERR are not interchangeable.** NA is a verdict *about the document* (it
+  does not engage this dimension); ERR is a verdict *about the eval process* (the
+  scorer could not assess). Prefer NA when in doubt; ERR is rare and is a signal to
+  re-run the eval rather than to publish the result.
 - **NA vs 1-4 is decided by the per-dim NA anchor, not by the reviewer’s intuition.**
   Each per-dim NA anchor specifies the conditions under which “should have but didn’t”
   still warrants NA vs a low score.
   Apply the per-dim anchor, do not improvise.
 
 NA must be reserved for dimensions the artifact’s task genuinely does not require.
-When aggregating, NA dimensions are excluded from any mean rather than treated as zero,
-so that lightweight artifacts are not penalized for not needing every dimension.
+When aggregating, both NA and ERR dimensions are excluded from any mean (counted
+separately in `na_dimensions` and `err_dimensions`) rather than treated as zero, so
+that lightweight artifacts are not penalized for not needing every dimension and
+unscored dimensions do not silently distort the rollup.
 
 ## Justified Deviations
 
@@ -169,8 +184,8 @@ are not justified.
 
 ## How to score
 
-For each dimension, assign either an integer 0-5 or `NA`, plus a brief parenthetical
-reason.
+For each dimension, assign either an integer 1-5, `NA`, or `ERR`, plus a brief
+parenthetical reason.
 
 - Score the dimensions independently.
   Do not aggregate to a single number unless the use case calls for it (and then state
@@ -228,7 +243,7 @@ Suggested primary assignments:
 
 ### Output format
 
-`SCORE (REASON)`, matching the regex `(NA|[0-5]) \(.*?\)`. Cite line numbers, section
+`SCORE (REASON)`, matching the regex `(NA|ERR|[1-5]) \(.*?\)`. Cite line numbers, section
 names, or quoted phrases in the reason where relevant.
 Examples:
 
@@ -260,7 +275,7 @@ cannot extract the needed output, if the purpose was not named, or if the output
 does not fit the task (a decision memo with no recommendation, an audit without
 findings).
 
-- **0:** Cannot assess.
+- **ERR:** Cannot assess (process failure; re-run the eval).
   Content missing or no task statable.
 - **1:** Task implicit and undeclared; reader cannot tell what the document is for.
   Output shape does not match task shape.
@@ -283,7 +298,7 @@ Is the scope of the document stated, and does the declared scope match the actua
 of the work? Scope is upstream of P3 Breadth and P4 Depth: a document with no declared
 scope cannot be evaluated for whether it covers everything relevant.
 
-- **0:** Cannot assess.
+- **ERR:** Cannot assess (process failure; re-run the eval).
   Content missing.
 - **1:** Scope undeclared throughout; reader cannot tell what is in or out of scope.
   Body drifts across multiple topics with no boundary stated.
@@ -309,7 +324,7 @@ The *how thoroughly* question is scored under P4 Depth.
 - **NA:** Not applicable.
   The document is a single-fact note (a one-line status, a numeric reading) where there
   is no class structure to cover.
-- **0:** Cannot assess.
+- **ERR:** Cannot assess (process failure; re-run the eval).
   Content missing or scope undeclared (score the latter under P2).
 - **1:** Major case classes within scope are absent (risk inventory limited to a single
   class; no prior-work coverage; obvious affected areas omitted).
@@ -334,7 +349,7 @@ Section depth matches section importance.
 - **NA:** Not applicable.
   The document is a pure index, table of contents, or pointer-only artifact where depth
   is not the relevant question.
-- **0:** Cannot assess.
+- **ERR:** Cannot assess (process failure; re-run the eval).
   Content missing or fragmentary.
 - **1:** Key sections thin.
   Vague magnitude words ("rapid," “large”) used without quantification throughout.
@@ -363,7 +378,7 @@ CMS. Concision is scored separately under E3; copyediting consistency (dialect,
 parallel-list syntax, citation style) is scored under E5 Consistency; markup
 validity is scored under E6 Formatting.
 
-- **0:** Cannot assess.
+- **ERR:** Cannot assess (process failure; re-run the eval).
   Content missing or fragmentary.
 - **1:** Numerous spelling, punctuation, grammatical errors; sentences hard to follow.
 - **2:** Errors but understandable.
@@ -386,7 +401,7 @@ smoothly sentence to sentence.
 Does not cover logical coherence (R2 Soundness) or arrangement of sections and visual
 elements (E4 Organization).
 
-- **0:** Cannot assess.
+- **ERR:** Cannot assess (process failure; re-run the eval).
   Content missing or fewer than 3 sentences.
 - **1:** Incoherent; no clear topic or thread.
 - **2:** Weak coherence or incomplete draft.
@@ -404,7 +419,7 @@ The writing carries only the content the task requires.
 Padding, repetition, and decorative content fail concision even when each sentence is
 clear.
 
-- **0:** Cannot assess.
+- **ERR:** Cannot assess (process failure; re-run the eval).
   Content missing.
 - **1:** Heavy padding; multiple paragraphs say the same thing; tables with stub data;
   sections that don’t serve the task.
@@ -427,7 +442,7 @@ Visual elements are not required (a tight prose document can score 5), but when 
 they should be arranged well.
 Markup validity is scored under E6 Formatting; style consistency is scored under E5.
 
-- **0:** Cannot assess.
+- **ERR:** Cannot assess (process failure; re-run the eval).
   Content missing or fragmentary.
 - **1:** No discernible organization.
   Flat wall of text or chaotic heading hierarchy; sections in random order; tables,
@@ -462,7 +477,7 @@ validity).
 - **NA:** Not applicable.
   The document is too short or fragmentary for a style guide to apply (a single line, a
   log entry).
-- **0:** Cannot assess.
+- **ERR:** Cannot assess (process failure; re-run the eval).
   Content missing or fragmentary.
 - **1:** Style chaotic.
   Multiple dialects mixed; capitalization inconsistent across acronyms and proper nouns;
@@ -494,7 +509,7 @@ Distinct from E4 Organization (arrangement) and E5 Consistency (editorial polish
 - **NA:** Not applicable.
   The document is plain text with no markup, or a format where formatting concerns are
   outside scope.
-- **0:** Cannot assess.
+- **ERR:** Cannot assess (process failure; re-run the eval).
   Content missing or fragmentary.
 - **1:** Markup broken throughout.
   Tables unrendered; code fences unclosed; frontmatter malformed; links non-functional.
@@ -558,12 +573,11 @@ operational notes only require sources for material claims.
   Reserve NA for artifacts whose entire content consists of statements of the first
   kind.
 
-- **0:** Cannot assess.
-  The document attempts at least one verifiable assertion, but the supporting content is
-  fragmentary or truncated: the claim is partial, mid-sentence, or marked as
-  intent-only (e.g., `[TODO: cite source]`) rather than executed.
-  Rare. If the document makes verifiable assertions and simply omits sources, score 1-4,
-  not 0. Score 0 distinguishes *attempted but missing* from *not attempted*.
+- **ERR:** Cannot assess (process failure; re-run the eval).
+  Reserve for genuine procedural failures — the document is truncated mid-claim, an
+  upstream tool failed, the assigned model refused to score this dimension.
+  If the document makes verifiable assertions and simply omits sources, that is a
+  quality verdict (score 1-4 with rule citations), not ERR.
 
 - **1:** Material claims are vague enough that no source could confirm or refute them,
   *and* unsourced. Quantitative claims with no source pointers; confidence tags absent or
@@ -652,7 +666,7 @@ penalize the document for them.
   on; if Verifiability is NA, Factuality is NA. If Verifiability is 1-5, Factuality is
   1-5.
 
-- **0:** Cannot assess.
+- **ERR:** Cannot assess (process failure; re-run the eval).
   The document attempts at least one verifiable assertion, but the claim is fragmentary
   or truncated (a partial sentence, an unfinished paragraph, or a `[TODO]` marker)
   leaving no claim to corroborate.
@@ -712,10 +726,12 @@ sections rather than words and paragraphs.
   raw measurements, a glossary, or a structured form). There is no audit trail to
   evaluate for relevance.
 
-- **0:** Cannot assess.
+- **ERR:** Cannot assess (process failure; re-run the eval).
   The document cites sources or builds reasoning chains, but its purpose is itself
   unstated or contradictory enough that no relevance test can be applied. (When
-  Suitability P1 has failed materially, Relevance is 0.)
+  Suitability P1 has failed materially, Relevance is ERR rather than 1: the
+  prerequisite for a relevance verdict is absent, so the issue is the eval setup,
+  not the document's relevance.)
 
 - **1:** Half or more of the cited sources or reasoning chains are irrelevant to the
   document's conclusions or purpose. Headline claims rest on tangential evidence, or
@@ -772,7 +788,7 @@ at all.
   without reasoning *from* them.
   If the artifact reasons anywhere (even one sentence) score 1-5.
 
-- **0:** Cannot assess.
+- **ERR:** Cannot assess (process failure; re-run the eval).
   The artifact attempts inferential reasoning but provides too little to score it:
   fewer than three sentences of reasoning, or reasoning truncated mid-argument.
 
@@ -807,7 +823,7 @@ visible chain from evidence to claim.
 Focuses on the document’s logical structure; multiple-perspective consideration is
 scored under J2 Fairness.
 
-- **0:** Cannot assess.
+- **ERR:** Cannot assess (process failure; re-run the eval).
   Content missing or fewer than 3 sentences.
 - **1:** Sloppy reasoning; imprecise statements; key terms undefined; arguments rest on
   unstated premises.
@@ -835,7 +851,7 @@ the generic phrasing is true.
 Distinct from E1 Clarity (register / readability) and P3 Breadth and P4 Depth (scope
 completeness, section development): Precision scores granularity *within* each claim.
 
-- **0:** Cannot assess.
+- **ERR:** Cannot assess (process failure; re-run the eval).
   Content missing or fewer than 3 sentences.
 - **1:** Generic vocabulary throughout; entities referred to by category nouns ("the
   company," “the model,” “the regulation”); umbrella terms used where the
@@ -869,7 +885,8 @@ conclusion requires.
 Parsimony presupposes Soundness (R2). When a step is unsound, a longer sound chain
 would do less damage to the conclusion, so the chain as written cannot be the most
 parsimonious sound argument. When Soundness fails materially on the headline claims,
-Parsimony is 0.
+Parsimony is ERR (the rubric's prerequisite is absent, so no parsimony verdict can be
+applied; fix Soundness, then re-score).
 
 Parsimony differs from E3 Concision (prose-level economy: words and paragraphs),
 from G3 Relevance (whether each source or section is on-task), from R1 Discipline
@@ -882,8 +899,9 @@ the minimum sufficient?
   glossary, or a structured form). There is no reasoning chain whose minimality could
   be evaluated.
 
-- **0:** Cannot assess; or Soundness (R2) has already failed materially on the
-  headline claims, so the chain cannot be the minimum sound argument.
+- **ERR:** Cannot assess (process failure; re-run the eval) — or Soundness (R2) has
+  already failed materially on the headline claims, so the chain cannot be the
+  minimum sound argument and the Parsimony prerequisite is absent.
 
 - **1:** Obviously extraneous elements throughout the chains of reasoning:
   citable facts re-derived where the citation would have served the same purpose,
@@ -927,7 +945,7 @@ forecast claims.
 - **NA:** Not applicable.
   The document makes no probability, forecast, confidence, or uncertainty claims, and
   the task does not require them.
-- **0:** Cannot assess.
+- **ERR:** Cannot assess (process failure; re-run the eval).
   Content missing.
 - **1:** Strong claims with no supporting evidence; probabilities asserted with no
   anchor; ranges absent where data warrants.
@@ -955,7 +973,7 @@ and the document says why) is not.
 - **NA:** Not applicable.
   The document surfaces no oppositional framings and the task does not require them (a
   procedural runbook, a non-controversial reference).
-- **0:** Cannot assess.
+- **ERR:** Cannot assess (process failure; re-run the eval).
   Content missing.
 - **1:** One-sided argument with no counter-evidence engaged; one-sided framings of
   two-sided facts; risk inventory absent or weighted to a single class.
@@ -990,7 +1008,7 @@ Robustness asks the further question: granting the evidence and the framing, wou
 
 - **NA:** Not applicable.
   The document makes no interpretive judgments (a pure reference, a literal log).
-- **0:** Cannot assess.
+- **ERR:** Cannot assess (process failure; re-run the eval).
   Content missing.
 - **1:** Single interpretive lens applied without acknowledgement; alternative readings
   not considered; key claims presented as if the framing were obvious.
@@ -1108,27 +1126,32 @@ invoke live in the guidelines.
 
 ## Versioning
 
-Current revision: **`20-dim-v1`**. Eval YAMLs produced under it set
-`metadata.rubric_version: 20-dim-v1`. The `from-metrics` subcommand of
+Current revision: **`20-dim-v2`**. Eval YAMLs produced under it set
+`metadata.rubric_version: 20-dim-v2`. The `from-metrics` subcommand of
 `../scripts/eval_report.py` writes this automatically.
 
-The previous revision `15-dim-v1` covered 15 dimensions in five groups; `20-dim-v1` adds
-three dimensions (Breadth and Depth split from Coverage; Consistency; Formatting),
-renames Structure → Organization, and introduces the `NA` value distinct from `0`.
-Score-anchor language was tightened in several dimensions.
+The previous revision `15-dim-v1` covered 15 dimensions in five groups; `20-dim-v1`
+added three dimensions (Breadth and Depth split from Coverage; Consistency;
+Formatting), renamed Structure → Organization, and introduced the `NA` value distinct
+from `0`. Score-anchor language was tightened in several dimensions. `20-dim-v2`
+removes `0` from the numeric scale (numeric scores are now 1-5) and replaces it with
+`ERR`, a process-failure sentinel distinct from `NA`: NA is a verdict about the
+document, ERR is a verdict about the eval. The eval loader migrates legacy `score: 0`
+entries to `ERR` automatically when `rubric_version` is anything other than the
+current value.
 
 Bump the version on substantive changes:
 
-- New dimension added or removed: bump the dim count (e.g., `20-dim-v1` → `19-dim-v1`).
-- Anchor language changed in a way that could shift scores: bump the rev (`20-dim-v1` →
-  `18-dim-v2`). The rubric schema in `../scripts/rubric_schema.yaml` is the canonical
+- New dimension added or removed: bump the dim count (e.g., `20-dim-v2` → `19-dim-v1`).
+- Anchor language changed in a way that could shift scores: bump the rev (`20-dim-v2` →
+  `20-dim-v3`). The rubric schema in `../scripts/rubric_schema.yaml` is the canonical
   source for the current version string; bumping the rubric here means bumping `version`
   there too.
 
 `../scripts/eval_compare.py` warns when comparing across rubric versions.
 Pinned regression fixtures (`../scripts/fixtures/rev{1,2}-net.eval.yaml`,
 `../scripts/fixtures/{guidelines,runbook}-self.eval.yaml`) were scored under `15-dim-v1`
-and must be re-scored before they can be reused under `20-dim-v1`.
+and must be re-scored before they can be reused under `20-dim-v2`.
 
 ## Related docs
 
