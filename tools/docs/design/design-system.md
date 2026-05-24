@@ -12,12 +12,10 @@ The runtime palette source of truth is
 [`tools/pprose/src/pprose/table_styles.py`](../../pprose/src/pprose/table_styles.py).
 This document is the human-readable rationale and the canonical color values.
 
-> **Note**: The runtime currently emits hex codes that pre-date the HSL rule below.
-> Migrate `table_styles.py` to `hsl()` when next touched.
-
 ## Color Policy
 
-**Always express colors as `hsl()`, never as hex.**
+**Always express colors as `hsl()`, never as hex.** Use the modern space-separated form:
+`hsl(H S% L%)` or `hsl(H S% L% / a)` for alpha — no commas inside the parentheses.
 
 Hex codes hide the structure of the system.
 `hsl(H S% L%)` makes the relationships visible directly in the source: a reader can scan
@@ -34,12 +32,91 @@ This applies to palette YAML, CSS, design tokens, and any structured color data 
 project emits. Renderers convert to other color spaces at draw time (`colorsys` in the
 stdlib handles ANSI fallbacks; no extra dependency needed).
 
-Use slash syntax for alpha (`hsl(H S% L% / a)`) rather than a separate opacity field
-when the schema allows it.
-
 If perceptual uniformity across hues becomes a real contrast-tuning problem (yellow at
 the same `L` reads visibly lighter than blue), consider `oklch(L C H)`. Default to
 `hsl()`.
+
+## Light & Dark Modes
+
+Every color in the system has a **light** value and a **dark** value, and every surface
+that consumes the palette is expected to support both.
+The pair is the unit of color, not a single value with a “main” and a “fallback”.
+
+| Aspect | Light mode | Dark mode |
+| --- | --- | --- |
+| Page surface | Cream / near-white (L ≈ 92–96%) | Near-black (L ≈ 8–12%) |
+| Group surfaces | Pale tint of the family hue (L ≈ 92–95%) | Dim tint of the family hue (L ≈ 16–20%, S lowered) |
+| Group ink | Dark, saturated (L ≈ 22–50%) | Light, slightly desaturated (L ≈ 60–72%) |
+| Score ramp | Saturated dark colors (L ≈ 20–35%) | Saturated lighter colors (L ≈ 45–65%) |
+| Muted (NA / 0) | Mid gray with opacity | Mid gray with opacity |
+
+The same hue (`H`) is used across modes; only `L` (and sometimes `S`) flips.
+A reader scanning down a column should see the same `H` in both light and dark for each
+family — only the lightness flips.
+
+### How to apply per surface
+
+- **CSS / HTML**: define the light values on `:root`, then override the same tokens
+  inside `@media (prefers-color-scheme: dark)` (and optionally inside
+  `:root[data-theme="dark"]` for an explicit override).
+  Surfaces read the tokens via `var(--…)` and never hard-code a value.
+- **Python / YAML**: emit both palettes side-by-side.
+  The convention is that a palette named `practical_prose_groups` carries the light
+  values and the parallel palette `practical_prose_groups_dark` carries the dark values.
+  The `_dark` suffix is a stable contract; renderers switch to it when in dark mode.
+- **Terminal**: detect light/dark from `COLORFGBG` (or a `--theme` flag) and pick the
+  appropriate ANSI mapping at render time.
+
+### CSS variable naming convention
+
+Surfaces that consume the palette in CSS should expose the tokens under stable, short
+names at the `:root` level, then override the same names inside the dark media query.
+Use single-letter group codes (`p / e / g / r / j`) in CSS so the tokens stay compact at
+call sites:
+
+```css
+:root {
+  --bg: hsl(40 38% 93%);            /* page background */
+  --fg: hsl(30 12% 10%);            /* primary text */
+
+  /* Group accents — the ink color of each group */
+  --accent-p: hsl(72 62% 44%);      /* Purpose */
+  --accent-e: hsl(206 59% 44%);     /* Expression */
+  --accent-g: hsl(162 55% 40%);     /* Grounding */
+  --accent-r: hsl(329 60% 44%);     /* Reasoning */
+  --accent-j: hsl(278 30% 55%);     /* Judgment */
+
+  /* Group surfaces — pale family-hue background tints (same H and S as the
+     ink; only L is higher). */
+  --surface-p: hsl(72 62% 92%);
+  --surface-e: hsl(206 59% 92%);
+  --surface-g: hsl(162 55% 92%);
+  --surface-r: hsl(329 60% 92%);
+  --surface-j: hsl(278 30% 92%);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: hsl(40 8% 8%);
+    --fg: hsl(40 25% 88%);
+
+    --accent-p: hsl(72 62% 68%);
+    --accent-e: hsl(206 59% 68%);
+    --accent-g: hsl(162 55% 62%);
+    --accent-r: hsl(329 60% 68%);
+    --accent-j: hsl(278 30% 72%);
+
+    --surface-p: hsl(72 62% 18%);
+    --surface-e: hsl(206 59% 18%);
+    --surface-g: hsl(162 55% 16%);
+    --surface-r: hsl(329 60% 18%);
+    --surface-j: hsl(278 30% 18%);
+  }
+}
+```
+
+For YAML and Python the full group name (`Purpose`, `Expression`, ...) is used so the
+data is self-describing without external knowledge of the short codes.
 
 ## Structure
 
@@ -61,41 +138,49 @@ Dimensions within the group stay inside that hue’s neighborhood, stepping alon
 lightness (and optionally a few degrees of hue) to give each dimension a distinguishable
 sub-hue.
 
-| Group | Hue | Surface | Ink | Icon |
-| --- | --- | --- | --- | --- |
-| Purpose | 214 (blue) | `hsl(214 60% 95%)` | `hsl(214 55% 25%)` | `mdi:compass-rose` |
-| Expression | 140 (green) | `hsl(140 50% 94%)` | `hsl(140 55% 22%)` | `mdi:quill` |
-| Grounding | 38 (amber) | `hsl(38 80% 93%)` | `hsl(38 80% 22%)` | `mdi:anchor` |
-| Reasoning | 265 (violet) | `hsl(265 55% 95%)` | `hsl(265 65% 32%)` | `mdi:ruler` |
-| Judgment | 348 (rose) | `hsl(348 75% 95%)` | `hsl(348 55% 30%)` | `mdi:scale-balance` |
+Each group has one hue and one saturation that all of its members (surface, ink,
+dimensions) share. Lightness alone moves to switch between light/dark mode and between
+surface / ink / dimension roles.
+
+| Group | H | S | Surface (light) | Surface (dark) | Ink (light) | Ink (dark) | Icon |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| Purpose | 72 | 62% | `hsl(72 62% 92%)` | `hsl(72 62% 18%)` | `hsl(72 62% 44%)` | `hsl(72 62% 68%)` | `mdi:compass-rose` |
+| Expression | 206 | 59% | `hsl(206 59% 92%)` | `hsl(206 59% 18%)` | `hsl(206 59% 44%)` | `hsl(206 59% 68%)` | `mdi:quill` |
+| Grounding | 162 | 55% | `hsl(162 55% 92%)` | `hsl(162 55% 16%)` | `hsl(162 55% 40%)` | `hsl(162 55% 62%)` | `mdi:anchor` |
+| Reasoning | 329 | 60% | `hsl(329 60% 92%)` | `hsl(329 60% 18%)` | `hsl(329 60% 44%)` | `hsl(329 60% 68%)` | `mdi:ruler` |
+| Judgment | 278 | 30% | `hsl(278 30% 92%)` | `hsl(278 30% 18%)` | `hsl(278 30% 55%)` | `hsl(278 30% 72%)` | `mdi:scale-balance` |
 
 ## Dimension Palette
 
 Dimensions inherit their group’s hue family.
 The `H` column reveals family; the `L` column reveals ramp position inside that family.
 
-| Dimension | Group | Color |
-| --- | --- | --- |
-| Suitability | Purpose | `hsl(210 55% 40%)` |
-| Scope | Purpose | `hsl(214 55% 35%)` |
-| Breadth | Purpose | `hsl(218 55% 30%)` |
-| Depth | Purpose | `hsl(222 55% 25%)` |
-| Clarity | Expression | `hsl(132 50% 35%)` |
-| Coherence | Expression | `hsl(138 50% 32%)` |
-| Concision | Expression | `hsl(144 50% 30%)` |
-| Organization | Expression | `hsl(150 50% 28%)` |
-| Consistency | Expression | `hsl(156 50% 26%)` |
-| Formatting | Expression | `hsl(162 50% 24%)` |
-| Verifiability | Grounding | `hsl(34 75% 32%)` |
-| Factuality | Grounding | `hsl(40 75% 28%)` |
-| Relevance | Grounding | `hsl(46 75% 26%)` |
-| Discipline | Reasoning | `hsl(258 60% 38%)` |
-| Soundness | Reasoning | `hsl(265 60% 35%)` |
-| Precision | Reasoning | `hsl(272 60% 32%)` |
-| Parsimony | Reasoning | `hsl(279 60% 30%)` |
-| Calibration | Judgment | `hsl(342 45% 38%)` |
-| Fairness | Judgment | `hsl(348 45% 35%)` |
-| Robustness | Judgment | `hsl(354 45% 32%)` |
+Each dimension uses the same `S` as its group, rotates `H` a few degrees around the
+group hue so its sub-family is distinguishable, and steps `L` so the ramp is readable
+within the group. Dark variants share the same `H` and `S` and only shift `L` upward.
+
+| Dimension | Group | Color (light) | Color (dark) |
+| --- | --- | --- | --- |
+| Suitability | Purpose | `hsl(68 62% 40%)` | `hsl(68 62% 65%)` |
+| Scope | Purpose | `hsl(72 62% 37%)` | `hsl(72 62% 62%)` |
+| Breadth | Purpose | `hsl(76 62% 34%)` | `hsl(76 62% 59%)` |
+| Depth | Purpose | `hsl(80 62% 31%)` | `hsl(80 62% 56%)` |
+| Clarity | Expression | `hsl(201 59% 35%)` | `hsl(201 59% 68%)` |
+| Coherence | Expression | `hsl(204 59% 32%)` | `hsl(204 59% 66%)` |
+| Concision | Expression | `hsl(207 59% 30%)` | `hsl(207 59% 64%)` |
+| Organization | Expression | `hsl(210 59% 28%)` | `hsl(210 59% 62%)` |
+| Consistency | Expression | `hsl(213 59% 26%)` | `hsl(213 59% 60%)` |
+| Formatting | Expression | `hsl(216 59% 24%)` | `hsl(216 59% 58%)` |
+| Verifiability | Grounding | `hsl(158 55% 32%)` | `hsl(158 55% 62%)` |
+| Factuality | Grounding | `hsl(162 55% 29%)` | `hsl(162 55% 58%)` |
+| Relevance | Grounding | `hsl(166 55% 26%)` | `hsl(166 55% 54%)` |
+| Discipline | Reasoning | `hsl(323 60% 40%)` | `hsl(323 60% 68%)` |
+| Soundness | Reasoning | `hsl(326 60% 37%)` | `hsl(326 60% 65%)` |
+| Precision | Reasoning | `hsl(329 60% 34%)` | `hsl(329 60% 62%)` |
+| Parsimony | Reasoning | `hsl(332 60% 31%)` | `hsl(332 60% 59%)` |
+| Calibration | Judgment | `hsl(272 30% 42%)` | `hsl(272 30% 70%)` |
+| Fairness | Judgment | `hsl(278 30% 39%)` | `hsl(278 30% 67%)` |
+| Robustness | Judgment | `hsl(284 30% 36%)` | `hsl(284 30% 64%)` |
 
 ## Score Palette
 
@@ -103,15 +188,15 @@ The score ramp is orthogonal to family.
 It is a valence axis (bad to good) plus a muted variant for `0` (not applicable to this
 document) and `NA` (not assessed).
 
-| Score | Color | Weight | Opacity |
-| --- | --- | --- | --- |
-| `0` | `hsl(220 10% 50%)` | 400 | 0.75 |
-| `1` | `hsl(0 70% 35%)` | 800 | — |
-| `2` | `hsl(28 80% 30%)` | 650 | — |
-| `3` | `hsl(40 80% 32%)` | 700 | — |
-| `4` | `hsl(140 60% 28%)` | 750 | — |
-| `5` | `hsl(140 60% 20%)` | 850 | — |
-| `NA` | `hsl(220 10% 50%)` | 400 | 0.65 |
+| Score | Color (light) | Color (dark) | Weight | Opacity |
+| --- | --- | --- | --- | --- |
+| `0` | `hsl(220 10% 50%)` | `hsl(220 10% 60%)` | 400 | 0.75 |
+| `1` | `hsl(0 70% 35%)` | `hsl(0 70% 60%)` | 800 | — |
+| `2` | `hsl(28 80% 30%)` | `hsl(28 70% 60%)` | 650 | — |
+| `3` | `hsl(40 80% 32%)` | `hsl(40 70% 60%)` | 700 | — |
+| `4` | `hsl(140 60% 28%)` | `hsl(140 50% 55%)` | 750 | — |
+| `5` | `hsl(140 60% 20%)` | `hsl(140 50% 45%)` | 850 | — |
+| `NA` | `hsl(220 10% 50%)` | `hsl(220 10% 60%)` | 400 | 0.65 |
 
 Font weight tracks score strength; opacity is reserved for the muted `0` and `NA`
 states.
@@ -167,12 +252,12 @@ Pair with the group’s ink color via one `color:` declaration:
 ```
 
 ```css
-.dim         { display: inline-flex; align-items: center; gap: 0.35em; }
-.dim--purpose    { color: hsl(214 55% 25%); }
-.dim--expression { color: hsl(140 55% 22%); }
-.dim--grounding  { color: hsl(38 80% 22%); }
-.dim--reasoning  { color: hsl(265 65% 32%); }
-.dim--judgment   { color: hsl(348 55% 30%); }
+.dim              { display: inline-flex; align-items: center; gap: 0.35em; }
+.dim--purpose     { color: var(--accent-p); }
+.dim--expression  { color: var(--accent-e); }
+.dim--grounding   { color: var(--accent-g); }
+.dim--reasoning   { color: var(--accent-r); }
+.dim--judgment    { color: var(--accent-j); }
 ```
 
 #### Outlined badge
@@ -222,25 +307,24 @@ surface color so it reads as a cut-out:
   padding: 0.45em;
   box-sizing: border-box;
 }
-.dim-stamp svg { width: 100%; height: 100%; color: var(--paper, #ffffff); }
+.dim-stamp svg { width: 100%; height: 100%; color: var(--bg); }
 
-/* Background uses the group ink color; the SVG color is the paper color. */
-.dim-stamp.dim--purpose    { background: hsl(214 55% 25%); }
-.dim-stamp.dim--expression { background: hsl(140 55% 22%); }
-.dim-stamp.dim--grounding  { background: hsl(38 80% 22%); }
-.dim-stamp.dim--reasoning  { background: hsl(265 65% 32%); }
-.dim-stamp.dim--judgment   { background: hsl(348 55% 30%); }
+/* Background uses the group ink color (light or dark via the theme tokens);
+   the SVG color is the page background, so the cut-out flips with the theme. */
+.dim-stamp.dim--purpose     { background: var(--accent-p); }
+.dim-stamp.dim--expression  { background: var(--accent-e); }
+.dim-stamp.dim--grounding   { background: var(--accent-g); }
+.dim-stamp.dim--reasoning   { background: var(--accent-r); }
+.dim-stamp.dim--judgment    { background: var(--accent-j); }
 ```
 
 Sizing rule: the icon should occupy roughly 55-65% of the stamp’s diameter (set via
 `padding` on the container, not by sizing the SVG). At small sizes (< 24px diameter)
 prefer the rounded-square variant (`border-radius: 22%`) for legibility.
 
-The `--paper` variable should resolve to the page or card surface color, so the cut-out
-matches the medium the stamp sits on (default: `#ffffff`; on the cream-paper demo
-surface, `hsl(38 80% 95%)` or similar).
 If a renderer cannot resolve a custom property, hard-code the surface color used by that
-medium.
+medium (`hsl(40 38% 93%)` for the cream-paper demo surface, `hsl(40 8% 8%)` for the dark
+counterpart).
 
 #### External-file reference (`<img>` or CSS `mask`)
 
@@ -258,7 +342,7 @@ cases:
 ```css
 .icon-purpose {
   width: 1em; height: 1em;
-  background-color: hsl(214 55% 25%);
+  background-color: var(--accent-p);
   mask-image: url("assets/icons/purpose.svg");
   mask-size: contain; mask-repeat: no-repeat;
 }
@@ -273,20 +357,30 @@ abbreviation as final fallback (`Pu`, `Ex`, `Gr`, `Re`, `Ju`).
 
 When proposing palette changes:
 
-1. Keep all values in `hsl()`. No hex, no `rgb()`.
-2. Adjust one axis at a time (hue, saturation, or lightness) so the rationale is
-   inspectable in the diff.
-3. Stay inside the family hue range for dimensions; if a dimension needs to move outside
-   its family’s neighborhood, the group assignment is the problem, not the color.
-4. Verify contrast for surface/ink pairs at minimum WCAG AA (4.5:1 for body text).
-   Tooling like the `contrast-ratio` CLI or any browser devtools color picker is
+1. Keep all values in `hsl()`. No hex, no `rgb()`, no commas inside the parentheses.
+2. **Always change the light/dark pair together.** A token without both modes is
+   incomplete; reviewers should reject single-mode color changes.
+3. **Hold `H` and `S` constant within a group.** Lightness alone moves between
+   light/dark and between surface / ink / dim.
+   If a group needs a different hue or saturation, change the whole group, not one
+   member.
+4. Adjust one axis at a time so the rationale is inspectable in the diff.
+5. Stay inside the family hue range for dimensions (a few degrees from the group hue);
+   if a dimension needs to move outside its family’s neighborhood, the group assignment
+   is the problem, not the color.
+6. Verify contrast for surface/ink pairs in **both modes** at minimum WCAG AA (4.5:1 for
+   body text). Any browser devtools color picker or the `contrast-ratio` CLI is
    sufficient.
 
 ## References
 
 - [`tools/pprose/src/pprose/table_styles.py`](../../pprose/src/pprose/table_styles.py) —
-  runtime source of truth for the palette (currently hex; migrate to `hsl()`).
+  runtime source of truth for the palette; emits `hsl()` and ships both light and
+  `_dark` palette variants per the convention above.
 - [`tools/pprose/src/pprose/rubric_schema.yaml`](../../pprose/src/pprose/rubric_schema.yaml)
   — defines the group and dimension keys this palette binds to.
 - [`tools/docs/project/specs/active/plan-2026-05-23-rendered-eval-reports.md`](../project/specs/active/plan-2026-05-23-rendered-eval-reports.md)
   — in-flight plan that will consume this system in the HTML renderer.
+- [`attic/dimension-visualizations.html`](../../../attic/dimension-visualizations.html)
+  — reference implementation of the CSS variable convention with full light + dark theme
+  tokens and a three-state Auto / Light / Dark switcher.
