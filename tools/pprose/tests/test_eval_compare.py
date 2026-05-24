@@ -54,10 +54,9 @@ def test_golden_six_way_unified_with_pairs(capsys: pytest.CaptureFixture[str]):
     #   uv run pprose compare tests/fixtures/figma-*.eval.md --format unified \
     #     --pairs DDOG-r1=DDOG-r4 NET-r1=NET-r4 DDOG-r2=DDOG-r4 NET-r2=NET-r4 \
     #     > tests/fixtures/expected-comparison.md
-    # The figma fixtures retain their original 12-dim score values where alignment
-    # was clean and demote everything else to 0 ("applicable but unassessable")
-    # under 18-dim-v1, which the loader migrates to ERR on the current rubric, so
-    # --allow-misalignment is not needed.
+    # The figma fixtures are native pp20v2: their qual blocks use the Expression +
+    # Form grouping, ERR for unassessable dimensions, and the 6-group palette, so
+    # no on-load migration or --allow-misalignment is needed.
     args = [str(p) for p in ALL_FIXTURES] + [
         "--format",
         "unified",
