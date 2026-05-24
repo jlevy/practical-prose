@@ -538,7 +538,7 @@ wheels = [
 ]
 
 [[package]]
-name = "practical-prose"
+name = "pprose"
 source = { editable = "." }
 dependencies = [
     { name = "aiolimiter" },
