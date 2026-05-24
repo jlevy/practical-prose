@@ -2,6 +2,20 @@
 
 Joshua Levy (github.com/jlevy) with agent assistance
 
+## Quick Start
+
+After the package is published, use the Practical Prose CLI in any repo with
+[uv](https://docs.astral.sh/uv/):
+
+```bash
+uvx pprose --help
+uvx pprose install --agents-md
+```
+
+The package name and command are both `pprose`. `pprose install` writes portable agent
+skills into `.claude/skills/`; `--agents-md` also adds a short routing block to
+`AGENTS.md` when a repo uses that file.
+
 ## Why Practical Prose Matters
 
 Clear writing and clear thinking are inseparable.
@@ -107,7 +121,7 @@ looking at specific qualities or dimensions.
 |  | E6. Formatting | Is the document visually and syntactically clean in its medium? |
 | **Grounding** | G1. Verifiability | Are claims traceable to sources or calculations? |
 |  | G2. Factuality | Do cited sources support the claims as asserted? |
-|  | G3. Relevance | Do sources, citations, and reasoning chains bear on the document's stated purpose? |
+|  | G3. Relevance | Do sources, citations, and reasoning chains bear on the document’s stated purpose? |
 | **Reasoning** | R1. Discipline | Are observation, judgment, interpretation, and implication worked through in order, with each higher rung supported by the prior? |
 |  | R2. Soundness | Do claims follow from evidence through valid mechanisms? |
 |  | R3. Precision | Are claims and terms specified at the right granularity? |
@@ -117,10 +131,9 @@ looking at specific qualities or dimensions.
 |  | J3. Robustness | Do key claims survive plausible alternative interpretations? |
 
 Each dimension maps back to one or more principles in
-[practical-prose-principles.md](docs/practical-prose-principles.md); prescriptive
-rules live in [practical-prose-guidelines.md](docs/practical-prose-guidelines.md)
-and 0-5 scoring anchors in
-[practical-prose-rubric.md](docs/practical-prose-rubric.md).
+[practical-prose-principles.md](docs/practical-prose-principles.md); prescriptive rules
+live in [practical-prose-guidelines.md](docs/practical-prose-guidelines.md) and 0-5
+scoring anchors in [practical-prose-rubric.md](docs/practical-prose-rubric.md).
 
 ## Layers
 
@@ -159,11 +172,10 @@ system gets used in practice.
   [practical-prose-quick-checklist.md](shortcuts/practical-prose-quick-checklist.md).
 - **Running a formal eval:** the [runbooks/](runbooks/) directory.
 - **Understanding why a rule exists:** the corresponding principle in
-  [practical-prose-principles.md](docs/practical-prose-principles.md), and the
-  source tradition in
-  [practical-prose-bibliography.md](docs/practical-prose-bibliography.md).
-- **Looking at the tooling:** [tools/pprose/](tools/pprose/) is the installable
-  Python package with the metrics, scoring, and report generators.
+  [practical-prose-principles.md](docs/practical-prose-principles.md), and the source
+  tradition in [practical-prose-bibliography.md](docs/practical-prose-bibliography.md).
+- **Looking at the tooling:** [tools/pprose/](tools/pprose/) is the installable Python
+  package with the metrics, scoring, and report generators.
 
 ## Agent Skills
 
@@ -182,22 +194,21 @@ Agent Skills under [skills/](skills/). The eval skills use the
 Install paths:
 
 1. Point the agent at this repo and let `AGENTS.md` route to the right skill.
-2. Symlink `skills/*` into the agent's skill directory. Claude Code can use the committed
-   `.claude/skills/` symlinks.
+2. Symlink `skills/*` into the agent’s skill directory.
+   Claude Code can use the committed `.claude/skills/` symlinks.
 3. If a Claude Code plugin marketplace entry exists, install that as a Claude-only
    convenience.
 
-Do not copy only the `skills/*` directories into another location unless you also preserve
-this repo's sibling `docs/`, `shortcuts/`, and `runbooks/` layout or update the relative
-links inside each `SKILL.md`. The skill files are intentionally small routers into those
-canonical source documents.
+Do not copy only the `skills/*` directories into another location unless you also
+preserve this repo’s sibling `docs/`, `shortcuts/`, and `runbooks/` layout or update the
+relative links inside each `SKILL.md`. The skill files are intentionally small routers
+into those canonical source documents.
 
 ## Tooling
 
-[tools/pprose/](tools/pprose/) is a standalone modern-Python package
-(bootstrapped from [`simple-modern-uv`](https://github.com/jlevy/simple-modern-uv)). The
-distribution is `practical-prose`; it installs a single `pprose` console-script entry
-point:
+[tools/pprose/](tools/pprose/) is a standalone modern-Python package (bootstrapped from
+[`simple-modern-uv`](https://github.com/jlevy/simple-modern-uv)). The distribution and
+console-script entry point are both `pprose`:
 
 - `pprose metrics`: deterministic metrics over a document (banned-register hits,
   vague-word counts, link validity, frontmatter presence, etc.).
@@ -209,24 +220,24 @@ point:
 
 It also bundles the guidelines, shortcuts, runbooks, and rubric and serves them as
 reference subcommands (`pprose guidelines|shortcut|runbook|skill <name>`, `--list` to
-enumerate), so the skills work in any repo. `pprose install` writes the five Practical
-Prose skills into a repo's `.claude/skills/`, each referencing pprose with a pinned,
-local-first invocation (`pprose` if on PATH, else `uvx --from practical-prose@<version>
-pprose` — the trusted version that ran install — else a message telling the user to
-install uv or pprose).
+enumerate), so the skills work in any repo.
+`pprose install` writes the five Practical Prose skills into a repo’s `.claude/skills/`,
+each referencing pprose with a pinned, local-first invocation (`pprose` if on PATH, else
+`uvx pprose@<version>` — the trusted version that ran install — else a message telling
+the user to install uv or pprose).
 
 Quick start:
 
 ```bash
 # Run with no install via uv (https://docs.astral.sh/uv/). `score` needs ANTHROPIC_API_KEY.
-# The package is practical-prose; the command is pprose, so zero-install uses --from.
-uvx --from practical-prose pprose report from-metrics path/to/doc.md --label my-doc --scope-class brief --out my-doc.eval.md
-uvx --from practical-prose pprose score my-doc.eval.md
-uvx --from practical-prose pprose report validate my-doc.eval.md
+uvx pprose report from-metrics path/to/doc.md --label my-doc --scope-class brief --out my-doc.eval.md
+uvx pprose score my-doc.eval.md
+uvx pprose report validate my-doc.eval.md
 ```
 
 See the runbooks for end-to-end operation and
-[tools/pprose/docs/development.md](tools/pprose/docs/development.md) for local development.
+[tools/pprose/docs/development.md](tools/pprose/docs/development.md) for local
+development.
 
 <!-- This document follows common-doc-guidelines.md.
 Review guidelines before editing.
