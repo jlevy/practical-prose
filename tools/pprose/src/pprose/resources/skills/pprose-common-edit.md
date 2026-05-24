@@ -11,7 +11,7 @@ Markdown formatting, links, headings, lists,
 frontmatter, and footer — so it is safe for almost any Markdown document, workflow, or
 repo, whether or not it is a Practical Prose artifact.
 
-For a deeper language-and-formatting pass (the Expression dimensions) use
+For a deeper language-and-formatting pass (the Expression and Form dimensions) use
 `pprose-copy-edit`; for a full all-dimension editorial pass use `pprose-full-edit`. Each
 tier is a superset of the one before.
 

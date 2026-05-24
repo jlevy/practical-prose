@@ -6,7 +6,7 @@ author: Joshua Levy (github.com/jlevy) with agent assistance
 ---
 # Full-Edit Shortcut
 
-The deepest edit tier: a systematic pass across all five groups and 20 dimensions of
+The deepest edit tier: a systematic pass across all six groups and 20 dimensions of
 `pprose guidelines practical-prose-guidelines`. A superset of the
 `pprose shortcut shortcut-copy-edit` (common substrate + Expression); full-edit
 adds the substantive dimensions and produces an editorial review.
@@ -18,8 +18,8 @@ adds the substantive dimensions and produces an editorial review.
 
 ## Apply vs. flag
 
-- **Auto-apply** (safe, meaning-preserving): the common substrate and the Expression
-  dimensions (E1-E6) — formatting, clarity wording, banned-register words, concision,
+- **Auto-apply** (safe, meaning-preserving): the common substrate and the Expression and Form
+  dimensions (E1-E3, F1-F3) — formatting, clarity wording, banned-register words, concision,
   consistency, organization, broken links. Apply a fix only if you are certain it
   preserves meaning, claim strength, and citations.
 - **Flag, do not silently rewrite** (substantive, judgment-bearing): Purpose, Grounding,
@@ -37,7 +37,7 @@ adds the substantive dimensions and produces an editorial review.
 2. **Run the passes by group** (the four audit passes in
    `pprose shortcut practical-prose-quick-checklist`
    §Audit-pass operationalization — required for high-stakes docs; keep them separate):
-   - **Lint pass** — E4 Organization, E5 Consistency, E6 Formatting, E1 banned-register
+   - **Lint pass** — F1 Organization, F2 Consistency, F3 Formatting, E1 banned-register
      and vague-word checks. Use `pprose metrics`. *Auto-apply.*
    - **Expression pass** — E1-E3 clarity, coherence, concision. *Auto-apply.*
    - **Claim audit** — G1 Verifiability, G2 Factuality, G3 Relevance: every quantitative

@@ -116,9 +116,9 @@ looking at specific qualities or dimensions.
 | **Expression** | E1. Clarity | Does the writing read well? |
 |  | E2. Coherence | Do the ideas progress smoothly? |
 |  | E3. Concision | Does every section earn its place? |
-|  | E4. Organization | Are sections, headings, sequence, tables, figures, links, and cross-references arranged for navigation? |
-|  | E5. Consistency | Does the document follow the chosen style guide or house style consistently? |
-|  | E6. Formatting | Is the document visually and syntactically clean in its medium? |
+| **Form** | F1. Organization | Are sections, headings, sequence, tables, figures, links, and cross-references arranged for navigation? |
+|  | F2. Consistency | Does the document follow the chosen style guide or house style consistently? |
+|  | F3. Formatting | Is the document visually and syntactically clean in its medium? |
 | **Grounding** | G1. Verifiability | Are claims traceable to sources or calculations? |
 |  | G2. Factuality | Do cited sources support the claims as asserted? |
 |  | G3. Relevance | Do sources, citations, and reasoning chains bear on the document’s stated purpose? |
@@ -158,7 +158,7 @@ specifications—not just practical prose.
 The practical-prose layers (Principles, Guidelines, Rubric) build on top of it with the
 seven principles and 20 dimensions specific to evaluating practical writing.
 Principles, Guidelines, and Rubric form a tight triple: same seven principles, same 20
-dimensions, same five groups (Purpose, Expression, Grounding, Reasoning, Judgment).
+dimensions, same six groups (Purpose, Expression, Form, Grounding, Reasoning, Judgment).
 The bibliography supplies the intellectual basis; the shortcuts and runbooks are how the
 system gets used in practice.
 

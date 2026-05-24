@@ -1,6 +1,6 @@
 ---
 title: Practical Prose Quick Checklist
-description: Single-page pre-publish self-audit covering the 20 practical-prose dimensions in five short groups; for use when the full guidelines are too long to load
+description: Single-page pre-publish self-audit covering the 20 practical-prose dimensions in six short groups; for use when the full guidelines are too long to load
 category: documentation
 author: Joshua Levy (github.com/jlevy) with agent assistance
 ---
@@ -8,7 +8,7 @@ author: Joshua Levy (github.com/jlevy) with agent assistance
 
 A one-page pre-publish self-audit for documents written under
 [practical-prose-guidelines.md](../docs/practical-prose-guidelines.md).
-Walk the five groups in order.
+Walk the six groups in order.
 For each line: yes / no / NA. If a question is unclear, jump to its dimension in the
 full guidelines (the §-number points there directly).
 
@@ -19,9 +19,9 @@ for pre-publish audit of an already-drafted doc.
 **Scope of the audit:**
 
 - The applicable dimensions depend on `risk_level`. Low-stakes notes audit only P1 / E1
-  / E3 / E6; standard internal docs audit Purpose, Expression, Grounding,
+  / E3 / F3; standard internal docs audit Purpose, Expression, Grounding,
   and R2 Soundness; decision memos / audits / deep research audit all 20; reference
-  / runbook docs focus on P1 / P2 / E4 / E6 / R3 and the Maintainable principle.
+  / runbook docs focus on P1 / P2 / F1 / F3 / R3 and the Maintainable principle.
   See `practical-prose-metrics.md` §Applicability Profiles.
 - A scored rule miss can be a **justified deviation** instead of a defect, if you
   document the rule set aside, the reader outcome served, and the risk introduced.
@@ -39,7 +39,7 @@ for pre-publish audit of an already-drafted doc.
 - [ ] **P4 Depth:** Do the sections the document’s purpose depends on get more detail
   than tangential ones?
 
-## Expression (E1-E6)
+## Expression (E1-E3)
 
 - [ ] **E1 Clarity:** Any banned-register words, vague magnitudes, meta-commentary, or
   parallel-structure padding (“not X but Y” without a real X)?
@@ -47,12 +47,15 @@ for pre-publish audit of an already-drafted doc.
   Do transitions bridge or stub?
 - [ ] **E3 Concision:** Does every section earn its place?
   Any duplication across sections?
-- [ ] **E4 Organization:** Heading hierarchy logical?
+
+## Form (F1-F3)
+
+- [ ] **F1 Organization:** Heading hierarchy logical?
   Tables earn their tabular shape?
   Figures captioned? Links resolve?
-- [ ] **E5 Consistency:** Dialect, casing, parallel-list syntax, citation style,
+- [ ] **F2 Consistency:** Dialect, casing, parallel-list syntax, citation style,
   register all consistent?
-- [ ] **E6 Formatting:** Markdown renders correctly?
+- [ ] **F3 Formatting:** Markdown renders correctly?
   Frontmatter and footer present and well-placed?
   No raw-source artifacts visible?
 
@@ -100,7 +103,7 @@ for pre-publish audit of an already-drafted doc.
 If the document is high-stakes, run the four audit passes separately rather than one
 broad pass:
 
-1. **Lint pass:** Cosmetic / deterministic: E4 Organization, E5 Consistency, E6
+1. **Lint pass:** Cosmetic / deterministic: F1 Organization, F2 Consistency, F3
    Formatting, E1 banned-register and vague-word checks.
    Use `pprose metrics`.
 2. **Claim audit:** Every quantitative claim against its cited source.

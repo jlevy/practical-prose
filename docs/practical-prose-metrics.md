@@ -80,7 +80,7 @@ fair.
 - [scripts/eval_compare.py](../scripts/eval_compare.py): compare N eval reports across
   versions or variants.
 - [scripts/rubric_schema.yaml](../scripts/rubric_schema.yaml): canonical
-  machine-readable schema for the 20 dimensions, the five groups, allowed score values,
+  machine-readable schema for the 20 dimensions, the six groups, allowed score values,
   and `NA`-eligible dimensions.
 
 ## Recommended Frontmatter Schema
@@ -126,10 +126,10 @@ The profiles below tell agents and reviewers which dimensions are *required*,
 
 | Profile | `risk_level` | Required dimensions | Conditional dimensions | Typically NA |
 | --- | --- | --- | --- | --- |
-| **Low-stakes note** (status update, standup, brief progress note) | `low` | P1 Suitability, E1 Clarity, E3 Concision, E6 Formatting | G1 Verifiability only for material claims | G3 Relevance, R1-R4 (Discipline, Soundness, Precision, Parsimony), J1-J3 (Calibration, Fairness, Robustness) |
-| **Standard internal doc** (memo, brief, internal report) | `standard` | All Purpose (P1-P4); all Expression (E1-E6); G1 Verifiability; G2 Factuality; R2 Soundness | G3 Relevance, R1 Discipline, R4 Parsimony, J1 Calibration, J2 Fairness, J3 Robustness when the doc makes those kinds of claims | R3 Precision unless terminology is contested |
+| **Low-stakes note** (status update, standup, brief progress note) | `low` | P1 Suitability, E1 Clarity, E3 Concision, F3 Formatting | G1 Verifiability only for material claims | G3 Relevance, R1-R4 (Discipline, Soundness, Precision, Parsimony), J1-J3 (Calibration, Fairness, Robustness) |
+| **Standard internal doc** (memo, brief, internal report) | `standard` | All Purpose (P1-P4); all Expression (E1-E3); all Form (F1-F3); G1 Verifiability; G2 Factuality; R2 Soundness | G3 Relevance, R1 Discipline, R4 Parsimony, J1 Calibration, J2 Fairness, J3 Robustness when the doc makes those kinds of claims | R3 Precision unless terminology is contested |
 | **Decision memo / audit / deep research** | `high` | All 20 unless explicitly NA | Four-pass audit (lint / claim / reasoning / purpose; see [rubric](practical-prose-rubric.md) §Audit passes for high-stakes evals) | None by default; NA only when explicitly stated and justified |
-| **Reference / runbook** | `standard` (override) | P1 Suitability, P2 Scope, E4 Organization, E6 Formatting, R3 Precision; plus the Maintainable principle | G1-G3 if the reference cites sources or makes verifiable claims; E2 Coherence on extended explanations | J2 Fairness, J3 Robustness unless interpretive claims appear |
+| **Reference / runbook** | `standard` (override) | P1 Suitability, P2 Scope, F1 Organization, F3 Formatting, R3 Precision; plus the Maintainable principle | G1-G3 if the reference cites sources or makes verifiable claims; E2 Coherence on extended explanations | J2 Fairness, J3 Robustness unless interpretive claims appear |
 
 Two operational notes:
 

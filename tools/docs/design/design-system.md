@@ -71,8 +71,8 @@ family — only the lightness flips.
 
 Surfaces that consume the palette in CSS should expose the tokens under stable, short
 names at the `:root` level, then override the same names inside the dark media query.
-Use single-letter group codes (`p / e / g / r / j`) in CSS so the tokens stay compact at
-call sites:
+Use single-letter group codes (`p / e / f / g / r / j`) in CSS so the tokens stay compact
+at call sites:
 
 ```css
 :root {
@@ -82,6 +82,7 @@ call sites:
   /* Group accents — the ink color of each group */
   --accent-p: hsl(72 62% 44%);      /* Purpose */
   --accent-e: hsl(206 59% 44%);     /* Expression */
+  --accent-f: hsl(30 60% 38%);      /* Form */
   --accent-g: hsl(162 55% 40%);     /* Grounding */
   --accent-r: hsl(329 60% 44%);     /* Reasoning */
   --accent-j: hsl(278 30% 55%);     /* Judgment */
@@ -90,6 +91,7 @@ call sites:
      ink; only L is higher). */
   --surface-p: hsl(72 62% 92%);
   --surface-e: hsl(206 59% 92%);
+  --surface-f: hsl(30 60% 92%);
   --surface-g: hsl(162 55% 92%);
   --surface-r: hsl(329 60% 92%);
   --surface-j: hsl(278 30% 92%);
@@ -102,12 +104,14 @@ call sites:
 
     --accent-p: hsl(72 62% 68%);
     --accent-e: hsl(206 59% 68%);
+    --accent-f: hsl(30 60% 68%);
     --accent-g: hsl(162 55% 62%);
     --accent-r: hsl(329 60% 68%);
     --accent-j: hsl(278 30% 72%);
 
     --surface-p: hsl(72 62% 18%);
     --surface-e: hsl(206 59% 18%);
+    --surface-f: hsl(30 60% 18%);
     --surface-g: hsl(162 55% 16%);
     --surface-r: hsl(329 60% 18%);
     --surface-j: hsl(278 30% 18%);
@@ -125,8 +129,8 @@ Both share the same hue family.
 
 | Tier | Visual weight | Role |
 | --- | --- | --- |
-| Group (5: Purpose, Expression, Grounding, Reasoning, Judgment) | Light surface, dark ink | Cards, section headers, group-mean rollups |
-| Dimension (20, distributed across the 5 groups) | Darker mark, often with a small hue offset | Per-dimension row accents, score chips, drill-down headers |
+| Group (6: Purpose, Expression, Form, Grounding, Reasoning, Judgment) | Light surface, dark ink | Cards, section headers, group-mean rollups |
+| Dimension (20, distributed across the 6 groups) | Darker mark, often with a small hue offset | Per-dimension row accents, score chips, drill-down headers |
 
 Scores are an **orthogonal axis** with their own red-to-green valence ramp.
 Score color is independent of which dimension or group is being scored.
@@ -146,6 +150,7 @@ surface / ink / dimension roles.
 | --- | --- | --- | --- | --- | --- | --- | --- |
 | Purpose | 72 | 62% | `hsl(72 62% 92%)` | `hsl(72 62% 18%)` | `hsl(72 62% 44%)` | `hsl(72 62% 68%)` | `mdi:compass-rose` |
 | Expression | 206 | 59% | `hsl(206 59% 92%)` | `hsl(206 59% 18%)` | `hsl(206 59% 44%)` | `hsl(206 59% 68%)` | `mdi:quill` |
+| Form | 30 | 60% | `hsl(30 60% 92%)` | `hsl(30 60% 18%)` | `hsl(30 60% 38%)` | `hsl(30 60% 68%)` | `mdi:scroll` |
 | Grounding | 162 | 55% | `hsl(162 55% 92%)` | `hsl(162 55% 16%)` | `hsl(162 55% 40%)` | `hsl(162 55% 62%)` | `mdi:anchor` |
 | Reasoning | 329 | 60% | `hsl(329 60% 92%)` | `hsl(329 60% 18%)` | `hsl(329 60% 44%)` | `hsl(329 60% 68%)` | `mdi:ruler` |
 | Judgment | 278 | 30% | `hsl(278 30% 92%)` | `hsl(278 30% 18%)` | `hsl(278 30% 55%)` | `hsl(278 30% 72%)` | `mdi:scale-balance` |
@@ -168,9 +173,9 @@ within the group. Dark variants share the same `H` and `S` and only shift `L` up
 | Clarity | Expression | `hsl(201 59% 35%)` | `hsl(201 59% 68%)` |
 | Coherence | Expression | `hsl(204 59% 32%)` | `hsl(204 59% 66%)` |
 | Concision | Expression | `hsl(207 59% 30%)` | `hsl(207 59% 64%)` |
-| Organization | Expression | `hsl(210 59% 28%)` | `hsl(210 59% 62%)` |
-| Consistency | Expression | `hsl(213 59% 26%)` | `hsl(213 59% 60%)` |
-| Formatting | Expression | `hsl(216 59% 24%)` | `hsl(216 59% 58%)` |
+| Organization | Form | `hsl(26 60% 38%)` | `hsl(26 60% 64%)` |
+| Consistency | Form | `hsl(30 60% 35%)` | `hsl(30 60% 61%)` |
+| Formatting | Form | `hsl(34 60% 32%)` | `hsl(34 60% 58%)` |
 | Verifiability | Grounding | `hsl(158 55% 32%)` | `hsl(158 55% 62%)` |
 | Factuality | Grounding | `hsl(162 55% 29%)` | `hsl(162 55% 58%)` |
 | Relevance | Grounding | `hsl(166 55% 26%)` | `hsl(166 55% 54%)` |
@@ -206,8 +211,8 @@ states.
 Each top-level group has one icon, drawn from
 [Material Design Icons (MDI)](https://pictogrammers.com/library/mdi/) (Apache 2.0). MDI
 was chosen for the timeless, instrument-flavored draftsmanship of these particular
-icons: a compass rose, a writing tool, a fixed point, a measuring tool, and a weighing
-tool — a navigator’s drafting kit.
+icons: a compass rose, a writing tool, a scroll, a fixed point, a measuring tool, and a
+weighing tool — a navigator’s drafting kit.
 
 Store the **name**, not a glyph, so the design system stays independent of font and
 Unicode availability.
@@ -217,6 +222,7 @@ The local SVGs are inlined verbatim with attribution in a leading XML comment.
 | --- | --- | --- | --- |
 | Purpose | `mdi:compass-rose` | [purpose.svg](assets/icons/purpose.svg) | orientation toward the reader’s task |
 | Expression | `mdi:quill` | [expression.svg](assets/icons/expression.svg) | language, surface form |
+| Form | `mdi:scroll` | [form.svg](assets/icons/form.svg) | the document as a structured artifact |
 | Grounding | `mdi:anchor` | [grounding.svg](assets/icons/grounding.svg) | tied to sources and facts |
 | Reasoning | `mdi:ruler` | [reasoning.svg](assets/icons/reasoning.svg) | inference, measurement, rigor |
 | Judgment | `mdi:scale-balance` | [judgment.svg](assets/icons/judgment.svg) | weighing claims, calibration |
@@ -255,6 +261,7 @@ Pair with the group’s ink color via one `color:` declaration:
 .dim              { display: inline-flex; align-items: center; gap: 0.35em; }
 .dim--purpose     { color: var(--accent-p); }
 .dim--expression  { color: var(--accent-e); }
+.dim--form        { color: var(--accent-f); }
 .dim--grounding   { color: var(--accent-g); }
 .dim--reasoning   { color: var(--accent-r); }
 .dim--judgment    { color: var(--accent-j); }
@@ -313,6 +320,7 @@ surface color so it reads as a cut-out:
    the SVG color is the page background, so the cut-out flips with the theme. */
 .dim-stamp.dim--purpose     { background: var(--accent-p); }
 .dim-stamp.dim--expression  { background: var(--accent-e); }
+.dim-stamp.dim--form        { background: var(--accent-f); }
 .dim-stamp.dim--grounding   { background: var(--accent-g); }
 .dim-stamp.dim--reasoning   { background: var(--accent-r); }
 .dim-stamp.dim--judgment    { background: var(--accent-j); }
@@ -351,7 +359,7 @@ cases:
 #### Terminal / plain text
 
 Maintain a small lookup that maps each name to a Unicode glyph, with a two-letter group
-abbreviation as final fallback (`Pu`, `Ex`, `Gr`, `Re`, `Ju`).
+abbreviation as final fallback (`Pu`, `Ex`, `Fo`, `Gr`, `Re`, `Ju`).
 
 ## Adding or Changing Colors
 
@@ -381,6 +389,3 @@ When proposing palette changes:
   — defines the group and dimension keys this palette binds to.
 - [`tools/docs/project/specs/active/plan-2026-05-23-rendered-eval-reports.md`](../project/specs/active/plan-2026-05-23-rendered-eval-reports.md)
   — in-flight plan that will consume this system in the HTML renderer.
-- [`attic/dimension-visualizations.html`](../../../attic/dimension-visualizations.html)
-  — reference implementation of the CSS variable convention with full light + dark theme
-  tokens and a three-state Auto / Light / Dark switcher.

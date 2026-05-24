@@ -22,7 +22,7 @@ Counts (all per-document):
     practical-prose-guidelines.md E1 Clarity rule 4 (e.g. incontrovertibly, monumental,
     paradigm-shifting). Override the default list with --banned-words-file.
   - Em-dash discipline: count of spaced em dashes (" — " — a common agent failure
-    mode prohibited by practical-prose-guidelines.md E5 rule 7) and total em-dash
+    mode prohibited by practical-prose-guidelines.md F2 rule 7) and total em-dash
     density per 1000 words.
   - Replacement-history hits: prose occurrences of phrases that narrate change
     ("previously named", "formerly", "under the new layout", "this design was changed",
@@ -32,7 +32,7 @@ Counts (all per-document):
     word-choice / reading-order justifications ("the canonical X", "we use the term Y
     because", "start with section"). E1 Clarity rule 6.
   - Generic-heading hits: ATX headings whose entire text is a single generic word
-    ("Overview", "Background", "Notes", "Details", "Misc"). E4 Organization rule 9 —
+    ("Overview", "Background", "Notes", "Details", "Misc"). F1 Organization rule 9 —
     flags only, since these can be appropriate at a section's outermost level.
   - Words, sentences, paragraphs, lines (prose-only — YAML frontmatter, fenced code
     blocks, and inline code are stripped before counting; sentence splitting via flowmark
@@ -422,7 +422,7 @@ Lint (E1 Clarity rule 4 — banned register from common-doc-guidelines §4.2; ma
   banned hits     {m.banned_register_hits:>4}
   examples        {banned_examples}
 
-Lint (E5 Consistency rule 7 — em-dash discipline):
+Lint (F2 Consistency rule 7 — em-dash discipline):
   spaced em " — " {m.spaced_em_dash_count:>4}    (common agent failure mode; prefer "—" or other punctuation)
   em dashes total {m.em_dashes_total:>4}
   density /1k wds {m.em_dash_density_per_1000_words:>4.2f}
@@ -435,7 +435,7 @@ Lint (E1 Clarity rule 6 — pedantic/pedagogical markers; flag only):
   pedantic hits   {m.pedantic_marker_hits:>4}
   examples        {pm_examples}
 
-Lint (E4 Organization rule 9 — generic templated headings; flag only):
+Lint (F1 Organization rule 9 — generic templated headings; flag only):
   generic-hd hits {m.generic_heading_hits:>4}
   examples        {gh_examples}
 """
