@@ -44,9 +44,10 @@ BoldRule = Literal["max", "min", "none"]
 BoldMode = Literal["max", "materially-different"]
 
 QUALITATIVE_SCORE_NOTE = (
-    "**Score notes:** Qualitative rows use the rubric's 0-5 scale. `NA` means the "
-    "dimension is not applicable and is excluded from group and overall means. Bold "
-    "numeric cells mark the best value in that row under the selected bolding rule."
+    "**Score notes:** Qualitative rows use the rubric's 1-5 scale. `NA` means the "
+    "dimension does not engage this artifact; `ERR` means the scorer could not assess "
+    "it. Both are excluded from group and overall means. Bold numeric cells mark the "
+    "best value in that row under the selected bolding rule."
 )
 
 
@@ -55,7 +56,7 @@ class Row:
     approach: str
     aspect: str
     measure: str
-    # Rubric-score cells use the sentinel string "NA"; other cells are numeric.
+    # Rubric-score cells use the sentinel strings "NA" / "ERR"; other cells are numeric.
     raw_values: list[float | int | str | None]
     display_values: list[str]
     bold_rule: BoldRule = "max"
@@ -80,7 +81,7 @@ def _qual_rows(reports: list[EvalReport]) -> list[Row]:
         for report in reports:
             group_obj = getattr(report.qual, group.key)
             vals = [getattr(group_obj, d.key) for d in group.dimensions]
-            if all(v == "NA" for v in vals):
+            if all(v in ("NA", "ERR") for v in vals):
                 means.append(None)
             else:
                 means.append(getattr(report.derived.rubric_rollup, mean_attr))
@@ -329,9 +330,9 @@ def _bold_indices(
     if rule == "none":
         return set()
 
-    # Treat both None and "NA" as missing for bolding purposes — there is no
-    # numeric comparison to make for a not-applicable dimension.
-    valid = [(i, v) for i, v in enumerate(raw) if v is not None and v != "NA"]
+    # Treat None, "NA", and "ERR" as missing for bolding purposes — there is no
+    # numeric comparison to make for a not-applicable / unscored dimension.
+    valid = [(i, v) for i, v in enumerate(raw) if v is not None and v not in ("NA", "ERR")]
     if not valid:
         return set()
     values = [v for _, v in valid]
@@ -460,10 +461,10 @@ def render_per_pair_deltas(
         for dim in rs.DIMENSIONS:
             v_from = getattr(getattr(r_from.qual, dim.group_key), dim.key)
             v_to = getattr(getattr(r_to.qual, dim.group_key), dim.key)
-            # NA on either side makes the numeric delta undefined; report the
-            # transition itself so the reader sees what changed.
-            if v_from == "NA" or v_to == "NA":
-                cell = f"{v_from} → {v_to}" if v_from != v_to else "NA"
+            # NA or ERR on either side makes the numeric delta undefined; report
+            # the transition itself so the reader sees what changed.
+            if v_from in ("NA", "ERR") or v_to in ("NA", "ERR"):
+                cell = f"{v_from} → {v_to}" if v_from != v_to else str(v_from)
             else:
                 d = v_to - v_from
                 sign = "+" if d > 0 else ""

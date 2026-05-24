@@ -38,9 +38,9 @@ def fmt_int(v: float | int) -> str:
 
 
 def fmt_score(v: int | str) -> str:
-    """Format a rubric score that may be the sentinel string "NA"."""
-    if v == "NA":
-        return "NA"
+    """Format a rubric score: numeric 1-5, or the sentinel "NA" / "ERR"."""
+    if v in ("NA", "ERR"):
+        return str(v)
     return str(int(v))
 
 

@@ -56,7 +56,8 @@ def test_golden_six_way_unified_with_pairs(capsys: pytest.CaptureFixture[str]):
     #     > tests/fixtures/expected-comparison.md
     # The figma fixtures retain their original 12-dim score values where alignment
     # was clean and demote everything else to 0 ("applicable but unassessable")
-    # under 18-dim-v1, so --allow-misalignment is not needed.
+    # under 18-dim-v1, which the loader migrates to ERR on the current rubric, so
+    # --allow-misalignment is not needed.
     args = [str(p) for p in ALL_FIXTURES] + [
         "--format",
         "unified",
@@ -138,8 +139,10 @@ def test_pair_deltas_compute_correctly():
     text = render_per_pair_deltas(reports, [("DDOG-r1", "DDOG-r4")])
     assert "Delta: DDOG-r1 → DDOG-r4" in text
     assert "| Calibration | +2 |" in text
-    # Discipline = old Discipline; unchanged in the figma mechanical migration.
-    assert "| Discipline | 0 |" in text
+    # Discipline was 0 (cannot assess) on both DDOG-r1 and DDOG-r4 under v1; the
+    # loader migrates both to ERR on the current rubric, so the delta is "ERR",
+    # not a numeric 0 (matching ERR — ERR's no-numeric-comparison semantics).
+    assert "| Discipline | ERR |" in text
     # Mean delta sign is the regression-test signal (DDOG-r4 still higher than DDOG-r1).
     assert "**Mean** | **+" in text
 
@@ -275,8 +278,8 @@ def _make_report(
                 "coherence": 5,
                 "concision": 4,
                 "organization": 5,
-                "consistency": 0,
-                "formatting": 0,
+                "consistency": "ERR",
+                "formatting": "ERR",
             },
             "purpose": {"suitability": 4, "breadth": 4, "depth": 4},
             "grounding": {"verifiability": 5, "factuality": 4, "relevance": 5},

@@ -506,8 +506,7 @@ def merge_into_report(
             if value is not None:
                 data["metadata"][key] = value
     notes = data["metadata"].get("notes")
-    stub_marker = "Stub — qual scores are 0"
-    if notes and stub_marker in notes:
+    if notes and notes.startswith("Stub — qual scores are "):
         data["metadata"].pop("notes", None)
     return EvalReport.model_validate(data)
 

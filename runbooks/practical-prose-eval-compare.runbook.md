@@ -161,8 +161,8 @@ Aim for falsifiable claims grounded in specific table cells, not generic.
 
 - [practical-prose-eval-single.runbook.md](practical-prose-eval-single.runbook.md):
   produces the eval reports this runbook consumes.
-- [practical-prose-rubric.md](../docs/practical-prose-rubric.md): per-dimension 0-5
-  anchors and scoring rules.
+- [practical-prose-rubric.md](../docs/practical-prose-rubric.md): per-dimension 1-5
+  anchors (with `NA` / `ERR` sentinels) and scoring rules.
 - [practical-prose-guidelines.md](../docs/practical-prose-guidelines.md): prescriptive
   rules cited by violations.
 - [eval_compare.py](../tools/pprose/src/pprose/eval_compare.py): the

@@ -13,6 +13,7 @@ from pprose.eval_report import (
     EvalReport,
     QualScores,
     QuantMetrics,
+    _migrate_legacy_scores,
     compute_derived,
 )
 
@@ -146,21 +147,23 @@ def test_headings_total_inconsistent_rejected():
         EvalReport.model_validate(data)
 
 
-def test_score_zero_allowed():
+def test_literal_zero_rejected_when_rubric_version_is_current():
+    """v2+ rubric: a literal `score: 0` fails validation (no migration fires)."""
     data = _minimal_report_dict()
+    data["metadata"]["rubric_version"] = rs.RUBRIC_VERSION
     data["qual"]["expression"]["clarity"] = 0
-    report = EvalReport.model_validate(data)
-    assert report.qual.expression.clarity == 0
+    with pytest.raises(Exception):
+        EvalReport.model_validate(data)
 
 
-def test_score_zero_excluded_from_rollup_means():
-    """Zero scores ('cannot assess') should not drag down group/overall means."""
+def test_err_excluded_from_rollup_means():
+    """ERR scores ('scorer could not assess') should not drag down group/overall means."""
     data = _minimal_report_dict()
-    # Start from a clean score-5-everywhere baseline, then mark clarity as cannot-assess.
+    # Start from a clean score-5-everywhere baseline, then mark clarity as ERR.
     for group in data["qual"].values():
         for dim in group:
             group[dim] = 5
-    data["qual"]["expression"]["clarity"] = 0
+    data["qual"]["expression"]["clarity"] = "ERR"
     report = EvalReport.model_validate(data)
     assert report.derived is not None
     rollup = report.derived.rubric_rollup
@@ -168,20 +171,62 @@ def test_score_zero_excluded_from_rollup_means():
     # formatting (clarity excluded).
     assert rollup.expression_mean == 5.0
     assert rollup.overall_mean == 5.0
-    # All but one dimension were assessed (clarity dropped to 0).
+    # All but one dimension were assessed (clarity is ERR).
     assert rollup.assessed_dimensions == rs.dimension_count() - 1
+    assert rollup.err_dimensions == 1
+    assert rollup.na_dimensions == 0
 
 
-def test_all_zero_stub_has_zero_assessed_dimensions():
-    """The from-metrics all-zero stub should report 0 assessed dimensions, mean 0.0."""
+def test_err_and_na_counted_separately_in_rollup():
+    """err_dimensions and na_dimensions are independent counters."""
     data = _minimal_report_dict()
     for group in data["qual"].values():
         for dim in group:
-            group[dim] = 0
+            group[dim] = 5
+    data["qual"]["expression"]["clarity"] = "ERR"
+    data["qual"]["judgment"]["calibration"] = "NA"
+    report = EvalReport.model_validate(data)
+    assert report.derived is not None
+    rollup = report.derived.rubric_rollup
+    assert rollup.err_dimensions == 1
+    assert rollup.na_dimensions == 1
+    assert rollup.assessed_dimensions == rs.dimension_count() - 2
+
+
+def test_all_err_stub_has_zero_assessed_dimensions():
+    """The from-metrics all-ERR stub should report 0 assessed dimensions, mean 0.0."""
+    data = _minimal_report_dict()
+    for group in data["qual"].values():
+        for dim in group:
+            group[dim] = "ERR"
     report = EvalReport.model_validate(data)
     assert report.derived is not None
     assert report.derived.rubric_rollup.assessed_dimensions == 0
+    assert report.derived.rubric_rollup.err_dimensions == rs.dimension_count()
     assert report.derived.rubric_rollup.overall_mean == 0.0
+
+
+def test_migrate_v1_zero_to_err():
+    """A v1-tagged report with score: 0 loads via the legacy-score migration."""
+    data = _minimal_report_dict()
+    data["metadata"]["rubric_version"] = "20-dim-v1"
+    data["qual"]["expression"]["clarity"] = 0
+    data["qual"]["purpose"]["scope"] = 0
+    report = EvalReport.model_validate(_migrate_legacy_scores(data))
+    assert report.qual.expression.clarity == "ERR"
+    assert report.qual.purpose.scope == "ERR"
+
+
+def test_migrate_idempotent_on_current_version():
+    """No migration fires when rubric_version is already current."""
+    data = _minimal_report_dict()
+    data["metadata"]["rubric_version"] = rs.RUBRIC_VERSION
+    # Build a clean v2 payload (no zeros) and confirm migration leaves it alone.
+    data["qual"]["expression"]["clarity"] = "ERR"
+    migrated = _migrate_legacy_scores(data)
+    # Same object, ERR preserved, nothing introduced.
+    assert migrated["qual"]["expression"]["clarity"] == "ERR"
+    assert migrated["metadata"]["rubric_version"] == rs.RUBRIC_VERSION
 
 
 def test_round_trip_yaml():
@@ -337,8 +382,8 @@ def test_from_metrics_round_trip(tmp_path: Path):
     report = EvalReport.from_eval_md(out_path)
     assert report.artifact.label == "all-headings"
     assert report.metadata.evaluator == "TODO"
-    # Stub qual is all zeros.
-    assert all(s == 0 for s in report.qual.all_scores())
+    # Stub qual is all ERR (scorer could not assess yet).
+    assert all(s == "ERR" for s in report.qual.all_scores())
     # Quant block is populated from the metrics script.
     assert report.quant.headings.total == 8
     assert report.quant.headings.h1 == 2
@@ -641,12 +686,12 @@ class TestB10_AlignmentProperty:
         errors = report.alignment_errors()
         assert any("Coherence" in e and "score=5" in e for e in errors)
 
-    def test_score_0_does_not_require_violation(self):
-        """Score 0 means cannot-assess; outside the alignment property."""
+    def test_err_does_not_require_violation(self):
+        """ERR means scorer-could-not-assess; outside the alignment property."""
         data = _minimal_report_dict()
-        data["qual"]["expression"]["clarity"] = 0
+        data["qual"]["expression"]["clarity"] = "ERR"
         report = EvalReport.model_validate(data)
-        # Filtering: errors should not mention Clarity (score 0)
+        # Filtering: errors should not mention Clarity (score ERR)
         errors = report.alignment_errors()
         assert not any("Clarity" in e for e in errors)
 
@@ -835,16 +880,16 @@ class TestB10_AlignmentProperty:
 
 
 def test_from_metrics_stub_qual_is_consistent_with_alignment_principle():
-    """Stub qual is all-zero; rubric defines 0 as 'cannot assess', no violations needed.
+    """Stub qual is all ERR; rubric defines ERR as 'scorer could not assess', no
+    violations needed.
 
-    This documents the interaction with the alignment property (B10): when B10 lands,
-    a strict validator must continue to allow score=0 with no violations, since 0
-    means the artifact cannot be assessed (e.g. content missing) rather than 'failing
-    the rubric without citing a rule'.
+    A strict validator must allow score=ERR with no violations, since ERR means
+    the scorer could not assess the dimension rather than 'failed the rubric
+    without citing a rule'.
     """
     from pprose.eval_report import stub_qual
 
     qual = stub_qual()
     from pprose import rubric_schema as rs
 
-    assert qual.all_scores() == [0] * rs.dimension_count()
+    assert qual.all_scores() == ["ERR"] * rs.dimension_count()

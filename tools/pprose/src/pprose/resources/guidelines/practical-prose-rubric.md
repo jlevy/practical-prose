@@ -1,15 +1,15 @@
 ---
 title: Practical Prose Rubric
-description: Descriptive 0-5 rubric for scoring a practical writing artifact across the 20 dimensions defined in practical-prose-guidelines.md.
-date: 2026-05-11
+description: Descriptive 1-5 rubric for scoring a practical writing artifact across the 20 dimensions defined in practical-prose-guidelines.md, with NA and ERR sentinels for dimensions outside the alignment scope.
+date: 2026-05-23
 status: active
 ---
 # Practical Prose Rubric
 
-Version: v0.1 (rubric: `20-dim-v1`, last update 2026-05-23)\
+Version: v0.1 (rubric: `pp20v1`, last update 2026-05-23)\
 Joshua Levy (github.com/jlevy)
 
-A descriptive 0-5 rubric for assessing practical writing artifacts (articles, blog
+A descriptive 1-5 rubric for assessing practical writing artifacts (articles, blog
 posts, research reports, design docs, specs, technical papers, decision memos) across
 the 20 dimensions defined in
 [practical-prose-guidelines.md](practical-prose-guidelines.md).
@@ -46,13 +46,21 @@ same 20 dimensions in the same five groups, using the same names and section num
 - **3** = multiple slips, or one severe slip that affects the document’s central claims.
 - **2** = frequent slips on key claims.
 - **1** = the dimension fails on most relevant content.
-- **0** = applicable but unassessable.
-  The dimension applies AND the artifact attempted to engage it, but the content needed
-  to score is materially absent or fragmentary.
-  Rare; see the decision tree below.
 - **NA** = not applicable.
-  The dimension does not engage with this artifact at all. For example, Calibration on
-  a document that makes no probability or forecast claims.
+  The dimension does not engage with this artifact at all.
+  For example, Calibration on a document that makes no probability or forecast claims.
+- **ERR** = the scorer could not assess this dimension.
+  A *process* failure, never a quality verdict on the document.
+  Use when the rubric cannot be applied for a procedural reason (the artifact is
+  truncated, an upstream tool failed, the assigned model refused, etc.). See the
+  decision tree below.
+
+Numeric scores are always 1-5: there is no 0. One meaning per value — numeric scores are
+*quality*, ERR is *process*, NA is *out of scope* — keeps the scoring prompt, the
+per-dim anchors, and the rollup all aligned, and stops a single 0 from being read as
+both a low quality verdict and a silent excluded-from-mean sentinel.
+As a side benefit, numeric scores are always truthy, so `if score: ...` cannot
+accidentally treat an unscored dimension as a quality-zero swing.
 
 When you score below 5, cite the specific guideline rule that was missed in the
 parenthetical reason.
@@ -68,7 +76,7 @@ and the deviation is documented (see *Justified deviations* below).
 The rubric is a strong instrument for catching avoidable defects; it is not a substitute
 for asking whether the document worked.
 
-### Decision tree: NA, 0, or 1-5?
+### Decision tree: NA, ERR, or 1-5?
 
 This decision tree is binding.
 Apply the questions in order and stop at the first “yes”.
@@ -84,23 +92,25 @@ reach different answers, one of them has skipped a step.
      If the per-dim anchor’s NA condition fits, score **NA**. If the per-dim anchor
      instead says the artifact’s task class was *expected* to engage and didn’t (e.g., a
      decision memo with no fairness content), score per the **1-anchor** of that
-     dimension and cite the missing- coverage rule.
+     dimension and cite the missing-coverage rule.
      **Do not invent a “should-have” judgment that the per-dim NA anchor does not
      authorize.** Reasons must quote or paraphrase the per-dim NA anchor when scoring
      NA.
    - **Yes.** → continue.
 
-2. **Can the dimension be assessed from what the artifact provides?** Assessment means:
-   the content needed to apply the per-dim anchors is materially present.
-   - **No, because the artifact tried to engage but provides too little to score**
-     (e.g., sources cited but unreachable; fewer than three sentences of reasoning;
-     declared intent without content).
-     → **0.** Score 0 is for *attempted but missing*, not for *not present*. If unsure
-     between NA and 0, prefer NA.
-   - **Yes.** → continue.
-
-3. **Apply the 1-5 anchors for the dimension** below.
+2. **Apply the 1-5 anchors for the dimension** below.
    For any score 1-4, cite at least one guideline rule the document missed.
+   - The “attempted but materially missing” case (e.g., sources cited but unreachable;
+     fewer than three sentences of reasoning; declared intent without content) is a
+     score of **1** with a citation of the missed rule.
+     It is not ERR: the document engaged the dimension and the rubric’s 1-anchor fits.
+
+3. **Score ERR only if the scorer cannot apply the rubric for a procedural reason.** The
+   artifact is truncated, an upstream tool failed, the assigned model refused or
+   returned malformed output, the dimension was added after the eval was run, and so on.
+   Reasons must name the procedural cause; never use ERR to register a quality
+   complaint. Re-running the eval is the right fix; if the document is genuinely beyond
+   the rubric, the answer is NA, not ERR.
 
 **Tiebreaks:**
 
@@ -110,17 +120,40 @@ reach different answers, one of them has skipped a step.
   If the artifact contains no content the per-dim 1-5 anchors describe, it is NA, not
   5\. ("No problems found because there’s nothing to check" → NA. “No problems found
   because everything checks out” → 5.)
-- **NA and 0 are not interchangeable.** Score 0 requires evidence that the artifact
-  *tried* to engage the dimension but came up materially short.
-  If the artifact simply does not engage, the score is NA. Prefer NA when in doubt.
+- **NA and ERR are not interchangeable.** NA is a verdict *about the document* (it does
+  not engage this dimension); ERR is a verdict *about the eval process* (the scorer
+  could not assess). Prefer NA when in doubt; ERR is rare and is a signal to re-run the
+  eval rather than to publish the result.
 - **NA vs 1-4 is decided by the per-dim NA anchor, not by the reviewer’s intuition.**
   Each per-dim NA anchor specifies the conditions under which “should have but didn’t”
   still warrants NA vs a low score.
   Apply the per-dim anchor, do not improvise.
 
 NA must be reserved for dimensions the artifact’s task genuinely does not require.
-When aggregating, NA dimensions are excluded from any mean rather than treated as zero,
-so that lightweight artifacts are not penalized for not needing every dimension.
+When aggregating, both NA and ERR dimensions are excluded from any mean (counted
+separately in `na_dimensions` and `err_dimensions`) rather than treated as zero, so that
+lightweight artifacts are not penalized for not needing every dimension and unscored
+dimensions do not silently distort the rollup.
+
+### Cross-dimension cascades
+
+A few dimensions are defined in terms of another (the *prereq*): you can’t score the
+dependent dimension without scoring the prereq first.
+The cascade rule is uniform — NA carries NA, ERR carries ERR, and 1-5 carries 1-5:
+
+| Prereq → Dependent | NA cascade | ERR cascade | 1-5 prereq |
+| --- | --- | --- | --- |
+| Verifiability → Factuality | Factuality NA | Factuality ERR | Factuality scored 1-5 on the same claim set Verifiability scored |
+| Suitability → Relevance | Relevance NA | Relevance ERR | Relevance scored 1-5 against the stated purpose |
+| Soundness → Parsimony | Parsimony NA | Parsimony ERR | Parsimony scored 1-5 on whatever sound chains remain |
+
+Read this as: when a prereq lands on a sentinel (NA or ERR), the dependent dimension
+inherits the same sentinel.
+A *low* prereq score (1 or 2) is not a cascade trigger — the dependent dimension is
+still scored on its own anchors, and the reason may cite the upstream weakness.
+Cascades exist because the dependent dimension’s question literally cannot be asked
+without its prereq’s basis (no verifiable claims → nothing to fact-check; no stated
+purpose → no target for relevance; no sound chain → no chain to be parsimonious about).
 
 ## Justified Deviations
 
@@ -158,7 +191,7 @@ are not justified.
 | 10 |  | Formatting | Is the document visually and syntactically clean in its medium? |
 | 11 | Grounding | Verifiability | Are claims traceable to sources or calculations? |
 | 12 |  | Factuality | Do cited sources support the claims as asserted? |
-| 13 |  | Relevance | Do sources, citations, and reasoning chains bear on the document's stated purpose? |
+| 13 |  | Relevance | Do sources, citations, and reasoning chains bear on the document’s stated purpose? |
 | 14 | Reasoning | Discipline | Are observation, judgment, interpretation, and implication worked through in order, with each higher rung supported by the prior? |
 | 15 |  | Soundness | Do claims follow from evidence through valid mechanisms? |
 | 16 |  | Precision | Are claims and terms specified at the right granularity? |
@@ -169,8 +202,8 @@ are not justified.
 
 ## How to score
 
-For each dimension, assign either an integer 0-5 or `NA`, plus a brief parenthetical
-reason.
+For each dimension, assign either an integer 1-5, `NA`, or `ERR`, plus a brief
+parenthetical reason.
 
 - Score the dimensions independently.
   Do not aggregate to a single number unless the use case calls for it (and then state
@@ -228,8 +261,8 @@ Suggested primary assignments:
 
 ### Output format
 
-`SCORE (REASON)`, matching the regex `(NA|[0-5]) \(.*?\)`. Cite line numbers, section
-names, or quoted phrases in the reason where relevant.
+`SCORE (REASON)`, matching the regex `(NA|ERR|[1-5]) \(.*?\)`. Cite line numbers,
+section names, or quoted phrases in the reason where relevant.
 Examples:
 
 ```
@@ -260,7 +293,7 @@ cannot extract the needed output, if the purpose was not named, or if the output
 does not fit the task (a decision memo with no recommendation, an audit without
 findings).
 
-- **0:** Cannot assess.
+- **ERR:** Cannot assess (process failure; re-run the eval).
   Content missing or no task statable.
 - **1:** Task implicit and undeclared; reader cannot tell what the document is for.
   Output shape does not match task shape.
@@ -283,7 +316,7 @@ Is the scope of the document stated, and does the declared scope match the actua
 of the work? Scope is upstream of P3 Breadth and P4 Depth: a document with no declared
 scope cannot be evaluated for whether it covers everything relevant.
 
-- **0:** Cannot assess.
+- **ERR:** Cannot assess (process failure; re-run the eval).
   Content missing.
 - **1:** Scope undeclared throughout; reader cannot tell what is in or out of scope.
   Body drifts across multiple topics with no boundary stated.
@@ -309,7 +342,7 @@ The *how thoroughly* question is scored under P4 Depth.
 - **NA:** Not applicable.
   The document is a single-fact note (a one-line status, a numeric reading) where there
   is no class structure to cover.
-- **0:** Cannot assess.
+- **ERR:** Cannot assess (process failure; re-run the eval).
   Content missing or scope undeclared (score the latter under P2).
 - **1:** Major case classes within scope are absent (risk inventory limited to a single
   class; no prior-work coverage; obvious affected areas omitted).
@@ -334,7 +367,7 @@ Section depth matches section importance.
 - **NA:** Not applicable.
   The document is a pure index, table of contents, or pointer-only artifact where depth
   is not the relevant question.
-- **0:** Cannot assess.
+- **ERR:** Cannot assess (process failure; re-run the eval).
   Content missing or fragmentary.
 - **1:** Key sections thin.
   Vague magnitude words ("rapid," “large”) used without quantification throughout.
@@ -360,10 +393,10 @@ Section depth matches section importance.
 Sentence-level readability: spelling, grammar, register, word choice.
 Errors covered by spell-checkers, Grammarly, Vale, and the language-use parts of AP /
 CMS. Concision is scored separately under E3; copyediting consistency (dialect,
-parallel-list syntax, citation style) is scored under E5 Consistency; markup
-validity is scored under E6 Formatting.
+parallel-list syntax, citation style) is scored under E5 Consistency; markup validity is
+scored under E6 Formatting.
 
-- **0:** Cannot assess.
+- **ERR:** Cannot assess (process failure; re-run the eval).
   Content missing or fragmentary.
 - **1:** Numerous spelling, punctuation, grammatical errors; sentences hard to follow.
 - **2:** Errors but understandable.
@@ -386,7 +419,7 @@ smoothly sentence to sentence.
 Does not cover logical coherence (R2 Soundness) or arrangement of sections and visual
 elements (E4 Organization).
 
-- **0:** Cannot assess.
+- **ERR:** Cannot assess (process failure; re-run the eval).
   Content missing or fewer than 3 sentences.
 - **1:** Incoherent; no clear topic or thread.
 - **2:** Weak coherence or incomplete draft.
@@ -404,7 +437,7 @@ The writing carries only the content the task requires.
 Padding, repetition, and decorative content fail concision even when each sentence is
 clear.
 
-- **0:** Cannot assess.
+- **ERR:** Cannot assess (process failure; re-run the eval).
   Content missing.
 - **1:** Heavy padding; multiple paragraphs say the same thing; tables with stub data;
   sections that don’t serve the task.
@@ -427,7 +460,7 @@ Visual elements are not required (a tight prose document can score 5), but when 
 they should be arranged well.
 Markup validity is scored under E6 Formatting; style consistency is scored under E5.
 
-- **0:** Cannot assess.
+- **ERR:** Cannot assess (process failure; re-run the eval).
   Content missing or fragmentary.
 - **1:** No discernible organization.
   Flat wall of text or chaotic heading hierarchy; sections in random order; tables,
@@ -462,7 +495,7 @@ validity).
 - **NA:** Not applicable.
   The document is too short or fragmentary for a style guide to apply (a single line, a
   log entry).
-- **0:** Cannot assess.
+- **ERR:** Cannot assess (process failure; re-run the eval).
   Content missing or fragmentary.
 - **1:** Style chaotic.
   Multiple dialects mixed; capitalization inconsistent across acronyms and proper nouns;
@@ -494,7 +527,7 @@ Distinct from E4 Organization (arrangement) and E5 Consistency (editorial polish
 - **NA:** Not applicable.
   The document is plain text with no markup, or a format where formatting concerns are
   outside scope.
-- **0:** Cannot assess.
+- **ERR:** Cannot assess (process failure; re-run the eval).
   Content missing or fragmentary.
 - **1:** Markup broken throughout.
   Tables unrendered; code fences unclosed; frontmatter malformed; links non-functional.
@@ -521,8 +554,8 @@ Distinct from E4 Organization (arrangement) and E5 Consistency (editorial polish
 Are claims traceable to specific sources, observations, calculations, or explicit
 assumptions? A document scores high when a competent reader could check claims from what
 the document provides, before any external lookup.
-Verifiability is text-internal; Factuality (G2) is the source-aware check that the
-audit would actually pass.
+Verifiability is text-internal; Factuality (G2) is the source-aware check that the audit
+would actually pass.
 The strictness of the primary-source bar scales with stakes: research reports, audits,
 and decision memos require primary sources for every quantitative claim; lightweight
 operational notes only require sources for material claims.
@@ -558,12 +591,11 @@ operational notes only require sources for material claims.
   Reserve NA for artifacts whose entire content consists of statements of the first
   kind.
 
-- **0:** Cannot assess.
-  The document attempts at least one verifiable assertion, but the supporting content is
-  fragmentary or truncated: the claim is partial, mid-sentence, or marked as
-  intent-only (e.g., `[TODO: cite source]`) rather than executed.
-  Rare. If the document makes verifiable assertions and simply omits sources, score 1-4,
-  not 0. Score 0 distinguishes *attempted but missing* from *not attempted*.
+- **ERR:** Cannot assess (process failure; re-run the eval).
+  Reserve for genuine procedural failures — the document is truncated mid-claim, an
+  upstream tool failed, the assigned model refused to score this dimension.
+  If the document makes verifiable assertions and simply omits sources, that is a
+  quality verdict (score 1-4 with rule citations), not ERR.
 
 - **1:** Material claims are vague enough that no source could confirm or refute them,
   *and* unsourced. Quantitative claims with no source pointers; confidence tags absent or
@@ -636,8 +668,8 @@ In such cases, the reviewer should:
    unreachable evidence) from *reviewer limits* (the doc provided reasonable pointers,
    but the pointers happen to be inaccessible to this reviewer).
 3. Score document failures per the anchors below.
-   Treat reviewer limits as neutral on Factuality: if the document did its part (cited
-   a primary source, stated the basis, or acknowledged the limit explicitly), the claim
+   Treat reviewer limits as neutral on Factuality: if the document did its part (cited a
+   primary source, stated the basis, or acknowledged the limit explicitly), the claim
    does not count against Factuality.
    The score reason names the access limit so a later reviewer with access can complete
    the audit.
@@ -649,14 +681,15 @@ penalize the document for them.
 - **NA:** Not applicable.
   The document makes no verifiable assertions at all (see G1 Verifiability NA for the
   engagement test). Factuality engages on the same set of claims Verifiability engages
-  on; if Verifiability is NA, Factuality is NA. If Verifiability is 1-5, Factuality is
-  1-5.
+  on, so Factuality follows Verifiability’s NA verdict (see *Cross-dimension cascades*
+  in the rubric front matter).
 
-- **0:** Cannot assess.
-  The document attempts at least one verifiable assertion, but the claim is fragmentary
-  or truncated (a partial sentence, an unfinished paragraph, or a `[TODO]` marker)
-  leaving no claim to corroborate.
-  Rare. If the document’s claims are fully stated, score 1-5 even if corroboration is
+- **ERR:** Cannot assess (process failure; re-run the eval).
+  Either the document attempts at least one verifiable assertion but the claim is
+  fragmentary or truncated (a partial sentence, an unfinished paragraph, or a `[TODO]`
+  marker) leaving no claim to corroborate, **or** Verifiability itself is ERR and the
+  cascade applies (Factuality ERR follows Verifiability ERR). Rare.
+  If the document’s claims are fully stated, score 1-5 even if corroboration is
   incomplete (per the rule above).
 
 - **1:** Major claims are contradicted by reasonable corroboration: cited sources do not
@@ -694,49 +727,56 @@ penalize the document for them.
 
 #### G3. Relevance
 
-Do sources, citations, and intermediate reasoning chains bear on the document's stated
-purpose?
-Relevance sits in **Grounding** alongside Verifiability (G1) and Factuality (G2):
-Verifiability asks whether claims trace to sources; Factuality asks whether those
+Do sources, citations, and intermediate reasoning chains bear on the document’s stated
+purpose? Relevance sits in **Grounding** alongside Verifiability (G1) and Factuality
+(G2): Verifiability asks whether claims trace to sources; Factuality asks whether those
 sources support the claims; Relevance asks whether the supported claims matter for the
-document's purpose. A document can score 5 on Verifiability and Factuality and still
-fail Relevance by anchoring its evidence to tangential material.
+document’s purpose.
+A document can score 5 on Verifiability and Factuality and still fail
+Relevance by anchoring its evidence to tangential material.
 
-Relevance is distinct from P2 Scope (which declares the document's boundary) and E3
+Relevance is distinct from P2 Scope (which declares the document’s boundary) and E3
 Concision (which is prose-level economy): Relevance tests whether the content *inside*
 the declared scope earns its place against the purpose, at the level of sources and
 sections rather than words and paragraphs.
 
 - **NA:** Not applicable.
-  The document makes no inferential claims and cites no sources (pure reference data,
-  raw measurements, a glossary, or a structured form). There is no audit trail to
-  evaluate for relevance.
+  Either the document makes no inferential claims and cites no sources (pure reference
+  data, raw measurements, a glossary, or a structured form — no audit trail to evaluate
+  for relevance), **or** Suitability is NA and the cascade applies (Relevance NA follows
+  Suitability NA; see *Cross-dimension cascades* in the rubric front matter).
 
-- **0:** Cannot assess.
-  The document cites sources or builds reasoning chains, but its purpose is itself
-  unstated or contradictory enough that no relevance test can be applied. (When
-  Suitability P1 has failed materially, Relevance is 0.)
+- **ERR:** Cannot assess (process failure; re-run the eval).
+  Either a procedural failure prevents scoring (truncated artifact, tool failure),
+  **or** Suitability is ERR and the cascade applies (Relevance ERR follows Suitability
+  ERR — without a known purpose, the relevance question has no target).
+  A low Suitability score (1-2) is not an ERR trigger; in that case Relevance is still
+  scored 1-5 against whatever purpose the document does state, and the reason may cite
+  the upstream Suitability weakness.
 
 - **1:** Half or more of the cited sources or reasoning chains are irrelevant to the
-  document's conclusions or purpose. Headline claims rest on tangential evidence, or
-  major sections do work toward goals the document never declared.
+  document’s conclusions or purpose.
+  Headline claims rest on tangential evidence, or major sections do work toward goals
+  the document never declared.
 
 - **2:** A significant fraction of cited sources or reasoning points are ancillary or
   extraneous to the purpose; load-bearing claims would survive cutting them.
 
-- **3:** Workable; the headline claims rest on relevant evidence, but several sources
-  or sections don't fully earn their place against the purpose. A reader who skims to
-  the recommendations does not pick up tangents, but a careful reader sees padding.
+- **3:** Workable; the headline claims rest on relevant evidence, but several sources or
+  sections don’t fully earn their place against the purpose.
+  A reader who skims to the recommendations does not pick up tangents, but a careful
+  reader sees padding.
 
 - **4:** Score-5 mostly satisfied with one or two minor slips: a few sources or notes
   are a bit of a stretch (cited for completeness, or surfacing as digressions) but
-  remain loosely relevant. Background sections, when present, are signalled as
-  background.
+  remain loosely relevant.
+  Background sections, when present, are signalled as background.
 
-- **5:** Every cited source and every line of reasoning is relevant to the document's
+- **5:** Every cited source and every line of reasoning is relevant to the document’s
   purpose; nothing can be removed without lowering the quality of the work.
-  Performative citations are absent. Digressions, where present, are explicitly marked
-  so the reader can skip without losing the main thread.
+  Performative citations are absent.
+  Digressions, where present, are explicitly marked so the reader can skip without
+  losing the main thread.
 
 ### Reasoning
 
@@ -744,16 +784,16 @@ sections rather than words and paragraphs.
 
 Climbing the ladder of inference rung by rung in order (observation → judgment →
 interpretation → implication), with each higher rung supported by the rung below.
-Implications rest on sound interpretations, which rest on sound judgments, which rest
-on sound observations. Each rung is named on its own terms; none is skipped, none is
-blended into its neighbor.
-Sister of Soundness (R2): Soundness asks whether each step is itself valid;
-Discipline asks whether the rungs are climbed in order and exist as distinct rungs
-at all.
+Implications rest on sound interpretations, which rest on sound judgments, which rest on
+sound observations.
+Each rung is named on its own terms; none is skipped, none is blended
+into its neighbor. Sister of Soundness (R2): Soundness asks whether each step is itself
+valid; Discipline asks whether the rungs are climbed in order and exist as distinct
+rungs at all.
 
 - **NA:** Not applicable.
-  Discipline tests whether the document moves rung by rung up the ladder
-  (observation → judgment → interpretation → implication).
+  Discipline tests whether the document moves rung by rung up the ladder (observation →
+  judgment → interpretation → implication).
   The dimension is engaged when the document moves between *any two* rungs at all,
   including a single observation that leads to a single implication.
 
@@ -772,9 +812,9 @@ at all.
   without reasoning *from* them.
   If the artifact reasons anywhere (even one sentence) score 1-5.
 
-- **0:** Cannot assess.
-  The artifact attempts inferential reasoning but provides too little to score it:
-  fewer than three sentences of reasoning, or reasoning truncated mid-argument.
+- **ERR:** Cannot assess (process failure; re-run the eval).
+  The artifact attempts inferential reasoning but provides too little to score it: fewer
+  than three sentences of reasoning, or reasoning truncated mid-argument.
 
 - **1:** Rungs systematically blended; observations, judgments, and implications fused
   inside single clauses throughout.
@@ -807,7 +847,7 @@ visible chain from evidence to claim.
 Focuses on the document’s logical structure; multiple-perspective consideration is
 scored under J2 Fairness.
 
-- **0:** Cannot assess.
+- **ERR:** Cannot assess (process failure; re-run the eval).
   Content missing or fewer than 3 sentences.
 - **1:** Sloppy reasoning; imprecise statements; key terms undefined; arguments rest on
   unstated premises.
@@ -835,7 +875,7 @@ the generic phrasing is true.
 Distinct from E1 Clarity (register / readability) and P3 Breadth and P4 Depth (scope
 completeness, section development): Precision scores granularity *within* each claim.
 
-- **0:** Cannot assess.
+- **ERR:** Cannot assess (process failure; re-run the eval).
   Content missing or fewer than 3 sentences.
 - **1:** Generic vocabulary throughout; entities referred to by category nouns ("the
   company," “the model,” “the regulation”); umbrella terms used where the
@@ -858,61 +898,68 @@ completeness, section development): Precision scores granularity *within* each c
 
 #### R4. Parsimony
 
-Is each load-bearing reasoning chain the cleanest, simplest sound argument possible
-for its conclusion?
-Length is not the metric; minimality given the per-step warrants in use is. A long
-chain of strong deductive steps (a formal proof, a multi-step regulatory cross-walk)
-is parsimonious when no shorter chain of the same warrant strength exists; a short
-chain of weak inductive gestures is non-parsimonious when it elides intermediates the
-conclusion requires.
+Is each load-bearing reasoning chain the cleanest, simplest sound argument possible for
+its conclusion? Length is not the metric; minimality given the per-step warrants in use
+is. A long chain of strong deductive steps (a formal proof, a multi-step regulatory
+cross-walk) is parsimonious when no shorter chain of the same warrant strength exists; a
+short chain of weak inductive gestures is non-parsimonious when it elides intermediates
+the conclusion requires.
 
-Parsimony presupposes Soundness (R2). When a step is unsound, a longer sound chain
-would do less damage to the conclusion, so the chain as written cannot be the most
-parsimonious sound argument. When Soundness fails materially on the headline claims,
-Parsimony is 0.
+Parsimony presupposes Soundness (R2). When a step is unsound, a longer sound chain would
+do less damage to the conclusion, so the chain as written cannot be the most
+parsimonious sound argument.
+The Soundness → Parsimony cascade (see the rubric front matter) carries NA and ERR
+through cleanly; a low Soundness score (1-2) still leaves Parsimony scorable 1-5 on
+whatever sound chains remain.
 
-Parsimony differs from E3 Concision (prose-level economy: words and paragraphs),
-from G3 Relevance (whether each source or section is on-task), from R1 Discipline
-(whether the rungs are climbed in order), and from R2 Soundness (whether each step is
-valid). Parsimony asks specifically: given the warrants in use, is the chain shape
-the minimum sufficient?
+Parsimony differs from E3 Concision (prose-level economy: words and paragraphs), from G3
+Relevance (whether each source or section is on-task), from R1 Discipline (whether the
+rungs are climbed in order), and from R2 Soundness (whether each step is valid).
+Parsimony asks specifically: given the warrants in use, is the chain shape the minimum
+sufficient?
 
 - **NA:** Not applicable.
-  The document makes no inferential claims (pure reference data, raw measurements, a
-  glossary, or a structured form). There is no reasoning chain whose minimality could
-  be evaluated.
+  Either the document makes no inferential claims (pure reference data, raw
+  measurements, a glossary, or a structured form — no reasoning chain whose minimality
+  could be evaluated), **or** Soundness is NA and the cascade applies (Parsimony NA
+  follows Soundness NA; see *Cross-dimension cascades* in the rubric front matter).
 
-- **0:** Cannot assess; or Soundness (R2) has already failed materially on the
-  headline claims, so the chain cannot be the minimum sound argument.
+- **ERR:** Cannot assess (process failure; re-run the eval).
+  Either a procedural failure prevents scoring, **or** Soundness is ERR and the cascade
+  applies (Parsimony ERR follows Soundness ERR — Parsimony is defined as the cleanest
+  *sound* chain, so an unscored Soundness leaves nothing to be parsimonious about).
+  A low Soundness score (1-2) is not an ERR trigger; in that case Parsimony is still
+  scored 1-5 on whatever sound chains remain, and the reason may cite the upstream
+  Soundness weakness.
 
-- **1:** Obviously extraneous elements throughout the chains of reasoning:
-  citable facts re-derived where the citation would have served the same purpose,
-  weaker warrants substituted where stronger ones were available, or non-load-bearing
-  rungs piled into chains that the conclusion does not require. The argument bears
-  little resemblance to a minimum sufficient sound chain.
+- **1:** Obviously extraneous elements throughout the chains of reasoning: citable facts
+  re-derived where the citation would have served the same purpose, weaker warrants
+  substituted where stronger ones were available, or non-load-bearing rungs piled into
+  chains that the conclusion does not require.
+  The argument bears little resemblance to a minimum sufficient sound chain.
 
-- **2:** Obviously extraneous elements in multiple load-bearing chains, or on the
-  chains that carry headline claims. Substantial padding, weaker-warrant substitution
-  where direct evidence existed, or re-derivation that adds neither inspectability
-  nor confidence.
+- **2:** Obviously extraneous elements in multiple load-bearing chains, or on the chains
+  that carry headline claims.
+  Substantial padding, weaker-warrant substitution where direct evidence existed, or
+  re-derivation that adds neither inspectability nor confidence.
 
 - **3:** Workable; the chains are roughly the right shape and the headline claims
-  survive a minimum-sufficiency test, but several arguments could be tightened
-  without loss of soundness or precision.
+  survive a minimum-sufficiency test, but several arguments could be tightened without
+  loss of soundness or precision.
 
-- **4:** A few arguments could be simplified but maintain the same level of
-  soundness and precision; otherwise tight. A single re-derivation that could have
-  been a citation without loss of inspectability, one chain using inductive language
-  where a deductive step is available, or one redundant rung in an otherwise-tight
-  chain.
+- **4:** A few arguments could be simplified but maintain the same level of soundness
+  and precision; otherwise tight.
+  A single re-derivation that could have been a citation without loss of inspectability,
+  one chain using inductive language where a deductive step is available, or one
+  redundant rung in an otherwise-tight chain.
 
 - **5:** Every line of inference or argument appears to be the most clean and simple
-  argument possible to a sound conclusion. Long chains appear only where the warrant
-  strengths in use require them; short chains appear only where per-step warrants
-  are strong enough to support them. No rung is extraneous; re-derivations are
-  present only where they add inspectability, confidence, or pedagogy that a
-  citation would not; no weaker warrant is substituted where a stronger one was
-  available.
+  argument possible to a sound conclusion.
+  Long chains appear only where the warrant strengths in use require them; short chains
+  appear only where per-step warrants are strong enough to support them.
+  No rung is extraneous; re-derivations are present only where they add inspectability,
+  confidence, or pedagogy that a citation would not; no weaker warrant is substituted
+  where a stronger one was available.
 
 ### Judgment
 
@@ -927,7 +974,7 @@ forecast claims.
 - **NA:** Not applicable.
   The document makes no probability, forecast, confidence, or uncertainty claims, and
   the task does not require them.
-- **0:** Cannot assess.
+- **ERR:** Cannot assess (process failure; re-run the eval).
   Content missing.
 - **1:** Strong claims with no supporting evidence; probabilities asserted with no
   anchor; ranges absent where data warrants.
@@ -955,7 +1002,7 @@ and the document says why) is not.
 - **NA:** Not applicable.
   The document surfaces no oppositional framings and the task does not require them (a
   procedural runbook, a non-controversial reference).
-- **0:** Cannot assess.
+- **ERR:** Cannot assess (process failure; re-run the eval).
   Content missing.
 - **1:** One-sided argument with no counter-evidence engaged; one-sided framings of
   two-sided facts; risk inventory absent or weighted to a single class.
@@ -990,7 +1037,7 @@ Robustness asks the further question: granting the evidence and the framing, wou
 
 - **NA:** Not applicable.
   The document makes no interpretive judgments (a pure reference, a literal log).
-- **0:** Cannot assess.
+- **ERR:** Cannot assess (process failure; re-run the eval).
   Content missing.
 - **1:** Single interpretive lens applied without acknowledgement; alternative readings
   not considered; key claims presented as if the framing were obvious.
@@ -1100,35 +1147,32 @@ invoke live in the guidelines.
 - **Scores are reductive.** A single dimension’s score is a summary, not a full review.
   Always pair scores with the parenthetical reason to preserve diagnostic information.
 - **Right score depends on context.** A short status update doesn’t need to score 5 on
-  P3 Breadth or P4 Depth; a security advisory shouldn’t score low on J1 Calibration
-  even when brief. Don’t aggregate dimensions to a single number unless the use case
-  calls for it (and then state the weighting).
+  P3 Breadth or P4 Depth; a security advisory shouldn’t score low on J1 Calibration even
+  when brief. Don’t aggregate dimensions to a single number unless the use case calls for
+  it (and then state the weighting).
   When aggregating, `NA` dimensions are excluded from the mean rather than treated as
   zero.
 
 ## Versioning
 
-Current revision: **`20-dim-v1`**. Eval YAMLs produced under it set
-`metadata.rubric_version: 20-dim-v1`. The `from-metrics` subcommand of
+Current revision: **`pp20v1`**. Eval YAMLs produced under it set
+`metadata.rubric_version: pp20v1`. The `from-metrics` subcommand of
 `../scripts/eval_report.py` writes this automatically.
 
-The previous revision `15-dim-v1` covered 15 dimensions in five groups; `20-dim-v1` adds
-three dimensions (Breadth and Depth split from Coverage; Consistency; Formatting),
-renames Structure → Organization, and introduces the `NA` value distinct from `0`.
-Score-anchor language was tightened in several dimensions.
+The rubric is still under active development; the version tag is the identity stamp for
+“what schema this report was scored against,” not a release-stability promise.
+Bump it on changes that could shift scores or break loaders:
 
-Bump the version on substantive changes:
-
-- New dimension added or removed: bump the dim count (e.g., `20-dim-v1` → `19-dim-v1`).
-- Anchor language changed in a way that could shift scores: bump the rev (`20-dim-v1` →
-  `18-dim-v2`). The rubric schema in `../scripts/rubric_schema.yaml` is the canonical
-  source for the current version string; bumping the rubric here means bumping `version`
-  there too.
+- Dimension added, removed, or renamed.
+- Score-anchor language tightened in a way that could move scores.
+- Score domain narrowed or widened.
 
 `../scripts/eval_compare.py` warns when comparing across rubric versions.
-Pinned regression fixtures (`../scripts/fixtures/rev{1,2}-net.eval.yaml`,
-`../scripts/fixtures/{guidelines,runbook}-self.eval.yaml`) were scored under `15-dim-v1`
-and must be re-scored before they can be reused under `20-dim-v1`.
+The eval loader auto-coerces `score: 0` to `ERR` on any report whose `rubric_version` is
+not the current value, so pre-`pp20v1` reports (legacy `20-dim-v1`,
+`18-dim-v1-stale-baseline`, `15-dim-v1`, etc.)
+still load — but they should be re-scored against the current schema before being reused
+as calibration baselines.
 
 ## Related docs
 

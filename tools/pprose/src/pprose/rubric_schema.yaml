@@ -1,4 +1,4 @@
-version: 20-dim-v1
+version: pp20v1
 groups:
 - key: purpose
   label: Purpose
@@ -268,16 +268,19 @@ groups:
 score_values:
   valid:
   - NA
-  - 0
+  - ERR
   - 1
   - 2
   - 3
   - 4
   - 5
   notes: >-
-    NA = not applicable to this artifact; 0 = applicable but unassessable (content
-    missing); 1-5 = quality score per anchors in practical-prose-rubric.md. When aggregating,
-    NA dimensions are excluded from any mean rather than treated as zero.
+    1-5 = quality score per anchors in practical-prose-rubric.md (no 0, so numeric
+    scores are always truthy). NA = not applicable to this artifact (the dimension does
+    not engage). ERR = the scorer could not assess the dimension (a process failure, not
+    a document-quality verdict). NA and ERR are both excluded from group and overall
+    means; they are counted separately so a reader can tell apart "doesn't apply" from
+    "couldn't be scored".
 na_applicable_dimensions:
 - breadth
 - depth
