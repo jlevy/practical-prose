@@ -1,583 +1,1000 @@
 <!doctype html>
 <html lang="en">
-<head>
-<meta charset="utf-8">
-<title>Practical Prose — Dimension Icon Chooser</title>
-<meta name="viewport" content="width=device-width,initial-scale=1">
+  <head>
+    <meta charset="utf-8" />
+    <title>Practical Prose — Dimension Icon Chooser</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
 
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cardo:ital,wght@0,400;0,700;1,400&family=EB+Garamond:ital,wght@0,400;0,500&family=Cormorant+Garamond:ital,wght@0,500;0,600&display=swap">
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Cardo:ital,wght@0,400;0,700;1,400&family=EB+Garamond:ital,wght@0,400;0,500&family=Cormorant+Garamond:ital,wght@0,500;0,600&display=swap"
+    />
 
-<style>
-  :root {
-    --bg: #f6f1e6;
-    --fg: #1c1a17;
-    --muted: #6e665a;
-    --card: #fbf8f0;
-    --border: #d8cfba;
-    --rule: #1c1a17;
-    --accent-p: #9c7a2e;      /* Purpose — warm ochre */
-    --accent-e: #3d5a80;
-    --accent-f: #a06030;      /* Form — terracotta */
-    --accent-g: #4a6e3a;
-    --accent-r: #7a2e2e;
-    --accent-j: #6b4a7a;
-  }
-  @media (prefers-color-scheme: dark) {
-    :root {
-      --bg: #14130f;
-      --fg: #ebe4d2;
-      --muted: #968d7a;
-      --card: #1c1a16;
-      --border: #2f2b24;
-      --rule: #ebe4d2;
-      --accent-p: #c9a558;
-      --accent-e: #8aa4c5;
-      --accent-f: #d0a070;
-      --accent-g: #9cba84;
-      --accent-r: #c98585;
-      --accent-j: #b39ec3;
-    }
-  }
-  html, body { background: var(--bg); color: var(--fg); }
-  body {
-    font-family: "Iowan Old Style", "Charter", "Hoefler Text", Georgia, serif;
-    margin: 0;
-    line-height: 1.5;
-  }
-  header { padding: 2rem clamp(1rem, 4vw, 3rem) 0.75rem; }
-  h1 { font-size: 1.5rem; font-weight: 600; margin: 0 0 0.25rem; }
-  .lede { color: var(--muted); margin: 0; max-width: 64ch; font-size: 0.95rem; }
+    <!-- All color tokens come from the design-system YAML via the generated CSS.
+     Edit tools/design-system/design-system.yaml + run generate.py to update. -->
+    <link
+      rel="stylesheet"
+      href="../../design-system/_generated/design_system.css"
+    />
 
-  .controls {
-    position: sticky;
-    top: 0;
-    z-index: 10;
-    background: var(--bg);
-    border-bottom: 1px solid var(--border);
-    padding: 0.85rem clamp(1rem, 4vw, 3rem);
-    display: flex;
-    gap: 0.9rem 1.5rem;
-    align-items: center;
-    flex-wrap: wrap;
-    font-family: -apple-system, "Helvetica Neue", sans-serif;
-    font-size: 0.82rem;
-  }
-  .controls label {
-    color: var(--muted);
-    display: inline-flex;
-    align-items: center;
-    gap: 0.4rem;
-  }
-  .controls select {
-    font-size: 0.85rem;
-    padding: 2px 4px;
-    background: var(--card);
-    color: var(--fg);
-    border: 1px solid var(--border);
-    border-radius: 4px;
-  }
-  .controls input[type=range] { width: 130px; }
+    <style>
+      html,
+      body {
+        background: var(--bg);
+        color: var(--fg);
+      }
+      body {
+        font-family:
+          "Iowan Old Style", "Charter", "Hoefler Text", Georgia, serif;
+        margin: 0;
+        line-height: 1.5;
+      }
+      header {
+        padding: 2rem clamp(1rem, 4vw, 3rem) 0.75rem;
+      }
+      h1 {
+        font-size: 1.5rem;
+        font-weight: 600;
+        margin: 0 0 0.25rem;
+      }
+      .lede {
+        color: var(--muted);
+        margin: 0;
+        max-width: 64ch;
+        font-size: 0.95rem;
+      }
 
-  main { padding: 0.75rem clamp(1rem, 4vw, 3rem) 3rem; }
+      .controls {
+        position: sticky;
+        top: 0;
+        z-index: 10;
+        background: var(--bg);
+        border-bottom: 1px solid var(--border);
+        padding: 0.85rem clamp(1rem, 4vw, 3rem);
+        display: flex;
+        gap: 0.9rem 1.5rem;
+        align-items: center;
+        flex-wrap: wrap;
+        font-family: -apple-system, "Helvetica Neue", sans-serif;
+        font-size: 0.82rem;
+      }
+      .controls label {
+        color: var(--muted);
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
+      }
+      .controls select {
+        font-size: 0.85rem;
+        padding: 2px 4px;
+        background: var(--card);
+        color: var(--fg);
+        border: 1px solid var(--border);
+        border-radius: 4px;
+      }
+      .controls input[type="range"] {
+        width: 130px;
+      }
 
-  .section-h {
-    font-family: -apple-system, "Helvetica Neue", sans-serif;
-    font-size: 0.8rem;
-    text-transform: uppercase;
-    letter-spacing: 0.1em;
-    color: var(--muted);
-    margin: 1.75rem 0 0.6rem;
-  }
-  .section-h:first-child { margin-top: 0.75rem; }
+      main {
+        padding: 0.75rem clamp(1rem, 4vw, 3rem) 3rem;
+      }
 
-  .grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(580px, 1fr));
-    gap: 1rem;
-  }
-  .card {
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    padding: 0.85rem 1.1rem 1rem;
-  }
-  .card h2 {
-    font-size: 0.74rem;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.07em;
-    color: var(--muted);
-    margin: 0 0 0.7rem;
-    font-family: -apple-system, "Helvetica Neue", sans-serif;
-  }
-  .card h2 a.source {
-    color: inherit;
-    opacity: 0.55;
-    text-decoration: none;
-    margin-left: 0.5em;
-    font-size: 0.95em;
-    border-bottom: 1px dotted currentColor;
-  }
-  .card h2 a.source:hover,
-  .card h2 a.source:focus-visible {
-    opacity: 1;
-    outline: none;
-  }
-  .row {
-    display: grid;
-    grid-template-columns: repeat(6, 1fr);
-    gap: 0.5rem;
-    align-items: start;
-  }
-  .cell {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 0.5rem;
-  }
-  .label {
-    font-size: 0.68rem;
-    color: var(--muted);
-    text-transform: uppercase;
-    letter-spacing: 0.07em;
-    font-family: -apple-system, "Helvetica Neue", sans-serif;
-  }
-  .label-concept {
-    font-family: ui-monospace, "SF Mono", "Menlo", "Consolas", monospace;
-    font-size: 0.72rem;
-    line-height: 1.2;
-    min-height: 2.4em;       /* reserve 2 lines so long names don't reflow neighbors */
-    color: var(--fg);
-    user-select: text;
-    cursor: text;
-    margin-top: 0.1rem;
-    text-align: center;
-    word-break: break-word;
-  }
-  .label-concept.missing {
-    color: var(--muted);
-    opacity: 0.4;
-    font-family: inherit;
-  }
-  /* Clickable cells cycle through available concepts on click / Enter / Space */
-  .frame.clickable {
-    cursor: pointer;
-    transition: transform 0.08s ease, opacity 0.1s ease;
-  }
-  .frame.clickable:hover { opacity: 0.75; }
-  .frame.clickable:active { transform: scale(0.96); }
-  .frame.clickable:focus-visible {
-    outline: 2px solid currentColor;
-    outline-offset: 3px;
-  }
+      .section-h {
+        font-family: -apple-system, "Helvetica Neue", sans-serif;
+        font-size: 0.8rem;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        color: var(--muted);
+        margin: 1.75rem 0 0.6rem;
+      }
+      .section-h:first-child {
+        margin-top: 0.75rem;
+      }
 
-  /* Frame */
-  .frame {
-    --pad: calc(var(--size, 56px) * 0.22);
-    --box: calc(var(--size, 56px) + var(--pad) * 2);
-    width: var(--box);
-    height: var(--box);
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    box-sizing: border-box;
-  }
-  .frame--none {}
-  .frame--thin { border: 1px solid var(--rule); }
-  .frame--rounded { border: 1.5px solid var(--rule); border-radius: calc(var(--box) * 0.14); }
-  .frame--double { border: 1px solid var(--rule); outline: 1px solid var(--rule); outline-offset: 3px; }
-  .frame--stamp { border: 2px solid var(--rule); border-radius: calc(var(--box) * 0.18); }
-  .frame--circle { border: 1.5px solid var(--rule); border-radius: 50%; }
-  .frame--hairline-circle { border: 1px solid var(--rule); border-radius: 50%; }
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(580px, 1fr));
+        gap: 1rem;
+      }
+      .card {
+        background: var(--card);
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        padding: 0.85rem 1.1rem 1rem;
+      }
+      .card h2 {
+        font-size: 0.74rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.07em;
+        color: var(--muted);
+        margin: 0 0 0.7rem;
+        font-family: -apple-system, "Helvetica Neue", sans-serif;
+      }
+      .card h2 a.source {
+        color: inherit;
+        opacity: 0.55;
+        text-decoration: none;
+        margin-left: 0.5em;
+        font-size: 0.95em;
+        border-bottom: 1px dotted currentColor;
+      }
+      .card h2 a.source:hover,
+      .card h2 a.source:focus-visible {
+        opacity: 1;
+        outline: none;
+      }
+      .row {
+        display: grid;
+        grid-template-columns: repeat(6, 1fr);
+        gap: 0.5rem;
+        align-items: start;
+      }
+      .cell {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 0.5rem;
+      }
+      .label {
+        font-size: 0.68rem;
+        color: var(--muted);
+        text-transform: uppercase;
+        letter-spacing: 0.07em;
+        font-family: -apple-system, "Helvetica Neue", sans-serif;
+      }
+      .label-concept {
+        font-family: ui-monospace, "SF Mono", "Menlo", "Consolas", monospace;
+        font-size: 0.72rem;
+        line-height: 1.2;
+        min-height: 2.4em; /* reserve 2 lines so long names don't reflow neighbors */
+        color: var(--fg);
+        user-select: text;
+        cursor: text;
+        margin-top: 0.1rem;
+        text-align: center;
+        word-break: break-word;
+      }
+      .label-concept.missing {
+        color: var(--muted);
+        opacity: 0.4;
+        font-family: inherit;
+      }
+      /* Clickable cells cycle through available concepts on click / Enter / Space */
+      .frame.clickable {
+        cursor: pointer;
+        transition:
+          transform 0.08s ease,
+          opacity 0.1s ease;
+      }
+      .frame.clickable:hover {
+        opacity: 0.75;
+      }
+      .frame.clickable:active {
+        transform: scale(0.96);
+      }
+      .frame.clickable:focus-visible {
+        outline: 2px solid currentColor;
+        outline-offset: 3px;
+      }
 
-  /* Icons via CSS mask (so they recolor). Longhand for cross-browser. */
-  .glyph-icon {
-    background-color: currentColor;
-    width: var(--size, 56px);
-    height: var(--size, 56px);
-    -webkit-mask-image: var(--mask);
-            mask-image: var(--mask);
-    -webkit-mask-repeat: no-repeat;
-            mask-repeat: no-repeat;
-    -webkit-mask-position: center;
-            mask-position: center;
-    -webkit-mask-size: contain;
-            mask-size: contain;
-  }
-  /* Math glyphs */
-  .glyph-text {
-    color: currentColor;
-    font-size: calc(var(--size, 56px) * 0.78);
-    font-weight: 400;
-    line-height: 1;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: var(--size, 56px);
-    height: var(--size, 56px);
-  }
-  /* Placeholder when a library doesn't have a concept */
-  .glyph-missing {
-    color: var(--muted);
-    opacity: 0.35;
-    font-size: calc(var(--size, 56px) * 0.7);
-    width: var(--size, 56px);
-    height: var(--size, 56px);
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-  }
+      /* Frame */
+      .frame {
+        --pad: calc(var(--size, 56px) * 0.22);
+        --box: calc(var(--size, 56px) + var(--pad) * 2);
+        width: var(--box);
+        height: var(--box);
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        box-sizing: border-box;
+      }
+      .frame--none {
+      }
+      .frame--thin {
+        border: 1px solid var(--rule);
+      }
+      .frame--rounded {
+        border: 1.5px solid var(--rule);
+        border-radius: calc(var(--box) * 0.14);
+      }
+      .frame--double {
+        border: 1px solid var(--rule);
+        outline: 1px solid var(--rule);
+        outline-offset: 3px;
+      }
+      .frame--stamp {
+        border: 2px solid var(--rule);
+        border-radius: calc(var(--box) * 0.18);
+      }
+      .frame--circle {
+        border: 1.5px solid var(--rule);
+        border-radius: 50%;
+      }
+      .frame--hairline-circle {
+        border: 1px solid var(--rule);
+        border-radius: 50%;
+      }
 
-  /* Per-dim colors */
-  .colorize.p { color: var(--accent-p); }
-  .colorize.e { color: var(--accent-e); }
-  .colorize.f { color: var(--accent-f); }
-  .colorize.g { color: var(--accent-g); }
-  .colorize.r { color: var(--accent-r); }
-  .colorize.j { color: var(--accent-j); }
-  body.colorize .frame--thin,
-  body.colorize .frame--rounded,
-  body.colorize .frame--double,
-  body.colorize .frame--stamp,
-  body.colorize .frame--circle,
-  body.colorize .frame--hairline-circle {
-    border-color: currentColor;
-    outline-color: currentColor;
-  }
+      /* Icons via CSS mask (so they recolor). Longhand for cross-browser. */
+      .glyph-icon {
+        background-color: currentColor;
+        width: var(--size, 56px);
+        height: var(--size, 56px);
+        -webkit-mask-image: var(--mask);
+        mask-image: var(--mask);
+        -webkit-mask-repeat: no-repeat;
+        mask-repeat: no-repeat;
+        -webkit-mask-position: center;
+        mask-position: center;
+        -webkit-mask-size: contain;
+        mask-size: contain;
+      }
+      /* Math glyphs */
+      .glyph-text {
+        color: currentColor;
+        font-size: calc(var(--size, 56px) * 0.78);
+        font-weight: 400;
+        line-height: 1;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: var(--size, 56px);
+        height: var(--size, 56px);
+      }
+      /* Placeholder when a library doesn't have a concept */
+      .glyph-missing {
+        color: var(--muted);
+        opacity: 0.35;
+        font-size: calc(var(--size, 56px) * 0.7);
+        width: var(--size, 56px);
+        height: var(--size, 56px);
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+      }
 
-  /* Solid mode: filled stamp with cut-out icon */
-  body.mode-solid .frame--thin,
-  body.mode-solid .frame--rounded,
-  body.mode-solid .frame--double,
-  body.mode-solid .frame--stamp,
-  body.mode-solid .frame--circle,
-  body.mode-solid .frame--hairline-circle {
-    background-color: currentColor;
-  }
-  body.mode-solid .glyph-icon { background-color: var(--card); }
-  body.mode-solid .glyph-text,
-  body.mode-solid .glyph-missing { color: var(--card); }
-  /* No-frame fallback: solid mode has nothing to fill, so render like ink */
-  body.mode-solid .frame--none .glyph-icon { background-color: currentColor; }
-  body.mode-solid .frame--none .glyph-text,
-  body.mode-solid .frame--none .glyph-missing { color: currentColor; }
+      /* Per-dim colors */
+      .colorize.p {
+        color: var(--accent-p);
+      }
+      .colorize.e {
+        color: var(--accent-e);
+      }
+      .colorize.f {
+        color: var(--accent-f);
+      }
+      .colorize.g {
+        color: var(--accent-g);
+      }
+      .colorize.r {
+        color: var(--accent-r);
+      }
+      .colorize.j {
+        color: var(--accent-j);
+      }
+      body.colorize .frame--thin,
+      body.colorize .frame--rounded,
+      body.colorize .frame--double,
+      body.colorize .frame--stamp,
+      body.colorize .frame--circle,
+      body.colorize .frame--hairline-circle {
+        border-color: currentColor;
+        outline-color: currentColor;
+      }
 
-  /* Math font variants per-card */
-  .font-cardo     .glyph-text { font-family: 'Cardo', serif; }
-  .font-garamond  .glyph-text { font-family: 'EB Garamond', serif; font-weight: 500; }
-  .font-cormorant .glyph-text { font-family: 'Cormorant Garamond', serif; font-weight: 500; }
-  .font-system    .glyph-text { font-family: "Iowan Old Style","Charter","Hoefler Text",Georgia,serif; }
+      /* Solid mode: filled stamp with cut-out icon */
+      body.mode-solid .frame--thin,
+      body.mode-solid .frame--rounded,
+      body.mode-solid .frame--double,
+      body.mode-solid .frame--stamp,
+      body.mode-solid .frame--circle,
+      body.mode-solid .frame--hairline-circle {
+        background-color: currentColor;
+      }
+      body.mode-solid .glyph-icon {
+        background-color: var(--card);
+      }
+      body.mode-solid .glyph-text,
+      body.mode-solid .glyph-missing {
+        color: var(--card);
+      }
+      /* No-frame fallback: solid mode has nothing to fill, so render like ink */
+      body.mode-solid .frame--none .glyph-icon {
+        background-color: currentColor;
+      }
+      body.mode-solid .frame--none .glyph-text,
+      body.mode-solid .frame--none .glyph-missing {
+        color: currentColor;
+      }
 
-  footer {
-    padding: 2rem clamp(1rem, 4vw, 3rem);
-    color: var(--muted);
-    font-size: 0.85rem;
-    font-family: -apple-system, "Helvetica Neue", sans-serif;
-  }
-</style>
-</head>
-<body>
+      /* Math font variants per-card */
+      .font-cardo .glyph-text {
+        font-family: "Cardo", serif;
+      }
+      .font-garamond .glyph-text {
+        font-family: "EB Garamond", serif;
+        font-weight: 500;
+      }
+      .font-cormorant .glyph-text {
+        font-family: "Cormorant Garamond", serif;
+        font-weight: 500;
+      }
+      .font-system .glyph-text {
+        font-family:
+          "Iowan Old Style", "Charter", "Hoefler Text", Georgia, serif;
+      }
 
-<header>
-  <h1>Dimension icon chooser</h1>
-  <p class="lede">
-    Pick a frame, size, and color mode. Then click any icon to cycle through the
-    options that library actually has for that dimension — the name appears below the
-    dimension label so you can copy it.
-  </p>
-</header>
+      footer {
+        padding: 2rem clamp(1rem, 4vw, 3rem);
+        color: var(--muted);
+        font-size: 0.85rem;
+        font-family: -apple-system, "Helvetica Neue", sans-serif;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1>Dimension icon chooser</h1>
+      <p class="lede">
+        Pick a frame, size, and color mode. Then click any icon to cycle through
+        the options that library actually has for that dimension — the name
+        appears below the dimension label so you can copy it.
+      </p>
+    </header>
 
-<div class="controls">
-  <label>Frame
-    <select id="frame">
-      <option value="frame--stamp" selected>Stamp · rounded box</option>
-      <option value="frame--thin">Thin square</option>
-      <option value="frame--rounded">Rounded square</option>
-      <option value="frame--double">Double line</option>
-      <option value="frame--hairline-circle">Hairline circle</option>
-      <option value="frame--circle">Bold circle</option>
-      <option value="frame--none">No frame</option>
-    </select>
-  </label>
-  <label>Size <input type="range" id="size" min="24" max="96" value="56"></label>
-  <span id="sizeVal" style="color:var(--muted); font-variant-numeric: tabular-nums; min-width:3em;">56px</span>
-  <label>Color
-    <select id="color-mode">
-      <option value="" selected>Outline (plain borders)</option>
-      <option value="ink">Ink (colored borders)</option>
-      <option value="solid">Solid (filled, cut-out icon)</option>
-    </select>
-  </label>
-</div>
+    <div class="controls">
+      <label
+        >Frame
+        <select id="frame">
+          <option value="frame--stamp" selected>Stamp · rounded box</option>
+          <option value="frame--thin">Thin square</option>
+          <option value="frame--rounded">Rounded square</option>
+          <option value="frame--double">Double line</option>
+          <option value="frame--hairline-circle">Hairline circle</option>
+          <option value="frame--circle">Bold circle</option>
+          <option value="frame--none">No frame</option>
+        </select>
+      </label>
+      <label
+        >Size <input type="range" id="size" min="24" max="96" value="56"
+      /></label>
+      <span
+        id="sizeVal"
+        style="
+          color: var(--muted);
+          font-variant-numeric: tabular-nums;
+          min-width: 3em;
+        "
+        >56px</span
+      >
+      <label
+        >Color
+        <select id="color-mode">
+          <option value="" selected>Outline (plain borders)</option>
+          <option value="ink">Ink (colored borders)</option>
+          <option value="solid">Solid (filled, cut-out icon)</option>
+        </select>
+      </label>
+    </div>
 
-<main id="main"></main>
+    <main id="main"></main>
 
-<footer>
-  Icons via <a href="https://iconify.design" style="color:inherit;">Iconify</a>
-  across ~20 libraries; math glyphs in Cardo, EB Garamond, Cormorant, and system serif.
-</footer>
+    <footer>
+      Icons via
+      <a href="https://iconify.design" style="color: inherit">Iconify</a>
+      across ~20 libraries; math glyphs in Cardo, EB Garamond, Cormorant, and
+      system serif.
+    </footer>
 
-<script>
-  // Per-dimension concept priority. First entry is preferred default;
-  // a library's available concepts are this list filtered by what it actually has,
-  // and click-cycling walks the filtered list in this order.
-  const DIM_CONCEPTS = {
-    p: ['compass-rose', 'bullseye-arrow', 'target', 'bullseye', 'crosshair', 'crosshairs', 'lighthouse', 'flag', 'dart', 'map-marker'],
-    e: ['quill', 'feather', 'fountain-pen', 'pen-nib', 'pen', 'pencil', 'draw', 'writing', 'edit'],
-    f: ['set-square', 'text-box-check-outline', 'text-box-outline', 'text-box-check', 'text-box', 'book-open-variant', 'book-open', 'notebook-outline', 'notebook', 'scroll', 'page-layout-body', 'pencil-ruler', 'typewriter', 'newspaper-variant', 'book-outline', 'square-outline', 'format-list-bulleted', 'file-document-outline'],
-    g: ['anchor', 'anchor-simple'],
-    r: ['astrolabe', 'sextant', 'compass', 'ruler', 'abacus', 'cog', 'gears', 'spyglass', 'sigma', 'function', 'compass-tool', 'ruler-2', 'math-function'],
-    j: ['scale-balance', 'scales', 'balance-scale', 'balance', 'libra', 'scale', 'weight', 'gavel', 'scale-outline'],
-  };
+    <script>
+      // Per-dimension concept priority. First entry is preferred default;
+      // a library's available concepts are this list filtered by what it actually has,
+      // and click-cycling walks the filtered list in this order.
+      const DIM_CONCEPTS = {
+        p: [
+          "compass-rose",
+          "bullseye-arrow",
+          "target",
+          "bullseye",
+          "crosshair",
+          "crosshairs",
+          "lighthouse",
+          "flag",
+          "dart",
+          "map-marker",
+        ],
+        e: [
+          "quill",
+          "feather",
+          "fountain-pen",
+          "pen-nib",
+          "pen",
+          "pencil",
+          "draw",
+          "writing",
+          "edit",
+        ],
+        f: [
+          "set-square",
+          "text-box-check-outline",
+          "text-box-outline",
+          "text-box-check",
+          "text-box",
+          "book-open-variant",
+          "book-open",
+          "notebook-outline",
+          "notebook",
+          "scroll",
+          "page-layout-body",
+          "pencil-ruler",
+          "typewriter",
+          "newspaper-variant",
+          "book-outline",
+          "square-outline",
+          "format-list-bulleted",
+          "file-document-outline",
+        ],
+        g: ["anchor", "anchor-simple"],
+        r: [
+          "astrolabe",
+          "sextant",
+          "compass",
+          "ruler",
+          "abacus",
+          "cog",
+          "gears",
+          "spyglass",
+          "sigma",
+          "function",
+          "compass-tool",
+          "ruler-2",
+          "math-function",
+        ],
+        j: [
+          "scale-balance",
+          "scales",
+          "balance-scale",
+          "balance",
+          "libra",
+          "scale",
+          "weight",
+          "gavel",
+          "scale-outline",
+        ],
+      };
 
-  // Math glyph candidates. Per the user: cursive E, "bottom" (⊥), therefore (∴), equivalence (≡).
-  const GLYPHS = {
-    p: ['𝒫', '𝓟', '𝔓', '𝕻', '⊤', '⊙', '⌖', '↑', 'π', 'P'],
-    e: ['ℰ', '𝓔', '𝔈', '𝕰', 'ε', 'E'],
-    f: ['ℱ', '𝓕', '𝔉', '𝕱', '§', '¶', '‡', '※', 'φ', 'F'],
-    g: ['⊥', '⊢', '⊨', '∎', '⌀', '∅'],
-    r: ['∴', '∵', 'Σ', '⇒', '⊢', '→', '∫'],
-    j: ['≃', '≡', '≣', '≈', '≅', '⇔', '='],
-  };
+      // Math glyph candidates. Per the user: cursive E, "bottom" (⊥), therefore (∴), equivalence (≡).
+      const GLYPHS = {
+        p: ["𝒫", "𝓟", "𝔓", "𝕻", "⊤", "⊙", "⌖", "↑", "π", "P"],
+        e: ["ℰ", "𝓔", "𝔈", "𝕰", "ε", "E"],
+        f: ["ℱ", "𝓕", "𝔉", "𝕱", "§", "¶", "‡", "※", "φ", "F"],
+        g: ["⊥", "⊢", "⊨", "∎", "⌀", "∅"],
+        r: ["∴", "∵", "Σ", "⇒", "⊢", "→", "∫"],
+        j: ["≃", "≡", "≣", "≈", "≅", "⇔", "="],
+      };
 
-  // Verified icon names per Iconify prefix (from a batch existence check).
-  // Phosphor weights share the same icon names across all variants.
-  const PH_ICONS = ['anchor','anchor-simple','book-open','compass','compass-rose','compass-tool','crosshair','feather','flag','function','gavel','lighthouse','notebook','pen','pen-nib','pencil','pencil-ruler','ruler','scales','scroll','sigma','target'];
-  const MS_ICONS = ['anchor','balance','book-outline','draw','edit','flag','format-list-bulleted','function','gavel','scale','scale-outline','square-outline','weight'];
-  const MS_LIGHT_ICONS = ['anchor','balance','book-outline','draw','edit','flag','format-list-bulleted','function','gavel','scale','scale-outline','square-outline','target','weight'];
+      // Verified icon names per Iconify prefix (from a batch existence check).
+      // Phosphor weights share the same icon names across all variants.
+      const PH_ICONS = [
+        "anchor",
+        "anchor-simple",
+        "book-open",
+        "compass",
+        "compass-rose",
+        "compass-tool",
+        "crosshair",
+        "feather",
+        "flag",
+        "function",
+        "gavel",
+        "lighthouse",
+        "notebook",
+        "pen",
+        "pen-nib",
+        "pencil",
+        "pencil-ruler",
+        "ruler",
+        "scales",
+        "scroll",
+        "sigma",
+        "target",
+      ];
+      const MS_ICONS = [
+        "anchor",
+        "balance",
+        "book-outline",
+        "draw",
+        "edit",
+        "flag",
+        "format-list-bulleted",
+        "function",
+        "gavel",
+        "scale",
+        "scale-outline",
+        "square-outline",
+        "weight",
+      ];
+      const MS_LIGHT_ICONS = [
+        "anchor",
+        "balance",
+        "book-outline",
+        "draw",
+        "edit",
+        "flag",
+        "format-list-bulleted",
+        "function",
+        "gavel",
+        "scale",
+        "scale-outline",
+        "square-outline",
+        "target",
+        "weight",
+      ];
 
-  const LIB_ICONS = {
-    'ph':          PH_ICONS,
-    'ph-thin':     PH_ICONS,
-    'ph-light':    PH_ICONS,
-    'ph-bold':     PH_ICONS,
-    'ph-fill':     PH_ICONS,
-    'ph-duotone':  PH_ICONS,
-    'tabler':      ['anchor','abacus','compass','crosshair','edit','feather','flag','function','gavel','math-function','notebook','pencil','ruler','ruler-2','scale','scale-outline','target','weight','writing'],
-    'lucide':      ['anchor','book-open','cog','compass','crosshair','edit','feather','flag','gavel','notebook','pen','pencil','pencil-ruler','ruler','scale','scroll','sigma','target','weight'],
-    'iconoir':     ['compass','edit','ruler','text-box','weight'],
-    'mdi':         ['abacus','anchor','book-open','book-open-variant','book-outline','bullseye','bullseye-arrow','cog','compass','compass-rose','crosshairs','draw','edit','feather','file-document-outline','flag','format-list-bulleted','fountain-pen','function','gavel','lighthouse','map-marker','newspaper-variant','notebook','notebook-outline','page-layout-body','pen','pencil','pencil-ruler','quill','ruler','scale','scale-balance','scroll','set-square','sigma','square-outline','target','text-box','text-box-check','text-box-check-outline','text-box-outline','typewriter','weight'],
-    'material-symbols':       MS_ICONS,
-    'material-symbols-light': MS_LIGHT_ICONS,
-    'carbon':      ['anchor','compass','draw','edit','flag','function','gears','notebook','pen','ruler','scale','scales','sigma','square-outline'],
-    'hugeicons':   ['abacus','anchor','balance-scale','cog','compass','dart','feather','function','gears','lighthouse','notebook','pencil','pencil-ruler','ruler','scroll'],
-    'game-icons':  ['abacus','anchor','astrolabe','bullseye','cog','compass','crosshair','dart','feather','fountain-pen','gavel','gears','libra','lighthouse','notebook','pencil','pencil-ruler','quill','scales','sextant','spyglass','weight'],
-    'fluent-emoji-high-contrast': ['abacus','anchor','balance-scale','bullseye','compass','feather','fountain-pen','libra','notebook','pen','pencil','scroll'],
-    'streamline':  ['anchor','cog','pencil','sigma','target'],
-    'majesticons': ['book-open','cog','compass','flag','map-marker','pencil','ruler-2','scroll'],
-    'bi':          ['bullseye','compass','crosshair','feather','flag','pen','pencil'],
-  };
+      const LIB_ICONS = {
+        ph: PH_ICONS,
+        "ph-thin": PH_ICONS,
+        "ph-light": PH_ICONS,
+        "ph-bold": PH_ICONS,
+        "ph-fill": PH_ICONS,
+        "ph-duotone": PH_ICONS,
+        tabler: [
+          "anchor",
+          "abacus",
+          "compass",
+          "crosshair",
+          "edit",
+          "feather",
+          "flag",
+          "function",
+          "gavel",
+          "math-function",
+          "notebook",
+          "pencil",
+          "ruler",
+          "ruler-2",
+          "scale",
+          "scale-outline",
+          "target",
+          "weight",
+          "writing",
+        ],
+        lucide: [
+          "anchor",
+          "book-open",
+          "cog",
+          "compass",
+          "crosshair",
+          "edit",
+          "feather",
+          "flag",
+          "gavel",
+          "notebook",
+          "pen",
+          "pencil",
+          "pencil-ruler",
+          "ruler",
+          "scale",
+          "scroll",
+          "sigma",
+          "target",
+          "weight",
+        ],
+        iconoir: ["compass", "edit", "ruler", "text-box", "weight"],
+        mdi: [
+          "abacus",
+          "anchor",
+          "book-open",
+          "book-open-variant",
+          "book-outline",
+          "bullseye",
+          "bullseye-arrow",
+          "cog",
+          "compass",
+          "compass-rose",
+          "crosshairs",
+          "draw",
+          "edit",
+          "feather",
+          "file-document-outline",
+          "flag",
+          "format-list-bulleted",
+          "fountain-pen",
+          "function",
+          "gavel",
+          "lighthouse",
+          "map-marker",
+          "newspaper-variant",
+          "notebook",
+          "notebook-outline",
+          "page-layout-body",
+          "pen",
+          "pencil",
+          "pencil-ruler",
+          "quill",
+          "ruler",
+          "scale",
+          "scale-balance",
+          "scroll",
+          "set-square",
+          "sigma",
+          "square-outline",
+          "target",
+          "text-box",
+          "text-box-check",
+          "text-box-check-outline",
+          "text-box-outline",
+          "typewriter",
+          "weight",
+        ],
+        "material-symbols": MS_ICONS,
+        "material-symbols-light": MS_LIGHT_ICONS,
+        carbon: [
+          "anchor",
+          "compass",
+          "draw",
+          "edit",
+          "flag",
+          "function",
+          "gears",
+          "notebook",
+          "pen",
+          "ruler",
+          "scale",
+          "scales",
+          "sigma",
+          "square-outline",
+        ],
+        hugeicons: [
+          "abacus",
+          "anchor",
+          "balance-scale",
+          "cog",
+          "compass",
+          "dart",
+          "feather",
+          "function",
+          "gears",
+          "lighthouse",
+          "notebook",
+          "pencil",
+          "pencil-ruler",
+          "ruler",
+          "scroll",
+        ],
+        "game-icons": [
+          "abacus",
+          "anchor",
+          "astrolabe",
+          "bullseye",
+          "cog",
+          "compass",
+          "crosshair",
+          "dart",
+          "feather",
+          "fountain-pen",
+          "gavel",
+          "gears",
+          "libra",
+          "lighthouse",
+          "notebook",
+          "pencil",
+          "pencil-ruler",
+          "quill",
+          "scales",
+          "sextant",
+          "spyglass",
+          "weight",
+        ],
+        "fluent-emoji-high-contrast": [
+          "abacus",
+          "anchor",
+          "balance-scale",
+          "bullseye",
+          "compass",
+          "feather",
+          "fountain-pen",
+          "libra",
+          "notebook",
+          "pen",
+          "pencil",
+          "scroll",
+        ],
+        streamline: ["anchor", "cog", "pencil", "sigma", "target"],
+        majesticons: [
+          "book-open",
+          "cog",
+          "compass",
+          "flag",
+          "map-marker",
+          "pencil",
+          "ruler-2",
+          "scroll",
+        ],
+        bi: [
+          "bullseye",
+          "compass",
+          "crosshair",
+          "feather",
+          "flag",
+          "pen",
+          "pencil",
+        ],
+      };
 
-  // Official "definitive source" URL for each library, shown as a small link on each
-  // card. Icons are fetched via api.iconify.design at runtime, but this is where the
-  // canonical project lives and where the full icon catalog can be browsed.
-  const LIB_HOME = {
-    'ph':                         'https://phosphoricons.com/',
-    'ph-thin':                    'https://phosphoricons.com/',
-    'ph-light':                   'https://phosphoricons.com/',
-    'ph-bold':                    'https://phosphoricons.com/',
-    'ph-fill':                    'https://phosphoricons.com/',
-    'ph-duotone':                 'https://phosphoricons.com/',
-    'tabler':                     'https://tabler.io/icons',
-    'lucide':                     'https://lucide.dev/icons/',
-    'iconoir':                    'https://iconoir.com/',
-    'mdi':                        'https://pictogrammers.com/library/mdi/',
-    'material-symbols':           'https://fonts.google.com/icons',
-    'material-symbols-light':     'https://fonts.google.com/icons',
-    'carbon':                     'https://carbondesignsystem.com/elements/icons/library/',
-    'hugeicons':                  'https://hugeicons.com/icons',
-    'game-icons':                 'https://game-icons.net/',
-    'fluent-emoji-high-contrast': 'https://github.com/microsoft/fluentui-emoji',
-    'streamline':                 'https://www.streamlinehq.com/',
-    'majesticons':                'https://www.majesticons.com/',
-    'bi':                         'https://icons.getbootstrap.com/',
-    // Math typography cards — link to the font specimen
-    'math-cardo':     'https://fonts.google.com/specimen/Cardo',
-    'math-garamond':  'https://fonts.google.com/specimen/EB+Garamond',
-    'math-cormorant': 'https://fonts.google.com/specimen/Cormorant+Garamond',
-    'math-system':    null,
-  };
+      // Official "definitive source" URL for each library, shown as a small link on each
+      // card. Icons are fetched via api.iconify.design at runtime, but this is where the
+      // canonical project lives and where the full icon catalog can be browsed.
+      const LIB_HOME = {
+        ph: "https://phosphoricons.com/",
+        "ph-thin": "https://phosphoricons.com/",
+        "ph-light": "https://phosphoricons.com/",
+        "ph-bold": "https://phosphoricons.com/",
+        "ph-fill": "https://phosphoricons.com/",
+        "ph-duotone": "https://phosphoricons.com/",
+        tabler: "https://tabler.io/icons",
+        lucide: "https://lucide.dev/icons/",
+        iconoir: "https://iconoir.com/",
+        mdi: "https://pictogrammers.com/library/mdi/",
+        "material-symbols": "https://fonts.google.com/icons",
+        "material-symbols-light": "https://fonts.google.com/icons",
+        carbon: "https://carbondesignsystem.com/elements/icons/library/",
+        hugeicons: "https://hugeicons.com/icons",
+        "game-icons": "https://game-icons.net/",
+        "fluent-emoji-high-contrast":
+          "https://github.com/microsoft/fluentui-emoji",
+        streamline: "https://www.streamlinehq.com/",
+        majesticons: "https://www.majesticons.com/",
+        bi: "https://icons.getbootstrap.com/",
+        // Math typography cards — link to the font specimen
+        "math-cardo": "https://fonts.google.com/specimen/Cardo",
+        "math-garamond": "https://fonts.google.com/specimen/EB+Garamond",
+        "math-cormorant":
+          "https://fonts.google.com/specimen/Cormorant+Garamond",
+        "math-system": null,
+      };
 
-  // URL-building metadata. Iconify quirks:
-  //  - Phosphor weight variants all live under prefix `ph` with a suffix on the icon name
-  //    (e.g. `ph:feather-bold`), not separate prefixes.
-  //  - Material Symbols default to the outlined cut; `-sharp` gives the sharp variant.
-  const LIB_META = {
-    'ph-thin':                { prefix: 'ph', suffix: '-thin' },
-    'ph-light':               { prefix: 'ph', suffix: '-light' },
-    'ph-bold':                { prefix: 'ph', suffix: '-bold' },
-    'ph-fill':                { prefix: 'ph', suffix: '-fill' },
-    'ph-duotone':             { prefix: 'ph', suffix: '-duotone' },
-    'material-symbols':       { prefix: 'material-symbols',       suffix: '-sharp' },
-    // material-symbols-light: default (no suffix) is the only variant with full coverage
-  };
-  function buildIconUrl(libId, concept) {
-    const meta = LIB_META[libId] || { prefix: libId, suffix: '' };
-    return `https://api.iconify.design/${meta.prefix}:${concept}${meta.suffix}.svg`;
-  }
+      // URL-building metadata. Iconify quirks:
+      //  - Phosphor weight variants all live under prefix `ph` with a suffix on the icon name
+      //    (e.g. `ph:feather-bold`), not separate prefixes.
+      //  - Material Symbols default to the outlined cut; `-sharp` gives the sharp variant.
+      const LIB_META = {
+        "ph-thin": { prefix: "ph", suffix: "-thin" },
+        "ph-light": { prefix: "ph", suffix: "-light" },
+        "ph-bold": { prefix: "ph", suffix: "-bold" },
+        "ph-fill": { prefix: "ph", suffix: "-fill" },
+        "ph-duotone": { prefix: "ph", suffix: "-duotone" },
+        "material-symbols": { prefix: "material-symbols", suffix: "-sharp" },
+        // material-symbols-light: default (no suffix) is the only variant with full coverage
+      };
+      function buildIconUrl(libId, concept) {
+        const meta = LIB_META[libId] || { prefix: libId, suffix: "" };
+        return `https://api.iconify.design/${meta.prefix}:${concept}${meta.suffix}.svg`;
+      }
 
-  // Sections grouping libraries by feel.
-  const SECTIONS = [
-    { title: 'Heraldic / timeless', libs: [
-      { id: 'game-icons',                 name: 'Game-Icons · solid silhouette' },
-      { id: 'mdi',                        name: 'Material Design Icons (mdi) · classic' },
-      { id: 'fluent-emoji-high-contrast', name: 'Fluent · high-contrast woodcut' },
-      { id: 'ph-duotone',                 name: 'Phosphor · duotone' },
-    ]},
-    { title: 'Refined line', libs: [
-      { id: 'ph-thin',                  name: 'Phosphor · thin' },
-      { id: 'ph-light',                 name: 'Phosphor · light' },
-      { id: 'carbon',                   name: 'Carbon · geometric' },
-      { id: 'material-symbols-light',   name: 'Material Symbols · light (outlined)' },
-      { id: 'iconoir',                  name: 'Iconoir · minimal' },
-      { id: 'streamline',               name: 'Streamline · refined' },
-      { id: 'majesticons',              name: 'Majesticons' },
-    ]},
-    { title: 'Math typography', math: true, libs: [
-      { id: 'math-cardo',     name: 'Cardo · academic serif',         fontClass: 'font-cardo' },
-      { id: 'math-garamond',  name: 'EB Garamond',                    fontClass: 'font-garamond' },
-      { id: 'math-cormorant', name: 'Cormorant Garamond',             fontClass: 'font-cormorant' },
-      { id: 'math-system',    name: 'System serif (Iowan / Charter)', fontClass: 'font-system' },
-    ]},
-    { title: 'Modern · for reference', libs: [
-      { id: 'ph',               name: 'Phosphor · regular' },
-      { id: 'tabler',           name: 'Tabler' },
-      { id: 'lucide',           name: 'Lucide' },
-      { id: 'hugeicons',        name: 'Hugeicons' },
-      { id: 'material-symbols', name: 'Material Symbols · sharp' },
-      { id: 'bi',               name: 'Bootstrap Icons' },
-    ]},
-    { title: 'Bold / heavy', libs: [
-      { id: 'ph-bold', name: 'Phosphor · bold' },
-      { id: 'ph-fill', name: 'Phosphor · fill' },
-    ]},
-  ];
+      // Sections grouping libraries by feel.
+      const SECTIONS = [
+        {
+          title: "Heraldic / timeless",
+          libs: [
+            { id: "game-icons", name: "Game-Icons · solid silhouette" },
+            { id: "mdi", name: "Material Design Icons (mdi) · classic" },
+            {
+              id: "fluent-emoji-high-contrast",
+              name: "Fluent · high-contrast woodcut",
+            },
+            { id: "ph-duotone", name: "Phosphor · duotone" },
+          ],
+        },
+        {
+          title: "Refined line",
+          libs: [
+            { id: "ph-thin", name: "Phosphor · thin" },
+            { id: "ph-light", name: "Phosphor · light" },
+            { id: "carbon", name: "Carbon · geometric" },
+            {
+              id: "material-symbols-light",
+              name: "Material Symbols · light (outlined)",
+            },
+            { id: "iconoir", name: "Iconoir · minimal" },
+            { id: "streamline", name: "Streamline · refined" },
+            { id: "majesticons", name: "Majesticons" },
+          ],
+        },
+        {
+          title: "Math typography",
+          math: true,
+          libs: [
+            {
+              id: "math-cardo",
+              name: "Cardo · academic serif",
+              fontClass: "font-cardo",
+            },
+            {
+              id: "math-garamond",
+              name: "EB Garamond",
+              fontClass: "font-garamond",
+            },
+            {
+              id: "math-cormorant",
+              name: "Cormorant Garamond",
+              fontClass: "font-cormorant",
+            },
+            {
+              id: "math-system",
+              name: "System serif (Iowan / Charter)",
+              fontClass: "font-system",
+            },
+          ],
+        },
+        {
+          title: "Modern · for reference",
+          libs: [
+            { id: "ph", name: "Phosphor · regular" },
+            { id: "tabler", name: "Tabler" },
+            { id: "lucide", name: "Lucide" },
+            { id: "hugeicons", name: "Hugeicons" },
+            { id: "material-symbols", name: "Material Symbols · sharp" },
+            { id: "bi", name: "Bootstrap Icons" },
+          ],
+        },
+        {
+          title: "Bold / heavy",
+          libs: [
+            { id: "ph-bold", name: "Phosphor · bold" },
+            { id: "ph-fill", name: "Phosphor · fill" },
+          ],
+        },
+      ];
 
-  const DIM_LABELS = { p: 'Purpose', e: 'Expression', f: 'Form', g: 'Grounding', r: 'Reasoning', j: 'Judgment' };
-  const DIM_ORDER  = ['p', 'e', 'f', 'g', 'r', 'j'];
+      const DIM_LABELS = {
+        p: "Purpose",
+        e: "Expression",
+        f: "Form",
+        g: "Grounding",
+        r: "Reasoning",
+        j: "Judgment",
+      };
+      const DIM_ORDER = ["p", "e", "f", "g", "r", "j"];
 
-  // ----- Lookups -----
-  const LIB_INFO = {};
-  SECTIONS.forEach(sec => sec.libs.forEach(lib => {
-    LIB_INFO[lib.id] = { lib, isMath: !!sec.math };
-  }));
+      // ----- Lookups -----
+      const LIB_INFO = {};
+      SECTIONS.forEach((sec) =>
+        sec.libs.forEach((lib) => {
+          LIB_INFO[lib.id] = { lib, isMath: !!sec.math };
+        }),
+      );
 
-  // What concepts (icon names or glyphs) can this cell cycle through, in priority order?
-  function availableChoices(libId, dim) {
-    if (LIB_INFO[libId].isMath) return GLYPHS[dim];
-    return DIM_CONCEPTS[dim].filter(c => (LIB_ICONS[libId] || []).includes(c));
-  }
+      // What concepts (icon names or glyphs) can this cell cycle through, in priority order?
+      function availableChoices(libId, dim) {
+        if (LIB_INFO[libId].isMath) return GLYPHS[dim];
+        return DIM_CONCEPTS[dim].filter((c) =>
+          (LIB_ICONS[libId] || []).includes(c),
+        );
+      }
 
-  // ----- Per-cell state: cellState[libId][dim] = current concept (or glyph) -----
-  const cellState = {};
-  SECTIONS.forEach(sec => sec.libs.forEach(lib => {
-    cellState[lib.id] = {};
-    DIM_ORDER.forEach(dim => {
-      const choices = availableChoices(lib.id, dim);
-      cellState[lib.id][dim] = choices.length ? choices[0] : null;
-    });
-  }));
+      // ----- Per-cell state: cellState[libId][dim] = current concept (or glyph) -----
+      const cellState = {};
+      SECTIONS.forEach((sec) =>
+        sec.libs.forEach((lib) => {
+          cellState[lib.id] = {};
+          DIM_ORDER.forEach((dim) => {
+            const choices = availableChoices(lib.id, dim);
+            cellState[lib.id][dim] = choices.length ? choices[0] : null;
+          });
+        }),
+      );
 
-  // ----- Render -----
-  function getFrame() { return document.getElementById('frame').value; }
+      // ----- Render -----
+      function getFrame() {
+        return document.getElementById("frame").value;
+      }
 
-  function renderCell(libId, dim) {
-    const concept = cellState[libId][dim];
-    const isMath = LIB_INFO[libId].isMath;
-    const frame = getFrame();
-    const choices = availableChoices(libId, dim);
-    const clickable = choices.length > 1 ? ' clickable' : '';
-    const dimLabel = `<div class="label">${DIM_LABELS[dim]}</div>`;
-    let iconHtml, concLabel;
-    if (!concept) {
-      iconHtml = `<span class="glyph-missing">—</span>`;
-      concLabel = `<div class="label-concept missing">none</div>`;
-    } else if (isMath) {
-      iconHtml = `<span class="glyph-text colorize ${dim}">${concept}</span>`;
-      concLabel = `<div class="label-concept">${concept}</div>`;
-    } else {
-      const url = buildIconUrl(libId, concept);
-      iconHtml = `<span class="glyph-icon colorize ${dim}" style="--mask: url('${url}')"></span>`;
-      concLabel = `<div class="label-concept">${concept}</div>`;
-    }
-    const a11y = clickable
-      ? ` tabindex="0" role="button" aria-label="Cycle ${DIM_LABELS[dim]} icon for ${LIB_INFO[libId].lib.name} (currently ${concept})"`
-      : '';
-    return `<div class="cell" data-lib="${libId}" data-dim="${dim}">`
-         + `<span class="frame ${frame}${clickable} colorize ${dim}" data-lib="${libId}" data-dim="${dim}"${a11y}>${iconHtml}</span>`
-         + `${dimLabel}${concLabel}`
-         + `</div>`;
-  }
+      function renderCell(libId, dim) {
+        const concept = cellState[libId][dim];
+        const isMath = LIB_INFO[libId].isMath;
+        const frame = getFrame();
+        const choices = availableChoices(libId, dim);
+        const clickable = choices.length > 1 ? " clickable" : "";
+        const dimLabel = `<div class="label">${DIM_LABELS[dim]}</div>`;
+        let iconHtml, concLabel;
+        if (!concept) {
+          iconHtml = `<span class="glyph-missing">—</span>`;
+          concLabel = `<div class="label-concept missing">none</div>`;
+        } else if (isMath) {
+          iconHtml = `<span class="glyph-text colorize ${dim}">${concept}</span>`;
+          concLabel = `<div class="label-concept">${concept}</div>`;
+        } else {
+          const url = buildIconUrl(libId, concept);
+          iconHtml = `<span class="glyph-icon colorize ${dim}" style="--mask: url('${url}')"></span>`;
+          concLabel = `<div class="label-concept">${concept}</div>`;
+        }
+        const a11y = clickable
+          ? ` tabindex="0" role="button" aria-label="Cycle ${DIM_LABELS[dim]} icon for ${LIB_INFO[libId].lib.name} (currently ${concept})"`
+          : "";
+        return (
+          `<div class="cell" data-lib="${libId}" data-dim="${dim}">` +
+          `<span class="frame ${frame}${clickable} colorize ${dim}" data-lib="${libId}" data-dim="${dim}"${a11y}>${iconHtml}</span>` +
+          `${dimLabel}${concLabel}` +
+          `</div>`
+        );
+      }
 
-  function renderCard(lib) {
-    const cells = DIM_ORDER.map(dim => renderCell(lib.id, dim)).join('');
-    const extraClass = lib.fontClass ? ' ' + lib.fontClass : '';
-    const home = LIB_HOME[lib.id];
-    const sourceLink = home
-      ? ` <a class="source" href="${home}" target="_blank" rel="noopener" title="Open source for ${lib.name}">↗</a>`
-      : '';
-    return `<div class="card${extraClass}" data-lib="${lib.id}"><h2>${lib.name}${sourceLink}</h2><div class="row">${cells}</div></div>`;
-  }
+      function renderCard(lib) {
+        const cells = DIM_ORDER.map((dim) => renderCell(lib.id, dim)).join("");
+        const extraClass = lib.fontClass ? " " + lib.fontClass : "";
+        const home = LIB_HOME[lib.id];
+        const sourceLink = home
+          ? ` <a class="source" href="${home}" target="_blank" rel="noopener" title="Open source for ${lib.name}">↗</a>`
+          : "";
+        return `<div class="card${extraClass}" data-lib="${lib.id}"><h2>${lib.name}${sourceLink}</h2><div class="row">${cells}</div></div>`;
+      }
 
-  function render() {
-    const main = document.getElementById('main');
-    main.innerHTML = SECTIONS.map(section => {
-      const cards = section.libs.map(lib => renderCard(lib)).join('');
-      return `<div class="section-h">${section.title}</div><div class="grid">${cards}</div>`;
-    }).join('');
-  }
+      function render() {
+        const main = document.getElementById("main");
+        main.innerHTML = SECTIONS.map((section) => {
+          const cards = section.libs.map((lib) => renderCard(lib)).join("");
+          return `<div class="section-h">${section.title}</div><div class="grid">${cards}</div>`;
+        }).join("");
+      }
 
-  function rerenderCard(libId) {
-    const cardEl = document.querySelector(`.card[data-lib="${libId}"]`);
-    if (!cardEl) return;
-    const tmp = document.createElement('div');
-    tmp.innerHTML = renderCard(LIB_INFO[libId].lib);
-    cardEl.replaceWith(tmp.firstElementChild);
-  }
+      function rerenderCard(libId) {
+        const cardEl = document.querySelector(`.card[data-lib="${libId}"]`);
+        if (!cardEl) return;
+        const tmp = document.createElement("div");
+        tmp.innerHTML = renderCard(LIB_INFO[libId].lib);
+        cardEl.replaceWith(tmp.firstElementChild);
+      }
 
-  // ----- Click / keyboard cycle -----
-  function cycleFromEvent(target) {
-    const frame = target.closest('.frame.clickable');
-    if (!frame) return false;
-    const libId = frame.dataset.lib;
-    const dim   = frame.dataset.dim;
-    const choices = availableChoices(libId, dim);
-    if (choices.length < 2) return false;
-    const cur = cellState[libId][dim];
-    const idx = choices.indexOf(cur);
-    cellState[libId][dim] = choices[(idx + 1) % choices.length];
-    rerenderCard(libId);
-    // Restore focus on the same cell after re-render so keyboard nav continues
-    const restored = document.querySelector(
-      `.frame.clickable[data-lib="${libId}"][data-dim="${dim}"]`,
-    );
-    if (restored) restored.focus();
-    return true;
-  }
-  document.getElementById('main').addEventListener('click', e => cycleFromEvent(e.target));
-  document.getElementById('main').addEventListener('keydown', e => {
-    if (e.key !== 'Enter' && e.key !== ' ') return;
-    if (cycleFromEvent(e.target)) e.preventDefault();
-  });
+      // ----- Click / keyboard cycle -----
+      function cycleFromEvent(target) {
+        const frame = target.closest(".frame.clickable");
+        if (!frame) return false;
+        const libId = frame.dataset.lib;
+        const dim = frame.dataset.dim;
+        const choices = availableChoices(libId, dim);
+        if (choices.length < 2) return false;
+        const cur = cellState[libId][dim];
+        const idx = choices.indexOf(cur);
+        cellState[libId][dim] = choices[(idx + 1) % choices.length];
+        rerenderCard(libId);
+        // Restore focus on the same cell after re-render so keyboard nav continues
+        const restored = document.querySelector(
+          `.frame.clickable[data-lib="${libId}"][data-dim="${dim}"]`,
+        );
+        if (restored) restored.focus();
+        return true;
+      }
+      document
+        .getElementById("main")
+        .addEventListener("click", (e) => cycleFromEvent(e.target));
+      document.getElementById("main").addEventListener("keydown", (e) => {
+        if (e.key !== "Enter" && e.key !== " ") return;
+        if (cycleFromEvent(e.target)) e.preventDefault();
+      });
 
-  // ----- Controls -----
-  function updateSize(val) {
-    document.documentElement.style.setProperty('--size', val + 'px');
-    document.getElementById('sizeVal').textContent = val + 'px';
-  }
-  document.getElementById('size').addEventListener('input', e => updateSize(e.target.value));
-  document.getElementById('color-mode').addEventListener('change', e => {
-    document.body.classList.remove('colorize', 'mode-solid');
-    if (e.target.value === 'ink')   document.body.classList.add('colorize');
-    if (e.target.value === 'solid') document.body.classList.add('colorize', 'mode-solid');
-  });
-  document.getElementById('frame').addEventListener('change', render);
+      // ----- Controls -----
+      function updateSize(val) {
+        document.documentElement.style.setProperty("--size", val + "px");
+        document.getElementById("sizeVal").textContent = val + "px";
+      }
+      document
+        .getElementById("size")
+        .addEventListener("input", (e) => updateSize(e.target.value));
+      document.getElementById("color-mode").addEventListener("change", (e) => {
+        document.body.classList.remove("colorize", "mode-solid");
+        if (e.target.value === "ink") document.body.classList.add("colorize");
+        if (e.target.value === "solid")
+          document.body.classList.add("colorize", "mode-solid");
+      });
+      document.getElementById("frame").addEventListener("change", render);
 
-  updateSize(56);
-  render();
-</script>
-
-</body>
+      updateSize(56);
+      render();
+    </script>
+  </body>
 </html>

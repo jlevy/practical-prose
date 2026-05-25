@@ -1,0 +1,47 @@
+# Top-level ruff config covering Python files that aren't part of the
+# pprose package — primarily `tools/design-system/`.
+#
+# The pprose package has its own ruff config inside tools/pprose/pyproject.toml
+# which is used when ruff is invoked from that directory.  This file is picked
+# up when ruff runs from the repo root against design-system files.
+#
+# Keep the rule set in sync with tools/pprose/pyproject.toml so a developer
+# never has to think about which Python tree they're in.
+
+line-length = 100
+target-version = "py311"
+
+extend-exclude = [
+  ".venv",
+  "tools/pprose",        # has its own pyproject ruff config
+  "**/_generated",       # generated files are owned by the generator
+  "**/__pycache__",
+  "attic",
+]
+
+[lint]
+select = [
+  "E",   # pycodestyle errors
+  "F",   # pyflakes
+  "UP",  # pyupgrade
+  "B",   # bugbear
+  "I",   # isort
+]
+ignore = [
+  "E501",   # line-too-long — formatter handles where it can; long URLs/strings get a pass
+  "E402",   # module-import-not-at-top-of-file — sys.path tweak before schema import
+  "E731",   # lambda-assignment
+  "B017",   # broad except in tests
+  "B904",   # raise-without-from-inside-except — common in CLI error handling
+  # Rules conflicting with the formatter (see ruff formatter docs):
+  "W191", "E111", "E114", "E117",
+  "D206", "D300",
+  "Q000", "Q001", "Q002", "Q003",
+  "COM812", "COM819",
+  "ISC002",
+]
+
+[format]
+quote-style = "double"
+indent-style = "space"
+docstring-code-format = true

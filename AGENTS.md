@@ -74,7 +74,7 @@ from the current directory hierarchy and `$HOME`.
 ## Visual Design
 
 Any work that touches palettes, eval-report rendering, or CSS should follow
-[design-system.md](tools/docs/design/design-system.md).
+[design-system.md](tools/design-system/design-system.md).
 All color values are written in `hsl()`, not hex, so the system’s structure is visible
 in the source.
 

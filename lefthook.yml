@@ -1,0 +1,41 @@
+# Git hooks managed by lefthook (https://lefthook.dev).
+# Install once: `make hooks-install` (or `npx lefthook install`).
+# Bypass for an emergency commit: `git commit --no-verify` (avoid in PRs).
+
+pre-commit:
+  parallel: true
+  commands:
+    biome:
+      glob: "*.{js,jsx,ts,tsx,json,jsonc,css,html}"
+      run: npx --no-install @biomejs/biome check --write {staged_files}
+      stage_fixed: true
+
+    # ruff lives in the pprose venv (`make install` creates it).
+    ruff-format:
+      glob: "*.py"
+      exclude: ["**/_generated/**"]
+      run: tools/pprose/.venv/bin/ruff format {staged_files}
+      stage_fixed: true
+
+    ruff-check:
+      glob: "*.py"
+      exclude: ["**/_generated/**"]
+      run: tools/pprose/.venv/bin/ruff check --fix {staged_files}
+      stage_fixed: true
+
+    # If anything under tools/design-system/ was touched, regenerate the
+    # derivatives and stage any refreshed output alongside the edit.
+    design-system-generate:
+      glob: "tools/design-system/**"
+      run: |
+        uv run --script tools/design-system/generate.py
+        git add tools/design-system/_generated/ \
+                tools/pprose/src/pprose/_generated/design_system.py
+
+pre-push:
+  parallel: true
+  commands:
+    generate-check:
+      run: uv run --script tools/design-system/generate.py --check
+    tests:
+      run: cd tools/pprose && uv run pytest -q

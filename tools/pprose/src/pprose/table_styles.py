@@ -5,8 +5,10 @@ Ordinary Markdown renderers can ignore it; the rendered table bodies stay valid
 Markdown and do not depend on browser-specific code.
 
 The palette is the runtime mirror of the canonical design system at
-``tools/docs/design/design-system.md``.  Two design system rules are enforced
-here:
+``tools/design-system/design-system.md``.  The actual color values come from
+the YAML source of truth at ``tools/design-system/design-system.yaml``, loaded
+here via the generated ``design_system_generated`` module.  Two design system
+rules are enforced upstream by that pipeline:
 
 * All colors are expressed as ``hsl(H S% L%)`` — no hex, no commas.
 * Every palette has a light and a dark variant.  Light values live under the
@@ -24,59 +26,50 @@ from __future__ import annotations
 
 from collections.abc import Sequence
 from copy import deepcopy
-from typing import Any
+from typing import Any, Literal
 
 import yaml
 
 from pprose import rubric_schema as rs
+from pprose._generated.design_system import DESIGN_SYSTEM
 
 TableStyleMetadata = dict[str, Any]
 
-# Group palette — light mode.  Background is the family surface tint; foreground
-# is the family ink.  Both share the same H and S; only L differs.
-_GROUP_STYLES_LIGHT: dict[str, dict[str, str]] = {
-    "Purpose": {"background": "hsl(72 62% 92%)", "foreground": "hsl(72 62% 44%)"},
-    "Expression": {"background": "hsl(206 59% 92%)", "foreground": "hsl(206 59% 44%)"},
-    "Form": {"background": "hsl(30 60% 92%)", "foreground": "hsl(30 60% 38%)"},
-    "Grounding": {"background": "hsl(162 55% 92%)", "foreground": "hsl(162 55% 40%)"},
-    "Reasoning": {"background": "hsl(329 60% 92%)", "foreground": "hsl(329 60% 44%)"},
-    "Judgment": {"background": "hsl(278 30% 92%)", "foreground": "hsl(278 30% 55%)"},
-}
+_Mode = Literal["light", "dark"]
 
-# Group palette — dark mode.  Same H and S as light; L flips so the surface is
-# dim and the ink is light.
-_GROUP_STYLES_DARK: dict[str, dict[str, str]] = {
-    "Purpose": {"background": "hsl(72 62% 18%)", "foreground": "hsl(72 62% 68%)"},
-    "Expression": {"background": "hsl(206 59% 18%)", "foreground": "hsl(206 59% 68%)"},
-    "Form": {"background": "hsl(30 60% 18%)", "foreground": "hsl(30 60% 68%)"},
-    "Grounding": {"background": "hsl(162 55% 16%)", "foreground": "hsl(162 55% 62%)"},
-    "Reasoning": {"background": "hsl(329 60% 18%)", "foreground": "hsl(329 60% 68%)"},
-    "Judgment": {"background": "hsl(278 30% 18%)", "foreground": "hsl(278 30% 72%)"},
-}
 
-# Score ramp — light mode.  Bad-to-good valence in red→amber→green, plus muted
-# variants for 0 (not applicable to this document) and NA (not assessed).
-_SCORE_STYLES_LIGHT: dict[str, dict[str, str | int | float]] = {
-    "0": {"foreground": "hsl(220 10% 50%)", "font_weight": 400, "opacity": 0.75},
-    "1": {"foreground": "hsl(0 70% 35%)", "font_weight": 800},
-    "2": {"foreground": "hsl(28 80% 30%)", "font_weight": 650},
-    "3": {"foreground": "hsl(40 80% 32%)", "font_weight": 700},
-    "4": {"foreground": "hsl(140 60% 28%)", "font_weight": 750},
-    "5": {"foreground": "hsl(140 60% 20%)", "font_weight": 850},
-    "NA": {"foreground": "hsl(220 10% 50%)", "font_weight": 400, "opacity": 0.65},
-}
+def _build_group_styles(mode: _Mode) -> dict[str, dict[str, str]]:
+    """Surface + ink per group, keyed by the group's full label."""
+    return {
+        g["label"]: {
+            "background": g["surface"][mode],
+            "foreground": g["ink"][mode],
+        }
+        for g in DESIGN_SYSTEM["groups"]
+    }
 
-# Score ramp — dark mode.  Same hues, lighter L so the colors read against a
-# dark background.  Weight and opacity are mode-independent.
-_SCORE_STYLES_DARK: dict[str, dict[str, str | int | float]] = {
-    "0": {"foreground": "hsl(220 10% 60%)", "font_weight": 400, "opacity": 0.75},
-    "1": {"foreground": "hsl(0 70% 60%)", "font_weight": 800},
-    "2": {"foreground": "hsl(28 70% 60%)", "font_weight": 650},
-    "3": {"foreground": "hsl(40 70% 60%)", "font_weight": 700},
-    "4": {"foreground": "hsl(140 50% 55%)", "font_weight": 750},
-    "5": {"foreground": "hsl(140 50% 45%)", "font_weight": 850},
-    "NA": {"foreground": "hsl(220 10% 60%)", "font_weight": 400, "opacity": 0.65},
-}
+
+def _build_score_styles(mode: _Mode) -> dict[str, dict[str, str | int | float]]:
+    """Score color + weight + (optional) opacity for one theme mode.
+
+    Emits every score level the design system defines, including ERR.
+    """
+    out: dict[str, dict[str, str | int | float]] = {}
+    for score in DESIGN_SYSTEM["scores"]:
+        entry: dict[str, str | int | float] = {
+            "foreground": score["color"][mode],
+            "font_weight": score["weight"],
+        }
+        if "opacity" in score:
+            entry["opacity"] = score["opacity"]
+        out[score["level"]] = entry
+    return out
+
+
+_GROUP_STYLES_LIGHT: dict[str, dict[str, str]] = _build_group_styles("light")
+_GROUP_STYLES_DARK: dict[str, dict[str, str]] = _build_group_styles("dark")
+_SCORE_STYLES_LIGHT: dict[str, dict[str, str | int | float]] = _build_score_styles("light")
+_SCORE_STYLES_DARK: dict[str, dict[str, str | int | float]] = _build_score_styles("dark")
 
 
 def _dimension_styles(group_styles: dict[str, dict[str, str]]) -> dict[str, dict[str, str]]:

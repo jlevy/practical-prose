@@ -103,6 +103,8 @@ include = [
 [tool.ruff]
 # Set as desired, typically 88 (black standard) or 100 (wide).
 line-length = 100
+# Generated files are owned by the generator; never lint or format them.
+extend-exclude = ["**/_generated"]
 
 [tool.ruff.lint]
 select = [
