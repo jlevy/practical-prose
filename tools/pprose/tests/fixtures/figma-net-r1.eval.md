@@ -408,30 +408,40 @@ quant:
     code_blocks: 0
     images: 0
     tables: 10
-violations:
+rule_findings:
 - description: Register flourishes ("the most narratively charged name", "the most
     violent macro event")
   dimension: Clarity
+  locations: []
   rule_number: 4
+  verdict: violated
 - description: Zero confidence tags; many derived figures lack inline derivation
   dimension: Factuality
+  locations: []
   rule_number: 3
+  verdict: violated
 - description: No committed pre-research priors; no Bayesian shrinkage
   dimension: Calibration
+  locations: []
   rule_number: 2
+  verdict: violated
 - description: No Predictions Registry; scenario probabilities stated without base-rate
   dimension: Calibration
+  locations: []
   rule_number: 4
+  verdict: violated
 - description: 8 counterintuitive findings without bull/bear/neutral count
   dimension: Fairness
+  locations: []
   rule_number: 4
+  verdict: violated
 ---
 
-## NET-r1
+# NET-r1
 
 **Source:** `<external artifact not in this repo>`  **Scope:** `—`  **Overall mean (20 dims):** 4.17  **Rubric:** `pp20v1`  **Model:** `—`  **Eval date:** 2026-05-07
 
-### Qualitative
+## Qualitative
 
 | Group | Dimension | Score | Reason |
 | --- | --- | ---: | --- |
@@ -463,7 +473,7 @@ violations:
 |  | **Mean** | **3.50** | |
 |  | **Overall mean (20 dims)** | **4.17** | |
 
-### Violations
+## Violations
 
 1. **Clarity** (rule 4) — Register flourishes ("the most narratively charged name", "the most violent macro event")
 2. **Factuality** (rule 3) — Zero confidence tags; many derived figures lack inline derivation
@@ -471,7 +481,7 @@ violations:
 4. **Calibration** (rule 4) — No Predictions Registry; scenario probabilities stated without base-rate
 5. **Fairness** (rule 4) — 8 counterintuitive findings without bull/bear/neutral count
 
-### Quantitative
+## Quantitative
 
 | Section | Measure | Value |
 | --- | --- | ---: |

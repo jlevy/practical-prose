@@ -13,15 +13,15 @@
 |  |  | Consistency | ERR | ERR | ERR | ERR | ERR | ERR |
 |  |  | Formatting | ERR | ERR | ERR | ERR | ERR | ERR |
 |  |  | *Mean* | — | 4.00 | 4.00 | **5.00** | 4.00 | 4.00 |
-|  | Grounding | Verifiability | ERR | ERR | 5 | ERR | ERR | 5 |
-|  |  | Factuality | ERR | 4 | **5** | 4 | 4 | **5** |
-|  |  | Relevance | ERR | ERR | 5 | ERR | ERR | 5 |
-|  |  | *Mean* | — | 4.00 | **5.00** | 4.00 | 4.00 | **5.00** |
 |  | Reasoning | Discipline | ERR | ERR | ERR | ERR | ERR | ERR |
 |  |  | Soundness | ERR | ERR | 5 | ERR | ERR | 5 |
 |  |  | Precision | ERR | ERR | ERR | ERR | ERR | ERR |
 |  |  | Parsimony | ERR | ERR | ERR | ERR | ERR | ERR |
 |  |  | *Mean* | — | — | 5.00 | — | — | 5.00 |
+|  | Grounding | Verifiability | ERR | ERR | 5 | ERR | ERR | 5 |
+|  |  | Factuality | ERR | 4 | **5** | 4 | 4 | **5** |
+|  |  | Relevance | ERR | ERR | 5 | ERR | ERR | 5 |
+|  |  | *Mean* | — | 4.00 | **5.00** | 4.00 | 4.00 | **5.00** |
 |  | Judgment | Calibration | 3 | 3 | **5** | 3 | 3 | **5** |
 |  |  | Fairness | 4 | 4 | **5** | 4 | 4 | **5** |
 |  |  | Robustness | ERR | ERR | ERR | ERR | ERR | ERR |
@@ -70,13 +70,13 @@
 | Organization | ERR → 4 |
 | Consistency | ERR |
 | Formatting | ERR |
-| Verifiability | ERR → 5 |
-| Factuality | ERR → 5 |
-| Relevance | ERR → 5 |
 | Discipline | ERR |
 | Soundness | ERR → 5 |
 | Precision | ERR |
 | Parsimony | ERR |
+| Verifiability | ERR → 5 |
+| Factuality | ERR → 5 |
+| Relevance | ERR → 5 |
 | Calibration | +2 |
 | Fairness | +1 |
 | Robustness | ERR |
@@ -96,13 +96,13 @@
 | Organization | -1 |
 | Consistency | ERR |
 | Formatting | ERR |
-| Verifiability | ERR → 5 |
-| Factuality | +1 |
-| Relevance | ERR → 5 |
 | Discipline | ERR |
 | Soundness | ERR → 5 |
 | Precision | ERR |
 | Parsimony | ERR |
+| Verifiability | ERR → 5 |
+| Factuality | +1 |
+| Relevance | ERR → 5 |
 | Calibration | +2 |
 | Fairness | +1 |
 | Robustness | ERR |
@@ -122,13 +122,13 @@
 | Organization | 0 |
 | Consistency | ERR |
 | Formatting | ERR |
-| Verifiability | ERR → 5 |
-| Factuality | +1 |
-| Relevance | ERR → 5 |
 | Discipline | ERR |
 | Soundness | ERR → 5 |
 | Precision | ERR |
 | Parsimony | ERR |
+| Verifiability | ERR → 5 |
+| Factuality | +1 |
+| Relevance | ERR → 5 |
 | Calibration | +2 |
 | Fairness | +1 |
 | Robustness | ERR |
@@ -148,13 +148,13 @@
 | Organization | 0 |
 | Consistency | ERR |
 | Formatting | ERR |
-| Verifiability | ERR → 5 |
-| Factuality | +1 |
-| Relevance | ERR → 5 |
 | Discipline | ERR |
 | Soundness | ERR → 5 |
 | Precision | ERR |
 | Parsimony | ERR |
+| Verifiability | ERR → 5 |
+| Factuality | +1 |
+| Relevance | ERR → 5 |
 | Calibration | +2 |
 | Fairness | +1 |
 | Robustness | ERR |

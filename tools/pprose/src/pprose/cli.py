@@ -35,7 +35,7 @@ COMMANDS: dict[str, CommandSpec] = {
         "Evaluate",
     ),
     "score": CommandSpec(
-        "Fill qualitative scores and violations in eval reports (needs ANTHROPIC_API_KEY).",
+        "Fill qualitative scores and rule_findings in eval reports via Pydantic AI.",
         eval_score.main,
         "Evaluate",
     ),
@@ -93,7 +93,9 @@ def _print_help() -> None:
             "",
             "Getting started:",
             f"  uvx {PROGRAM} install --agents-md   # zero-install; installs skills",
-            "  `score` needs ANTHROPIC_API_KEY (auto-loads .env / .env.local).",
+            "  `score` needs --model and a provider API key in the environment",
+            "  (ANTHROPIC_API_KEY, OPENAI_API_KEY, or GOOGLE_API_KEY; .env / .env.local",
+            "  are auto-loaded). Run `pprose score --list-models` for suggestions.",
         ]
     )
     print("\n".join(lines))

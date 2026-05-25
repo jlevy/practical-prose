@@ -24,8 +24,8 @@ When generating, summarizing, or rewriting practical prose:
 
 1. Answer the reader’s task and make the main output recoverable from a skim.
 2. State scope and claim boundaries early.
-3. Make material claims traceable to sources, calculations, or explicit assumptions.
-4. Keep evidence, inference, and recommendation distinct.
+3. Keep evidence, inference, and recommendation distinct.
+4. Make material claims traceable to sources, calculations, or explicit assumptions.
 5. Use concrete language and the most specific terms the reader can parse.
 6. Cut visible rigor that does not improve inspectability, accuracy, usefulness, or
    reader trust.
@@ -74,7 +74,7 @@ from the current directory hierarchy and `$HOME`.
 ## Visual Design
 
 Any work that touches palettes, eval-report rendering, or CSS should follow
-[design-system.md](tools/docs/design/design-system.md).
+[design-system.md](tools/design-system/design-system.md).
 All color values are written in `hsl()`, not hex, so the system’s structure is visible
 in the source.
 

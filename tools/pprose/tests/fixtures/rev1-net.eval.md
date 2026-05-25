@@ -444,109 +444,147 @@ quant:
     code_blocks: 1
     images: 0
     tables: 15
-violations:
+rule_findings:
 - description: §1.5d Application Services changelog deferred at P3 without standalone
     treatment; WAF/DDoS/CDN feature releases only partially captured
   dimension: Breadth
-  location: §1.5d
+  locations:
+  - section: §1.5d
   rule_number: 3
+  verdict: violated
 - description: AI revenue triangulated estimate 5-15% stated without showing the inputs
     or method, leaving a key claim thin relative to its importance
   dimension: Depth
-  location: §2.7 L1062
+  locations:
+  - section: §2.7 L1062
   rule_number: 1
+  verdict: violated
 - description: Banned-register-adjacent phrasing 'thesis only crystallized' uses extravagant
     register for what is simply 'was first articulated'
   dimension: Clarity
-  location: §2.6 L983
+  locations:
+  - section: §2.6 L983
   rule_number: 4
+  verdict: violated
 - description: Beat-magnitude series ($6.6M to $25.5M) duplicated across §1.3, §2.1,
     §2.2, and §2.8
   dimension: Concision
-  location: §1.3 L262, §2.1 L835, §2.2 L878, §2.8 L1109
+  locations:
+  - section: §1.3 L262, §2.1 L835, §2.2 L878, §2.8 L1109
   rule_number: 2
+  verdict: violated
 - description: Cross-references to data files name only the filename, not what the
     reader will find
   dimension: Organization
-  location: §1.7 L651
+  locations:
+  - section: §1.7 L651
   rule_number: 7
+  verdict: violated
 - description: Date formats mix ISO (2024-08-01) with abbreviated month (Aug 2026,
     Feb 2026) within the same sections
   dimension: Consistency
-  location: §1.2, §2.3
+  locations:
+  - section: §1.2, §2.3
   rule_number: 1
+  verdict: violated
 - description: Table footnote at §1.3 uses bare asterisk rather than a proper footnote
     anchor that round-trips
   dimension: Formatting
-  location: L576
+  locations:
+  - line_start: 576
   rule_number: 2
+  verdict: violated
 - description: Vercel CEO Rauch benchmark claim and X quote at §1.7 has no post ID
     or URL; CF '20% of the web' at §1.8 has no source URL
   dimension: Verifiability
-  location: §1.7 L668-672, §1.8 L785
+  locations:
+  - section: §1.7 L668-672, §1.8 L785
   rule_number: 2
+  verdict: violated
 - description: '''Multiple'' as source for $12.8B AI coding assistant market size
     is not a verifiable citation'
   dimension: Factuality
-  location: §1.8 L710
+  locations:
+  - section: §1.8 L710
   rule_number: 1
+  verdict: violated
 - description: Anthropic '$4B Amazon investment' is a rounded aggregate across multiple
     tranches without disclosure of rounding or aggregation
   dimension: Factuality
-  location: §2.7 L1050
+  locations:
+  - section: §2.7 L1050
   rule_number: 2
+  verdict: violated
 - description: Observation (commit cadence preceded earnings narrative) and interpretation
     (leading indicator status) fused in one sentence
   dimension: Discipline
-  location: §2.6 L982-983
+  locations:
+  - section: §2.6 L982-983
   rule_number: 2
+  verdict: violated
 - description: 5-15% AI-revenue estimate asserted as 'triangulated' without showing
     the triangulation method or contributing data points
   dimension: Soundness
-  location: §2.7 L1062
+  locations:
+  - section: §2.7 L1062
   rule_number: 5
+  verdict: violated
 - description: '''Multiple'' and ''Reported'' used as source attributions where specific
     publication names exist'
   dimension: Precision
-  location: §1.8 L710, L704
+  locations:
+  - section: §1.8 L710, L704
   rule_number: 2
+  verdict: violated
 - description: 30/50/20 scenario probabilities not anchored in empirical base rates
     for SaaS earnings outcomes
   dimension: Calibration
-  location: §2.8 L1163-1170
+  locations:
+  - section: §2.8 L1163-1170
   rule_number: 1
+  verdict: violated
 - description: Bear case receives one table row at §2.7 while bull case is developed
     across multiple paragraphs with named mechanisms; asymmetry not declared
   dimension: Fairness
-  location: §2.7 L1072-1078
+  locations:
+  - section: §2.7 L1072-1078
   rule_number: 1
+  verdict: violated
 - description: Bear-case 'all narrative' lens named but not tested at depth comparable
     to the bull case
   dimension: Robustness
-  location: §2.7 L1078, §2.9 L1228
+  locations:
+  - section: §2.7 L1078, §2.9 L1228
   rule_number: 2
+  verdict: violated
 - description: Interpretive lens for DBNRR-AI correlation (§2.9 finding 3) not stated
     explicitly; coincidence-vs-causation frame asserted without naming the lens
   dimension: Robustness
-  location: §2.9 L1206-1209
+  locations:
+  - section: §2.9 L1206-1209
   rule_number: 1
+  verdict: violated
 - description: References at §1.8 cited for completeness rather than clearly bearing
     on the headline thesis.
   dimension: Relevance
-  location: §1.8
+  locations:
+  - section: §1.8
   rule_number: 4
+  verdict: violated
 - description: Re-derivation of the §1.3 series in §2.2 where a back-reference would
     suffice.
   dimension: Parsimony
-  location: §2.2
+  locations:
+  - section: §2.2
   rule_number: 1
+  verdict: violated
 ---
 
-## rev1-net
+# rev1-net
 
 **Source:** `<external artifact not in this repo>`  **Scope:** `deep_research`  **Overall mean (20 dims):** 4.10  **Rubric:** `pp20v1`  **Model:** `—`  **Eval date:** 2026-05-10
 
-### Qualitative
+## Qualitative
 
 | Group | Dimension | Score | Reason |
 | --- | --- | ---: | --- |
@@ -578,7 +616,7 @@ violations:
 |  | **Mean** | **3.67** | |
 |  | **Overall mean (20 dims)** | **4.10** | |
 
-### Violations
+## Violations
 
 1. **Breadth** (rule 3) — §1.5d Application Services changelog deferred at P3 without standalone treatment; WAF/DDoS/CDN feature releases only partially captured *Location:* §1.5d.
 2. **Depth** (rule 1) — AI revenue triangulated estimate 5-15% stated without showing the inputs or method, leaving a key claim thin relative to its importance *Location:* §2.7 L1062.
@@ -600,7 +638,7 @@ violations:
 18. **Relevance** (rule 4) — References at §1.8 cited for completeness rather than clearly bearing on the headline thesis. *Location:* §1.8.
 19. **Parsimony** (rule 1) — Re-derivation of the §1.3 series in §2.2 where a back-reference would suffice. *Location:* §2.2.
 
-### Quantitative
+## Quantitative
 
 | Section | Measure | Value |
 | --- | --- | ---: |

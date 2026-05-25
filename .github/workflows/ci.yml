@@ -68,3 +68,47 @@ jobs:
 
       - name: Run tests
         run: uv run pytest
+
+  # Root-level checks for the design-system generator + JS toolchain, neither
+  # of which depend on the pprose Python version matrix. Runs once per push.
+  lint-root:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v7
+        with:
+          version: "0.10.2"
+          enable-cache: true
+          python-version: "3.13"
+
+      - name: Set up Python
+        run: uv python install
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Install Node dependencies (locked)
+        run: npm ci
+
+      - name: Sync pprose dev tools (for ruff)
+        run: uv sync --all-extras
+        working-directory: tools/pprose
+
+      - name: Verify design-system generated files are up to date
+        run: uv run --script tools/design-system/generate.py --check
+
+      - name: Lint design-system Python (top-level ruff.toml)
+        run: |
+          cd tools/pprose
+          uv run ruff format --check ../../tools/design-system
+          uv run ruff check ../../tools/design-system
+
+      - name: Lint JS / CSS / HTML / JSON via Biome
+        run: npx --no-install @biomejs/biome ci .

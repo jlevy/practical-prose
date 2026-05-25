@@ -1,17 +1,26 @@
 """
-Model-scoring runner for the qualitative rubric (Anthropic SDK + prompt caching).
+Model-scoring runner for the qualitative rubric.
 
 Reads an in-progress eval report YAML (typically produced by
-`pprose report from-metrics`), invokes the Anthropic SDK with the rubric +
-guidelines + artifact + structured-output prompt, parses the JSON block out
-of the response, and fills the YAML's qual + violations + metadata.
+`pprose report from-metrics`), invokes an LLM via Pydantic AI's provider-agnostic
+Agent with the rubric + guidelines + artifact + structured-output schema, and
+fills the YAML's qual + rule_findings + metadata.
 
-The rubric / guidelines / instructions block is sent with `cache_control` so
-subsequent calls in the same batch (within the cache TTL) reuse the cached
-input — ~10× cheaper and faster per call after the first.
+Provider abstraction:
+  The model is selected by a Pydantic AI model string (e.g. `anthropic:claude-opus-4-7`,
+  `openai:gpt-5.2`). The default is the latest Claude Opus over Anthropic. Switching to a
+  non-Anthropic provider requires that provider's `[extra]` in pyproject.toml
+  (`pydantic-ai-slim[anthropic,openai,...]`); the call shape is identical.
 
-Reads `ANTHROPIC_API_KEY` from the environment; `.env` and `.env.local` in
-the current directory hierarchy or `$HOME` are auto-loaded.
+Prompt caching:
+  When the provider is Anthropic, the rubric + guidelines + instructions block is
+  passed as `instructions` and marked cacheable via `anthropic_cache_instructions=True`.
+  Subsequent calls in a batch (within the ~5 min TTL) reuse the cached prefix at
+  ~0.1× the input cost. Other providers have their own caching semantics; the
+  default behavior on a non-Anthropic provider is uncached.
+
+API keys are read from the environment (e.g. `ANTHROPIC_API_KEY`). `.env` and
+`.env.local` in the current directory hierarchy and `$HOME` are auto-loaded.
 
 Run `pprose score --help` for the CLI surface.
 """
@@ -20,14 +29,16 @@ from __future__ import annotations
 
 import argparse
 import hashlib
-import json
 import os
-import re
 import sys
 from dataclasses import dataclass, field
 from pathlib import Path
+from typing import Literal
 
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
+from pydantic_ai import Agent
+from pydantic_ai.models.anthropic import AnthropicModelSettings
+from pydantic_ai.settings import ModelSettings
 
 from pprose import resources
 from pprose import rubric_schema as rs
@@ -42,13 +53,15 @@ from pprose.eval_report import (
     GroundingScores,
     JudgmentReasons,
     JudgmentScores,
+    Location,
     PurposeReasons,
     PurposeScores,
     QualReasons,
     QualScores,
     ReasoningReasons,
     ReasoningScores,
-    Violation,
+    RuleFinding,
+    Verdict,
 )
 
 PACKAGE_ROOT = Path(__file__).resolve().parent
@@ -88,26 +101,72 @@ PROMPT_TEMPLATE_PATH = PACKAGE_ROOT / "prompts" / "eval-rubric-score.md"
 RUBRIC_PATH = _resolve_doc("practical-prose-rubric")
 GUIDELINES_PATH = _resolve_doc("practical-prose-guidelines")
 
-JSON_FENCE_RE = re.compile(r"```json\s*\n(.+?)\n```", re.DOTALL)
-
-# Defaults baked from plan-2026-05-12-eval-scoring-rearchitecture.md decisions.
-DEFAULT_MODEL = "claude-sonnet-4-5"
+# Per-call execution budget.
 DEFAULT_MAX_TOKENS = 8192
 DEFAULT_TIMEOUT_S = 600.0  # 10 minutes — Q10 decision
 
-# Anthropic publishes model aliases like "claude-sonnet-4-5", "claude-opus-4-1",
-# "claude-haiku-4-5". Accept short names too for convenience.
-_MODEL_ALIASES = {
-    "sonnet": "claude-sonnet-4-5",
-    "opus": "claude-opus-4-1",
-    "haiku": "claude-haiku-4-5",
-}
+# Curated list of currently-recommended models, surfaced in --model help and via
+# `--list-models`. Sourced from llm-pricing/data/llms.yml (the canonical
+# tracking file for tool-capable models). Aliases on the right resolve to the
+# Pydantic AI model string on the left.
+#
+# Users can also pass any other model string Pydantic AI accepts (e.g.
+# `openai:gpt-5.2`, `google:gemini-3-pro-preview`); --model just won't suggest
+# it. An unknown provider prefix raises at the agent boundary.
+SUGGESTED_MODELS: tuple[tuple[str, str, str], ...] = (
+    # (alias, full model string, one-line description)
+    ("opus", "anthropic:claude-opus-4-7", "Anthropic Claude Opus 4.7 (flagship)"),
+    ("sonnet", "anthropic:claude-sonnet-4-6", "Anthropic Claude Sonnet 4.6 (balanced)"),
+    ("haiku", "anthropic:claude-haiku-4-5", "Anthropic Claude Haiku 4.5 (fast/cheap)"),
+    ("gpt", "openai:gpt-5.5", "OpenAI GPT-5.5 (flagship)"),
+    ("gpt-pro", "openai:gpt-5.5-pro", "OpenAI GPT-5.5 Pro (deep reasoning)"),
+    ("gpt-mini", "openai:gpt-5.4-mini", "OpenAI GPT-5.4 Mini (mid-tier)"),
+    ("gpt-nano", "openai:gpt-5.4-nano", "OpenAI GPT-5.4 Nano (cheapest)"),
+    ("gemini", "google:gemini-3.5-flash", "Google Gemini 3.5 Flash"),
+    ("gemini-pro", "google:gemini-3.1-pro-preview", "Google Gemini 3.1 Pro (preview)"),
+    ("gemini-lite", "google:gemini-3.1-flash-lite", "Google Gemini 3.1 Flash Lite"),
+)
+_ALIAS_TO_MODEL = {alias: model for alias, model, _ in SUGGESTED_MODELS}
 
 
-def _resolve_model(name: str | None) -> str:
+def _resolve_model(name: str) -> str:
+    """
+    Resolve a user-supplied model spec to a Pydantic AI model string.
+
+    Accepts short aliases from SUGGESTED_MODELS, bare `claude-*` IDs (auto-
+    prefixed with `anthropic:`), and any explicit `provider:model` string
+    (which passes through untouched).
+
+    Empty/None is rejected: the CLI requires --model so a misconfigured run is
+    never silently routed to an unintended provider.
+    """
     if not name:
-        return DEFAULT_MODEL
-    return _MODEL_ALIASES.get(name, name)
+        raise ValueError("model is required; pass --model or call _resolve_model with a string")
+    if name in _ALIAS_TO_MODEL:
+        return _ALIAS_TO_MODEL[name]
+    if name.startswith("claude-") and ":" not in name:
+        return f"anthropic:{name}"
+    return name
+
+
+def _provider_of(model: str) -> str:
+    """Return the provider prefix (`anthropic`, `openai`, `google`, ...) of a resolved model."""
+    return model.split(":", 1)[0] if ":" in model else "anthropic"
+
+
+def _format_suggested_models() -> str:
+    """Render SUGGESTED_MODELS as a human-readable block for --list-models / help."""
+    width_alias = max(len(a) for a, _, _ in SUGGESTED_MODELS)
+    width_model = max(len(m) for _, m, _ in SUGGESTED_MODELS)
+    lines = ["Suggested models (pass any other Pydantic AI model string too):", ""]
+    lines.extend(
+        f"  {alias:<{width_alias}}  {model:<{width_model}}  {desc}"
+        for alias, model, desc in SUGGESTED_MODELS
+    )
+    lines.append("")
+    lines.append("Provider extras shipped: anthropic, openai, google.")
+    lines.append("Bare claude-* IDs are auto-prefixed with `anthropic:`.")
+    return "\n".join(lines)
 
 
 def _load_env_files() -> None:
@@ -131,16 +190,16 @@ _SCORES_CLS = {
     "purpose": PurposeScores,
     "expression": ExpressionScores,
     "form": FormScores,
-    "grounding": GroundingScores,
     "reasoning": ReasoningScores,
+    "grounding": GroundingScores,
     "judgment": JudgmentScores,
 }
 _REASONS_CLS = {
     "purpose": PurposeReasons,
     "expression": ExpressionReasons,
     "form": FormReasons,
-    "grounding": GroundingReasons,
     "reasoning": ReasoningReasons,
+    "grounding": GroundingReasons,
     "judgment": JudgmentReasons,
 }
 VALID_DIMENSION_KEYS = set(rs.dimension_keys())
@@ -149,7 +208,7 @@ VALID_DIMENSION_KEYS = set(rs.dimension_keys())
 @dataclass
 class ScoredResult:
     qual: QualScores
-    violations: list[Violation]
+    rule_findings: list[RuleFinding]
     qual_reasons: QualReasons = field(default_factory=QualReasons)
 
 
@@ -159,9 +218,9 @@ def _rule_bounds_appendix() -> str:
     lines = [
         "## Rule-number bounds per dimension",
         "",
-        "When citing `rule_number` under `violations`, use only an integer in the",
-        "range listed for that dimension. Numbers outside these ranges will fail",
-        "validation and the eval will be discarded.",
+        "When citing `rule_number` under `rule_findings`, use only an integer in",
+        "the range listed for that dimension. Numbers outside these ranges will",
+        "fail validation and the eval will be discarded.",
         "",
     ]
     for group in rs.GROUPS:
@@ -176,33 +235,16 @@ def _canonical_names() -> str:
     return ", ".join(d.label for d in rs.DIMENSIONS)
 
 
-def _scores_json_skeleton() -> str:
-    """The JSON output example, with one entry per dimension key, schema-derived."""
-    key_fields = [f'"{d.key}":' for d in rs.DIMENSIONS]
-    width = max(len(k) for k in key_fields)
-    entries = [f'    {k:<{width}} {{"score": 0, "reason": "..."}}' for k in key_fields]
-    body = ",\n".join(entries)
-    return (
-        "```json\n"
-        "{\n"
-        '  "scores": {\n'
-        f"{body}\n"
-        "  },\n"
-        '  "violations": [\n'
-        '    {"dimension": "Clarity", "rule_number": 4, "description": "...", '
-        '"location": "L412-418"}\n'
-        "  ]\n"
-        "}\n"
-        "```"
-    )
-
-
 def _cached_block_text() -> str:
-    """The invariant block: instructions + rule-bounds appendix + rubric + guidelines.
+    """
+    Build the invariant instructions block: scoring directions + rule-bounds
+    appendix + rubric + guidelines.
 
-    Identical across every call in a batch, so the SDK can serve it from the
-    prompt cache after the first request. Kept as one logical block (one
-    cache_control marker) for simplicity.
+    Sent to the model as `instructions` (system prompt). Identical across every
+    call in a batch, so when the provider is Anthropic and caching is enabled,
+    the first call writes the cache and the rest read it within the ~5 min TTL.
+    Pydantic AI generates the JSON schema for `ScoringResponse` automatically,
+    so the template no longer carries an inline JSON example.
     """
     if not PROMPT_TEMPLATE_PATH.is_file():
         raise FileNotFoundError(f"prompt template missing: {PROMPT_TEMPLATE_PATH}")
@@ -211,15 +253,13 @@ def _cached_block_text() -> str:
     if not GUIDELINES_PATH.is_file():
         raise FileNotFoundError(f"guidelines missing: {GUIDELINES_PATH}")
     template = PROMPT_TEMPLATE_PATH.read_text(encoding="utf-8")
-    template = (
-        template.replace("{{CANONICAL_NAMES}}", _canonical_names())
-        .replace("{{SCORES_JSON}}", _scores_json_skeleton())
-        .replace("{{DIMENSION_COUNT}}", str(rs.dimension_count()))
+    template = template.replace("{{CANONICAL_NAMES}}", _canonical_names()).replace(
+        "{{DIMENSION_COUNT}}", str(rs.dimension_count())
     )
     parts = [
         "# Inputs",
         "",
-        "## Instructions and output format",
+        "## Instructions",
         "",
         template,
         "",
@@ -257,200 +297,209 @@ def build_prompt(artifact_path: Path) -> str:
     return _cached_block_text() + "\n\n" + _artifact_block_text(artifact_path)
 
 
-def _build_messages(cached_block: str, artifact_block: str) -> list[dict]:
-    """Assemble the SDK message list from pre-rendered block texts.
+# Structured output ----------------------------------------------------------
+#
+# Pydantic AI fills `output_type=ScoringResponse` directly from the model's
+# tool call, replacing the old manual JSON-fence regex + dict-walking parser.
+# The schema is generated automatically from these models and shipped to the
+# model alongside the instructions; the model can no longer emit malformed
+# JSON because the framework enforces conformance at the SDK boundary.
 
-    One user message with two content blocks: the invariant block (rubric +
-    guidelines + instructions) marked `cache_control: ephemeral`, then the
-    uncached artifact body. The cache TTL is ~5 minutes; subsequent calls within
-    that window read the cached prefix at ~0.1× the input cost.
+
+class ScoreEntry(BaseModel):
+    """One score + reason for a single rubric dimension."""
+
+    score: int | Literal["NA", "ERR"]
+    reason: str = ""
+
+
+class RawRuleFinding(BaseModel):
     """
-    return [
-        {
-            "role": "user",
-            "content": [
-                {"type": "text", "text": cached_block, "cache_control": {"type": "ephemeral"}},
-                {"type": "text", "text": artifact_block},
-            ],
-        }
-    ]
+    Permissive variant of RuleFinding used as the scorer's structured output.
+
+    Mirrors RuleFinding's fields but skips the dimension/rule_number range
+    validators so a single hallucinated value can be dropped in
+    `_to_scored_result()` rather than failing the whole call. Surviving
+    entries are re-validated through the strict RuleFinding before they reach
+    the report.
+    """
+
+    model_config = ConfigDict(extra="forbid")
+    dimension: str
+    rule_number: int
+    verdict: Verdict
+    description: str
+    locations: list[Location] = []
 
 
-def extract_json_block(text: str) -> dict:
-    """Pull the first ```json fence out of the model response and parse it."""
-    m = JSON_FENCE_RE.search(text)
-    if not m:
-        raise ValueError(
-            f"no ```json``` block in response; got {len(text)} chars starting: {text[:200]!r}"
-        )
-    payload = m.group(1).strip()
-    try:
-        return json.loads(payload)
-    except json.JSONDecodeError as exc:
-        raise ValueError(f"json block did not parse: {exc}\npayload:\n{payload[:500]}") from exc
+class ScoringResponse(BaseModel):
+    """The validated shape of what the scoring agent emits per artifact."""
+
+    scores: dict[str, ScoreEntry]
+    rule_findings: list[RawRuleFinding] = []
 
 
-def parse_response(payload: dict) -> ScoredResult:
-    """Translate a parsed JSON payload into QualScores + violations."""
-    if "scores" not in payload or not isinstance(payload["scores"], dict):
-        raise ValueError("response missing 'scores' object")
-    scores_raw = payload["scores"]
-    missing = VALID_DIMENSION_KEYS - set(scores_raw.keys())
+def _to_scored_result(response: ScoringResponse) -> ScoredResult:
+    """
+    Regroup the flat ScoringResponse into the nested QualScores / QualReasons
+    pair that downstream report code expects.
+
+    Unknown dimension labels and out-of-range `rule_number` values are dropped
+    with a stderr warning rather than crashing the whole eval — the model
+    occasionally hallucinates one even with the bounds appendix in the prompt;
+    the score and other findings remain useful. `ScoringResponse` uses
+    `RawRuleFinding` (permissive) at the SDK boundary so the bad entry reaches
+    this filter instead of being rejected by Pydantic AI.
+    """
+    missing = VALID_DIMENSION_KEYS - set(response.scores.keys())
     if missing:
         raise ValueError(f"response missing dimensions: {sorted(missing)}")
-    extra = set(scores_raw.keys()) - VALID_DIMENSION_KEYS
+    extra = set(response.scores.keys()) - VALID_DIMENSION_KEYS
     if extra:
         raise ValueError(f"response has unknown dimension keys: {sorted(extra)}")
 
     def _score(key: str) -> int | str:
-        entry = scores_raw[key]
-        if not isinstance(entry, dict) or "score" not in entry:
-            raise ValueError(f"dimension {key!r} has no 'score' field")
-        s = entry["score"]
-        if s == "NA":
-            return "NA"
-        if not isinstance(s, int) or not 0 <= s <= 5:
-            raise ValueError(f"dimension {key!r} score must be int 0-5 or the literal 'NA': {s!r}")
+        s = response.scores[key].score
+        if s in ("NA", "ERR"):
+            return s
+        if not (1 <= s <= 5):
+            raise ValueError(f"dimension {key!r} score out of 1-5 range: {s!r}")
         return s
 
     def _reason(key: str) -> str | None:
-        entry = scores_raw[key]
-        if not isinstance(entry, dict):
-            return None
-        reason = entry.get("reason")
-        if reason is None:
-            return None
-        if not isinstance(reason, str):
-            raise ValueError(f"dimension {key!r} reason not str: {reason!r}")
-        return reason.strip() or None
+        return response.scores[key].reason.strip() or None
 
     score_groups: dict[str, BaseModel] = {}
     reason_groups: dict[str, BaseModel] = {}
     for group in rs.GROUPS:
-        score_kwargs = {d.key: _score(d.key) for d in group.dimensions}
-        reason_kwargs = {d.key: _reason(d.key) for d in group.dimensions}
-        score_groups[group.key] = _SCORES_CLS[group.key](**score_kwargs)
-        reason_groups[group.key] = _REASONS_CLS[group.key](**reason_kwargs)
+        score_groups[group.key] = _SCORES_CLS[group.key](
+            **{d.key: _score(d.key) for d in group.dimensions}
+        )
+        reason_groups[group.key] = _REASONS_CLS[group.key](
+            **{d.key: _reason(d.key) for d in group.dimensions}
+        )
     qual = QualScores(**score_groups)
     qual_reasons = QualReasons(**reason_groups)
 
-    violations_raw = payload.get("violations", [])
-    if not isinstance(violations_raw, list):
-        raise ValueError("response 'violations' is not a list")
-    violations: list[Violation] = []
-    for v in violations_raw:
-        if not isinstance(v, dict):
-            raise ValueError(f"violation is not an object: {v!r}")
-        rn = v.get("rule_number")
-        if not isinstance(rn, int):
-            raise ValueError(
-                f"violation rule_number must be an integer, got {type(rn).__name__}: "
-                f"{rn!r} (dimension {v.get('dimension')!r})"
-            )
-        # Drop out-of-range rule_numbers with a stderr warning rather than
-        # crashing the whole eval — the model occasionally invents a number
-        # past the dimension's bound even with the bounds appendix in the
-        # prompt. The score and other citations are still useful; the raw
-        # response is preserved for audit.
-        try:
-            max_rule = rs.rule_count(v["dimension"])
-        except KeyError:
-            max_rule = None
-        if max_rule is not None and not (1 <= rn <= max_rule):
+    kept_findings: list[RuleFinding] = []
+    for finding in response.rule_findings:
+        if finding.dimension not in rs.DIMENSIONS_BY_LABEL:
             sys.stderr.write(
-                f"warning: dropping out-of-range violation rule_number={rn} "
-                f"for dimension {v['dimension']!r} (valid 1-{max_rule}); "
-                f"description: {(v.get('description') or '')[:120]!r}\n"
+                f"warning: dropping rule_finding with unknown dimension {finding.dimension!r}; "
+                f"description: {finding.description[:120]!r}\n"
             )
             continue
-        violations.append(
-            Violation(
-                dimension=v["dimension"],
-                rule_number=rn,
-                description=v["description"],
-                location=v.get("location"),
+        max_rule = rs.rule_count(finding.dimension)
+        if max_rule and not (1 <= finding.rule_number <= max_rule):
+            sys.stderr.write(
+                f"warning: dropping out-of-range rule_finding rule_number={finding.rule_number} "
+                f"for dimension {finding.dimension!r} (valid 1-{max_rule}); "
+                f"description: {finding.description[:120]!r}\n"
             )
-        )
-    return ScoredResult(qual=qual, qual_reasons=qual_reasons, violations=violations)
+            continue
+        kept_findings.append(RuleFinding.model_validate(finding.model_dump()))
+
+    return ScoredResult(qual=qual, qual_reasons=qual_reasons, rule_findings=kept_findings)
+
+
+# LLM client ----------------------------------------------------------------
 
 
 @dataclass
-class AnthropicCallResult:
-    """Wrapper around an Anthropic response capturing what we need for audit + scoring."""
+class CallResult:
+    """Wrapper around a scoring call capturing the parts we need downstream."""
 
-    text: str
+    output: ScoringResponse
     model_id: str
-    cache_creation_input_tokens: int
-    cache_read_input_tokens: int
+    cache_write_tokens: int
+    cache_read_tokens: int
     input_tokens: int
     output_tokens: int
 
 
-def _extract_call_result(response) -> AnthropicCallResult:
-    """Convert an SDK Message response into AnthropicCallResult."""
-    text_parts: list[str] = []
-    for block in response.content:
-        if getattr(block, "type", None) == "text":
-            text_parts.append(block.text)
-    text = "".join(text_parts)
-    usage = response.usage
-    return AnthropicCallResult(
-        text=text,
-        model_id=response.model,
-        cache_creation_input_tokens=getattr(usage, "cache_creation_input_tokens", 0) or 0,
-        cache_read_input_tokens=getattr(usage, "cache_read_input_tokens", 0) or 0,
+def _model_settings(provider: str) -> ModelSettings | AnthropicModelSettings:
+    """
+    Per-provider settings.
+
+    For Anthropic we opt into prompt caching of both the instructions block
+    and the tool definitions, so a batch run amortizes the rubric + guidelines
+    + schema overhead across all calls. Other providers fall back to the
+    framework default.
+    """
+    if provider == "anthropic":
+        return AnthropicModelSettings(
+            max_tokens=DEFAULT_MAX_TOKENS,
+            timeout=DEFAULT_TIMEOUT_S,
+            anthropic_cache_instructions=True,
+            anthropic_cache_tool_definitions=True,
+        )
+    return ModelSettings(
+        max_tokens=DEFAULT_MAX_TOKENS,
+        timeout=DEFAULT_TIMEOUT_S,
+    )
+
+
+def _build_agent(model: str) -> Agent[None, ScoringResponse]:
+    """
+    Construct the scoring Agent with provider-appropriate caching.
+
+    `model` must be a non-empty string. An unknown provider prefix or model id
+    raises `UserError` from Pydantic AI; we let that propagate so the CLI can
+    print it and exit non-zero rather than silently scoring against the wrong
+    provider.
+    """
+    resolved = _resolve_model(model)
+    try:
+        return Agent(
+            model=resolved,
+            output_type=ScoringResponse,
+            instructions=_cached_block_text(),
+            model_settings=_model_settings(_provider_of(resolved)),
+        )
+    except Exception as exc:
+        # Re-raise with the user-facing model spec attached so the failure
+        # message says what they asked for, not just the resolved string.
+        raise ValueError(
+            f"cannot load model {model!r} (resolved to {resolved!r}): {exc}. "
+            f"Run `pprose score --list-models` for suggestions."
+        ) from exc
+
+
+def _result_to_call_result(result) -> CallResult:
+    """Pull the output, model id, and per-call token usage out of an AgentRunResult."""
+    usage = result.usage
+    # The provider response is exposed at result.response with the resolved model
+    # name; fall back to "unknown" if the framework didn't populate it (e.g. tests).
+    model_id = getattr(getattr(result, "response", None), "model_name", "unknown")
+    return CallResult(
+        output=result.output,
+        model_id=model_id,
+        cache_write_tokens=getattr(usage, "cache_write_tokens", 0) or 0,
+        cache_read_tokens=getattr(usage, "cache_read_tokens", 0) or 0,
         input_tokens=getattr(usage, "input_tokens", 0) or 0,
         output_tokens=getattr(usage, "output_tokens", 0) or 0,
     )
 
 
-def call_anthropic(
-    messages: list[dict],
-    *,
-    model: str | None = None,
-    max_tokens: int = DEFAULT_MAX_TOKENS,
-    timeout: float = DEFAULT_TIMEOUT_S,
-) -> AnthropicCallResult:
-    """Invoke the Anthropic Messages API (sync) with the prepared message list.
-
-    Reads `ANTHROPIC_API_KEY` from the environment via the SDK default.
-    Returns the response text plus the usage stats needed to populate
-    `ReproContext.cache_stats`.
-    """
-    import anthropic
-
-    client = anthropic.Anthropic(timeout=timeout)
-    response = client.messages.create(
-        model=_resolve_model(model),
-        max_tokens=max_tokens,
-        messages=messages,
-    )
-    return _extract_call_result(response)
+def call_scorer(artifact_block: str, *, model: str) -> CallResult:
+    """Invoke the scoring agent synchronously."""
+    agent = _build_agent(model)
+    return _result_to_call_result(agent.run_sync(artifact_block))
 
 
-async def call_anthropic_async(
-    messages: list[dict],
-    *,
-    model: str | None = None,
-    max_tokens: int = DEFAULT_MAX_TOKENS,
-    timeout: float = DEFAULT_TIMEOUT_S,
-) -> AnthropicCallResult:
-    """Async variant of call_anthropic, used by score_batch under gather_limited."""
-    import anthropic
-
-    client = anthropic.AsyncAnthropic(timeout=timeout)
-    response = await client.messages.create(
-        model=_resolve_model(model),
-        max_tokens=max_tokens,
-        messages=messages,
-    )
-    return _extract_call_result(response)
+async def call_scorer_async(artifact_block: str, *, model: str) -> CallResult:
+    """Async variant of call_scorer, used by score_batch under gather_limited."""
+    agent = _build_agent(model)
+    return _result_to_call_result(await agent.run(artifact_block))
 
 
-def _anthropic_sdk_version() -> str:
-    import anthropic
+def _pydantic_ai_version() -> str:
+    try:
+        from importlib.metadata import version
 
-    return getattr(anthropic, "__version__", "unknown")
+        return version("pydantic-ai-slim")
+    except Exception:
+        return "unknown"
 
 
 @dataclass
@@ -482,7 +531,7 @@ def merge_into_report(
     evaluator: str,
     repro: ReproContext | None = None,
 ) -> EvalReport:
-    """Return a new EvalReport with scored qual + violations + evaluator merged in.
+    """Return a new EvalReport with scored qual + rule_findings + evaluator merged in.
 
     If `repro` is provided (model-scoring path), its fields are recorded under
     metadata for reproducibility.
@@ -491,9 +540,17 @@ def merge_into_report(
     data.pop("derived", None)  # let validator recompute
     data["qual"] = scored.qual.model_dump(mode="json")
     data["qual_reasons"] = scored.qual_reasons.model_dump(mode="json")
-    data["violations"] = [v.model_dump(mode="json") for v in scored.violations]
+    data["rule_findings"] = [v.model_dump(mode="json") for v in scored.rule_findings]
     data["metadata"]["evaluator"] = evaluator
-    data["metadata"]["method"] = data["metadata"].get("method") or "model (anthropic SDK)"
+    # Default `method` to the resolved provider so audit/comparison traceability
+    # records which API actually scored the report (Anthropic, OpenAI, Google,
+    # ...). Falls back to a provider-agnostic label when no repro context is
+    # given (e.g. the manual-scoring + merge path in tests).
+    default_method = "model (pydantic-ai)"
+    if repro is not None and repro.model:
+        provider = _provider_of(_resolve_model(repro.model))
+        default_method = f"model ({provider} via pydantic-ai)"
+    data["metadata"]["method"] = data["metadata"].get("method") or default_method
     data["metadata"]["status"] = "complete"
     if repro is not None:
         for key, value in (
@@ -517,17 +574,17 @@ def merge_into_report(
 
 @dataclass
 class _ScorePrep:
-    """Everything needed before the SDK call, computed once per artifact."""
+    """Everything needed before the LLM call, computed once per artifact."""
 
     report: EvalReport
     artifact_path: Path
-    messages: list[dict]
+    artifact_block: str
     out_path: Path
     prompt_text: str
 
 
 def _prepare_score(yaml_path: Path, *, out: Path | None) -> _ScorePrep:
-    """Load the eval file, resolve the artifact path, build messages + I/O paths."""
+    """Load the eval file, resolve the artifact path, build prompts + I/O paths."""
     report = EvalReport.from_eval_md(yaml_path)
     artifact_path = Path(report.artifact.path)
     if not artifact_path.is_absolute():
@@ -535,13 +592,12 @@ def _prepare_score(yaml_path: Path, *, out: Path | None) -> _ScorePrep:
 
     cached_block = _cached_block_text()
     artifact_block = _artifact_block_text(artifact_path)
-    messages = _build_messages(cached_block, artifact_block)
 
     out_path = out if out else yaml_path
     return _ScorePrep(
         report=report,
         artifact_path=artifact_path,
-        messages=messages,
+        artifact_block=artifact_block,
         out_path=out_path,
         prompt_text=cached_block + "\n\n" + artifact_block,
     )
@@ -549,21 +605,22 @@ def _prepare_score(yaml_path: Path, *, out: Path | None) -> _ScorePrep:
 
 def _apply_score(
     prep: _ScorePrep,
-    result: AnthropicCallResult,
+    result: CallResult,
     *,
-    model: str | None,
+    model: str,
     evaluator: str,
     allow_misaligned: bool,
     argv: list[str] | None,
     quiet: bool = False,
 ) -> int:
-    """Parse the model response, merge into the eval report, write `.eval.md`.
+    """
+    Reshape the agent's structured response, merge into the eval report, and
+    write `.eval.md`.
 
     Returns 0 on success, 1 on alignment failure. Shared between the sync and
     async _score_one paths.
     """
-    payload = extract_json_block(result.text)
-    scored = parse_response(payload)
+    scored = _to_scored_result(result.output)
 
     cmd_str = " ".join(["pprose", "score"] + (argv or sys.argv[1:]))
     repro = ReproContext(
@@ -574,10 +631,10 @@ def _apply_score(
         rubric_sha256=_sha256_of_file(RUBRIC_PATH),
         guidelines_sha256=_sha256_of_file(GUIDELINES_PATH),
         artifact_sha256=_sha256_of_file(prep.artifact_path),
-        sdk_version=_anthropic_sdk_version(),
+        sdk_version=_pydantic_ai_version(),
         cache_stats={
-            "creation_input_tokens": result.cache_creation_input_tokens,
-            "read_input_tokens": result.cache_read_input_tokens,
+            "cache_write_tokens": result.cache_write_tokens,
+            "cache_read_tokens": result.cache_read_tokens,
             "input_tokens": result.input_tokens,
             "output_tokens": result.output_tokens,
         },
@@ -616,7 +673,7 @@ def _score_one(
     yaml_path: Path,
     *,
     out: Path | None,
-    model: str | None,
+    model: str,
     evaluator: str,
     allow_misaligned: bool,
     argv: list[str] | None,
@@ -626,7 +683,7 @@ def _score_one(
         print(f"error: not a file: {yaml_path}", file=sys.stderr)
         return 1
     prep = _prepare_score(yaml_path, out=out)
-    result = call_anthropic(prep.messages, model=model)
+    result = call_scorer(prep.artifact_block, model=model)
     return _apply_score(
         prep,
         result,
@@ -641,7 +698,7 @@ async def _score_one_async(
     yaml_path: Path,
     *,
     out: Path | None,
-    model: str | None,
+    model: str,
     evaluator: str,
     allow_misaligned: bool,
     argv: list[str] | None,
@@ -652,7 +709,7 @@ async def _score_one_async(
         print(f"error: not a file: {yaml_path}", file=sys.stderr)
         return 1
     prep = _prepare_score(yaml_path, out=out)
-    result = await call_anthropic_async(prep.messages, model=model)
+    result = await call_scorer_async(prep.artifact_block, model=model)
     return _apply_score(
         prep,
         result,
@@ -667,7 +724,7 @@ async def _score_one_async(
 async def score_batch(
     yaml_paths: list[Path],
     *,
-    model: str | None,
+    model: str,
     evaluator: str,
     allow_misaligned: bool,
     argv: list[str] | None,
@@ -734,18 +791,19 @@ async def score_batch(
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(
         description=(
-            "Score the qual + violations blocks of one or more eval reports "
-            "via the Anthropic SDK. The rubric + guidelines block is cached "
+            "Score the qual + rule_findings blocks of one or more eval reports "
+            "via Pydantic AI. On Anthropic the rubric + guidelines block is cached "
             "across calls within ~5 minutes."
         ),
     )
     parser.add_argument(
         "yaml_paths",
         metavar="report_paths",
-        nargs="+",
+        nargs="*",
         help=(
             "One or more eval reports (typically from `pprose report from-metrics`). "
-            "Multiple paths score them sequentially; pair with --batch for parallel."
+            "Multiple paths score them sequentially; pair with --batch for parallel. "
+            "Omit when using --list-models."
         ),
     )
     parser.add_argument(
@@ -760,13 +818,22 @@ def main(argv: list[str] | None = None) -> int:
         "--model",
         default=None,
         help=(
-            f"Claude model alias or ID (e.g. sonnet, opus, haiku, or a full ID). "
-            f"Default: {DEFAULT_MODEL}."
+            "Model to score with (required for actual scoring; not needed for "
+            "--dry-run or --list-models). Accepts a short alias from --list-models "
+            "(e.g. opus, gpt, gemini), a Pydantic AI model string "
+            "(anthropic:claude-opus-4-7, openai:gpt-5.5, google:gemini-3.5-flash), "
+            "or a bare claude-* ID (auto-prefixed with anthropic:). Unknown "
+            "provider prefixes or model IDs raise at the agent boundary."
         ),
     )
     parser.add_argument(
+        "--list-models",
+        action="store_true",
+        help="Print the curated list of suggested models and exit.",
+    )
+    parser.add_argument(
         "--evaluator",
-        default="model (anthropic SDK)",
+        default="model (pydantic-ai)",
         help="Identity to record in metadata.evaluator.",
     )
     parser.add_argument(
@@ -806,9 +873,16 @@ def main(argv: list[str] | None = None) -> int:
     )
     args = parser.parse_args(argv)
 
+    if args.list_models:
+        print(_format_suggested_models())
+        return 0
+
     _load_env_files()
 
     yaml_paths = [Path(p) for p in args.yaml_paths]
+    if not yaml_paths:
+        print("error: at least one eval report path is required", file=sys.stderr)
+        return 2
     if args.out and len(yaml_paths) > 1:
         print("error: --out is only valid with a single eval report", file=sys.stderr)
         return 2
@@ -829,9 +903,28 @@ def main(argv: list[str] | None = None) -> int:
         sys.stdout.write(build_prompt(artifact_path))
         return 0
 
-    if "ANTHROPIC_API_KEY" not in os.environ:
+    if not args.model:
         print(
-            "error: ANTHROPIC_API_KEY not set; "
+            "error: --model is required for scoring (omit only with --dry-run "
+            "or --list-models). Run `pprose score --list-models` for suggestions.",
+            file=sys.stderr,
+        )
+        return 2
+
+    # Each provider reads its own API key from the environment. We surface the
+    # missing-key error early for the resolved provider rather than waiting for
+    # the SDK to raise on the first request.
+    resolved = _resolve_model(args.model)
+    provider = _provider_of(resolved)
+    _API_KEY_ENV = {
+        "anthropic": "ANTHROPIC_API_KEY",
+        "openai": "OPENAI_API_KEY",
+        "google": "GOOGLE_API_KEY",
+    }
+    key_env = _API_KEY_ENV.get(provider)
+    if key_env and key_env not in os.environ:
+        print(
+            f"error: {key_env} not set (required for provider {provider!r}); "
             "add it to .env or .env.local (auto-loaded), or export it",
             file=sys.stderr,
         )

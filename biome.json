@@ -1,0 +1,87 @@
+{
+  "$schema": "https://biomejs.dev/schemas/2.4.14/schema.json",
+  "vcs": {
+    "enabled": true,
+    "clientKind": "git",
+    "useIgnoreFile": true
+  },
+  "files": {
+    "ignoreUnknown": false,
+    "includes": [
+      "**",
+      "!**/.venv",
+      "!**/__pycache__",
+      "!**/node_modules",
+      "!**/_generated",
+      "!attic",
+      "!tools/pprose/.venv",
+      "!tools/pprose/dist"
+    ]
+  },
+  "formatter": {
+    "enabled": true,
+    "indentStyle": "space",
+    "indentWidth": 2,
+    "lineWidth": 100,
+    "lineEnding": "lf",
+    "formatWithErrors": false
+  },
+  "assist": {
+    "actions": {
+      "source": {
+        "organizeImports": "on"
+      }
+    }
+  },
+  "linter": {
+    "enabled": true,
+    "rules": {
+      "recommended": true,
+      "correctness": {
+        "noUnusedVariables": "warn",
+        "noUnusedImports": "warn"
+      },
+      "style": {
+        "useConst": "error",
+        "useTemplate": "warn",
+        "noNonNullAssertion": "warn"
+      },
+      "suspicious": {
+        "noExplicitAny": "warn",
+        "noConsole": "off"
+      }
+    }
+  },
+  "javascript": {
+    "formatter": {
+      "quoteStyle": "double",
+      "trailingCommas": "all",
+      "semicolons": "always",
+      "arrowParentheses": "always",
+      "bracketSpacing": true
+    },
+    "globals": [
+      "d3",
+      "PracticalProseDesignSystem",
+      "PracticalProseDesignColorControls",
+      "PracticalProseDesignFontControls",
+      "PracticalProseDesignPaletteSliders"
+    ]
+  },
+  "css": {
+    "formatter": {
+      "enabled": true,
+      "quoteStyle": "double"
+    },
+    "linter": {
+      "enabled": true
+    }
+  },
+  "json": {
+    "formatter": {
+      "enabled": true,
+      "indentWidth": 2,
+      "trailingCommas": "none"
+    }
+  }
+}

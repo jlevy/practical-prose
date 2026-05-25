@@ -131,12 +131,67 @@ groups:
     - >-
       Required headers, metadata, and footers are present and correctly placed
     - The rendered document has no obvious production defects
+- key: reasoning
+  label: Reasoning
+  dimensions:
+  - key: discipline
+    label: Discipline
+    section: 11
+    question: >-
+      Are observation, judgment, interpretation, and implication worked through in
+      order, with each higher rung supported by the prior?
+    rules:
+    - Don’t skip rungs
+    - Don’t blend rungs in one sentence
+    - Each rung carries its own evidence
+    - >-
+      Use rung tags in audits, evals, and high-stakes analysis; preserve rung separation
+      without tags in polished prose
+    - Mark transitions
+  - key: soundness
+    label: Soundness
+    section: 12
+    question: >-
+      Do claims follow from evidence through valid mechanisms and explicit assumptions?
+    rules:
+    - Mechanism > correlation
+    - Don’t bridge “promising signal” to “outcome confirmed.”
+    - Surface unstated assumptions
+    - Engage the strongest counter-evidence
+    - Asserted ≠ argued
+    - Define terms when they carry weight
+    - Internal consistency
+    - Counterfactual test for causal and explanatory claims
+  - key: precision
+    label: Precision
+    section: 13
+    question: Are claims and terms specified at the right granularity?
+    rules:
+    - Use the most specific term the audience can parse
+    - Refer to entities by their proper name
+    - Avoid umbrella terms when sub-distinctions matter
+    - Quantitative precision matches measurement precision
+    - No vague placeholders for countables
+  - key: parsimony
+    label: Parsimony
+    section: 14
+    question: >-
+      Is each load-bearing reasoning chain the cleanest, simplest sound argument possible
+      for its conclusion?
+    rules:
+    - >-
+      Prefer citation over re-derivation when both serve the same purpose
+    - Cut non-load-bearing steps
+    - Match chain length to warrant strength
+    - Don't truncate required intermediates
+    - Prefer the most direct warrant available
+    - Parsimony applies to load-bearing chains
 - key: grounding
   label: Grounding
   dimensions:
   - key: verifiability
     label: Verifiability
-    section: 11
+    section: 15
     question: >-
       Are claims traceable to specific sources, observations, or calculations?
     rules:
@@ -150,7 +205,7 @@ groups:
     - For central claims, name what would invalidate them
   - key: factuality
     label: Factuality
-    section: 12
+    section: 16
     question: Are claims true and supported by their cited evidence?
     rules:
     - Verifiable claims are corroborated
@@ -167,7 +222,7 @@ groups:
       Calibrated uncertainty satisfies Factuality; uncalibrated certainty fails it
   - key: relevance
     label: Relevance
-    section: 13
+    section: 17
     question: >-
       Do sources, citations, and reasoning chains bear on the document's stated purpose?
     rules:
@@ -176,61 +231,6 @@ groups:
     - Mark digressions as digressions
     - Each source passes the one-sentence test
     - Don't pad bibliographies for performative-rigor reasons
-- key: reasoning
-  label: Reasoning
-  dimensions:
-  - key: discipline
-    label: Discipline
-    section: 14
-    question: >-
-      Are observation, judgment, interpretation, and implication worked through in
-      order, with each higher rung supported by the prior?
-    rules:
-    - Don’t skip rungs
-    - Don’t blend rungs in one sentence
-    - Each rung carries its own evidence
-    - >-
-      Use rung tags in audits, evals, and high-stakes analysis; preserve rung separation
-      without tags in polished prose
-    - Mark transitions
-  - key: soundness
-    label: Soundness
-    section: 15
-    question: >-
-      Do claims follow from evidence through valid mechanisms and explicit assumptions?
-    rules:
-    - Mechanism > correlation
-    - Don’t bridge “promising signal” to “outcome confirmed.”
-    - Surface unstated assumptions
-    - Engage the strongest counter-evidence
-    - Asserted ≠ argued
-    - Define terms when they carry weight
-    - Internal consistency
-    - Counterfactual test for causal and explanatory claims
-  - key: precision
-    label: Precision
-    section: 16
-    question: Are claims and terms specified at the right granularity?
-    rules:
-    - Use the most specific term the audience can parse
-    - Refer to entities by their proper name
-    - Avoid umbrella terms when sub-distinctions matter
-    - Quantitative precision matches measurement precision
-    - No vague placeholders for countables
-  - key: parsimony
-    label: Parsimony
-    section: 17
-    question: >-
-      Is each load-bearing reasoning chain the cleanest, simplest sound argument possible
-      for its conclusion?
-    rules:
-    - >-
-      Prefer citation over re-derivation when both serve the same purpose
-    - Cut non-load-bearing steps
-    - Match chain length to warrant strength
-    - Don't truncate required intermediates
-    - Prefer the most direct warrant available
-    - Parsimony applies to load-bearing chains
 - key: judgment
   label: Judgment
   dimensions:

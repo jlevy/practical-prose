@@ -407,24 +407,30 @@ quant:
     code_blocks: 0
     images: 0
     tables: 24
-violations:
+rule_findings:
 - description: Compressed phrasing risks ambiguity in §2.4 Strategic-horizon mapping
     ("Acts 1-4")
   dimension: Clarity
+  locations: []
   rule_number: 4
+  verdict: violated
 - description: 0 external inline links to primary sources
   dimension: Organization
+  locations: []
   rule_number: 5
+  verdict: violated
 - description: §1.8 pricing section less deep than its strategic relevance
   dimension: Depth
+  locations: []
   rule_number: 4
+  verdict: violated
 ---
 
-## NET-r4
+# NET-r4
 
 **Source:** `<external artifact not in this repo>`  **Scope:** `—`  **Overall mean (20 dims):** 4.73  **Rubric:** `pp20v1`  **Model:** `—`  **Eval date:** 2026-05-07
 
-### Qualitative
+## Qualitative
 
 | Group | Dimension | Score | Reason |
 | --- | --- | ---: | --- |
@@ -456,13 +462,13 @@ violations:
 |  | **Mean** | **5.00** | |
 |  | **Overall mean (20 dims)** | **4.73** | |
 
-### Violations
+## Violations
 
 1. **Clarity** (rule 4) — Compressed phrasing risks ambiguity in §2.4 Strategic-horizon mapping ("Acts 1-4")
 2. **Organization** (rule 5) — 0 external inline links to primary sources
 3. **Depth** (rule 4) — §1.8 pricing section less deep than its strategic relevance
 
-### Quantitative
+## Quantitative
 
 | Section | Measure | Value |
 | --- | --- | ---: |

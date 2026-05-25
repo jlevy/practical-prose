@@ -22,8 +22,8 @@ adds the substantive dimensions and produces an editorial review.
   dimensions (E1-E3, F1-F3) — formatting, clarity wording, banned-register words, concision,
   consistency, organization, broken links. Apply a fix only if you are certain it
   preserves meaning, claim strength, and citations.
-- **Flag, do not silently rewrite** (substantive, judgment-bearing): Purpose, Grounding,
-  Reasoning, and Judgment issues — anything that would change factual meaning, claim
+- **Flag, do not silently rewrite** (substantive, judgment-bearing): Purpose, Reasoning,
+  Grounding, and Judgment issues — anything that would change factual meaning, claim
   strength, scope, cited evidence, or the line of argument. Record these in the review as
   suggested fixes for the author.
 
@@ -40,10 +40,10 @@ adds the substantive dimensions and produces an editorial review.
    - **Lint pass** — F1 Organization, F2 Consistency, F3 Formatting, E1 banned-register
      and vague-word checks. Use `pprose metrics`. *Auto-apply.*
    - **Expression pass** — E1-E3 clarity, coherence, concision. *Auto-apply.*
-   - **Claim audit** — G1 Verifiability, G2 Factuality, G3 Relevance: every quantitative
-     claim against its cited source; re-run calculations. *Flag.*
    - **Reasoning audit** — R1-R4, J2 Fairness, J3 Robustness: assumptions, mechanisms,
      counter-evidence, parsimony, alternative lenses. *Flag.*
+   - **Claim audit** — G1 Verifiability, G2 Factuality, G3 Relevance: every quantitative
+     claim against its cited source; re-run calculations. *Flag.*
    - **Purpose audit** — P1-P4, J1 Calibration: output shape vs. task, scope,
      skim-recoverability. *Flag structural moves; apply small reorders.*
 
@@ -81,7 +81,7 @@ keep. Specific, not generic praise.
 
 ## Weaknesses
 
-Organized by group (Purpose, Expression, Grounding, Reasoning, Judgment). For each issue:
+Organized by group (Purpose, Expression, Form, Reasoning, Grounding, Judgment). For each issue:
 the dimension (e.g. G2 Factuality), a location pointer (line range, §heading, or quoted
 phrase), and what is wrong.
 

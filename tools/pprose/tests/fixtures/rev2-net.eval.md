@@ -454,213 +454,293 @@ quant:
     code_blocks: 2
     images: 0
     tables: 27
-violations:
+rule_findings:
 - description: Central thesis answer and scenario tree buried in §2.8; not recoverable
     from a skim of intro + section headings
   dimension: Suitability
-  location: Overview L29-47
+  locations:
+  - note: Overview L29-47
   rule_number: 2
+  verdict: violated
 - description: §1.12 Macro context tagged [OPTIONAL] but included without flagging
     as mid-document scope expansion
   dimension: Scope
-  location: §1.12, L1018-1043
+  locations:
+  - section: §1.12, L1018-1043
   rule_number: 3
+  verdict: violated
 - description: Limited competitive benchmarking data for SASE segment; Akamai/Fastly
     CDN share decline asserted without sourced market-share series
   dimension: Breadth
-  location: §1.10 Vector 4, L935-938
+  locations:
+  - section: §1.10 Vector 4, L935-938
   rule_number: 2
+  verdict: violated
 - description: 'Vague magnitude words persist without quantification: ''heavy hiring'',
     ''materially'', ''modest'' across §1.9, §2.1, §2.2'
   dimension: Depth
-  location: §1.9 L885; §2.1 L1154; §2.2 L1441
+  locations:
+  - section: §1.9 L885; §2.1 L1154; §2.2 L1441
   rule_number: 3
+  verdict: violated
 - description: AI revenue triangulated estimate 5-15% is a key claim without its triangulation
     method shown
   dimension: Depth
-  location: §2.8, L1685-1687
+  locations:
+  - section: §2.8, L1685-1687
   rule_number: 1
+  verdict: violated
 - description: 'Banned-register hit: ''crystallized'' at §2.1 Q3''25 narrative and
     ''crystallizes'' at §2.8a crux table'
   dimension: Clarity
-  location: §2.1 L1266; §2.8a L1694
+  locations:
+  - section: §2.1 L1266; §2.8a L1694
   rule_number: 4
+  verdict: violated
 - description: 'Meta-commentary narrating the document''s lineage: ''this rev2 dry-run
     aims to exceed that depth'''
   dimension: Clarity
-  location: Overview, L44-46
+  locations:
+  - note: Overview, L44-46
   rule_number: 3
+  verdict: violated
 - description: 'Parallel-structure padding: ''not a CDN/security provider but an essential
     control plane for autonomous AI agents'''
   dimension: Clarity
-  location: §2.1 Q4'25, L1309-1310
+  locations:
+  - section: §2.1 Q4'25, L1309-1310
   rule_number: 5
+  verdict: violated
 - description: Verbatim paragraph duplication at L1326-1342 creates a literal copy-paste
     backtrack
   dimension: Coherence
-  location: §2.1, L1326-1342
+  locations:
+  - section: §2.1, L1326-1342
   rule_number: 3
+  verdict: violated
 - description: §2.7 customer interpretation largely restates §1.7 findings without
     advancing a distinct analytical job
   dimension: Coherence
-  location: §2.7, L1607-1634
+  locations:
+  - section: §2.7, L1607-1634
   rule_number: 1
+  verdict: violated
 - description: Beat-magnitude series ($6.6M to $25.5M) duplicated across five sections
   dimension: Concision
-  location: §1.3 L381; §2.0 L1062; §2.1 L1316; §2.2 L1387; §2.9 L1729
+  locations:
+  - section: §1.3 L381; §2.0 L1062; §2.1 L1316; §2.2 L1387; §2.9 L1729
   rule_number: 2
+  verdict: violated
 - description: §1.12 Macro tagged [OPTIONAL] adds little marginal information beyond
     §2.10 risk register coverage
   dimension: Concision
-  location: §1.12, L1018-1043
+  locations:
+  - section: §1.12, L1018-1043
   rule_number: 1
+  verdict: violated
 - description: Frontmatter carries substantive claims (target_decision, event_anchor)
     that are prose framing, not machine-readable metadata
   dimension: Concision
-  location: Frontmatter, L1-18
+  locations:
+  - note: Frontmatter, L1-18
   rule_number: 4
+  verdict: violated
 - description: Mermaid timeline code block at §1.4 is a figure without a caption explaining
     what it shows
   dimension: Organization
-  location: §1.4, L477-495
+  locations:
+  - section: §1.4, L477-495
   rule_number: 4
+  verdict: violated
 - description: Zero hyperlinks in a 17.8K-word document; all citations prose-embedded
     with no stable anchor targets
   dimension: Organization
-  location: Document-wide
+  locations:
+  - note: Document-wide
   rule_number: 6
+  verdict: violated
 - description: Several tables have too few meaningful columns to earn tabular shape
     (§1.7 2-row mega-deal table, §2.9 positioning metrics 2-column table)
   dimension: Organization
-  location: §1.7 L802-809; §2.9 L1749-1758
+  locations:
+  - section: §1.7 L802-809; §2.9 L1749-1758
   rule_number: 3
+  verdict: violated
 - description: Register drifts between analytical and extravagant ('crystallized',
     'essential control plane') without consistent house-style enforcement
   dimension: Consistency
-  location: §2.1 L1266; §2.1 L1309
+  locations:
+  - section: §2.1 L1266; §2.1 L1309
   rule_number: 5
+  verdict: violated
 - description: 'Citation style inconsistent: some claims use [VERIFIED via X] bracket
     tags, others use bare prose references'
   dimension: Consistency
-  location: §1.7 L820 vs §1.9 L898
+  locations:
+  - section: §1.7 L820 vs §1.9 L898
   rule_number: 4
+  verdict: violated
 - description: Zero reference-style or inline links means the document's link layer
     is entirely absent
   dimension: Formatting
-  location: Document-wide
+  locations:
+  - note: Document-wide
   rule_number: 2
+  verdict: violated
 - description: Inconsistent blank-line spacing around the verbatim-duplicated paragraph
     block at L1326-1342
   dimension: Formatting
-  location: §2.1, L1325-1343
+  locations:
+  - section: §2.1, L1325-1343
   rule_number: 3
+  verdict: violated
 - description: Zero hyperlinks in a deep-research document; no quantitative claim
     verifiable via a link despite [VERIFIED] tags
   dimension: Verifiability
-  location: Document-wide
+  locations:
+  - note: Document-wide
   rule_number: 1
+  verdict: violated
 - description: '[VERIFIED via 10-K cover] at §1.1 L236 does not give filing date or
     accession number; pattern repeats at §1.5b L535, §1.6 L683'
   dimension: Verifiability
-  location: §1.1 L236; §1.5b L535; §1.6 L683
+  locations:
+  - section: §1.1 L236; §1.5b L535; §1.6 L683
   rule_number: 3
+  verdict: violated
 - description: Vercel CEO benchmark claim (1.2-5x faster) has no tweet ID or URL
   dimension: Verifiability
-  location: §1.10, L911-914
+  locations:
+  - section: §1.10, L911-914
   rule_number: 2
+  verdict: violated
 - description: Anthropic '$4B Amazon investment' at §2.8 is a simplified round number;
     actual investment is multi-tranche
   dimension: Factuality
-  location: §2.8, L1669
+  locations:
+  - section: §2.8, L1669
   rule_number: 2
+  verdict: violated
 - description: AI market-size figures cite aggregator sources ('Multiple', 'AgentMarketCap')
     without URLs, dates, or verifiable identifiers
   dimension: Factuality
-  location: §1.8 AI adoption table
+  locations:
+  - section: §1.8 AI adoption table
   rule_number: 5
+  verdict: violated
 - description: '''GM at peak, op margin at through — typical Q1 seasonality with year-start
     S&M reset'' fuses observed values with interpretive judgment'
   dimension: Discipline
-  location: §2.1 Q1 2024, L1107
+  locations:
+  - section: §2.1 Q1 2024, L1107
   rule_number: 2
+  verdict: violated
 - description: '''DBNRR re-acceleration and the AI product GA timeline align too tightly
     to be coincidence'' blends observation with interpretation'
   dimension: Discipline
-  location: '§2.12 finding #3, L1913-1920'
+  locations:
+  - section: '§2.12 finding #3, L1913-1920'
   rule_number: 2
+  verdict: violated
 - description: AI-revenue triangulated estimate 5-15% stated without showing the triangulation
     method or naming the data points
   dimension: Soundness
-  location: §2.8, L1685-1687
+  locations:
+  - section: §2.8, L1685-1687
   rule_number: 3
+  verdict: violated
 - description: Verbatim paragraph duplication at L1326-1342 is an internal-consistency
     failure
   dimension: Soundness
-  location: §2.1, L1326-1342
+  locations:
+  - section: §2.1, L1326-1342
   rule_number: 7
+  verdict: violated
 - description: '''Financial fingerprint of AI is in the gross margin'' asserted as
     finding without naming the mechanism distinguishing AI-mix-shift from R2/APAC
     effects'
   dimension: Soundness
-  location: '§2.12 finding #2, L1904-1911'
+  locations:
+  - section: '§2.12 finding #2, L1904-1911'
   rule_number: 5
+  verdict: violated
 - description: '''Anthropic ($4B Amazon investment)'' uses round umbrella figure where
     multi-tranche sub-distinction matters'
   dimension: Precision
-  location: §2.5, L1554
+  locations:
+  - section: §2.5, L1554
   rule_number: 2
+  verdict: violated
 - description: '''Heavy hiring'' and ''materially'' used as vague placeholders where
     counts or named specifics are available'
   dimension: Precision
-  location: §1.9 L885; §2.1 L1154
+  locations:
+  - section: §1.9 L885; §2.1 L1154
   rule_number: 5
+  verdict: violated
 - description: Scenario probabilities 30/50/20 stated without empirical base-rate
     anchor for SaaS earnings scenario distributions
   dimension: Calibration
-  location: §2.8 scenario tree, L1710-1712
+  locations:
+  - section: §2.8 scenario tree, L1710-1712
   rule_number: 1
+  verdict: violated
 - description: AI-revenue triangulated estimate 5-15% given without showing the triangulation
     method or what data points contribute
   dimension: Calibration
-  location: §2.8, L1348-1350
+  locations:
+  - section: §2.8, L1348-1350
   rule_number: 3
+  verdict: violated
 - description: §2.12 counterintuitive findings skew ~5 bull / 1 bear / 2 neutral with
     no explicit count or confirmation-bias acknowledgement
   dimension: Fairness
-  location: §2.12, L1889-1965
+  locations:
+  - section: §2.12, L1889-1965
   rule_number: 4
+  verdict: violated
 - description: Bull case argued with three named primitives and numerical thresholds
     while bear case receives a single paragraph without comparable named mechanisms
   dimension: Fairness
-  location: §2.8, L1651-1675
+  locations:
+  - section: §2.8, L1651-1675
   rule_number: 1
+  verdict: violated
 - description: 'Base-to-bull lean not tested against most threatening alternative:
     ''all narrative'' bear lens named in §2.8 but not run at comparable depth'
   dimension: Robustness
-  location: §2.8, L1706-1712
+  locations:
+  - section: §2.8, L1706-1712
   rule_number: 2
+  verdict: violated
 - description: DBNRR-AI correlation finding treats temporal alignment as the obvious
     reading without naming alternative explanations (GTM rebuild, macro cycle)
   dimension: Robustness
-  location: '§2.12 finding #3, L1913-1920'
+  locations:
+  - section: '§2.12 finding #3, L1913-1920'
   rule_number: 1
+  verdict: violated
 - description: Several cited sources address adjacent topics rather than the headline
     thesis.
   dimension: Relevance
-  location: throughout
+  locations:
+  - note: throughout
   rule_number: 1
+  verdict: violated
 - description: Multiple intermediate inferences could be cut without weakening the
     conclusion.
   dimension: Parsimony
-  location: throughout
+  locations:
+  - note: throughout
   rule_number: 2
+  verdict: violated
 ---
 
-## rev2-net
+# rev2-net
 
 **Source:** `<external artifact not in this repo>`  **Scope:** `deep_research`  **Overall mean (20 dims):** 3.10  **Rubric:** `pp20v1`  **Model:** `—`  **Eval date:** 2026-05-10
 
-### Qualitative
+## Qualitative
 
 | Group | Dimension | Score | Reason |
 | --- | --- | ---: | --- |
@@ -692,7 +772,7 @@ violations:
 |  | **Mean** | **3.00** | |
 |  | **Overall mean (20 dims)** | **3.10** | |
 
-### Violations
+## Violations
 
 1. **Suitability** (rule 2) — Central thesis answer and scenario tree buried in §2.8; not recoverable from a skim of intro + section headings *Location:* Overview L29-47.
 2. **Scope** (rule 3) — §1.12 Macro context tagged [OPTIONAL] but included without flagging as mid-document scope expansion *Location:* §1.12, L1018-1043.
@@ -735,7 +815,7 @@ violations:
 39. **Relevance** (rule 1) — Several cited sources address adjacent topics rather than the headline thesis. *Location:* throughout.
 40. **Parsimony** (rule 2) — Multiple intermediate inferences could be cut without weakening the conclusion. *Location:* throughout.
 
-### Quantitative
+## Quantitative
 
 | Section | Measure | Value |
 | --- | --- | ---: |

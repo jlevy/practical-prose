@@ -408,33 +408,45 @@ quant:
     code_blocks: 0
     images: 0
     tables: 29
-violations:
+rule_findings:
 - description: GM compression mentioned 5+ times; DBNRR across 5 places; vinext discussed
     in 7 sections
   dimension: Concision
+  locations: []
   rule_number: 2
+  verdict: violated
 - description: 0 inline links
   dimension: Organization
+  locations: []
   rule_number: 5
+  verdict: violated
 - description: Some tags missing source pointer (e.g. SS1.6 GitHub claims)
   dimension: Factuality
+  locations: []
   rule_number: 3
+  verdict: violated
 - description: No Bayesian shrinkage on probability claims
   dimension: Calibration
+  locations: []
   rule_number: 2
+  verdict: violated
 - description: Scenario probabilities stated without base-rate triangulation
   dimension: Calibration
+  locations: []
   rule_number: 3
+  verdict: violated
 - description: 8 counterintuitive findings without bull/bear/neutral count
   dimension: Fairness
+  locations: []
   rule_number: 4
+  verdict: violated
 ---
 
-## NET-r2
+# NET-r2
 
 **Source:** `<external artifact not in this repo>`  **Scope:** `—`  **Overall mean (20 dims):** 3.83  **Rubric:** `pp20v1`  **Model:** `—`  **Eval date:** 2026-05-07
 
-### Qualitative
+## Qualitative
 
 | Group | Dimension | Score | Reason |
 | --- | --- | ---: | --- |
@@ -466,7 +478,7 @@ violations:
 |  | **Mean** | **3.50** | |
 |  | **Overall mean (20 dims)** | **3.83** | |
 
-### Violations
+## Violations
 
 1. **Concision** (rule 2) — GM compression mentioned 5+ times; DBNRR across 5 places; vinext discussed in 7 sections
 2. **Organization** (rule 5) — 0 inline links
@@ -475,7 +487,7 @@ violations:
 5. **Calibration** (rule 3) — Scenario probabilities stated without base-rate triangulation
 6. **Fairness** (rule 4) — 8 counterintuitive findings without bull/bear/neutral count
 
-### Quantitative
+## Quantitative
 
 | Section | Measure | Value |
 | --- | --- | ---: |

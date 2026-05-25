@@ -408,29 +408,39 @@ quant:
     code_blocks: 0
     images: 0
     tables: 30
-violations:
+rule_findings:
 - description: Heavy duplication of canonical numbers across §1.x and §2.x
   dimension: Concision
+  locations: []
   rule_number: 2
+  verdict: violated
 - description: Zero inline links
   dimension: Organization
+  locations: []
   rule_number: 5
+  verdict: violated
 - description: Some confidence tags missing source pointers
   dimension: Factuality
+  locations: []
   rule_number: 3
+  verdict: violated
 - description: No Bayesian shrinkage on probability claims
   dimension: Calibration
+  locations: []
   rule_number: 2
+  verdict: violated
 - description: Counterintuitive findings 6 bull / 2 neutral / 0 bear with no count
   dimension: Fairness
+  locations: []
   rule_number: 4
+  verdict: violated
 ---
 
-## DDOG-r2
+# DDOG-r2
 
 **Source:** `<external artifact not in this repo>`  **Scope:** `—`  **Overall mean (20 dims):** 3.83  **Rubric:** `pp20v1`  **Model:** `—`  **Eval date:** 2026-05-07
 
-### Qualitative
+## Qualitative
 
 | Group | Dimension | Score | Reason |
 | --- | --- | ---: | --- |
@@ -462,7 +472,7 @@ violations:
 |  | **Mean** | **3.50** | |
 |  | **Overall mean (20 dims)** | **3.83** | |
 
-### Violations
+## Violations
 
 1. **Concision** (rule 2) — Heavy duplication of canonical numbers across §1.x and §2.x
 2. **Organization** (rule 5) — Zero inline links
@@ -470,7 +480,7 @@ violations:
 4. **Calibration** (rule 2) — No Bayesian shrinkage on probability claims
 5. **Fairness** (rule 4) — Counterintuitive findings 6 bull / 2 neutral / 0 bear with no count
 
-### Quantitative
+## Quantitative
 
 | Section | Measure | Value |
 | --- | --- | ---: |

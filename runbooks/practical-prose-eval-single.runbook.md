@@ -14,7 +14,8 @@ Joshua Levy (github.com/jlevy)
 
 End-to-end operational steps for evaluating one practical writing artifact: run
 quantitative metrics, score the 20 qualitative dimensions, cite guideline-rule
-violations, produce a validated `<artifact>.eval.md` report.
+findings (the `violations` view is the subset that lowered the score), produce a
+validated `<artifact>.eval.md` report.
 
 The substance of *how* to score lives in `practical-prose-rubric.md` (anchors per
 dimension, alignment principle, output format); this runbook covers what commands to
@@ -31,7 +32,9 @@ For comparing N evaluated artifacts, see `practical-prose-eval-compare.runbook.m
 
 ## Prerequisites
 
-`pprose` available on the command line and `ANTHROPIC_API_KEY` set for scoring — see
+`pprose` available on the command line and the provider-specific API key set for the
+model you score with: `ANTHROPIC_API_KEY` for `anthropic:` models, `OPENAI_API_KEY` for
+`openai:` models, `GOOGLE_API_KEY` for `google:` models. See
 [Tooling](../AGENTS.md#tooling). Batch eval outputs go under `evals/<round-name>/` at the
 repo root.
 
@@ -45,8 +48,10 @@ pprose report from-metrics path/to/artifact.md --label NAME \
 ```
 
 This runs the metrics script internally, populates the `quant` block in schema-correct
-shape, and stubs `qual` (all ERR = scorer-could-not-assess), `violations`, and
-`metadata`.
+shape, and stubs `qual` (all ERR = scorer-could-not-assess), `rule_findings`, and
+`metadata`. (`violations` is a derived view over `rule_findings` whose verdict is
+`violated` or `partial`; it is computed by the renderer, not stored as a separate
+field.)
 
 **Pick a `--scope-class`** so the comparison generator can flag density problems
 relative to genre expectations.
@@ -95,20 +100,24 @@ when calibrating the rubric.
 **Model-scoring path (default):**
 
 ```bash
-pprose score path/to/artifact.eval.md
+pprose score path/to/artifact.eval.md --model opus
 ```
 
-This calls the Anthropic SDK with the rubric, guidelines, and artifact, parses the
-structured JSON response, and fills the `qual` and `violations` blocks of the eval report
-in place. The rubric and guidelines block is sent with prompt-caching enabled, so
-subsequent calls (and `--batch` runs) reuse the cache and cost ~10× less than the first
-call.
+This routes the rubric, guidelines, and artifact through Pydantic AI to the chosen
+provider, validates the structured response, and fills the `qual`, `qual_reasons`, and
+`rule_findings` blocks of the eval report in place. On Anthropic the rubric +
+guidelines block is sent with prompt-caching enabled, so subsequent calls (and
+`--batch` runs) reuse the cache and cost ~10× less than the first call.
 Useful flags:
 
 - `--dry-run`: print the prompt to stdout without invoking the model.
 - `--out path`: write the filled eval report to a different file.
-- `--model <name>`: passed to the Anthropic SDK. Accepts aliases (`sonnet`, `haiku`,
-  `opus`) or an exact model ID. Defaults to the SDK’s default model.
+- `--model <name>`: **required.** Pydantic AI model spec. Accepts short aliases
+  (`opus`, `sonnet`, `haiku`, `gpt`, `gpt-mini`, `gemini`, ...) or a provider-
+  prefixed string (`anthropic:claude-opus-4-7`, `openai:gpt-5.5`,
+  `google:gemini-3.5-flash`). Run `pprose score --list-models` for the full
+  suggested set; any other Pydantic AI model string is accepted too.
+- `--list-models`: print the suggested model list and exit (no scoring).
 - `--batch`: score multiple eval reports in one invocation:
   `pprose score a.eval.md b.eval.md ... --batch [--max-concurrent 8 --max-rps 4]`.
   See [practical-prose-eval-compare.runbook.md](practical-prose-eval-compare.runbook.md)
@@ -134,17 +143,22 @@ For any score below 5, identify at least one specific guideline-rule violation f
 one-line description, and a location pointer (line range like `L412-418`, section
 heading like `§2.8`, or quoted phrase).
 
-### 3. Fill the `qual`, `violations`, and `metadata` blocks
+### 3. Fill the `qual`, `qual_reasons`, `rule_findings`, and `metadata` blocks
 
 If you ran the model-scoring path in step 2, this is already done; skip to step 4.
 
 If manual: open the eval report produced in step 1 and edit:
 
-- `qual`: replace the all-ERR stubs with real 1-5 scores per group (`expression`,
-  `purpose`, `grounding`, `reasoning`, `judgment`). Use `NA` where the dimension does
-  not engage; leave `ERR` only when a procedural failure prevents scoring.
-- `violations`: one entry per cited guideline-rule violation (dimension, rule_number,
-  description, location).
+- `qual`: replace the all-ERR stubs with real 1-5 scores per group (`purpose`,
+  `expression`, `form`, `reasoning`, `grounding`, `judgment`). Use `NA` where the
+  dimension does not engage; leave `ERR` only when a procedural failure prevents
+  scoring.
+- `qual_reasons`: a one-line `reason` per dimension you scored 1-5 (and for any
+  `NA` / `ERR`, a one-line procedural reason).
+- `rule_findings`: one entry per cited guideline-rule finding with `dimension`,
+  `rule_number`, `verdict` (`violated`, `partial`, `met`, or `na`), `description`,
+  and at least one `locations` anchor for `violated` / `partial`. The renderer's
+  `violations` section is the subset whose `verdict` is `violated` or `partial`.
 - `metadata`: replace `evaluator: TODO` with the human or model-scoring identity; add
   optional `method` and `notes`. `eval_date` is pre-filled.
 
@@ -163,7 +177,7 @@ Expected: `OK: path/to/artifact.eval.md`. Common failures:
 - Missing dimension under `qual`
 - `headings.total` doesn’t equal sum of `h1..h6`
 - Unknown field (typos like `discipline:` misspelled)
-- Unknown dimension or rule_number out of range under `violations`
+- Unknown dimension or rule_number out of range under `rule_findings`
 
 Validation enforces the alignment principle: every score below 5 needs a matching cited
 violation, and every score-5 (and every `NA` / `ERR`) needs none.
@@ -203,11 +217,9 @@ If the audit fails, revise scores or violations until consistent.
 
 ## Calibration set
 
-`../tools/pprose/tests/fixtures/` ships a small calibration set with **agreed scores
-and violations under `pp20v1`** (legacy `20-dim-v1` / `18-dim-v1-stale-baseline`
-reports are still loaded; the eval loader migrates `score: 0` to `ERR` automatically)
-so future agent or human evaluators can be tested for drift and self-eval overrating
-against a fixed reference:
+`../tools/pprose/tests/fixtures/` ships a small calibration set with agreed scores
+and rule findings under `pp20v1`, so future agent or human evaluators can be tested
+for drift and self-eval overrating against a fixed reference:
 
 | Fixture | Artifact | Type | Overall mean | NA dims |
 | --- | --- | --- | ---: | ---: |
@@ -218,17 +230,17 @@ against a fixed reference:
 Use this set to calibrate model-scoring runs:
 
 ```bash
-pprose score path/to/your-artifact.eval.md --model sonnet
+pprose score path/to/your-artifact.eval.md --model opus
 # then run pprose score against the calibration artifacts and compare overall_mean +
 # per-dimension scores to the pinned values above; gap >0.5 on overall or >1 on any
 # dimension flags a calibration drift to investigate.
 ```
 
 The 6 `figma-*.eval.md` fixtures are comparison-renderer test data, not calibration
-baselines: many dimensions were scored 0 on the original 12-dim eval because it did not
-enumerate per-dim violations satisfying the alignment property. The loader migrates
-those 0s to `ERR` on read of the legacy `rubric_version`.
-To restore real scores, re-eval the underlying artifact under `pp20v1`.
+baselines: many dimensions are `ERR` (scorer-could-not-assess) because the
+fixtures were carried over from a smaller earlier rubric and never re-scored under
+the current 20-dimension set. To restore real scores, re-eval the underlying
+artifact via `pprose score`.
 
 Bump the calibration set whenever the rubric is bumped (`practical-prose-rubric.md`
 §Versioning explains the trigger).
@@ -240,14 +252,13 @@ change.
 - [practical-prose-rubric.md](../docs/practical-prose-rubric.md): per-dimension
   1-5 anchors (with `NA` / `ERR` sentinels) and scoring rules.
 - [practical-prose-guidelines.md](../docs/practical-prose-guidelines.md):
-  prescriptive rules cited by `violations`.
+  prescriptive rules cited by `rule_findings`.
 - [practical-prose-eval-compare.runbook.md](practical-prose-eval-compare.runbook.md):
   runbook for comparing N evals.
 - [eval_report.py](../tools/pprose/src/pprose/eval_report.py): schema,
   validator, `from-metrics` stub generator.
 - [eval_score.py](../tools/pprose/src/pprose/eval_score.py): model-scoring
-  runner that fills
-  `qual` and `violations`.
+  runner that fills `qual`, `qual_reasons`, and `rule_findings`.
 - [metrics.py](../tools/pprose/src/pprose/metrics.py): quantitative metrics
   tool.
 

@@ -1,0 +1,3262 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Practical Prose — 20-Dimension Visualization Survey</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+
+    <script src="https://cdn.jsdelivr.net/npm/d3@7.9.0/dist/d3.min.js"></script>
+
+    <!-- Design-system tokens (surfaces, group accents, dimension colors, score
+     ramp) come from the YAML via the generated CSS.  Viz-specific tokens
+     (NA/ERR washes, rungs, overlay text, font stacks) live in the <style>
+     block below.  Edit tools/design-system/design-system.yaml + run
+     generate.py to update palette values. -->
+    <link
+      rel="stylesheet"
+      href="../../design-system/_generated/design_system.css"
+    />
+
+    <!-- Production design-system runtime: the YAML data, attached to
+     window.PracticalProseDesignSystem.  Plain script for file:// compat. -->
+    <script src="../../design-system/_generated/design_system.global.js"></script>
+
+    <!-- Design-only tools — color / font / palette UI controls. Used only by
+     these exploration pages; not part of the production design system. -->
+    <script src="lib/design-color-controls.js"></script>
+    <script src="lib/design-font-controls.js"></script>
+    <script src="lib/design-palette-sliders.js"></script>
+
+    <style>
+      /* Colors expressed as hsl() per tools/design-system/design-system.md.
+     Group hues come from the design system (Purpose=72, Expression=206,
+     Form=30, Reasoning=329, Grounding=162, Judgment=278; one hue + saturation
+     per group, lightness shifts for light/dark). The cream-paper reading surface is local to
+     this report; the score ramp (red→green valence) is the design
+     system's prescribed encoding for score cells, orthogonal to group. */
+
+      /* Font stacks — overridden live by the font chooser in the controls
+     panel below the header.  Defaults match the original cream-paper
+     book typography (serif body, system sans for UI). */
+      :root {
+        --font-sans:
+          -apple-system, BlinkMacSystemFont, "Inter", "Helvetica Neue", Arial,
+          sans-serif;
+        --font-serif:
+          "Iowan Old Style", "Charter", "Hoefler Text", Georgia, serif;
+      }
+
+      /* Viz-specific tokens NOT provided by the generated design-system CSS:
+     NA/ERR washes, rung strokes, bar overlay text.  Light values. */
+      :root,
+      :root[data-theme="light"] {
+        --score-na-fill: hsl(
+          40 12% 83%
+        ); /* NA bar fill — close to --bg, subtly darker */
+        --score-na-bg: hsl(220 8% 55% / 0.18);
+        --score-err-fill: hsl(
+          0 30% 87%
+        ); /* ERR bar fill — close to --bg, faint red tint */
+        --score-err: hsl(
+          0 60% 45%
+        ); /* ERR text / icon / badge — saturated red */
+        --score-err-bg: hsl(0 60% 50% / 0.22);
+
+        /* Rung / level-ring stroke — dark enough to read on top of a
+       filled coxcomb petal as well as on the cream background. */
+        --rung: hsl(30 12% 18% / 0.42);
+        --rung-bold: hsl(30 12% 10% / 0.85);
+
+        /* Bar-overlay text — opposite end of the value range from --fg so it
+       contrasts with a dark colored fill while --fg covers the empty
+       portion of the same bar. */
+        --bar-overlay-text: hsl(0 0% 100%);
+      }
+
+      @media (prefers-color-scheme: dark) {
+        :root {
+          --score-na-fill: hsl(40 6% 18%);
+          --score-na-bg: hsl(220 10% 60% / 0.2);
+          --score-err-fill: hsl(0 15% 20%);
+          --score-err: hsl(0 60% 65%);
+          --score-err-bg: hsl(0 60% 60% / 0.24);
+
+          --rung: hsl(40 12% 82% / 0.42);
+          --rung-bold: hsl(40 12% 92% / 0.85);
+
+          --bar-overlay-text: hsl(40 8% 6%);
+        }
+      }
+
+      /* ───────────── Surface-tone schemes ─────────────
+     Orthogonal to light/dark.  data-surface="white" gives a pure
+     near-white surface; data-surface="gray" gives a cool light-gray
+     surface.  Default (no attribute) is the warm cream paper above.
+     Each scheme overrides --bg, --card, --border, and the bg-adjacent
+     --score-na-fill / --score-err-fill tokens for both light and dark. */
+
+      /* White — light */
+      :root[data-surface="white"] {
+        --bg: hsl(0 0% 100%);
+        --card: hsl(0 0% 98%);
+        --border: hsl(0 0% 88%);
+        --score-na-fill: hsl(0 0% 90%);
+        --score-err-fill: hsl(0 35% 93%);
+      }
+      /* White — dark (via OS preference) */
+      @media (prefers-color-scheme: dark) {
+        :root[data-surface="white"]:not([data-theme="light"]) {
+          --bg: hsl(0 0% 6%);
+          --card: hsl(0 0% 10%);
+          --border: hsl(0 0% 18%);
+          --score-na-fill: hsl(0 0% 16%);
+          --score-err-fill: hsl(0 25% 18%);
+        }
+      }
+      /* White — dark (explicit) */
+      :root[data-surface="white"][data-theme="dark"] {
+        --bg: hsl(0 0% 6%);
+        --card: hsl(0 0% 10%);
+        --border: hsl(0 0% 18%);
+        --score-na-fill: hsl(0 0% 16%);
+        --score-err-fill: hsl(0 25% 18%);
+      }
+
+      /* Gray — light */
+      :root[data-surface="gray"] {
+        --bg: hsl(220 8% 96%);
+        --card: hsl(220 8% 99%);
+        --border: hsl(220 8% 85%);
+        --score-na-fill: hsl(220 8% 85%);
+        --score-err-fill: hsl(0 30% 90%);
+      }
+      /* Gray — dark (via OS preference) */
+      @media (prefers-color-scheme: dark) {
+        :root[data-surface="gray"]:not([data-theme="light"]) {
+          --bg: hsl(220 8% 12%);
+          --card: hsl(220 8% 16%);
+          --border: hsl(220 8% 24%);
+          --score-na-fill: hsl(220 8% 22%);
+          --score-err-fill: hsl(0 18% 20%);
+        }
+      }
+      /* Gray — dark (explicit) */
+      :root[data-surface="gray"][data-theme="dark"] {
+        --bg: hsl(220 8% 12%);
+        --card: hsl(220 8% 16%);
+        --border: hsl(220 8% 24%);
+        --score-na-fill: hsl(220 8% 22%);
+        --score-err-fill: hsl(0 18% 20%);
+      }
+
+      /* Explicit dark override (data-theme="dark" beats media query
+     when the user picks dark while their OS is light). */
+      :root[data-theme="dark"] {
+        --bg: hsl(40 8% 8%);
+        --fg: hsl(40 25% 88%);
+        --muted: hsl(35 8% 58%);
+        --card: hsl(40 6% 11%);
+        --border: hsl(40 6% 20%);
+        --rule: hsl(40 25% 88%);
+
+        --accent-p: hsl(72 62% 68%);
+        --accent-e: hsl(206 59% 68%);
+        --accent-f: hsl(30 60% 65%);
+        --accent-g: hsl(162 55% 62%);
+        --accent-r: hsl(329 60% 68%);
+        --accent-j: hsl(278 30% 72%);
+
+        --surface-p: hsl(72 62% 18%);
+        --surface-e: hsl(206 59% 18%);
+        --surface-f: hsl(30 60% 18%);
+        --surface-g: hsl(162 55% 16%);
+        --surface-r: hsl(329 60% 18%);
+        --surface-j: hsl(278 30% 18%);
+
+        --score-1: hsl(0 70% 60%);
+        --score-2: hsl(28 70% 60%);
+        --score-3: hsl(40 70% 60%);
+        --score-4: hsl(140 45% 55%);
+        --score-5: hsl(140 50% 45%);
+
+        --score-na-fill: hsl(
+          40 6% 18%
+        ); /* NA bar fill — close to --bg, subtly lighter */
+        --score-na-bg: hsl(220 10% 60% / 0.2);
+        --score-err-fill: hsl(
+          0 15% 20%
+        ); /* ERR bar fill — close to --bg, faint red tint */
+        --score-err: hsl(
+          0 60% 65%
+        ); /* ERR text / icon / badge — saturated red */
+        --score-err-bg: hsl(0 60% 60% / 0.24);
+
+        --rung: hsl(40 12% 82% / 0.42);
+        --rung-bold: hsl(40 12% 92% / 0.85);
+
+        --bar-overlay-text: hsl(40 8% 6%);
+
+        /* Per-dim hues — dark-mode variants */
+        --dim-P1: hsl(68 62% 65%);
+        --dim-P2: hsl(72 62% 62%);
+        --dim-P3: hsl(76 62% 59%);
+        --dim-P4: hsl(80 62% 56%);
+        --dim-E1: hsl(201 59% 68%);
+        --dim-E2: hsl(204 59% 66%);
+        --dim-E3: hsl(207 59% 64%);
+        --dim-F1: hsl(26 60% 64%);
+        --dim-F2: hsl(30 60% 61%);
+        --dim-F3: hsl(34 60% 58%);
+        --dim-G1: hsl(158 55% 62%);
+        --dim-G2: hsl(162 55% 58%);
+        --dim-G3: hsl(166 55% 54%);
+        --dim-R1: hsl(323 60% 68%);
+        --dim-R2: hsl(326 60% 65%);
+        --dim-R3: hsl(329 60% 62%);
+        --dim-R4: hsl(332 60% 59%);
+        --dim-J1: hsl(272 30% 70%);
+        --dim-J2: hsl(278 30% 67%);
+        --dim-J3: hsl(284 30% 64%);
+      }
+
+      html,
+      body {
+        background: var(--bg);
+        color: var(--fg);
+      }
+      body {
+        font-family: var(--font-serif);
+        margin: 0;
+        line-height: 1.5;
+        font-size: 16px;
+      }
+      header {
+        padding: 2.25rem clamp(1rem, 4vw, 3rem) 1rem;
+        max-width: 1400px;
+      }
+      h1 {
+        font-size: 1.8rem;
+        font-weight: 600;
+        margin: 0;
+      }
+      .lede {
+        color: var(--muted);
+        margin: 0 0 1rem;
+        max-width: 70ch;
+      }
+      .header-bar {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 1rem;
+        flex-wrap: wrap;
+      }
+      /* Shared style for both toggles (theme + surface).  Sits in the
+     header as a small pill of segmented buttons. */
+      .header-controls {
+        display: flex;
+        gap: 0.6rem;
+        flex-wrap: wrap;
+        flex-shrink: 0;
+        align-items: flex-start;
+      }
+      .theme-toggle,
+      .surface-toggle {
+        display: inline-flex;
+        border: 1px solid var(--border);
+        border-radius: 999px;
+        padding: 2px;
+        background: var(--card);
+        font-family: var(--font-sans);
+        font-size: 0.74rem;
+        flex-shrink: 0;
+      }
+      .theme-toggle button,
+      .surface-toggle button {
+        border: 0;
+        background: transparent;
+        color: var(--muted);
+        padding: 4px 12px;
+        border-radius: 999px;
+        cursor: pointer;
+        font: inherit;
+        transition:
+          background-color 220ms ease,
+          color 220ms ease;
+      }
+      .theme-toggle button.active,
+      .surface-toggle button.active {
+        background: var(--fg);
+        color: var(--bg);
+      }
+      .theme-toggle button:hover:not(.active),
+      .surface-toggle button:hover:not(.active) {
+        color: var(--fg);
+      }
+      .legend {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1rem 1.5rem;
+        margin-top: 0.75rem;
+        font-family: var(--font-sans);
+        font-size: 0.78rem;
+        color: var(--muted);
+      }
+      .legend .score-ramp {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.3rem;
+      }
+      .legend .score-ramp .step {
+        display: inline-block;
+        width: 0.9rem;
+        height: 0.7rem;
+      }
+      .legend .score-ramp .step:first-child {
+        border-radius: 2px 0 0 2px;
+      }
+      .legend .score-ramp .step:last-child {
+        border-radius: 0 2px 2px 0;
+      }
+      .legend .swatch {
+        display: inline-block;
+        width: 0.9rem;
+        height: 0.9rem;
+        border-radius: 50%; /* circle, matches palette + notes */
+        border: 1px solid var(--border);
+        margin-right: 0.4rem;
+        vertical-align: middle;
+      }
+      .legend .doc-key {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.3rem;
+      }
+      .legend .doc-key .line {
+        display: inline-block;
+        width: 1.4rem;
+        height: 2px;
+        border-radius: 1px;
+      }
+
+      main {
+        padding: 0.5rem clamp(1rem, 4vw, 3rem) 4rem;
+        max-width: 1400px;
+      }
+
+      /* ─────────── Experimentation controls panel ───────────
+     All the "let me explore the palette" controls live below the
+     header so the title area stays clean.  The theme toggle (Auto /
+     Light / Dark) stays in the header. */
+      .controls-panel {
+        margin: 0 clamp(1rem, 4vw, 3rem) 1.75rem;
+        max-width: 1400px;
+        padding: 0.85rem 1.05rem;
+        background: var(--card);
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        font-family: var(--font-sans);
+        font-size: 0.78rem;
+      }
+      .controls-section {
+        display: flex;
+        align-items: center;
+        gap: 0.6rem 1rem;
+        padding: 0.4rem 0;
+        flex-wrap: wrap;
+        border-top: 1px dashed var(--border);
+      }
+      .controls-section:first-child {
+        border-top: none;
+        padding-top: 0;
+      }
+      .controls-section:last-child {
+        padding-bottom: 0;
+      }
+      .controls-label {
+        font-size: 0.68rem;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        font-weight: 700;
+        color: var(--muted);
+        min-width: 4.5rem;
+      }
+      .controls-field {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
+      }
+      .controls-field label {
+        font-size: 0.7rem;
+        color: var(--muted);
+      }
+      .controls-field select {
+        font-family: var(--font-sans);
+        font-size: 0.78rem;
+        padding: 2px 6px;
+        background: var(--bg);
+        color: var(--fg);
+        border: 1px solid var(--border);
+        border-radius: 4px;
+      }
+
+      /* Palette controls — one row per group with H / S / Spread sliders. */
+      .controls-palette-section {
+        align-items: flex-start;
+      }
+      .palette-grid {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 2px;
+        flex: 1;
+        min-width: 0;
+      }
+      /* Flex (not grid) so the children pack with a fixed gap and any
+     extra row width stays at the right — never distributes between
+     the sliders. */
+      .palette-row {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        flex-wrap: wrap;
+      }
+      .palette-row > * {
+        flex-shrink: 0;
+      }
+      .palette-name {
+        width: 4.5rem;
+      }
+      .palette-swatch {
+        width: 0.9rem;
+        height: 0.9rem;
+        border-radius: 50%;
+        border: 1px solid var(--border);
+      }
+      .palette-name {
+        font-weight: 700;
+        font-size: 0.76rem;
+        color: var(--fg);
+      }
+      .palette-channel {
+        display: flex;
+        align-items: center;
+        gap: 0.25rem;
+      }
+      .palette-channel .ch-name {
+        font-size: 0.6rem;
+        color: var(--muted);
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        width: 2.4rem;
+        text-align: right;
+      }
+      /* Narrow sliders.  The gradient/colored thumb is always present;
+     filter: saturate() rules below desaturate everything by default
+     and smoothly re-saturate on hover (CSS doesn't interpolate
+     solid→gradient transitions, but it interpolates filter cleanly). */
+      .palette-channel input[type="range"] {
+        flex: 0 0 5rem;
+        height: 8px;
+        -webkit-appearance: none;
+        appearance: none;
+        background: var(--track-gradient, var(--border));
+        border-radius: 4px;
+        outline: none;
+        cursor: pointer;
+        filter: saturate(0);
+        transition: filter 220ms ease;
+      }
+      /* Static rainbow track for the Hue slider. */
+      .palette-channel input.ch-h {
+        background: linear-gradient(
+          to right,
+          hsl(0 100% 50%),
+          hsl(60 100% 50%),
+          hsl(120 100% 50%),
+          hsl(180 100% 50%),
+          hsl(240 100% 50%),
+          hsl(300 100% 50%),
+          hsl(359 100% 50%)
+        );
+      }
+      /* Hover — full saturation. */
+      .palette-channel input[type="range"]:hover {
+        filter: saturate(1);
+      }
+      /* Spread is a plain numeric box (not a slider) — it controls a
+     numeric range, not a continuous channel of the same color space. */
+      .palette-channel input[type="number"].ch-spread-num {
+        width: 3rem;
+        padding: 2px 4px;
+        font-family: var(--font-sans);
+        font-size: 0.85rem;
+        font-weight: 600;
+        background: var(--bg);
+        color: var(--fg);
+        border: 1px solid var(--border);
+        border-radius: 4px;
+        text-align: right;
+        font-variant-numeric: tabular-nums;
+      }
+      .palette-channel
+        input[type="number"].ch-spread-num::-webkit-inner-spin-button {
+        opacity: 0.5;
+      }
+      /* Thumb — bigger; always carries the channel's value color via
+     --thumb-color.  The parent slider's filter: saturate() handles
+     the gray-by-default + smooth saturate-on-hover. */
+      .palette-channel input[type="range"]::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        appearance: none;
+        width: 18px;
+        height: 18px;
+        border-radius: 50%;
+        background: var(--thumb-color, var(--muted));
+        border: 2px solid var(--bg);
+        box-shadow: 0 1px 2px hsl(0 0% 0% / 0.25);
+        cursor: pointer;
+      }
+      .palette-channel input[type="range"]::-moz-range-thumb {
+        width: 18px;
+        height: 18px;
+        border-radius: 50%;
+        background: var(--thumb-color, var(--muted));
+        border: 2px solid var(--bg);
+        box-shadow: 0 1px 2px hsl(0 0% 0% / 0.25);
+        cursor: pointer;
+      }
+      /* More prominent numeric readouts. */
+      .palette-channel .ch-value {
+        width: 2.1rem;
+        text-align: right;
+        font-variant-numeric: tabular-nums;
+        font-size: 0.88rem;
+        font-weight: 600;
+        color: var(--fg);
+      }
+
+      /* Export — Copy YAML button + accompanying hint text. */
+      .copy-design-btn {
+        font-family: var(--font-sans);
+        font-size: 0.78rem;
+        font-weight: 600;
+        color: var(--fg);
+        background: var(--bg);
+        border: 1px solid var(--border);
+        border-radius: 4px;
+        padding: 4px 10px;
+        cursor: pointer;
+        transition:
+          background-color 220ms ease,
+          border-color 220ms ease,
+          color 220ms ease;
+      }
+      .copy-design-btn:hover {
+        border-color: var(--fg);
+      }
+      .copy-design-btn.copied {
+        background: hsl(140 40% 88%);
+        color: hsl(140 60% 22%);
+        border-color: hsl(140 40% 60%);
+      }
+      .controls-hint {
+        font-size: 0.7rem;
+        color: var(--muted);
+        line-height: 1.4;
+        flex: 1;
+        min-width: 0;
+      }
+
+      .panel {
+        background: var(--card);
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        padding: 1.25rem 1.5rem 1.5rem;
+        margin-bottom: 1.5rem;
+      }
+      .panel h2 {
+        font-family: var(--font-sans);
+        font-size: 0.78rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.09em;
+        color: var(--muted);
+        margin: 0 0 0.2rem;
+      }
+      .panel .title {
+        font-family: var(--font-serif);
+        font-size: 1.15rem;
+        font-weight: 600;
+        margin: 0 0 0.2rem;
+      }
+      .panel .note {
+        color: var(--muted);
+        font-size: 0.9rem;
+        margin: 0 0 1rem;
+        max-width: 75ch;
+      }
+
+      /* ─────────── Heatmap (tabular) ─────────── */
+      .heatmap {
+        display: grid;
+        gap: 2px;
+        overflow-x: auto;
+      }
+      .heatmap .hm-row {
+        display: contents;
+      }
+      .heatmap .hm-cell {
+        width: 38px;
+        height: 38px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-family: var(--font-sans);
+        font-size: 0.82rem;
+        color: var(--fg);
+        border-radius: 4px;
+        font-variant-numeric: tabular-nums;
+        font-weight: 500;
+      }
+      /* NA/ERR text matches the regular score color/weight in each visual,
+         so the indicator stays readable instead of fading out. */
+      .heatmap .hm-cell.na,
+      .heatmap .hm-cell.err {
+        font-size: 0.65rem;
+        font-weight: 800;
+      }
+      .heatmap .hm-axis {
+        width: 38px;
+        height: 38px;
+        display: flex;
+        align-items: end;
+        justify-content: center;
+        padding-bottom: 0.25rem;
+        font-family: var(--font-sans);
+        font-size: 0.7rem;
+        color: var(--muted);
+        writing-mode: vertical-rl;
+        transform: rotate(180deg);
+        border-bottom: 2px solid currentColor;
+      }
+      .heatmap .hm-doc-label {
+        display: flex;
+        align-items: center;
+        padding-right: 0.6rem;
+        justify-content: flex-end;
+        font-size: 0.85rem;
+        white-space: nowrap;
+      }
+      .heatmap .hm-group-band {
+        height: 6px;
+        border-radius: 3px;
+      }
+      .heatmap .hm-group-label {
+        font-family: var(--font-sans);
+        font-size: 0.68rem;
+        text-transform: uppercase;
+        letter-spacing: 0.09em;
+        color: var(--muted);
+        text-align: center;
+        padding: 0.25rem 0 0.4rem;
+        font-weight: 600;
+      }
+
+      /* ─────────── Strip / sparkline rows ─────────── */
+      .strip-row {
+        display: grid;
+        grid-template-columns: 14rem 1fr 4rem;
+        align-items: center;
+        gap: 0.75rem;
+        padding: 0.45rem 0;
+        border-bottom: 1px dashed var(--border);
+      }
+      .strip-row:last-child {
+        border-bottom: none;
+      }
+      .strip-row .doc-name {
+        font-size: 0.95rem;
+      }
+      .strip-row .doc-meta {
+        color: var(--muted);
+        font-size: 0.72rem;
+        font-family: var(--font-sans);
+      }
+      .strip-cells {
+        display: flex;
+        gap: 3px;
+      }
+      .strip-cells .grp-gap {
+        width: 8px;
+      }
+      .strip-cell {
+        width: 14px;
+        height: 22px;
+        border-radius: 3px;
+        position: relative;
+      }
+      .strip-cell.na {
+        background: var(--score-na-bg);
+      }
+      .strip-cell.err {
+        background: var(--score-err-bg);
+      }
+      .strip-mean {
+        font-family: var(--font-sans);
+        font-variant-numeric: tabular-nums;
+        font-size: 0.95rem;
+        text-align: right;
+        color: var(--fg);
+        font-weight: 600;
+      }
+
+      /* ─────────── Group small-multiples ─────────── */
+      .group-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 1rem;
+      }
+      .group-card {
+        border: 1px solid var(--border);
+        border-radius: 6px;
+        padding: 0.6rem 0.75rem 0.85rem;
+        background: var(--bg);
+      }
+      .group-card .gc-head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 0.55rem;
+      }
+      .group-card .gc-name {
+        font-family: var(--font-sans);
+        font-size: 0.72rem;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        font-weight: 600;
+      }
+      .group-card .gc-pill {
+        font-family: var(--font-sans);
+        font-size: 0.7rem;
+        padding: 1px 7px;
+        border-radius: 999px;
+        color: white;
+        font-weight: 600;
+      }
+      .group-card .gc-row {
+        display: grid;
+        grid-template-columns: 5.5rem 1fr 1.5rem;
+        align-items: center;
+        gap: 0.45rem;
+        margin: 0.18rem 0;
+      }
+      .group-card .gc-row .gc-dim {
+        font-family: var(--font-sans);
+        font-size: 0.74rem;
+        color: var(--muted);
+        text-align: right;
+      }
+      .group-card .gc-bars {
+        display: flex;
+        align-items: center;
+        height: 12px;
+        gap: 2px;
+      }
+      .group-card .gc-bar {
+        height: 100%;
+        border-radius: 2px;
+        flex: 1;
+      }
+      .group-card .gc-score {
+        font-family: var(--font-sans);
+        font-variant-numeric: tabular-nums;
+        font-size: 0.74rem;
+        text-align: right;
+        color: var(--fg);
+      }
+
+      /* ─────────── Hex honeycomb ─────────── */
+      .hex-doc-row {
+        display: grid;
+        grid-template-columns: 14rem 1fr;
+        gap: 1rem;
+        align-items: center;
+        padding: 0.5rem 0;
+      }
+      .hex-doc-row .doc-name {
+        font-size: 0.95rem;
+      }
+
+      /* ─────────── Radar / coxcomb / sunburst layout ─────────── */
+      .chart-row {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+        gap: 1.25rem;
+      }
+      .chart-card {
+        border: 1px solid var(--border);
+        border-radius: 6px;
+        background: var(--bg);
+        padding: 0.85rem 0.85rem 0.5rem;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+      .chart-card .doc-name {
+        font-size: 0.95rem;
+        margin-bottom: 0.4rem;
+        text-align: center;
+      }
+      .chart-card .doc-meta {
+        font-family: var(--font-sans);
+        font-size: 0.72rem;
+        color: var(--muted);
+        margin-bottom: 0.4rem;
+      }
+
+      svg {
+        display: block;
+      }
+
+      .axis-label {
+        font-family: var(--font-sans);
+        font-size: 8.5px;
+        fill: var(--muted);
+      }
+      .axis-label.bold {
+        fill: var(--fg);
+        font-weight: 600;
+      }
+      .group-arc-label {
+        font-family: var(--font-sans);
+        font-size: 8.5px;
+        fill: var(--fg);
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        font-weight: 600;
+      }
+
+      /* ─────────── Group icons (single SVG sprite) ───────────
+     Renders an <svg><use href="…icons.svg#icon-X"/></svg>; the symbols
+     use fill="currentColor" so the icon takes its color from the
+     parent's CSS color property. Sprite source:
+     tools/design-system/assets/icons.svg. */
+      .grp-icon {
+        display: inline-flex;
+        width: 1em;
+        height: 1em;
+        vertical-align: -0.15em;
+        flex-shrink: 0;
+        color: inherit;
+      }
+      .grp-icon svg {
+        width: 100%;
+        height: 100%;
+        display: block;
+        fill: currentColor;
+      }
+
+      /* ─────────── Visual 8: Overlay-text Bar Cards ───────────
+     Per-doc cards. Each row is a single bar whose width encodes the
+     score in the dim's group color, with the dim name overlaid via a
+     two-copy text trick (a dark base everywhere, plus a light overlay
+     clipped to the fill width) so the label stays legible across both
+     the filled and the empty portions of the bar. */
+      .bartable-row {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(19rem, 1fr));
+        gap: 1rem;
+      }
+      .bartable-card {
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        background: var(--bg);
+        padding: 0.8rem 0.9rem 0.9rem;
+        font-family: var(--font-sans);
+        min-width: 18rem;
+      }
+      .bartable-card .doc-name {
+        font-family: var(--font-sans);
+        font-size: 1rem;
+        font-weight: 600;
+        margin: 0 0 0.1rem;
+        color: var(--fg);
+      }
+      .bartable-card .doc-meta {
+        font-size: 0.7rem;
+        color: var(--muted);
+        margin-bottom: 0.45rem;
+        text-transform: uppercase;
+        letter-spacing: 0.07em;
+      }
+      /* Category row: label flush with the bar text below; horizontal
+     rule fills the rest of the row; group icon sits at the right end. */
+      .bt-group-sep {
+        display: flex;
+        align-items: center;
+        gap: 0.4rem;
+        font-size: 0.85rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.09em;
+        margin: 0.7rem 0 0.2rem;
+        padding-left: 0.3rem; /* matches .bt-text padding-left */
+      }
+      .bt-group-sep .label {
+        white-space: nowrap;
+      }
+      .bt-group-line {
+        flex: 1;
+        height: 1px;
+        background: currentColor;
+        opacity: 0.3;
+      }
+      .bt-group-sep .grp-icon {
+        font-size: 1rem;
+      }
+
+      .bt-row {
+        display: flex;
+        align-items: center;
+        gap: 0.45rem;
+        margin: 2px 0;
+      }
+      .bt-track {
+        flex: 1;
+        height: 1.5rem; /* tight fit for 1.1rem text */
+        background: hsl(0 0% 50% / 0.1);
+        border-radius: 4px;
+        position: relative;
+        /* No overflow: hidden — long dim names extend past the track
+       onto the card bg in --fg color, where they remain legible. */
+      }
+      .bt-fill {
+        position: absolute;
+        left: 0;
+        top: 0;
+        height: 100%;
+        border-radius: 4px;
+      }
+      /* Vertical tick marks at scores 1/2/3/4 (20/40/60/80%) — drawn after
+     the fill so they stay visible inside the colored area. */
+      .bt-tick {
+        position: absolute;
+        top: 18%;
+        bottom: 18%;
+        width: 1px;
+        background: var(--rung);
+        pointer-events: none;
+      }
+      .bt-text {
+        position: absolute;
+        left: 0;
+        right: 0;
+        top: 50%;
+        transform: translateY(-50%);
+        padding: 0 0.3rem; /* matches .bt-group-sep padding-left */
+        font-family: var(--font-sans);
+        font-size: 1.05rem;
+        font-weight: 500;
+        white-space: nowrap;
+        pointer-events: none;
+        line-height: 1;
+        color: #fff;
+      }
+      .bt-num {
+        font-family: var(--font-sans);
+        font-size: 0.85rem;
+        color: var(--fg);
+        font-variant-numeric: tabular-nums;
+        width: 1.3rem;
+        text-align: right;
+      }
+      /* NA stays --fg (matches the numeric scores in this row); ERR keeps the
+         saturated red so the error meaning carries.  Both bump to weight 800,
+         matching the heavier labels — readable even though the glyph is small. */
+      .bt-num.na {
+        font-size: 0.68rem;
+        font-weight: 800;
+      }
+      .bt-num.err {
+        color: var(--score-err);
+        font-size: 0.68rem;
+        font-weight: 800;
+      }
+
+      /* ─────────── Visual 9: Bidirectional Bars ─────────── */
+      /* Responsive: cards flow into rows when they fit (each ≥ 28rem),
+         dropping to a single centered column on narrow screens. */
+      .bi-stack {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(28rem, 1fr));
+        justify-items: center;
+        gap: 1.25rem;
+      }
+      .bi-card {
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        background: var(--bg);
+        padding: 0.95rem 1.1rem 1.2rem;
+        font-family: var(--font-sans);
+        width: 100%;
+        max-width: 32rem; /* ~500px; keeps bars from getting too wide */
+      }
+      /* Matches .bi-dim-name: sans, 0.9rem, weight 800, uppercase, 0.09em. */
+      .bi-card .doc-kicker {
+        font-family: var(--font-sans);
+        font-size: 0.9rem;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 0.09em;
+        text-align: center;
+        color: var(--muted);
+        margin: 0 0 0.25rem;
+      }
+      .bi-card .doc-name {
+        font-family: var(--font-serif);
+        font-style: italic;
+        font-size: 2.1rem;
+        font-weight: 600;
+        text-align: center;
+        margin: 0 0 0.9rem;
+        color: var(--fg);
+      }
+      .bi-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        column-gap: 0.5rem;
+      }
+      .bi-col {
+        display: flex;
+        flex-direction: column;
+        min-width: 0;
+      }
+      /* Group header: outward-stretching rule + label + group icon at the
+     inner edge (near the center spine). */
+      .bi-group-header {
+        display: flex;
+        align-items: center;           /* icon + label share the same center line */
+        justify-content: space-between;
+        gap: 0.4rem;
+        font-family: var(--font-serif);
+        font-size: 1.5rem;
+        font-weight: 600;
+        margin: 0.7rem 0 0.3rem;
+      }
+      /* Padded so the category label lands at the same x as the dim
+     labels below it (right edge sits over the bar's inner edge).  No
+     more bi-group-line — justify-content: space-between pushes the
+     icon to the outer edge and the label to the inner edge. */
+      .bi-col.left .bi-group-header {
+        padding-right: calc(1.92rem + 0.45rem);
+      }
+      .bi-col.right .bi-group-header {
+        padding-left: calc(1.92rem + 0.45rem);
+      }
+      .bi-group-line { display: none; }
+      .bi-group-header .grp-icon {
+        font-size: 2.6rem;             /* ~2× the previous size; anchors the outer corner */
+        line-height: 1;
+      }
+      /* Group label text sits between --muted and --fg — more prominent
+         than the dim names (which use --muted) but a step under the title
+         (which uses --fg).  color-mix keeps it theme-aware. */
+      .bi-group-header .label {
+        color: color-mix(in oklch, var(--fg) 70%, var(--muted));
+      }
+
+      /* Two-row dim entry: head (full dim name on the outer side + brief id
+     above the score circle on the inner / center-spine side) and body
+     (bar on the outer side + colored number circle on the inner side).
+     The inner column is the "summary" — a vertical stack of id + circle
+     for every dim — and the outer column adds detail.  The two would
+     stand alone if the bars were removed. */
+      .bi-dim {
+        margin: 2px 0;
+      }
+      .bi-dim-head {
+        display: flex;
+        align-items: baseline; /* shares the text baseline */
+        gap: 0.45rem;
+        margin-bottom: 0;
+      }
+      /* Toggled via the "Show dim labels" checkbox in the controls
+         panel.  Default-off: the head row (dim name + id) is hidden
+         and the spine circles carry the dim identity by color alone. */
+      body.no-dim-labels .bi-dim-head { display: none; }
+      .bi-dim-name {
+        flex: 1;
+        font-family: var(--font-sans);
+        font-size: 0.9rem;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 0.09em;
+        color: var(--muted);
+        line-height: 1.2;
+        white-space: nowrap;
+        overflow: hidden;
+        min-width: 0;
+      }
+      .bi-col.left .bi-dim-name {
+        text-align: right;
+      }
+      .bi-col.right .bi-dim-name {
+        text-align: left;
+      }
+
+      .bi-dim-id {
+        width: 1.92rem; /* matches .bi-num-circle below */
+        flex-shrink: 0;
+        font-family: var(--font-sans);
+        font-size: 0.9rem;             /* matches .bi-dim-name */
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 0.09em;        /* matches .bi-dim-name */
+        color: var(--muted);
+        line-height: 1.2;
+        font-variant-numeric: tabular-nums;
+        text-align: center;
+      }
+
+      .bi-row {
+        display: flex;
+        align-items: center;
+        gap: 0.45rem;
+      }
+      .bi-row.left {
+        flex-direction: row;
+      }
+      .bi-row.right {
+        flex-direction: row;
+      }
+
+      .bi-bar-track {
+        flex: 1;
+        height: 1.5rem;
+        background: hsl(0 0% 50% / 0.1);
+        border-radius: 4px;
+        position: relative;
+        min-width: 0;
+      }
+      .bi-bar-fill {
+        position: absolute;
+        top: 0;
+        height: 100%;
+        border-radius: 4px;
+      }
+      .bi-row.left .bi-bar-fill {
+        right: 0;
+      } /* anchored at right, grows left */
+      .bi-row.right .bi-bar-fill {
+        left: 0;
+      } /* anchored at left, grows right */
+
+      /* Score circle on the inner side — the "summary" element.
+     Fill carries the dim's color (matches the bar); the score is in
+     white inside.  NA and ERR get their own bg + label. */
+      .bi-num-circle {
+        width: 1.92rem; /* 20% bigger than the 1.5rem bar so the
+                                   circle reads at equal visual weight */
+        height: 1.92rem;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #fff;
+        font-family: var(--font-sans);
+        font-size: 0.95rem;
+        font-weight: 600;
+        font-variant-numeric: tabular-nums;
+        line-height: 1;
+        flex-shrink: 0;
+      }
+      /* NA/ERR circles match numeric prominence — white text (same as numeric
+         circles) at weight 800 (matches the heavier labels). */
+      .bi-num-circle.na {
+        background: var(--score-na);
+        font-size: 0.62rem;
+        font-weight: 800;
+      }
+      .bi-num-circle.err {
+        background: var(--score-err);
+        font-size: 0.62rem;
+        font-weight: 800;
+      }
+
+      /* Group-header padding aligns the category label with the id label
+     in the head row below (which sits 1.6rem from the spine + the row
+     gap of 0.45rem). */
+
+      /* Unit tick marks at score positions 1/2/3/4 — thin lines in the
+     page background color so they appear as small gaps cut into the
+     colored bar fill (like a battery indicator). */
+      .bi-tick {
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        width: 1.5px;
+        background: var(--bg);
+        pointer-events: none;
+      }
+
+      /* ─────────── Visual notes / sources ─────────── */
+      .notes {
+        padding: 1rem clamp(1rem, 4vw, 3rem) 1.5rem;
+        max-width: 1400px;
+      }
+      .notes h2.section-h {
+        font-family: var(--font-sans);
+        font-size: 0.78rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.09em;
+        color: var(--muted);
+        margin: 0 0 1rem;
+      }
+      .notes-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
+        gap: 1rem 1.5rem;
+      }
+      .note-card {
+        background: var(--card);
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        padding: 1rem 1.15rem 1.1rem;
+      }
+      .note-card h3 {
+        font-family: var(--font-serif);
+        font-size: 1.02rem;
+        font-weight: 600;
+        margin: 0 0 0.15rem;
+      }
+      .note-card .accent-bar {
+        display: inline-block;
+        width: 1.4rem;
+        height: 3px;
+        border-radius: 2px;
+        margin-right: 0.4rem;
+        vertical-align: middle;
+        transform: translateY(-2px);
+      }
+      .note-card .meta {
+        font-family: var(--font-sans);
+        font-size: 0.72rem;
+        color: var(--muted);
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        margin: 0 0 0.55rem;
+      }
+      .note-card p {
+        margin: 0.45rem 0;
+        font-size: 0.92rem;
+        line-height: 1.5;
+      }
+      .note-card .label {
+        font-family: var(--font-sans);
+        font-size: 0.7rem;
+        text-transform: uppercase;
+        letter-spacing: 0.07em;
+        color: var(--muted);
+        margin-right: 0.3rem;
+        font-weight: 600;
+      }
+      .note-card ul {
+        margin: 0.3rem 0 0;
+        padding-left: 1.1rem;
+        font-size: 0.88rem;
+      }
+      .note-card ul li {
+        margin: 0.15rem 0;
+      }
+      .palette-card {
+        grid-column: 1 / -1;
+      }
+      .palette-card .swatch-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.4rem 0.75rem;
+        margin-top: 0.5rem;
+        font-family: var(--font-sans);
+        font-size: 0.78rem;
+      }
+      .palette-card .swatch-row .sw {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.35rem;
+        padding: 0.2rem 0.5rem 0.2rem 0.3rem;
+        border: 1px solid var(--border);
+        border-radius: 999px;
+      }
+      .palette-card .sw .chip {
+        display: inline-block;
+        width: 0.9rem;
+        height: 0.9rem;
+        border-radius: 50%;
+        border: 1px solid var(--border);
+      }
+
+      footer {
+        color: var(--muted);
+        font-size: 0.82rem;
+        padding: 0 clamp(1rem, 4vw, 3rem) 3rem;
+        max-width: 1400px;
+        font-family: var(--font-sans);
+      }
+      footer code {
+        font-size: 0.85em;
+      }
+      /* Per-card credit — sits at the bottom of each bi-card so each
+         doc card is a self-contained, shareable widget.  Same
+         typographic treatment as the dim labels, but lowercase. */
+      .bi-card-credit {
+        font-family: var(--font-sans);
+        font-size: 0.9rem;
+        font-weight: 800;
+        text-align: center;
+        text-transform: lowercase;
+        margin-top: 1rem;
+      }
+      .bi-card-credit a {
+        color: var(--muted);
+        text-decoration: none;
+        transition: color 220ms ease;
+      }
+      .bi-card-credit a:hover {
+        color: var(--fg);
+        text-decoration: none;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Group icon sprite (inlined copy of tools/design-system/assets/icons.svg).
+         Inlined here because browsers block cross-file <use href> references
+         when the page is loaded via file://.  Same content as the canonical
+         sprite file; update both together. -->
+    <svg xmlns="http://www.w3.org/2000/svg" style="display:none" aria-hidden="true">
+      <symbol id="icon-purpose" viewBox="0 0 24 24"><path fill="currentColor" d="m15 9l-3-9l-3 9l-9 3l9 3l3 9l3-9l9-3zM4 12l6-2l1 2zm8 8l-2-6l2-1zm0-16l2 6l-2 1zm2 10l-1-2h7zm-5.3 3.3L5 19l1.7-3.7l1.6.5zm8.6-2L19 19l-3.7-1.7l.5-1.6zM6.7 8.7L5 5l3.7 1.7l-.5 1.5zm8.6-2L19 5l-1.7 3.7l-1.6-.5z"/></symbol>
+      <symbol id="icon-expression" viewBox="0 0 24 24"><path fill="currentColor" d="M22 2s-7.64-.37-13.66 7.88C3.72 16.21 2 22 2 22l1.94-1c1.44-2.5 2.19-3.53 3.6-5c2.53.74 5.17.65 7.46-2c-2-.56-3.6-.43-5.96-.19C11.69 12 13.5 11.6 16 12l1-2c-1.8-.34-3-.37-4.78.04C14.19 8.65 15.56 7.87 18 8l1.21-1.93c-1.56-.11-2.5.06-4.29.5c1.61-1.46 3.08-2.12 5.22-2.25c0 0 1.05-1.89 1.86-2.32"/></symbol>
+      <symbol id="icon-form" viewBox="0 0 24 24"><path fill="currentColor" d="M17.8 20c-.4 1.2-1.5 2-2.8 2H5c-1.7 0-3-1.3-3-3v-1h12.2c.4 1.2 1.5 2 2.8 2zM19 2H8C6.3 2 5 3.3 5 5v11h11v1c0 .6.4 1 1 1h1V5c0-.6.4-1 1-1s1 .4 1 1v1h2V5c0-1.7-1.3-3-3-3"/></symbol>
+      <symbol id="icon-grounding" viewBox="0 0 24 24"><path fill="currentColor" d="M12 2a3 3 0 0 0-3 3a3 3 0 0 0 2 2.83V9H8v2h3v8.92c-.74-.13-1.5-.34-2.21-.65c-.74-.32-1.39-.71-1.97-1.18s-1.04-.98-1.38-1.54L7 15l-4-3v3c0 .97.27 1.88.82 2.72A8.2 8.2 0 0 0 6 19.95c.87.64 1.84 1.14 2.88 1.5c1.05.36 2.09.55 3.12.55s2.07-.2 3.12-.56c1.04-.36 2.01-.86 2.88-1.49c.92-.64 1.63-1.38 2.18-2.23c.55-.84.82-1.75.82-2.72v-3l-4 3l1.56 1.55c-.34.56-.8 1.07-1.38 1.54s-1.23.86-1.97 1.18c-.71.31-1.47.52-2.21.65V11h3V9h-3V7.82A3 3 0 0 0 15 5a3 3 0 0 0-3-3m0 2a1 1 0 0 1 1 1a1 1 0 0 1-1 1a1 1 0 0 1-1-1a1 1 0 0 1 1-1"/></symbol>
+      <symbol id="icon-reasoning" viewBox="0 0 24 24"><path fill="currentColor" d="m1.39 18.36l1.77-1.76L4.58 18l1.06-1.05l-1.42-1.41l1.42-1.42l2.47 2.48l1.06-1.06l-2.47-2.48l1.41-1.41l1.42 1.41L10.59 12l-1.42-1.41l1.42-1.42l2.47 2.48l1.06-1.06l-2.47-2.48l1.41-1.41l1.41 1.41l1.07-1.06l-1.42-1.41l1.42-1.42L18 6.7l1.07-1.06l-2.47-2.48l1.76-1.77l4.25 4.25L5.64 22.61z"/></symbol>
+      <symbol id="icon-judgment" viewBox="0 0 24 24"><path fill="currentColor" d="M12 3c-1.27 0-2.4.8-2.82 2H3v2h1.95L2 14c-.47 2 1 3 3.5 3s4.06-1 3.5-3L6.05 7h3.12c.33.85.98 1.5 1.83 1.83V20H2v2h20v-2h-9V8.82c.85-.32 1.5-.97 1.82-1.82h3.13L15 14c-.47 2 1 3 3.5 3s4.06-1 3.5-3l-2.95-7H21V5h-6.17C14.4 3.8 13.27 3 12 3m0 2a1 1 0 0 1 1 1a1 1 0 0 1-1 1a1 1 0 0 1-1-1a1 1 0 0 1 1-1m-6.5 5.25L7 14H4zm13 0L20 14h-3z"/></symbol>
+    </svg>
+
+    <header>
+      <div class="header-bar">
+        <div>
+          <h1>Practical Prose — 20-Dimension Visualization Survey</h1>
+          <p class="lede">
+            Nine candidate visuals for the rubric’s 20 dimensions across 6
+            groups — rendered against four sample eval reports from
+            <code>evals/baselines/</code>. Palette and tokens follow
+            <a href="../../design-system/design-system.md"
+              ><code>tools/design-system/design-system.md</code></a
+            >: group hues identify category, the red→green score ramp identifies
+            value.
+          </p>
+        </div>
+        <div class="theme-toggle" role="group" aria-label="Color theme">
+          <button data-theme-set="auto" type="button">Auto</button>
+          <button data-theme-set="light" type="button">Light</button>
+          <button data-theme-set="dark" type="button">Dark</button>
+        </div>
+      </div>
+      <div class="legend">
+        <span
+          ><span class="swatch" style="background: var(--accent-p)"></span
+          >Purpose · 72</span
+        >
+        <span
+          ><span class="swatch" style="background: var(--accent-e)"></span
+          >Expression · 206</span
+        >
+        <span
+          ><span class="swatch" style="background: var(--accent-f)"></span>Form
+          · 30</span
+        >
+        <span
+          ><span class="swatch" style="background: var(--accent-g)"></span
+          >Grounding · 162</span
+        >
+        <span
+          ><span class="swatch" style="background: var(--accent-r)"></span
+          >Reasoning · 329</span
+        >
+        <span
+          ><span class="swatch" style="background: var(--accent-j)"></span
+          >Judgment · 278</span
+        >
+        <span style="opacity: 0.5">·</span>
+        <span class="score-ramp" title="Score valence ramp 1–5">
+          Score
+          <span class="step" style="background: var(--score-1)"></span>
+          <span class="step" style="background: var(--score-2)"></span>
+          <span class="step" style="background: var(--score-3)"></span>
+          <span class="step" style="background: var(--score-4)"></span>
+          <span class="step" style="background: var(--score-5)"></span>
+          1→5
+        </span>
+        <span
+          ><span class="swatch" style="background: var(--score-na-bg)"></span
+          >NA</span
+        >
+        <span
+          ><span class="swatch" style="background: var(--score-err-bg)"></span
+          >ERR</span
+        >
+      </div>
+    </header>
+
+    <section class="controls-panel" aria-label="Experimentation controls">
+      <div class="controls-section">
+        <span class="controls-label">Surface</span>
+        <div class="surface-toggle" role="group" aria-label="Background tone">
+          <button data-surface-set="white" type="button">White</button>
+          <button data-surface-set="paper" type="button">Paper</button>
+          <button data-surface-set="gray" type="button">Gray</button>
+        </div>
+      </div>
+      <div class="controls-section">
+        <span class="controls-label">Fonts</span>
+        <div class="controls-field">
+          <label for="font-sans-select">Sans</label>
+          <select id="font-sans-select"></select>
+        </div>
+        <div class="controls-field">
+          <label for="font-serif-select">Serif</label>
+          <select id="font-serif-select"></select>
+        </div>
+      </div>
+      <div class="controls-section controls-palette-section">
+        <span class="controls-label">Palette</span>
+        <div class="palette-grid" id="palette-grid"></div>
+      </div>
+      <div class="controls-section">
+        <span class="controls-label">Layout</span>
+        <label class="controls-field">
+          <input type="checkbox" id="show-dim-labels">
+          Show dim labels (Visual 9)
+        </label>
+        <span class="controls-hint"
+          >Show the dim name + id above each bar in the bidirectional bars
+          visual.  Default off — the colored circle + score number on the
+          spine is usually enough.</span
+        >
+      </div>
+      <div class="controls-section">
+        <span class="controls-label">Export</span>
+        <button class="copy-design-btn" type="button" id="copy-design-btn">
+          Copy YAML
+        </button>
+        <span class="controls-hint"
+          >Captures the surface, theme, fonts, and per-group palette as a YAML
+          snapshot (with its Zod schema, as a leading comment).</span
+        >
+      </div>
+    </section>
+
+    <main id="root"></main>
+
+    <section class="notes">
+      <h2 class="section-h">Visual notes &amp; sources</h2>
+      <p
+        style="
+          color: var(--muted);
+          font-size: 0.92rem;
+          max-width: 75ch;
+          margin: 0 0 1rem;
+        "
+      >
+        Background on each candidate — where the form comes from, what it does
+        well on this data shape (6 grouped categories × 20 ordinal axes ×
+        multiple docs), and where it breaks down. Use these to think about new
+        visuals worth trying.
+      </p>
+
+      <div class="notes-grid">
+        <!-- Visual 1 -->
+        <div class="note-card">
+          <h3>1 · Grouped Heatmap</h3>
+          <p class="meta">Tabular · color saturation encoding</p>
+          <p>
+            <span class="label">Lineage:</span> Edward Tufte’s table-graphics
+            (<em>The Visual Display of Quantitative Information</em>, 1983) and
+            the conditional-formatting heatmaps that became standard in business
+            intelligence in the 2000s (Excel, Tableau). The GitHub contribution
+            graph (2013) cemented the small-square-saturation idiom in everyday
+            UI.
+          </p>
+          <p>
+            <span class="label">Strengths:</span> scales gracefully to many
+            documents, exact values are still readable in each cell, group bands
+            at the top tie columns to color, the layout is print-friendly and
+            accessible to screen readers.
+          </p>
+          <p>
+            <span class="label">Tradeoffs:</span> reads as a spreadsheet first
+            and a picture second; you have to learn the encoding before patterns
+            pop; with many docs the doc-name column dominates the page width.
+          </p>
+        </div>
+
+        <!-- Visual 2 -->
+        <div class="note-card">
+          <h3>2 · Score Strip</h3>
+          <p class="meta">Sparkline row · one document per line</p>
+          <p>
+            <span class="label">Lineage:</span> Edward Tufte coined "sparklines"
+            in <em>Beautiful Evidence</em> (2006) for word-sized graphics that
+            sit inline with prose. The horizontal strip variant shows up in
+            financial dashboards (Bloomberg, Splunk row indicators) and in
+            github-style activity strips.
+          </p>
+          <p>
+            <span class="label">Strengths:</span> very compact, drops cleanly
+            into a list of files or PRs, the row is reading-order so the eye
+            scans from left (purpose) to right (judgment) in the same order as
+            the rubric.
+          </p>
+          <p>
+            <span class="label">Tradeoffs:</span> tiny cells make any single
+            dimension hard to identify without hover; absolute score is harder
+            to read than the heatmap because the cells are smaller.
+          </p>
+        </div>
+
+        <!-- Visual 3 -->
+        <div class="note-card">
+          <h3>3 · Hex Honeycomb</h3>
+          <p class="meta">Hex grid · row-per-group</p>
+          <p>
+            <span class="label">Lineage:</span> hex-binning maps from the
+            cartography world (Mike Bostock’s D3 hexbin examples; Carto’s 2014
+            hex-tile choropleths) and the periodic-table-of-elements layout,
+            where every cell is the same shape but labels and color carry
+            meaning.
+          </p>
+          <p>
+            <span class="label">Strengths:</span> the 6 rows of (4, 3, 3, 3, 4,
+            3) hex tiles map one-to-one to the rubric groups, the shape is
+            decorative without being noisy, every dim gets a label, and the
+            whole figure fits in a few inches.
+          </p>
+          <p>
+            <span class="label">Tradeoffs:</span> hexagons are not a canonical
+            shape for ordinal data; readers may search for a meaning in the
+            hexagonal-ness that isn’t there.
+          </p>
+        </div>
+
+        <!-- Visual 4 -->
+        <div class="note-card">
+          <h3>4 · Radial Spider / Radar</h3>
+          <p class="meta">Polar line graph · score = radius</p>
+          <p>
+            <span class="label">Lineage:</span> the Kiviat diagram, introduced
+            by Kenneth Kolence and Philip Kiviat in 1973 for visualizing
+            computer performance metrics. Popularized for human-readable use by
+            PISA education reports, Strava / Garmin athletic profiles, and the
+            "competency wheels" of HR / talent tooling.
+          </p>
+          <p>
+            <span class="label">Strengths:</span> shape recognition is fast — a
+            balanced doc is a regular polygon, a weak group is a visible dent;
+            group-tinted arc backgrounds let the eye associate spoke clusters
+            with the rubric groups.
+          </p>
+          <p>
+            <span class="label">Tradeoffs:</span> the closed polygon overstates
+            area (a doc that scores 5,1,5,1 looks much worse than 3,3,3,3 even
+            though both mean 3); axis order changes the perceived shape;
+            comparing two polygons overlaid is visually noisy past two
+            documents.
+          </p>
+        </div>
+
+        <!-- Visual 5 -->
+        <div class="note-card">
+          <h3>5 · Coxcomb / Nightingale Rose</h3>
+          <p class="meta">Polar area chart · score = √(petal radius)</p>
+          <p>
+            <span class="label">Lineage:</span> Florence Nightingale’s 1858
+            "Diagram of the Causes of Mortality in the Army in the East," drawn
+            to persuade Parliament that sanitation, not battle, was killing
+            soldiers in Crimea. Modern uses: BBC and FT election graphics,
+            Stefanie Posavec’s data portraits, Giorgia Lupi’s
+            <em>Dear Data</em> (2016).
+          </p>
+          <p>
+            <span class="label">Strengths:</span> more visually punchy than
+            radar — soft spots really stick out as short petals; works well as a
+            single, "iconic" chart for a one-document report header; the
+            √-scaling keeps low scores legible without exaggerating high ones.
+          </p>
+          <p>
+            <span class="label">Tradeoffs:</span> area encoding is harder to
+            read precisely than length; the form is less familiar than bars or
+            radar so readers need a moment to learn it; like radar, hard to
+            overlay multiple docs.
+          </p>
+        </div>
+
+        <!-- Visual 6 -->
+        <div class="note-card">
+          <h3>6 · Sunburst</h3>
+          <p class="meta">Radial treemap · 2 rings, hierarchy + value</p>
+          <p>
+            <span class="label">Lineage:</span> John Stasko and Eugene Zhang
+            introduced the sunburst at IEEE InfoVis 2000 as a radial successor
+            to the treemap. Popularized by Mike Bostock’s D3 sunburst examples
+            and by disk-inventory tools (Disk Inventory X, WinDirStat, Daisy
+            Disk).
+          </p>
+          <p>
+            <span class="label">Strengths:</span> a single figure carries
+            <em>both</em> the group structure and the per-dim scores — inner
+            ring for groups, outer ring saturation for scores; the centred mean
+            gives a one-glance overall verdict.
+          </p>
+          <p>
+            <span class="label">Tradeoffs:</span> outer-ring arc lengths are
+            equal here (each dim gets the same wedge), so the chart only encodes
+            value with color — meaning we’re carrying the sunburst’s decorative
+            cost without using its strongest dimension; not as efficient as the
+            heatmap for actual reading.
+          </p>
+        </div>
+
+        <!-- Visual 7 -->
+        <div class="note-card">
+          <h3>7 · Group Small Multiples</h3>
+          <p class="meta">
+            Trellis cards · one card per group, bars across docs
+          </p>
+          <p>
+            <span class="label">Lineage:</span> trellis / lattice plots from
+            William Cleveland and Robert McGill at Bell Labs (1980s), formalized
+            in Cleveland’s <em>Visualizing Data</em> (1993); Tufte’s "small
+            multiples" principle (<em>Envisioning Information</em>, 1990); the
+            ggplot2 <code>facet_wrap</code> idiom that made the pattern standard
+            in modern data analysis.
+          </p>
+          <p>
+            <span class="label">Strengths:</span> the best layout for "I want to
+            look inside one group across several drafts" — the eye walks one
+            card at a time without losing context; the per-dim mean column on
+            the right is a built-in roll-up.
+          </p>
+          <p>
+            <span class="label">Tradeoffs:</span> no single-figure summary;
+            takes the most vertical space of any candidate; comparing across
+            groups means jumping between cards rather than scanning a line.
+          </p>
+        </div>
+
+        <!-- Visual 8 -->
+        <div class="note-card">
+          <h3>8 · Bar Cards (overlay-text)</h3>
+          <p class="meta">One card per doc · text on top of the bar</p>
+          <p>
+            <span class="label">Lineage:</span> the in-cell data-bar idiom from
+            Excel 2007 and Stephen Few’s bullet charts (<em
+              >Information Dashboard Design</em
+            >, 2006), fused with the progress-bar / Likert row used in modern
+            product UI (Linear, GitHub Insights, Notion). The two-copy text-clip
+            trick for legibility against a moving fill is the same technique
+            that powers e.g. Apple Music’s scrubber-time readout.
+          </p>
+          <p>
+            <span class="label">Strengths:</span> the most space-efficient
+            per-doc view — bar and label share the same row, no separate name
+            column. Dim labels read at sentence-length speed (lowercase
+            sans-serif), group sections carry the design-system MDI icons
+            (<code>compass-rose</code>, <code>quill</code>, <code>anchor</code>,
+            <code>ruler</code>, <code>scale-balance</code>) so groups identify
+            themselves visually as well as by color. NA / ERR get full-width
+            muted bars so they can never be misread as low scores.
+          </p>
+          <p>
+            <span class="label">Tradeoffs:</span> only sensibly comparable
+            side-by-side (one card per doc); for many docs the page gets
+            horizontally crowded. Two-copy text labels mean the dim name is
+            drawn twice per row — cheap, but worth noting if you ever wanted to
+            animate the fill.
+          </p>
+        </div>
+
+        <!-- Visual 9 -->
+        <div class="note-card">
+          <h3>9 · Bidirectional Bars</h3>
+          <p class="meta">
+            10 left + 10 right · per-dim hue · central numeric spine
+          </p>
+          <p>
+            <span class="label">Lineage:</span> the back-to-back / opposed bar
+            chart used in demographic population pyramids (US Census, Statistics
+            Canada) and in Hans Rosling–style gender / age comparisons, combined
+            with the rubric’s grouped structure. The per-dim hue variation
+            (slight hue rotation within each group family) is the design pattern
+            Datawrapper and the FT use for grouped categorical palettes — colors
+            that read as "the same family" without being monochromatic.
+          </p>
+          <p>
+            <span class="label">Strengths:</span> reads as a single "shape" per
+            document — the silhouette formed by the bar lengths across all 20
+            dims is glanceable; the prominent central numbers give the precise
+            scores while the bars give the visual; group identity is doubly
+            encoded (hue family + section header with MDI icon);
+            Reasoning-on-top pairs its 4 dims row-for-row with Purpose’s 4,
+            giving a strong top-section anchor.
+          </p>
+          <p>
+            <span class="label">Tradeoffs:</span> the right side has one more
+            group transition (Reasoning → Grounding → Judgment) than the left
+            (Purpose → Expression), so the bottom rows can drift slightly out of
+            alignment; the dim text is on the colored fill only, so very low
+            scores can truncate the name on a narrow bar (the leading dim id
+            "P1." mitigates).
+          </p>
+        </div>
+
+        <!-- Design system / palette -->
+        <div class="note-card palette-card">
+          <h3>Design system &amp; palette</h3>
+          <p class="meta">HSL tokens · group hues + valence score ramp</p>
+          <p>
+            All color tokens on this page are defined with
+            <code>hsl()</code> and aligned to
+            <a href="../../design-system/design-system.md"
+              ><code>tools/design-system/design-system.md</code></a
+            >, the project’s color policy of record. Two axes are kept
+            orthogonal: <strong>group identity</strong> (one hue and one
+            saturation per group: Purpose 72, Expression 206, Form 30, Grounding
+            162, Reasoning 329, Judgment 278; lightness alone shifts between
+            light/dark and between surface/ink/dim roles) and
+            <strong>score value</strong> (a five-stop red→green valence ramp
+            from <code>hsl(0 70% 35%)</code> at 1 to
+            <code>hsl(140 60% 20%)</code> at 5, plus a muted gray for NA and a
+            faint red wash for ERR).
+          </p>
+          <p>
+            Each visual decides which axis to encode in color. The
+            <em>tabular</em> visuals (heatmap, strip, hex, sunburst outer) use
+            the score ramp in cells and rely on adjacent bands / labels for
+            group identity. The <em>polar</em> visuals (radar, coxcomb, group
+            cards) keep the group hue on the mark and let length / radius / area
+            carry the score. The cream-paper reading surface is local to this
+            report; it can be swapped for the design system’s default surface
+            tokens when the page moves into the renderer.
+          </p>
+          <div class="swatch-row">
+            <span class="sw"
+              ><span class="chip" style="background: var(--accent-p)"></span
+              >Purpose · hsl(72 62% …)</span
+            >
+            <span class="sw"
+              ><span class="chip" style="background: var(--accent-e)"></span
+              >Expression · hsl(206 59% …)</span
+            >
+            <span class="sw"
+              ><span class="chip" style="background: var(--accent-f)"></span
+              >Form · hsl(30 60% …)</span
+            >
+            <span class="sw"
+              ><span class="chip" style="background: var(--accent-g)"></span
+              >Grounding · hsl(162 55% …)</span
+            >
+            <span class="sw"
+              ><span class="chip" style="background: var(--accent-r)"></span
+              >Reasoning · hsl(329 60% …)</span
+            >
+            <span class="sw"
+              ><span class="chip" style="background: var(--accent-j)"></span
+              >Judgment · hsl(278 30% …)</span
+            >
+          </div>
+          <div class="swatch-row" style="margin-top: 0.35rem">
+            <span class="sw"
+              ><span class="chip" style="background: var(--score-1)"></span
+              >Score 1</span
+            >
+            <span class="sw"
+              ><span class="chip" style="background: var(--score-2)"></span
+              >Score 2</span
+            >
+            <span class="sw"
+              ><span class="chip" style="background: var(--score-3)"></span
+              >Score 3</span
+            >
+            <span class="sw"
+              ><span class="chip" style="background: var(--score-4)"></span
+              >Score 4</span
+            >
+            <span class="sw"
+              ><span class="chip" style="background: var(--score-5)"></span
+              >Score 5</span
+            >
+            <span class="sw"
+              ><span
+                class="chip"
+                style="
+                  background: var(--score-na-bg);
+                  border-color: var(--score-na);
+                "
+              ></span
+              >NA wash</span
+            >
+            <span class="sw"
+              ><span
+                class="chip"
+                style="
+                  background: var(--score-err-bg);
+                  border-color: var(--score-err);
+                "
+              ></span
+              >ERR wash</span
+            >
+          </div>
+        </div>
+
+        <!-- Other sources / directions -->
+        <div class="note-card palette-card">
+          <h3>Other visual languages worth a look</h3>
+          <p class="meta">Not built here · candidates for a second pass</p>
+          <ul>
+            <li>
+              <strong>Parallel coordinates</strong> (Alfred Inselberg, 1985) —
+              one vertical axis per dimension, each doc is a polyline. Strong
+              for spotting which docs cluster together across many axes; weak
+              when the axes are grouped and the eye wants to read groups.
+            </li>
+            <li>
+              <strong>Bullet charts</strong> (Stephen Few,
+              <em>Information Dashboard Design</em>, 2006) — a per-dim
+              horizontal bar with target and qualitative bands. Could replace
+              the heatmap cell with a tiny bullet for richer encoding (score +
+              NA / ERR + the 1-5 anchor bands).
+            </li>
+            <li>
+              <strong>Marimekko / mosaic</strong> — stacked columns sized by
+              group weight. Useful if some groups carry more "weight" than
+              others in a weighted rollup; not useful with equal weighting.
+            </li>
+            <li>
+              <strong>Slope graph</strong> (Tufte, <em>Visual Display</em>,
+              1983) — pairs of axes with lines between, ideal for
+              <em>before / after</em> comparisons of the same doc across two
+              drafts. Worth keeping in mind for the
+              <code>pprose compare</code> report.
+            </li>
+            <li>
+              <strong>Chord / arc diagram</strong> — for the cross-dimension
+              cascades (Suitability → Relevance, Verifiability → Factuality,
+              Soundness → Parsimony). The current rubric encodes those as a
+              table; a small chord diagram could make the prereq relationships
+              visible.
+            </li>
+            <li>
+              <strong>Annotated text mark-up</strong> — not a chart per se, but
+              a "scored doc preview" with inline dim markers and color-coded
+              margins, in the spirit of <em>The Pudding</em>’s long-form essays.
+              Could be the most useful representation for a single doc.
+            </li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <footer>
+      Data: <code>evals/baselines/comparison-all.md</code>. Original report was
+      scored under the 18-dim rubric; values for the newer G3 Relevance and R4
+      Parsimony are filled in for illustrative purposes. Design tokens follow
+      <a href="../../design-system/design-system.md"
+        ><code>tools/design-system/design-system.md</code></a
+      >
+      (HSL only; group hues + orthogonal score-valence ramp).
+    </footer>
+
+    <script>
+      /* ────────────────────── theme / surface / font controls ─────────────── */
+      /* Color, surface, and font UI now live in shared design-tool modules:
+     lib/design-color-controls.js   — theme toggle + surface-tone toggle
+     lib/design-font-controls.js    — sans / serif font choosers
+   Script tags loading them are in <head> at the top of this file. */
+      PracticalProseDesignColorControls.mountThemeToggle(".theme-toggle");
+      PracticalProseDesignColorControls.mountSurfaceToggle(".surface-toggle");
+      PracticalProseDesignFontControls.mountFontChooser({
+        sans: "#font-sans-select",
+        serif: "#font-serif-select",
+      });
+
+      /* ───────────────────────────── data ─────────────────────────────────── */
+      /* Groups and dimensions are derived from the design-system YAML, loaded by
+   the design-system.generated.global.js script tag in <head>.  Source of
+   truth: tools/design-system/design-system.yaml. */
+      const _ds = window.PracticalProseDesignSystem.designSystem;
+      const groups = _ds.groups.map((g) => ({
+        id: g.id,
+        label: g.label,
+        color: `var(--accent-${g.id.toLowerCase()})`,
+      }));
+      const groupColor = (id) => `var(--accent-${id.toLowerCase()})`;
+
+      const dims = _ds.dimensions.map((d) => ({
+        id: d.id,
+        g: d.group,
+        short: d.short,
+        label: d.label,
+      }));
+
+      /* Score values: 1-5, 'NA', or 'ERR'.
+   18-dim values are real from comparison-all.md.
+   G3 Relevance and R4 Parsimony are illustrative. */
+      const docs = [
+        {
+          id: "irs",
+          name: "IRS 1040: Filing Requirements",
+          meta: "brief · 8.5 pp",
+          scores: {
+            P1: 4,
+            P2: 5,
+            P3: 4,
+            P4: 3,
+            E1: 3,
+            E2: 4,
+            E3: 3,
+            F1: 3,
+            F2: 4,
+            F3: 5,
+            G1: 3,
+            G2: 5,
+            G3: 4,
+            R1: "NA",
+            R2: 4,
+            R3: 3,
+            R4: "NA",
+            J1: "NA",
+            J2: "NA",
+            J3: "NA",
+          },
+        },
+        {
+          id: "sqlite",
+          name: "SQLite: Appropriate Uses",
+          meta: "brief · 8.6 pp",
+          scores: {
+            P1: 5,
+            P2: 5,
+            P3: 5,
+            P4: 4,
+            E1: 5,
+            E2: 5,
+            E3: 5,
+            F1: 5,
+            F2: 5,
+            F3: 5,
+            G1: 4,
+            G2: 5,
+            G3: 5,
+            R1: 5,
+            R2: 5,
+            R3: 4,
+            R4: 4,
+            J1: 5,
+            J2: 5,
+            J3: 5,
+          },
+        },
+        {
+          id: "guide",
+          name: "Practical Prose Guidelines",
+          meta: "design_doc · 28 pp",
+          scores: {
+            P1: 5,
+            P2: 5,
+            P3: 5,
+            P4: 5,
+            E1: 4,
+            E2: 5,
+            E3: 4,
+            F1: 5,
+            F2: 5,
+            F3: 5,
+            G1: 5,
+            G2: 5,
+            G3: 5,
+            R1: 5,
+            R2: 5,
+            R3: 5,
+            R4: 5,
+            J1: "NA",
+            J2: "NA",
+            J3: "ERR",
+          },
+        },
+        {
+          id: "rubric",
+          name: "Practical Prose Rubric",
+          meta: "design_doc · 30 pp",
+          scores: {
+            P1: 5,
+            P2: 5,
+            P3: 5,
+            P4: 5,
+            E1: 4,
+            E2: 5,
+            E3: 4,
+            F1: 4,
+            F2: 5,
+            F3: 5,
+            G1: 5,
+            G2: 5,
+            G3: 5,
+            R1: 5,
+            R2: 5,
+            R3: 5,
+            R4: 5,
+            J1: "NA",
+            J2: "NA",
+            J3: 5,
+          },
+        },
+      ];
+
+      /* ─────────────────────── HSL palette widget ─────────────────────────── */
+      /* Per-group H / S / L / Spread sliders rewrite --accent-X / --surface-X /
+         --dim-Xn live.  Behavior + initial values live in the shared lib
+         (lib/design-palette-sliders.js), reading defaults from the YAML via
+         window.PracticalProseDesignSystem.  Mount call is alongside the
+         render calls below. */
+
+      /* Repo-credit URL — single const so it lives in one place.
+         Appended at the bottom of each bi-card (V9), making each
+         doc card a self-contained, shareable widget. */
+      const REPO_URL = "github.com/jlevy/practical-prose";
+      function repoCredit() {
+        const div = document.createElement("div");
+        div.className = "bi-card-credit";
+        div.innerHTML = `<a href="https://${REPO_URL}">${REPO_URL}</a>`;
+        return div;
+      }
+
+      /* Layout flag — Show dim labels in Visual 9.  Default-off: the
+         head row (dim name + id) is hidden so the spine carries the
+         dim identity by colored circle alone.  Toggle to bring the
+         text labels back. */
+      (function setupShowDimLabels() {
+        const cb = document.getElementById("show-dim-labels");
+        if (!cb) return;
+        const apply = () => {
+          document.body.classList.toggle("no-dim-labels", !cb.checked);
+        };
+        cb.addEventListener("change", apply);
+        apply(); /* honor initial checkbox state (default: unchecked → hidden) */
+      })();
+
+      /* Copy-design button — serializes current slider state to YAML. */
+      (function setupCopyDesignButton() {
+        const btn = document.getElementById("copy-design-btn");
+        if (!btn) return;
+        let timer = null;
+        btn.addEventListener("click", async () => {
+          const text = PracticalProseDesignPaletteSliders.exportDesignYAML();
+          try {
+            await navigator.clipboard.writeText(text);
+            btn.classList.add("copied");
+            btn.textContent = "Copied ✓";
+          } catch (e) {
+            btn.textContent = "Copy failed";
+          }
+          clearTimeout(timer);
+          timer = setTimeout(() => {
+            btn.classList.remove("copied");
+            btn.textContent = "Copy YAML";
+          }, 1600);
+        });
+      })();
+
+      /* ───────────────────────────── helpers ──────────────────────────────── */
+
+      /* Score → cell tint, using the design-system score ramp (red→green
+   valence). Group identity is carried by adjacent labels and bands,
+   not the cell color, per tools/design-system/design-system.md.
+   The groupId parameter is accepted but unused, kept for call-site
+   compatibility. */
+      function scoreTint(score, _groupId) {
+        // NA/ERR use translucent bg washes on the card; text uses --fg
+        // (full body color) so the indicator reads at the same weight as a
+        // numeric score, rather than fading toward the surface.
+        if (score === "NA")
+          return { bg: "var(--score-na-bg)", fg: "var(--fg)" };
+        if (score === "ERR")
+          return { bg: "var(--score-err-bg)", fg: "var(--score-err)" };
+        return { bg: `var(--score-${score})`, fg: "#fff" };
+      }
+
+      function meanScore(scores) {
+        const nums = Object.values(scores).filter((v) => typeof v === "number");
+        if (!nums.length) return null;
+        return nums.reduce((a, b) => a + b, 0) / nums.length;
+      }
+
+      function _groupBreaks() {
+        /* indices in `dims` where a new group starts */
+        const out = [];
+        let last = null;
+        dims.forEach((d, i) => {
+          if (d.g !== last) {
+            out.push(i);
+            last = d.g;
+          }
+        });
+        return out;
+      }
+
+      function el(tag, attrs = {}, ...children) {
+        const e = document.createElement(tag);
+        Object.entries(attrs).forEach(([k, v]) => {
+          if (k === "style" && typeof v === "object") Object.assign(e.style, v);
+          else if (k === "class") e.className = v;
+          else if (k.startsWith("on") && typeof v === "function")
+            e.addEventListener(k.slice(2), v);
+          else e.setAttribute(k, v);
+        });
+        children.flat().forEach((c) => {
+          if (c == null) return;
+          e.appendChild(typeof c === "string" ? document.createTextNode(c) : c);
+        });
+        return e;
+      }
+
+      /* Render a group icon as <svg><use href=".../icons.svg#icon-X"/></svg>
+         inside a styled span.  Using <use> from the sprite means
+         fill="currentColor" in the symbol is resolved from the parent's
+         CSS color — much more reliable than the mask-image approach. */
+      /* Empty string → <use href="#icon-X"/> references the inlined
+         sprite at the top of <body>.  Browsers block cross-file <use>
+         references when the page is loaded via file://, so the
+         canonical sprite at tools/design-system/assets/icons.svg is
+         duplicated inline below for same-document reference. */
+      const ICON_SPRITE = "";
+      function groupIcon(g) {
+        const span = document.createElement("span");
+        span.className = `grp-icon ${g.id.toLowerCase()}`;
+        span.setAttribute("aria-hidden", "true");
+        const symbol = g.label.toLowerCase();
+        span.innerHTML =
+          `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">` +
+          `<use href="${ICON_SPRITE}#icon-${symbol}"/>` +
+          `</svg>`;
+        return span;
+      }
+
+      function panel(kicker, title, note, body) {
+        return el(
+          "section",
+          { class: "panel" },
+          el("h2", {}, kicker),
+          el("div", { class: "title" }, title),
+          el("p", { class: "note" }, note),
+          body,
+        );
+      }
+
+      const root = document.getElementById("root");
+
+      /* ────────────────────── Visual 1: Heatmap (tabular) ──────────────────── */
+      function renderHeatmap() {
+        const _cols = dims.length + 1; // doc label + 20 dims
+        const grid = el("div", {
+          class: "heatmap",
+          style: {
+            gridTemplateColumns: `12rem repeat(${dims.length}, 38px)`,
+            gridAutoRows: "min-content",
+          },
+        });
+
+        /* group label row */
+        grid.appendChild(
+          el(
+            "div",
+            { class: "hm-doc-label", style: { visibility: "hidden" } },
+            "x",
+          ),
+        );
+        let i = 0;
+        groups.forEach((g) => {
+          const n = dims.filter((d) => d.g === g.id).length;
+          const cell = el(
+            "div",
+            {
+              class: "hm-group-label",
+              style: {
+                gridColumn: `${i + 2} / span ${n}`,
+                color: groupColor(g.id),
+              },
+            },
+            g.label,
+          );
+          grid.appendChild(cell);
+          i += n;
+        });
+
+        /* group color band */
+        grid.appendChild(el("div", {}));
+        i = 0;
+        groups.forEach((g) => {
+          const n = dims.filter((d) => d.g === g.id).length;
+          const band = el("div", {
+            class: "hm-group-band",
+            style: {
+              gridColumn: `${i + 2} / span ${n}`,
+              background: groupColor(g.id),
+              marginBottom: "4px",
+            },
+          });
+          grid.appendChild(band);
+          i += n;
+        });
+
+        /* dim axis row */
+        grid.appendChild(el("div", {}));
+        dims.forEach((d) => {
+          grid.appendChild(
+            el(
+              "div",
+              { class: "hm-axis", style: { color: groupColor(d.g) } },
+              d.label,
+            ),
+          );
+        });
+
+        /* data rows */
+        docs.forEach((doc) => {
+          grid.appendChild(el("div", { class: "hm-doc-label" }, doc.name));
+          dims.forEach((d) => {
+            const s = doc.scores[d.id];
+            const t = scoreTint(s, d.g);
+            grid.appendChild(
+              el(
+                "div",
+                {
+                  class: `hm-cell ${typeof s !== "number" ? s.toLowerCase() : ""}`,
+                  style: { background: t.bg, color: t.fg },
+                },
+                String(s),
+              ),
+            );
+          });
+        });
+
+        root.appendChild(
+          panel(
+            "Visual 1 · Grouped Heatmap",
+            "Dense tabular grid",
+            "Reads like a spreadsheet, scans like a heatmap. Group bands across the top tie columns to their group hue; cell color uses the design system’s red→green score ramp (1 = red, 5 = green) so the value reads at a glance, orthogonal to group identity. Best for side-by-side comparison across many documents.",
+            grid,
+          ),
+        );
+      }
+
+      /* ─────────────────── Visual 2: Strip / sparkline rows ────────────────── */
+      function renderStrip() {
+        const body = el("div", {});
+
+        /* per-document strip rows */
+        docs.forEach((doc) => {
+          const row = el("div", { class: "strip-row" });
+          row.appendChild(
+            el(
+              "div",
+              {},
+              el("div", { class: "doc-name" }, doc.name),
+              el("div", { class: "doc-meta" }, doc.meta),
+            ),
+          );
+          const cells = el("div", { class: "strip-cells" });
+          let lastGroup = null;
+          dims.forEach((d) => {
+            if (lastGroup && lastGroup !== d.g) {
+              cells.appendChild(el("div", { class: "grp-gap" }));
+            }
+            lastGroup = d.g;
+            const s = doc.scores[d.id];
+            const t = scoreTint(s, d.g);
+            const c = el("div", {
+              class: `strip-cell ${typeof s !== "number" ? s.toLowerCase() : ""}`,
+              style: typeof s === "number" ? { background: t.bg } : {},
+              title: `${d.id} ${d.label}: ${s}`,
+            });
+            cells.appendChild(c);
+          });
+          row.appendChild(cells);
+          const m = meanScore(doc.scores);
+          row.appendChild(
+            el("div", { class: "strip-mean" }, m ? m.toFixed(2) : "—"),
+          );
+          body.appendChild(row);
+        });
+
+        root.appendChild(
+          panel(
+            "Visual 2 · Score Strip",
+            "One line per document",
+            "A sparkline scorecard: each document is a single horizontal strip of 20 cells. Group gaps and group-tinted colors make the five blocks legible at a glance. Compact enough to drop next to a document name in a list.",
+            body,
+          ),
+        );
+      }
+
+      /* ──────────────────── Visual 3: Hex honeycomb per doc ─────────────────── */
+      /* 20 cells per doc, arranged in a flat-topped honeycomb 6+5+5+4 layout. */
+      function renderHex() {
+        const body = el("div", {});
+        /* layout: rows of [count, indexStart] — designed for 20 cells */
+        const _rows = [
+          [4, 0], // Purpose
+          [6, 4], // Expression
+          [4, 10], // Reasoning (3) + first Grounding slot → adjust below
+        ];
+        /* Simpler: stack 6 rows of (4, 3, 3, 3, 4, 3) for direct group correspondence. */
+        const grpRows = groups.map((g) =>
+          dims.filter((d) => d.g === g.id).map((d) => dims.indexOf(d)),
+        );
+
+        const HEX_W = 34,
+          HEX_H = 30,
+          GAP = 4;
+
+        docs.forEach((doc) => {
+          /* width = widest row × (HEX_W + GAP) */
+          const maxRow = Math.max(...grpRows.map((r) => r.length));
+          const W = maxRow * (HEX_W + GAP) + 40;
+          const H = grpRows.length * (HEX_H + GAP) + 20;
+
+          const svg = d3
+            .create("svg")
+            .attr("width", W)
+            .attr("height", H)
+            .attr("viewBox", `0 0 ${W} ${H}`);
+
+          grpRows.forEach((row, ri) => {
+            const y = ri * (HEX_H + GAP) + HEX_H / 2 + 8;
+            /* centre the row */
+            const rowW = row.length * (HEX_W + GAP);
+            const xStart = (W - rowW) / 2 + HEX_W / 2;
+            row.forEach((dimIdx, ci) => {
+              const d = dims[dimIdx];
+              const s = doc.scores[d.id];
+              const t = scoreTint(s, d.g);
+              const x = xStart + ci * (HEX_W + GAP);
+              /* flat-topped hex */
+              const hexPath = hexagonPath(x, y, HEX_W / 2);
+              svg
+                .append("path")
+                .attr("d", hexPath)
+                .attr("fill", t.bg)
+                .attr("stroke", groupColor(d.g))
+                .attr("stroke-width", 0.5);
+              svg
+                .append("text")
+                .attr("x", x)
+                .attr("y", y + 3)
+                .attr("text-anchor", "middle")
+                .attr("class", "axis-label bold")
+                .attr("fill", t.fg)
+                .text(typeof s === "number" ? s : s);
+              svg
+                .append("text")
+                .attr("x", x)
+                .attr("y", y + HEX_H / 2 - 1)
+                .attr("text-anchor", "middle")
+                .attr("class", "axis-label")
+                .text(d.short);
+            });
+          });
+
+          const row = el("div", { class: "hex-doc-row" });
+          row.appendChild(
+            el(
+              "div",
+              {},
+              el("div", { class: "doc-name" }, doc.name),
+              el("div", { class: "doc-meta" }, doc.meta),
+            ),
+          );
+          row.appendChild(svg.node());
+          body.appendChild(row);
+        });
+
+        root.appendChild(
+          panel(
+            "Visual 3 · Hex Honeycomb",
+            "Five rows, one per group",
+            "Each cell is a hex tile in its group color, intensity-keyed to the score. The 6 rows of (4, 3, 3, 3, 4, 3) match the group sizes directly, and short labels turn every cell into a glanceable scorecard. Works small enough to print at the head of a report.",
+            body,
+          ),
+        );
+      }
+      function hexagonPath(cx, cy, r) {
+        /* flat-topped */
+        const pts = [];
+        for (let i = 0; i < 6; i++) {
+          const a = (Math.PI / 3) * i;
+          pts.push([cx + r * Math.cos(a), cy + r * Math.sin(a)]);
+        }
+        return `M${pts.map((p) => p.join(",")).join(" L ")} Z`;
+      }
+
+      /* ───────────── Visual 4: Radar / Spider (one card per doc) ──────────── */
+      function renderRadar() {
+        const body = el("div", { class: "chart-row" });
+        docs.forEach((doc) => {
+          body.appendChild(radarCard(doc));
+        });
+        root.appendChild(
+          panel(
+            "Visual 4 · Radial Spider",
+            "20 spokes, 5 colored arc backgrounds",
+            'A classic radar reframed for grouped axes: each of the six groups gets a tinted arc background, the spokes inside take the group color, and the polygon traces the doc’s scores. NA sectors are washed in muted gray and ERR sectors in faint red, with the polyline broken across them so a missing dimension can never be mistaken for a zero. Good for "is this doc balanced?"',
+            body,
+          ),
+        );
+      }
+
+      function radarCard(doc) {
+        const SIZE = 320,
+          CX = SIZE / 2,
+          CY = SIZE / 2 + 10,
+          R = 120;
+        const svg = d3
+          .create("svg")
+          .attr("width", SIZE)
+          .attr("height", SIZE)
+          .attr("viewBox", `0 0 ${SIZE} ${SIZE}`);
+
+        /* group arc backgrounds */
+        const N = dims.length;
+        const angleFor = (i) => -Math.PI / 2 + (i / N) * 2 * Math.PI;
+        /* For each group, draw an arc covering its dims (with half-cell padding on each side) */
+        let i = 0;
+        groups.forEach((g) => {
+          const n = dims.filter((d) => d.g === g.id).length;
+          const a0 = angleFor(i - 0.5);
+          const a1 = angleFor(i + n - 0.5);
+          const arc = d3
+            .arc()
+            .innerRadius(0)
+            .outerRadius(R + 18)
+            .startAngle(a0 + Math.PI / 2)
+            .endAngle(a1 + Math.PI / 2);
+          svg
+            .append("path")
+            .attr("d", arc())
+            .attr("transform", `translate(${CX},${CY})`)
+            .attr("fill", groupColor(g.id))
+            .attr("opacity", 0.08);
+
+          /* group label arc-text on the outside */
+          const mid = (a0 + a1) / 2;
+          const lx = CX + (R + 28) * Math.cos(mid);
+          const ly = CY + (R + 28) * Math.sin(mid);
+          svg
+            .append("text")
+            .attr("x", lx)
+            .attr("y", ly)
+            .attr("text-anchor", "middle")
+            .attr("dominant-baseline", "middle")
+            .attr("class", "group-arc-label")
+            .attr("fill", groupColor(g.id))
+            .text(g.label);
+          i += n;
+        });
+
+        /* NA / ERR sector wash — over the group bg, under the rings.
+     Signals "no data for this dimension" so a missing point is never
+     confused with a zero score. */
+        const wedgeHalf = Math.PI / N;
+        dims.forEach((d, idx) => {
+          const s = doc.scores[d.id];
+          if (typeof s === "number") return;
+          const mid = angleFor(idx);
+          const a0 = mid - wedgeHalf;
+          const a1 = mid + wedgeHalf;
+          const arc = d3
+            .arc()
+            .innerRadius(0)
+            .outerRadius(R)
+            .startAngle(a0 + Math.PI / 2)
+            .endAngle(a1 + Math.PI / 2);
+          svg
+            .append("path")
+            .attr("d", arc())
+            .attr("transform", `translate(${CX},${CY})`)
+            .attr(
+              "fill",
+              s === "ERR" ? "var(--score-err-bg)" : "var(--score-na-bg)",
+            );
+        });
+
+        /* concentric rings 1..5 */
+        for (let k = 1; k <= 5; k++) {
+          svg
+            .append("circle")
+            .attr("cx", CX)
+            .attr("cy", CY)
+            .attr("r", (R * k) / 5)
+            .attr("fill", "none")
+            .attr("stroke", "var(--border)")
+            .attr("stroke-width", k === 5 ? 1.2 : 0.5)
+            .attr("stroke-dasharray", k === 5 ? null : "2,3");
+        }
+
+        /* spokes + axis labels */
+        dims.forEach((d, idx) => {
+          const a = angleFor(idx);
+          const x2 = CX + R * Math.cos(a),
+            y2 = CY + R * Math.sin(a);
+          svg
+            .append("line")
+            .attr("x1", CX)
+            .attr("y1", CY)
+            .attr("x2", x2)
+            .attr("y2", y2)
+            .attr("stroke", groupColor(d.g))
+            .attr("stroke-width", 0.5)
+            .attr("opacity", 0.4);
+          const lx = CX + (R + 12) * Math.cos(a);
+          const ly = CY + (R + 12) * Math.sin(a);
+          svg
+            .append("text")
+            .attr("x", lx)
+            .attr("y", ly)
+            .attr(
+              "text-anchor",
+              Math.abs(Math.cos(a)) < 0.2
+                ? "middle"
+                : Math.cos(a) > 0
+                  ? "start"
+                  : "end",
+            )
+            .attr("dominant-baseline", "middle")
+            .attr("class", "axis-label")
+            .text(d.short);
+        });
+
+        /* polygon — closed + filled when all dims are numeric, otherwise
+     drawn as discrete line segments between adjacent numeric points
+     so the NA / ERR gaps are visible rather than papered over. */
+        const pts = dims.map((d, idx) => {
+          const a = angleFor(idx);
+          const s = doc.scores[d.id];
+          if (typeof s !== "number") return null;
+          const r = R * (s / 5);
+          return [CX + r * Math.cos(a), CY + r * Math.sin(a)];
+        });
+        const allValid = pts.every((p) => p !== null);
+        if (allValid) {
+          svg
+            .append("polygon")
+            .attr("points", pts.map((p) => p.join(",")).join(" "))
+            .attr("fill", "var(--fg)")
+            .attr("fill-opacity", 0.08)
+            .attr("stroke", "var(--fg)")
+            .attr("stroke-width", 1.2)
+            .attr("stroke-linejoin", "round");
+        } else {
+          for (let idx = 0; idx < N; idx++) {
+            const p1 = pts[idx],
+              p2 = pts[(idx + 1) % N];
+            if (p1 && p2) {
+              svg
+                .append("line")
+                .attr("x1", p1[0])
+                .attr("y1", p1[1])
+                .attr("x2", p2[0])
+                .attr("y2", p2[1])
+                .attr("stroke", "var(--fg)")
+                .attr("stroke-width", 1.2)
+                .attr("stroke-linecap", "round");
+            }
+          }
+        }
+
+        /* dots for numeric scores; NA / ERR badge text inside the sector wash */
+        dims.forEach((d, idx) => {
+          const p = pts[idx];
+          const s = doc.scores[d.id];
+          if (!p) {
+            const a = angleFor(idx);
+            const tr = R * 0.55;
+            svg
+              .append("text")
+              .attr("x", CX + tr * Math.cos(a))
+              .attr("y", CY + tr * Math.sin(a) + 3)
+              .attr("text-anchor", "middle")
+              .attr("class", "axis-label bold")
+              .style("font-size", "8px")
+              
+              .style("fill", s === "ERR" ? "var(--score-err)" : "var(--fg)")
+              .text(s);
+          } else {
+            svg
+              .append("circle")
+              .attr("cx", p[0])
+              .attr("cy", p[1])
+              .attr("r", 2.8)
+              .attr("fill", groupColor(d.g));
+          }
+        });
+
+        const card = el("div", { class: "chart-card" });
+        card.appendChild(el("div", { class: "doc-name" }, doc.name));
+        card.appendChild(el("div", { class: "doc-meta" }, doc.meta));
+        card.appendChild(svg.node());
+        return card;
+      }
+
+      /* ──────────── Visual 5: Coxcomb / Nightingale Rose ──────────── */
+      function renderCoxcomb() {
+        const body = el("div", { class: "chart-row" });
+        docs.forEach((doc) => {
+          body.appendChild(coxcombCard(doc));
+        });
+        root.appendChild(
+          panel(
+            "Visual 5 · Coxcomb (Nightingale Rose)",
+            "Petal length = score, color = group",
+            "Each dimension is a pie wedge whose radius scales linearly with the score, so the 1–5 level rings are evenly spaced. Solid hairline rings overlay the petals, making partial values (e.g., 3.6) readable by eye between rings. NA / ERR dimensions are full-radius muted wedges with a label so an out-of-scope dimension never looks like a zero-score petal. Note: linear radius means wedge <em>area</em> grows as score², visually exaggerating high scores relative to low ones — the classic Nightingale sqrt-scaled version trades that off in the opposite direction.",
+            body,
+          ),
+        );
+      }
+
+      function coxcombCard(doc) {
+        const SIZE = 320,
+          CX = SIZE / 2,
+          CY = SIZE / 2 + 10,
+          R = 120;
+        const svg = d3
+          .create("svg")
+          .attr("width", SIZE)
+          .attr("height", SIZE)
+          .attr("viewBox", `0 0 ${SIZE} ${SIZE}`);
+
+        const N = dims.length;
+        const wedge = (2 * Math.PI) / N;
+
+        /* Pass 1 — petals and NA/ERR wedges (drawn first so the rings overlay
+     them as visible hairlines inside the colored fill). */
+        dims.forEach((d, i) => {
+          const a0 = -Math.PI / 2 + i * wedge;
+          const a1 = a0 + wedge;
+          const mid = (a0 + a1) / 2;
+          const s = doc.scores[d.id];
+
+          if (typeof s === "number") {
+            const r = R * (s / 5);
+            const arc = d3
+              .arc()
+              .innerRadius(0)
+              .outerRadius(r)
+              .startAngle(a0 + Math.PI / 2)
+              .endAngle(a1 + Math.PI / 2)
+              .padAngle(0.012);
+            svg
+              .append("path")
+              .attr("d", arc())
+              .attr("transform", `translate(${CX},${CY})`)
+              .attr("fill", groupColor(d.g))
+              .attr("opacity", 0.85)
+              .attr("stroke", "var(--card)")
+              .attr("stroke-width", 0.4);
+          } else {
+            const arc = d3
+              .arc()
+              .innerRadius(0)
+              .outerRadius(R)
+              .startAngle(a0 + Math.PI / 2)
+              .endAngle(a1 + Math.PI / 2)
+              .padAngle(0.012);
+            svg
+              .append("path")
+              .attr("d", arc())
+              .attr("transform", `translate(${CX},${CY})`)
+              .attr(
+                "fill",
+                s === "ERR" ? "var(--score-err-bg)" : "var(--score-na-bg)",
+              )
+              .attr("stroke", "var(--card)")
+              .attr("stroke-width", 0.4);
+            const tr = R * 0.55;
+            svg
+              .append("text")
+              .attr("x", CX + tr * Math.cos(mid))
+              .attr("y", CY + tr * Math.sin(mid) + 3)
+              .attr("text-anchor", "middle")
+              .attr("class", "axis-label bold")
+              .style("font-size", "8px")
+              
+              .style("fill", s === "ERR" ? "var(--score-err)" : "var(--fg)")
+              .text(s);
+          }
+        });
+
+        /* Pass 2 — level rings at scores 1..5, drawn on top of the petals.
+     Solid hairlines (no dash) in --rung-bold so they’re readable on
+     both the cream background and across the colored petal fills. */
+        for (let k = 1; k <= 5; k++) {
+          svg
+            .append("circle")
+            .attr("cx", CX)
+            .attr("cy", CY)
+            .attr("r", R * (k / 5))
+            .attr("fill", "none")
+            .attr("stroke", "var(--rung-bold)")
+            .attr("stroke-width", k === 5 ? 1.5 : 1.0);
+        }
+
+        /* Pass 3 — outer dimension tick labels (on top of everything). */
+        dims.forEach((d, i) => {
+          const a0 = -Math.PI / 2 + i * wedge;
+          const a1 = a0 + wedge;
+          const mid = (a0 + a1) / 2;
+          const lx = CX + (R + 10) * Math.cos(mid);
+          const ly = CY + (R + 10) * Math.sin(mid);
+          svg
+            .append("text")
+            .attr("x", lx)
+            .attr("y", ly)
+            .attr(
+              "text-anchor",
+              Math.abs(Math.cos(mid)) < 0.2
+                ? "middle"
+                : Math.cos(mid) > 0
+                  ? "start"
+                  : "end",
+            )
+            .attr("dominant-baseline", "middle")
+            .attr("class", "axis-label")
+            .text(d.short);
+        });
+
+        /* centre mean */
+        const m = meanScore(doc.scores);
+        svg
+          .append("text")
+          .attr("x", CX)
+          .attr("y", CY + 4)
+          .attr("text-anchor", "middle")
+          .attr("class", "axis-label bold")
+          .style("font-size", "12px")
+          .text(m ? m.toFixed(2) : "");
+
+        const card = el("div", { class: "chart-card" });
+        card.appendChild(el("div", { class: "doc-name" }, doc.name));
+        card.appendChild(el("div", { class: "doc-meta" }, doc.meta));
+        card.appendChild(svg.node());
+        return card;
+      }
+
+      /* ───────────── Visual 6: Sunburst (group → dim, score = arc width) ───────────── */
+      function renderSunburst() {
+        const body = el("div", { class: "chart-row" });
+        docs.forEach((doc) => {
+          body.appendChild(sunburstCard(doc));
+        });
+        root.appendChild(
+          panel(
+            "Visual 6 · Sunburst",
+            "Inner ring = group, outer ring = dimension",
+            'A two-ring sunburst: the inner ring carries the 6 groups (size by member count, color from the group palette); the outer ring is the 20 dimensions, each arc colored on the red→green score ramp. Reads as "which groups carry weight, and within each group which dim is the soft spot."',
+            body,
+          ),
+        );
+      }
+
+      function sunburstCard(doc) {
+        const SIZE = 320,
+          CX = SIZE / 2,
+          CY = SIZE / 2 + 10;
+        const RIN0 = 30,
+          RIN1 = 70,
+          ROUT0 = 72,
+          ROUT1 = 130;
+        const svg = d3
+          .create("svg")
+          .attr("width", SIZE)
+          .attr("height", SIZE)
+          .attr("viewBox", `0 0 ${SIZE} ${SIZE}`);
+        const N = dims.length;
+        const wedge = (2 * Math.PI) / N;
+
+        /* outer ring: per-dim score, colored on the design-system score ramp */
+        dims.forEach((d, i) => {
+          const a0 = -Math.PI / 2 + i * wedge;
+          const a1 = a0 + wedge;
+          const s = doc.scores[d.id];
+          const fill =
+            typeof s === "number"
+              ? `var(--score-${s})`
+              : s === "ERR"
+                ? "var(--score-err-bg)"
+                : "var(--score-na-bg)";
+          const arc = d3
+            .arc()
+            .innerRadius(ROUT0)
+            .outerRadius(ROUT1)
+            .startAngle(a0 + Math.PI / 2)
+            .endAngle(a1 + Math.PI / 2)
+            .padAngle(0.006);
+          svg
+            .append("path")
+            .attr("d", arc())
+            .attr("transform", `translate(${CX},${CY})`)
+            .attr("fill", fill)
+            .attr("stroke", "var(--card)")
+            .attr("stroke-width", 0.5);
+
+          /* tick label */
+          const mid = (a0 + a1) / 2;
+          const lx = CX + (ROUT1 + 8) * Math.cos(mid);
+          const ly = CY + (ROUT1 + 8) * Math.sin(mid);
+          svg
+            .append("text")
+            .attr("x", lx)
+            .attr("y", ly)
+            .attr(
+              "text-anchor",
+              Math.abs(Math.cos(mid)) < 0.2
+                ? "middle"
+                : Math.cos(mid) > 0
+                  ? "start"
+                  : "end",
+            )
+            .attr("dominant-baseline", "middle")
+            .attr("class", "axis-label")
+            .text(d.short);
+
+          /* score number inside the arc */
+          const tr = (ROUT0 + ROUT1) / 2;
+          svg
+            .append("text")
+            .attr("x", CX + tr * Math.cos(mid))
+            .attr("y", CY + tr * Math.sin(mid) + 3)
+            .attr("text-anchor", "middle")
+            .attr("class", "axis-label bold")
+            .style("font-size", "9px")
+            .style(
+              "fill",
+              typeof s === "number"
+                ? "#fff"
+                : s === "ERR"
+                  ? "var(--score-err)"
+                  : "var(--fg)",
+            )
+            .text(s);
+        });
+
+        /* inner ring: groups */
+        let i = 0;
+        groups.forEach((g) => {
+          const n = dims.filter((d) => d.g === g.id).length;
+          const a0 = -Math.PI / 2 + i * wedge;
+          const a1 = a0 + n * wedge;
+          const arc = d3
+            .arc()
+            .innerRadius(RIN0)
+            .outerRadius(RIN1)
+            .startAngle(a0 + Math.PI / 2)
+            .endAngle(a1 + Math.PI / 2)
+            .padAngle(0.01);
+          svg
+            .append("path")
+            .attr("d", arc())
+            .attr("transform", `translate(${CX},${CY})`)
+            .attr("fill", groupColor(g.id))
+            .attr("opacity", 0.92);
+          const mid = (a0 + a1) / 2;
+          svg
+            .append("text")
+            .attr("x", CX + ((RIN0 + RIN1) / 2) * Math.cos(mid))
+            .attr("y", CY + ((RIN0 + RIN1) / 2) * Math.sin(mid) + 3)
+            .attr("text-anchor", "middle")
+            .attr("class", "group-arc-label")
+            .style("fill", "#fff")
+            .text(g.id);
+          i += n;
+        });
+
+        /* centre mean */
+        const m = meanScore(doc.scores);
+        svg
+          .append("text")
+          .attr("x", CX)
+          .attr("y", CY + 2)
+          .attr("text-anchor", "middle")
+          .style("font-family", "var(--font-sans)")
+          .style("font-size", "14px")
+          .style("font-weight", "600")
+          .style("fill", "var(--fg)")
+          .text(m ? m.toFixed(2) : "");
+        svg
+          .append("text")
+          .attr("x", CX)
+          .attr("y", CY + 16)
+          .attr("text-anchor", "middle")
+          .attr("class", "axis-label")
+          .style("font-size", "8px")
+          .text("overall");
+
+        const card = el("div", { class: "chart-card" });
+        card.appendChild(el("div", { class: "doc-name" }, doc.name));
+        card.appendChild(el("div", { class: "doc-meta" }, doc.meta));
+        card.appendChild(svg.node());
+        return card;
+      }
+
+      /* ──────────── Visual 7: Small-multiples per group ───────────── */
+      function renderGroupCards() {
+        const body = el("div", { class: "group-grid" });
+        groups.forEach((g) => {
+          const card = el("div", {
+            class: "group-card",
+            style: { borderColor: groupColor(g.id) },
+          });
+          card.appendChild(
+            el(
+              "div",
+              { class: "gc-head" },
+              el(
+                "span",
+                { class: "gc-name", style: { color: groupColor(g.id) } },
+                g.label,
+              ),
+              el(
+                "span",
+                { class: "gc-pill", style: { background: groupColor(g.id) } },
+                g.id,
+              ),
+            ),
+          );
+          const groupDims = dims.filter((d) => d.g === g.id);
+          groupDims.forEach((d) => {
+            const row = el("div", { class: "gc-row" });
+            row.appendChild(el("div", { class: "gc-dim" }, d.label));
+            const bars = el("div", { class: "gc-bars" });
+            const scores = el("div", { class: "gc-score" });
+            /* one bar per doc */
+            docs.forEach((doc) => {
+              const s = doc.scores[d.id];
+              const bar = el("div", {
+                class: "gc-bar",
+                title: `${doc.name}: ${s}`,
+              });
+              if (typeof s === "number") {
+                bar.style.height = `${20 + s * 14}%`;
+                bar.style.alignSelf = "flex-end";
+                const a = 0.3 + (s - 1) * (0.65 / 4);
+                bar.style.background = `color-mix(in srgb, ${groupColor(g.id)} ${Math.round(a * 100)}%, var(--card))`;
+              } else {
+                bar.style.background =
+                  s === "ERR" ? "var(--score-err)" : "var(--score-na)";
+                bar.style.height = "14%";
+                bar.style.alignSelf = "flex-end";
+              }
+              bars.appendChild(bar);
+            });
+            row.appendChild(bars);
+            /* per-dim mean across docs (numeric only) */
+            const ns = docs
+              .map((doc) => doc.scores[d.id])
+              .filter((v) => typeof v === "number");
+            scores.textContent = ns.length
+              ? (ns.reduce((a, b) => a + b, 0) / ns.length).toFixed(1)
+              : "—";
+            row.appendChild(scores);
+            card.appendChild(row);
+          });
+          body.appendChild(card);
+        });
+
+        root.appendChild(
+          panel(
+            "Visual 7 · Group Small Multiples",
+            "6 group cards, one bar per doc per dim",
+            'A library-catalog feel: six group cards lined up, each containing its dimension rows with a tiny grouped bar chart spanning the documents. Best when you want to look "into" one group and quickly compare drafts on it, not for at-a-glance overall scores.',
+            body,
+          ),
+        );
+      }
+
+      /* ───────────── Visual 8: Overlay-text Bar Cards ─────────────── */
+      function renderTableBars() {
+        const body = el("div", { class: "bartable-row" });
+        docs.forEach((doc) => {
+          body.appendChild(bartableCard(doc));
+        });
+        root.appendChild(
+          panel(
+            "Visual 8 · Bar Cards",
+            "Overlay-text bars · one card per doc · MDI group icons",
+            'Space-efficient text-on-bar layout: each row is a single bar whose width encodes the score in the dim’s group color. The dim id+name (e.g. “P1. Suitability”) is overlaid in the body color with a cream halo so it stays legible across the track, the colored fill, and the card background when a long name overflows the bar. Small vertical ticks at 1/2/3/4 calibrate the scale so partial values can be read off the bar. Group sections use the design system’s MDI icons (compass-rose / quill / anchor / ruler / scale-balance) with ALL CAPS labels; dim names use rubric-style capitalization ("P1. Suitability"), flush-left with the group labels above them.',
+            body,
+          ),
+        );
+      }
+
+      function bartableCard(doc) {
+        const card = el("div", { class: "bartable-card" });
+        card.appendChild(el("div", { class: "doc-name" }, doc.name));
+        card.appendChild(el("div", { class: "doc-meta" }, doc.meta));
+
+        groups.forEach((g) => {
+          /* Group header: label flush left, divider line stretches, MDI icon
+       sits at the right end so it never visually indents the label. */
+          const sep = el(
+            "div",
+            { class: "bt-group-sep", style: { color: groupColor(g.id) } },
+            el("span", { class: "label" }, g.label),
+            el("span", { class: "bt-group-line", "aria-hidden": "true" }),
+            groupIcon(g),
+          );
+          card.appendChild(sep);
+
+          dims
+            .filter((d) => d.g === g.id)
+            .forEach((d) => {
+              const s = doc.scores[d.id];
+              const track = el("div", { class: "bt-track" });
+              const fill = el("div", { class: "bt-fill" });
+              const num = el("div", { class: "bt-num" });
+
+              let pct;
+              if (typeof s === "number") {
+                pct = (s / 5) * 100;
+                fill.style.background = groupColor(g.id);
+                num.textContent = s;
+              } else if (s === "ERR") {
+                pct = 100;
+                fill.style.background =
+                  "var(--score-err-fill)"; /* subtle bar */
+                num.textContent = "ERR";
+                num.classList.add("err");
+              } else {
+                pct = 100;
+                fill.style.background = "var(--score-na-fill)"; /* subtle bar */
+                num.textContent = "NA";
+                num.classList.add("na");
+              }
+              fill.style.width = `${pct}%`;
+              track.appendChild(fill);
+
+              /* Tick marks at scores 1..4 (20/40/60/80%). Drawn after the
+         fill so they remain visible inside the colored area. */
+              for (let k = 1; k <= 4; k++) {
+                const tick = el("div", { class: "bt-tick" });
+                tick.style.left = `${k * 20}%`;
+                track.appendChild(tick);
+              }
+
+              /* Single text element — dark fg color with a cream halo (text
+         stroke + soft text-shadow) so the label reads cleanly on the
+         track tint, on the colored fill, and on the card bg if it
+         overflows the bar. No per-letter clip artifacts because there
+         is only one text element. */
+              track.appendChild(
+                el("span", { class: "bt-text" }, `${d.id}. ${d.label}`),
+              );
+
+              card.appendChild(el("div", { class: "bt-row" }, track, num));
+            });
+        });
+
+        return card;
+      }
+
+      /* ───────────── Visual 9: Bidirectional Bars ─────────────── */
+      /* Left column: Purpose (4) + Expression (6) = 10 dims, bars grow LEFT.
+   Right column: Reasoning (4) + Grounding (3) + Judgment (3) = 10 dims,
+   bars grow RIGHT.  Reasoning sits at top to pair with Purpose's 4 dims.
+   Numbers form a central spine.  Per-dim hues within each group family
+   (from the design-system per-dim palette) prevent monochromy. */
+
+      const _groupById = (id) => groups.find((g) => g.id === id);
+      const biLeftGroups = ["P", "E", "F"].map(_groupById); // 4 + 3 + 3 = 10 dims
+      const biRightGroups = ["R", "G", "J"].map(_groupById); // 4 + 3 + 3 = 10 dims
+      const biDocIds = ["irs", "sqlite", "rubric"];
+
+      function renderBidirectional() {
+        const body = el("div", { class: "bi-stack" });
+        const biDocs = docs.filter((d) => biDocIds.includes(d.id));
+        biDocs.forEach((doc) => {
+          body.appendChild(biCard(doc));
+        });
+        root.appendChild(
+          panel(
+            "Visual 9 · Bidirectional Bars",
+            "Bars grow outward from a central numeric spine · per-dim hues",
+            "A compromise between a bar chart and a starburst. The left column lists Purpose (4) + Expression (3) + Form (3) = 10 dims with bars growing leftward; the right column lists Reasoning (4) + Grounding (3) + Judgment (3) = 10 dims with bars growing rightward. Reasoning sits at the top of the right column so its 4 dims pair row-for-row with Purpose. Dim ids (P1, E1, F1…) form the central spine; scores sit just outside the outer edge of each bar. Each dim uses a slightly different hue within its group family — Purpose 68–80, Expression 201–207, Form 26–34, Reasoning 323–332, Grounding 158–166, Judgment 272–284 — so the colors are not monochromatic. Unit ticks at 1/2/3/4 cut visible gaps in the bar. NA rows get a subtle bar close to the page bg; ERR rows get a subtle red-tinted bar with a saturated ERR badge as the indicator.",
+            body,
+          ),
+        );
+      }
+
+      function biCard(doc) {
+        const card = el("div", { class: "bi-card" });
+        card.appendChild(el("div", { class: "doc-kicker" }, "Practical Prose Evaluation"));
+        card.appendChild(el("div", { class: "doc-name" }, doc.name));
+
+        const grid = el("div", { class: "bi-grid" });
+
+        /* Left column — bars grow leftward, text right-aligned on bar, num at
+     the rightmost edge (touching the center spine). */
+        const left = el("div", { class: "bi-col left" });
+        biLeftGroups.forEach((g) => {
+          /* Order: icon (outer) → line → label (inner-most, aligned with
+       the dim labels below thanks to the header's padding-right). */
+          left.appendChild(
+            el(
+              "div",
+              { class: "bi-group-header", style: { color: `var(--text-${g.id.toLowerCase()})` } },
+              groupIcon(g),
+              el("span", { class: "bi-group-line", "aria-hidden": "true" }),
+              el("span", { class: "label" }, g.label),
+            ),
+          );
+          dims
+            .filter((d) => d.g === g.id)
+            .forEach((d) => {
+              left.appendChild(biDim(doc, d, "left"));
+            });
+        });
+        grid.appendChild(left);
+
+        /* Right column — bars grow rightward; circle on the inner side
+     (touching the center spine). */
+        const right = el("div", { class: "bi-col right" });
+        biRightGroups.forEach((g) => {
+          /* Order: label (inner-most, aligned with the dim labels below
+       thanks to the header's padding-left) → line → icon (outer). */
+          right.appendChild(
+            el(
+              "div",
+              { class: "bi-group-header", style: { color: `var(--text-${g.id.toLowerCase()})` } },
+              el("span", { class: "label" }, g.label),
+              el("span", { class: "bi-group-line", "aria-hidden": "true" }),
+              groupIcon(g),
+            ),
+          );
+          dims
+            .filter((d) => d.g === g.id)
+            .forEach((d) => {
+              right.appendChild(biDim(doc, d, "right"));
+            });
+        });
+        grid.appendChild(right);
+
+        card.appendChild(grid);
+        card.appendChild(repoCredit());
+        return card;
+      }
+
+      /* Build one dim entry: a head row (full name on the outer side, brief
+   id on the inner / center-spine side) plus a body row (bar on the outer
+   side, colored score circle on the inner side).  The inner column
+   alone — id stacked over circle, per dim — is the "summary view"; the
+   outer column adds detail.  The two would stand alone if the bars
+   were stripped. */
+      function biDim(doc, d, side) {
+        const s = doc.scores[d.id];
+        const entry = el("div", {
+          class: "bi-dim",
+          style: { color: `var(--dim-${d.id})` },
+        });
+
+        /* Head row: dim name + id label. */
+        const head = el("div", { class: "bi-dim-head" });
+        const name = el("span", { class: "bi-dim-name" }, d.label);
+        const id = el("span", { class: "bi-dim-id" }, d.id);
+        if (side === "left") {
+          head.appendChild(name);
+          head.appendChild(id);
+        } else {
+          head.appendChild(id);
+          head.appendChild(name);
+        }
+        entry.appendChild(head);
+
+        /* Body row: bar track + score circle. */
+        const body = el("div", { class: `bi-row ${side}` });
+        const track = el("div", { class: "bi-bar-track" });
+        const fill = el("div", { class: "bi-bar-fill" });
+        const circle = el("div", { class: "bi-num-circle" });
+
+        let pct;
+        if (typeof s === "number") {
+          pct = (s / 5) * 100;
+          const c = `var(--dim-${d.id})`;
+          fill.style.background = c;
+          circle.style.background = c;
+          circle.textContent = s;
+        } else if (s === "ERR") {
+          pct = 100;
+          fill.style.background = "var(--score-err-fill)"; /* subtle bar */
+          circle.style.background =
+            "var(--score-err)"; /* saturated red — the red indicator */
+          circle.textContent = "ERR";
+          circle.classList.add("err");
+        } else {
+          /* NA */
+          pct = 100;
+          fill.style.background = "var(--score-na-fill)"; /* subtle bar */
+          circle.style.background =
+            "var(--score-na)"; /* saturated gray — the NA indicator */
+          circle.textContent = "NA";
+          circle.classList.add("na");
+        }
+        fill.style.width = `${pct}%`;
+        track.appendChild(fill);
+
+        /* Unit tick marks at score positions 1/2/3/4.  For left bars
+     (anchored at right, growing left), tick at score k sits at
+     (100 - k*20)% from the track's left edge; for right bars it
+     sits at k*20%. */
+        for (let k = 1; k <= 4; k++) {
+          const tick = el("div", { class: "bi-tick" });
+          tick.style.left = `${side === "left" ? 100 - k * 20 : k * 20}%`;
+          track.appendChild(tick);
+        }
+
+        if (side === "left") {
+          body.appendChild(track);
+          body.appendChild(circle);
+        } else {
+          body.appendChild(circle);
+          body.appendChild(track);
+        }
+        entry.appendChild(body);
+
+        return entry;
+      }
+
+      /* ───────────────────────────── render all ───────────────────────────── */
+
+      // Display order: 9, 4, 5 promoted to the top; rest follow in original order.
+      renderBidirectional(); // Visual 9
+      renderRadar(); // Visual 4
+      renderCoxcomb(); // Visual 5
+      renderHeatmap(); // Visual 1
+      renderStrip(); // Visual 2
+      renderHex(); // Visual 3
+      renderSunburst(); // Visual 6
+      renderGroupCards(); // Visual 7
+      renderTableBars(); // Visual 8
+
+      /* Mount the palette tweaker sliders.  The shared lib handles slider
+   construction, applying CSS tokens, and re-applying on theme flips. */
+      PracticalProseDesignPaletteSliders.mountPaletteSliders("#palette-grid");
+    </script>
+  </body>
+</html>

@@ -59,18 +59,6 @@ for pre-publish audit of an already-drafted doc.
   Frontmatter and footer present and well-placed?
   No raw-source artifacts visible?
 
-## Grounding (G1-G3)
-
-- [ ] **G1 Verifiability:** Every quantitative claim source-traceable at the
-  stakes-appropriate bar?
-  Confidence tags paired with sources?
-  For central claims, is what would invalidate them named (§11.5)?
-- [ ] **G2 Factuality:** Cited sources support the claim at the asserted strength?
-  Numbers match sources, or rounding disclosed?
-- [ ] **G3 Relevance:** Every cited source and every section bears on the document's
-  purpose? Digressions marked as digressions? Each source passes the one-sentence
-  test ("this source supports claim X, which bears on purpose Y")?
-
 ## Reasoning (R1-R4)
 
 - [ ] **R1 Discipline:** Observation, judgment, interpretation, implication
@@ -80,13 +68,25 @@ for pre-publish audit of an already-drafted doc.
   Assumptions surfaced?
   Counter-evidence engaged?
   Counterfactual test for causal claims: would we expect to see something different if
-  the explanation were wrong (§15.8)?
+  the explanation were wrong (§12.8)?
 - [ ] **R3 Precision:** Most specific term the audience can parse used?
   Umbrella terms avoided where sub-distinctions matter?
 - [ ] **R4 Parsimony:** Each load-bearing reasoning chain the minimum sufficient
   sound argument? No non-load-bearing rungs; no weaker warrant where a stronger one
   was available; re-derivations only where they add inspectability, confidence, or
   audience understanding beyond what a citation would?
+
+## Grounding (G1-G3)
+
+- [ ] **G1 Verifiability:** Every quantitative claim source-traceable at the
+  stakes-appropriate bar?
+  Confidence tags paired with sources?
+  For central claims, is what would invalidate them named (§15.5)?
+- [ ] **G2 Factuality:** Cited sources support the claim at the asserted strength?
+  Numbers match sources, or rounding disclosed?
+- [ ] **G3 Relevance:** Every cited source and every section bears on the document's
+  purpose? Digressions marked as digressions? Each source passes the one-sentence
+  test ("this source supports claim X, which bears on purpose Y")?
 
 ## Judgment (J1-J3)
 

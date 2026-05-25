@@ -25,16 +25,7 @@ The order matters. When two priorities conflict, the earlier one wins.
    its evidence in scope is not competent to conclude.
    (P2 Scope, §2.5 claim-boundary.)
 
-3. **Make material claims traceable, and keep cited material on-task.** Every
-   quantitative or load-bearing factual claim points to a source the reader can check.
-   Confidence tags (`[VERIFIED]`, `[ESTIMATED]`, `[UNVERIFIED]`, `[ASSUMING: ...]`) pair
-   with specific source pointers.
-   Each cited source bears on the document's purpose; performative citations and
-   tangential sources are cut or marked as background.
-   For central claims, also name what would invalidate them.
-   (G1 Verifiability, G2 Factuality, G3 Relevance.)
-
-4. **Keep evidence, inference, and recommendation distinct, and the chain short.**
+3. **Keep evidence, inference, and recommendation distinct, and the chain short.**
    Observation, judgment, interpretation, and implication on separate rungs.
    Mechanism named where causation is asserted; counterfactual named where the
    explanation could be wrong.
@@ -43,6 +34,15 @@ The order matters. When two priorities conflict, the earlier one wins.
    available, and no re-derivation that doesn't add inspectability, confidence, or
    audience understanding beyond what a citation would.
    (R1 Discipline, R2 Soundness, R4 Parsimony.)
+
+4. **Make material claims traceable, and keep cited material on-task.** Every
+   quantitative or load-bearing factual claim points to a source the reader can check.
+   Confidence tags (`[VERIFIED]`, `[ESTIMATED]`, `[UNVERIFIED]`, `[ASSUMING: ...]`) pair
+   with specific source pointers.
+   Each cited source bears on the document's purpose; performative citations and
+   tangential sources are cut or marked as background.
+   For central claims, also name what would invalidate them.
+   (G1 Verifiability, G2 Factuality, G3 Relevance.)
 
 5. **Use concrete language and specific terms.** Most specific word the audience can
    parse. No vague magnitudes; no umbrella nouns where sub-distinctions matter;

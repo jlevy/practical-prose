@@ -408,29 +408,39 @@ quant:
     code_blocks: 0
     images: 0
     tables: 5
-violations:
+rule_findings:
 - description: Extravagant register flourishes (e.g. 'transformative')
   dimension: Clarity
+  locations: []
   rule_number: 4
+  verdict: violated
 - description: No pre-research priors; no Bayesian shrinkage on probabilities
   dimension: Calibration
+  locations: []
   rule_number: 2
+  verdict: violated
 - description: No Pass 0 / Pass 1 / Pass 2 structure
   dimension: Calibration
+  locations: []
   rule_number: 4
+  verdict: violated
 - description: Risk register missing 2 of 5 classes
   dimension: Fairness
+  locations: []
   rule_number: 3
+  verdict: violated
 - description: Counterintuitive findings all bull-leaning with no tally
   dimension: Fairness
+  locations: []
   rule_number: 4
+  verdict: violated
 ---
 
-## DDOG-r1
+# DDOG-r1
 
 **Source:** `<external artifact not in this repo>`  **Scope:** `—`  **Overall mean (20 dims):** 4.00  **Rubric:** `pp20v1`  **Model:** `—`  **Eval date:** 2026-05-07
 
-### Qualitative
+## Qualitative
 
 | Group | Dimension | Score | Reason |
 | --- | --- | ---: | --- |
@@ -462,7 +472,7 @@ violations:
 |  | **Mean** | **3.50** | |
 |  | **Overall mean (20 dims)** | **4.00** | |
 
-### Violations
+## Violations
 
 1. **Clarity** (rule 4) — Extravagant register flourishes (e.g. 'transformative')
 2. **Calibration** (rule 2) — No pre-research priors; no Bayesian shrinkage on probabilities
@@ -470,7 +480,7 @@ violations:
 4. **Fairness** (rule 3) — Risk register missing 2 of 5 classes
 5. **Fairness** (rule 4) — Counterintuitive findings all bull-leaning with no tally
 
-### Quantitative
+## Quantitative
 
 | Section | Measure | Value |
 | --- | --- | ---: |

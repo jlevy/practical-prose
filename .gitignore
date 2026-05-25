@@ -1,3 +1,6 @@
+# Node / Biome / lefthook
+node_modules/
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[codz]
@@ -16,6 +19,12 @@ eggs/
 .eggs/
 lib/
 lib64/
+# Tracked lib/ directories (the generic `lib/` rule above is for Python
+# packaging; these are JS/TS modules that ARE part of the source).
+!tools/design-system/lib/
+!tools/design-system/lib/**
+!tools/explorations/visual-design/lib/
+!tools/explorations/visual-design/lib/**
 parts/
 sdist/
 var/

@@ -119,13 +119,13 @@ looking at specific qualities or dimensions.
 | **Form** | F1. Organization | Are sections, headings, sequence, tables, figures, links, and cross-references arranged for navigation? |
 |  | F2. Consistency | Does the document follow the chosen style guide or house style consistently? |
 |  | F3. Formatting | Is the document visually and syntactically clean in its medium? |
-| **Grounding** | G1. Verifiability | Are claims traceable to sources or calculations? |
-|  | G2. Factuality | Do cited sources support the claims as asserted? |
-|  | G3. Relevance | Do sources, citations, and reasoning chains bear on the document’s stated purpose? |
 | **Reasoning** | R1. Discipline | Are observation, judgment, interpretation, and implication worked through in order, with each higher rung supported by the prior? |
 |  | R2. Soundness | Do claims follow from evidence through valid mechanisms? |
 |  | R3. Precision | Are claims and terms specified at the right granularity? |
 |  | R4. Parsimony | Is each load-bearing reasoning chain the cleanest, simplest sound argument possible for its conclusion? |
+| **Grounding** | G1. Verifiability | Are claims traceable to sources or calculations? |
+|  | G2. Factuality | Do cited sources support the claims as asserted? |
+|  | G3. Relevance | Do sources, citations, and reasoning chains bear on the document’s stated purpose? |
 | **Judgment** | J1. Calibration | Does claim strength match evidence strength? |
 |  | J2. Fairness | Are opposing positions argued at proportional evidentiary depth? |
 |  | J3. Robustness | Do key claims survive plausible alternative interpretations? |
@@ -158,7 +158,7 @@ specifications—not just practical prose.
 The practical-prose layers (Principles, Guidelines, Rubric) build on top of it with the
 seven principles and 20 dimensions specific to evaluating practical writing.
 Principles, Guidelines, and Rubric form a tight triple: same seven principles, same 20
-dimensions, same six groups (Purpose, Expression, Form, Grounding, Reasoning, Judgment).
+dimensions, same six groups (Purpose, Expression, Form, Reasoning, Grounding, Judgment).
 The bibliography supplies the intellectual basis; the shortcuts and runbooks are how the
 system gets used in practice.
 

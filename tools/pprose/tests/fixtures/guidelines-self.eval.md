@@ -449,84 +449,114 @@ quant:
     code_blocks: 0
     images: 0
     tables: 1
-violations:
+rule_findings:
 - description: Stale dimension name 'Coverage' from the prior 15-dim-v1 rubric used
     instead of current 'Breadth'
   dimension: Scope
-  location: L88
+  locations:
+  - line_start: 88
   rule_number: 1
+  verdict: violated
 - description: Calibration rules (§16) and Robustness rules (§18) are more abstract
     and less developed with worked examples than Clarity (§5) or Discipline (§13)
   dimension: Depth
-  location: §16 and §18
+  locations:
+  - section: §16 and §18
   rule_number: 1
+  verdict: violated
 - description: Five banned-register words (incontrovertibly, monumental, seismic,
     paradigm-shifting, structurally outmaneuvered) appear in prose; though used as
     illustrative examples, a lint pass fires on them
   dimension: Clarity
-  location: L197-198
+  locations:
+  - line_end: 198
+    line_start: 197
   rule_number: 4
+  verdict: violated
 - description: Common Pitfalls section introduces 'compliance pressure crowding out
     self-regulation' and 'anchoring on a source document' without setup from preceding
     rule sections
   dimension: Coherence
-  location: L707-728
+  locations:
+  - line_end: 728
+    line_start: 707
   rule_number: 4
+  verdict: violated
 - description: 'Scope Rule 2.4 and Breadth Rule 3.4 are near-verbatim duplicates:
     both state ''out-of-scope omissions are not breadth failures'' with the same elaboration'
   dimension: Concision
-  location: L105-108 and L136-138
+  locations:
+  - note: L105-108 and L136-138
   rule_number: 2
+  verdict: violated
 - description: 35 internal § cross-references are not hyperlinked, forcing manual
     navigation in an 800-line document
   dimension: Organization
-  location: Throughout
+  locations:
+  - note: Throughout
   rule_number: 7
+  verdict: violated
 - description: Contractions ('can't', 'don't', 'doesn't') mixed freely with formal
     equivalents ('cannot', 'does not') with no stated register convention
   dimension: Consistency
-  location: L58, L64, L70, L88, L150, L212, L340
+  locations:
+  - note: L58, L64, L70, L88, L150, L212, L340
   rule_number: 5
+  verdict: violated
 - description: No YAML frontmatter despite the doc's own Rule 10.5 requiring 'required
     headers, metadata, and footers present' and the companion rubric having frontmatter
   dimension: Formatting
-  location: L1 (document opening)
+  locations:
+  - note: L1 (document opening)
   rule_number: 5
+  verdict: violated
 - description: Argyris citation omits co-authors (Putnam, Smith), page numbers, and
     publisher; 'Action Science (1985)' is not specific enough to verify the exact
     passage
   dimension: Verifiability
-  location: L485-486
+  locations:
+  - line_end: 486
+    line_start: 485
   rule_number: 2
+  verdict: violated
 - description: L88 refers to 'Coverage' as though it is a current dimension name,
     but 18-dim-v1 replaced Coverage with Breadth and Depth; entity reference does
     not match current rubric
   dimension: Factuality
-  location: L88
+  locations:
+  - line_start: 88
   rule_number: 3
+  verdict: violated
 - description: The alignment claim at L11-12 ('every scoring failure should map to
     a specific rule here') is load-bearing but asserted without a worked example or
     test case
   dimension: Soundness
-  location: L11-12
+  locations:
+  - line_end: 12
+    line_start: 11
   rule_number: 5
+  verdict: violated
 - description: L88 uses the obsolete umbrella term 'Coverage' where the current proper
     names are 'Breadth' and 'Depth'
   dimension: Precision
-  location: L88
+  locations:
+  - line_start: 88
   rule_number: 2
+  verdict: violated
 - description: Bibliography section §Related at L1000 lists references some of which
     stretch toward adjacent topics without one-sentence purpose link.
   dimension: Relevance
-  location: §Related
+  locations:
+  - section: §Related
   rule_number: 5
+  verdict: violated
 ---
 
-## guidelines-self
+# guidelines-self
 
 **Source:** `docs/practical-prose-guidelines.md`  **Scope:** `memo`  **Overall mean (20 dims):** 4.13  **Rubric:** `pp20v1`  **Model:** `—`  **Eval date:** 2026-05-10
 
-### Qualitative
+## Qualitative
 
 | Group | Dimension | Score | Reason |
 | --- | --- | ---: | --- |
@@ -558,7 +588,7 @@ violations:
 |  | **Mean** | — | |
 |  | **Overall mean (20 dims)** | **4.13** | |
 
-### Violations
+## Violations
 
 1. **Scope** (rule 1) — Stale dimension name 'Coverage' from the prior 15-dim-v1 rubric used instead of current 'Breadth' *Location:* L88.
 2. **Depth** (rule 1) — Calibration rules (§16) and Robustness rules (§18) are more abstract and less developed with worked examples than Clarity (§5) or Discipline (§13) *Location:* §16 and §18.
@@ -574,7 +604,7 @@ violations:
 12. **Precision** (rule 2) — L88 uses the obsolete umbrella term 'Coverage' where the current proper names are 'Breadth' and 'Depth' *Location:* L88.
 13. **Relevance** (rule 5) — Bibliography section §Related at L1000 lists references some of which stretch toward adjacent topics without one-sentence purpose link. *Location:* §Related.
 
-### Quantitative
+## Quantitative
 
 | Section | Measure | Value |
 | --- | --- | ---: |

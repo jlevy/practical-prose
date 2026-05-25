@@ -281,7 +281,7 @@ def _make_report(
                 "consistency": "ERR",
                 "formatting": "ERR",
             },
-            "purpose": {"suitability": 4, "breadth": 4, "depth": 4},
+            "purpose": {"suitability": 4, "scope": 4, "breadth": 4, "depth": 4},
             "grounding": {"verifiability": 5, "factuality": 4, "relevance": 5},
             "reasoning": {
                 "discipline": 4,

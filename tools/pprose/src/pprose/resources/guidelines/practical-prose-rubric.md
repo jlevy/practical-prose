@@ -189,13 +189,13 @@ are not justified.
 | 8 | Form | Organization | Are sections, headings, sequence, tables, figures, links, and cross-references arranged for navigation? |
 | 9 |  | Consistency | Does the document follow the chosen style guide or house style consistently? |
 | 10 |  | Formatting | Is the document visually and syntactically clean in its medium? |
-| 11 | Grounding | Verifiability | Are claims traceable to sources or calculations? |
-| 12 |  | Factuality | Do cited sources support the claims as asserted? |
-| 13 |  | Relevance | Do sources, citations, and reasoning chains bear on the document’s stated purpose? |
-| 14 | Reasoning | Discipline | Are observation, judgment, interpretation, and implication worked through in order, with each higher rung supported by the prior? |
-| 15 |  | Soundness | Do claims follow from evidence through valid mechanisms? |
-| 16 |  | Precision | Are claims and terms specified at the right granularity? |
-| 17 |  | Parsimony | Is each load-bearing reasoning chain the cleanest, simplest sound argument possible for its conclusion? |
+| 11 | Reasoning | Discipline | Are observation, judgment, interpretation, and implication worked through in order, with each higher rung supported by the prior? |
+| 12 |  | Soundness | Do claims follow from evidence through valid mechanisms? |
+| 13 |  | Precision | Are claims and terms specified at the right granularity? |
+| 14 |  | Parsimony | Is each load-bearing reasoning chain the cleanest, simplest sound argument possible for its conclusion? |
+| 15 | Grounding | Verifiability | Are claims traceable to sources or calculations? |
+| 16 |  | Factuality | Do cited sources support the claims as asserted? |
+| 17 |  | Relevance | Do sources, citations, and reasoning chains bear on the document’s stated purpose? |
 | 18 | Judgment | Calibration | Does claim strength match evidence strength? |
 | 19 |  | Fairness | Are opposing positions argued at proportional evidentiary depth? |
 | 20 |  | Robustness | Do key claims survive plausible alternative interpretations? |
@@ -554,6 +554,189 @@ Distinct from F1 Organization (arrangement) and F2 Consistency (editorial polish
   Required headers, metadata, and footers present and correctly placed.
   No raw-source artifacts in the rendered output.
 
+### Reasoning
+
+#### R1. Discipline
+
+Climbing the ladder of inference rung by rung in order (observation → judgment →
+interpretation → implication), with each higher rung supported by the rung below.
+Implications rest on sound interpretations, which rest on sound judgments, which rest on
+sound observations.
+Each rung is named on its own terms; none is skipped, none is blended
+into its neighbor. Sister of Soundness (R2): Soundness asks whether each step is itself
+valid; Discipline asks whether the rungs are climbed in order and exist as distinct
+rungs at all.
+
+- **NA:** Not applicable.
+  Discipline tests whether the document moves rung by rung up the ladder (observation →
+  judgment → interpretation → implication).
+  The dimension is engaged when the document moves between *any two* rungs at all,
+  including a single observation that leads to a single implication.
+
+  Signals that **do** engage the dimension (any one suffices):
+  1. A claim drawn from an earlier observation in the same document ("X happened,
+     therefore Y").
+  2. A judgment, conclusion, or implication stated in the document’s own voice (not
+     quoted from a source).
+  3. A causal, evaluative, or predictive statement about something the document has just
+     described.
+  4. Connectives that signal reasoning: “therefore”, “so”, “this means”, “as a result”,
+     “hence”, “it follows that”.
+
+  Reserve NA for artifacts whose entire content is a pure reference table, a fact-only
+  roster, a literal log excerpt, a definition list, or other content that states facts
+  without reasoning *from* them.
+  If the artifact reasons anywhere (even one sentence) score 1-5.
+
+- **ERR:** Cannot assess (process failure; re-run the eval).
+  The artifact attempts inferential reasoning but provides too little to score it: fewer
+  than three sentences of reasoning, or reasoning truncated mid-argument.
+
+- **1:** Rungs systematically blended; observations, judgments, and implications fused
+  inside single clauses throughout.
+  Reader cannot tell which sub-claim carries evidence.
+
+- **2:** Rungs collapsed in key claims.
+  Frequent leaps from observation directly to implication with the intermediate judgment
+  and interpretation skipped or buried.
+
+- **3:** Rungs distinguished in some sections but blended in others.
+  Several key claims fuse observation and interpretation in one sentence; citation
+  legitimacy from the observation rung leaks onto the implication rung.
+
+- **4:** Score-5 mostly satisfied with one or two minor slips: one sentence that bundles
+  observation and judgment, or an implication asserted without the interpretation rung
+  explicitly named.
+
+- **5:** Each key claim sits on a single, identifiable rung.
+  No rung skipped on the way to a conclusion; transitions between rungs signaled ("from
+  this we judge…", “which we interpret as…”, “which implies…”). Each rung carries its
+  own evidence, and citations are tied to the rung they support, not transferred upward.
+  For audits, evals, and high-stakes analysis, rung tags (`[observed]`, `[judged]`,
+  `[interpreted]`, `[implied]`) used; in polished prose, the rung separation holds
+  without tags.
+
+#### R2. Soundness
+
+Logical organization, well-defined terms, mechanisms named where causation is asserted,
+visible chain from evidence to claim.
+Focuses on the document’s logical structure; multiple-perspective consideration is
+scored under J2 Fairness.
+
+- **ERR:** Cannot assess (process failure; re-run the eval).
+  Content missing or fewer than 3 sentences.
+- **1:** Sloppy reasoning; imprecise statements; key terms undefined; arguments rest on
+  unstated premises.
+- **2:** Logical gaps or unclear terms; mechanism not named where causation is asserted;
+  premises the argument depends on slipped in as background.
+- **3:** Generally logical but could be more precise.
+  Some claims asserted rather than argued; counter-evidence in the document not engaged;
+  one or two premises implicit rather than named.
+- **4:** Well-structured with mostly clear reasoning.
+  Mechanisms named where causation is asserted.
+  Internal consistency holds.
+  Most premises are surfaced.
+- **5:** Scientifically precise and logical.
+  Mechanisms named, key terms defined, premises explicitly surfaced (inline
+  `[ASSUMING: ...]` or a “Key assumptions” block), internal consistency tight (same
+  number / fact / claim stated identically across sections), counter-evidence in the
+  document engaged, asserted claims either argued or marked as assertions subject to
+  falsifiable conditions.
+
+#### R3. Precision
+
+Claims and terms specified at the right granularity for the domain and audience.
+Generic vocabulary in place of available specific vocabulary is imprecision, even when
+the generic phrasing is true.
+Distinct from E1 Clarity (register / readability) and P3 Breadth and P4 Depth (scope
+completeness, section development): Precision scores granularity *within* each claim.
+
+- **ERR:** Cannot assess (process failure; re-run the eval).
+  Content missing or fewer than 3 sentences.
+- **1:** Generic vocabulary throughout; entities referred to by category nouns ("the
+  company," “the model,” “the regulation”); umbrella terms used where the
+  sub-distinction matters; vague placeholders ("several," “various,” “many”) for items
+  the doc could count or name.
+- **2:** Frequent imprecision on key claims.
+  Mix of proper and category names; quantitative claims at coarser resolution than the
+  source supports or finer resolution than the measurement supports.
+- **3:** Workable precision; key claims mostly use specific terms but several umbrella
+  terms remain where the sub-distinction matters; one or two vague countables.
+- **4:** Score-5 mostly satisfied with one or two minor slips: a single category-name
+  reference, one quantitative claim with mismatched precision, or one umbrella term
+  where the sub-distinction matters.
+- **5:** Most specific term the audience can parse used throughout; domain entities
+  referred to by proper name (versioned model names, statute sections, filing IDs,
+  product names); umbrella terms avoided where sub-distinctions matter (capex vs
+  maintenance / growth; users vs MAU / DAU / paid; latency vs p50 / p99); quantitative
+  precision matches measurement precision; no vague placeholders for countable items
+  (either counted: “12”, or named: “AWS, Azure, GCP, OCI”).
+
+#### R4. Parsimony
+
+Is each load-bearing reasoning chain the cleanest, simplest sound argument possible for
+its conclusion? Length is not the metric; minimality given the per-step warrants in use
+is. A long chain of strong deductive steps (a formal proof, a multi-step regulatory
+cross-walk) is parsimonious when no shorter chain of the same warrant strength exists; a
+short chain of weak inductive gestures is non-parsimonious when it elides intermediates
+the conclusion requires.
+
+Parsimony presupposes Soundness (R2). When a step is unsound, a longer sound chain would
+do less damage to the conclusion, so the chain as written cannot be the most
+parsimonious sound argument.
+The Soundness → Parsimony cascade (see the rubric front matter) carries NA and ERR
+through cleanly; a low Soundness score (1-2) still leaves Parsimony scorable 1-5 on
+whatever sound chains remain.
+
+Parsimony differs from E3 Concision (prose-level economy: words and paragraphs), from G3
+Relevance (whether each source or section is on-task), from R1 Discipline (whether the
+rungs are climbed in order), and from R2 Soundness (whether each step is valid).
+Parsimony asks specifically: given the warrants in use, is the chain shape the minimum
+sufficient?
+
+- **NA:** Not applicable.
+  Either the document makes no inferential claims (pure reference data, raw
+  measurements, a glossary, or a structured form — no reasoning chain whose minimality
+  could be evaluated), **or** Soundness is NA and the cascade applies (Parsimony NA
+  follows Soundness NA; see *Cross-dimension cascades* in the rubric front matter).
+
+- **ERR:** Cannot assess (process failure; re-run the eval).
+  Either a procedural failure prevents scoring, **or** Soundness is ERR and the cascade
+  applies (Parsimony ERR follows Soundness ERR — Parsimony is defined as the cleanest
+  *sound* chain, so an unscored Soundness leaves nothing to be parsimonious about).
+  A low Soundness score (1-2) is not an ERR trigger; in that case Parsimony is still
+  scored 1-5 on whatever sound chains remain, and the reason may cite the upstream
+  Soundness weakness.
+
+- **1:** Obviously extraneous elements throughout the chains of reasoning: citable facts
+  re-derived where the citation would have served the same purpose, weaker warrants
+  substituted where stronger ones were available, or non-load-bearing rungs piled into
+  chains that the conclusion does not require.
+  The argument bears little resemblance to a minimum sufficient sound chain.
+
+- **2:** Obviously extraneous elements in multiple load-bearing chains, or on the chains
+  that carry headline claims.
+  Substantial padding, weaker-warrant substitution where direct evidence existed, or
+  re-derivation that adds neither inspectability nor confidence.
+
+- **3:** Workable; the chains are roughly the right shape and the headline claims
+  survive a minimum-sufficiency test, but several arguments could be tightened without
+  loss of soundness or precision.
+
+- **4:** A few arguments could be simplified but maintain the same level of soundness
+  and precision; otherwise tight.
+  A single re-derivation that could have been a citation without loss of inspectability,
+  one chain using inductive language where a deductive step is available, or one
+  redundant rung in an otherwise-tight chain.
+
+- **5:** Every line of inference or argument appears to be the most clean and simple
+  argument possible to a sound conclusion.
+  Long chains appear only where the warrant strengths in use require them; short chains
+  appear only where per-step warrants are strong enough to support them.
+  No rung is extraneous; re-derivations are present only where they add inspectability,
+  confidence, or pedagogy that a citation would not; no weaker warrant is substituted
+  where a stronger one was available.
+
 ### Grounding
 
 #### G1. Verifiability
@@ -785,189 +968,6 @@ sections rather than words and paragraphs.
   Digressions, where present, are explicitly marked so the reader can skip without
   losing the main thread.
 
-### Reasoning
-
-#### R1. Discipline
-
-Climbing the ladder of inference rung by rung in order (observation → judgment →
-interpretation → implication), with each higher rung supported by the rung below.
-Implications rest on sound interpretations, which rest on sound judgments, which rest on
-sound observations.
-Each rung is named on its own terms; none is skipped, none is blended
-into its neighbor. Sister of Soundness (R2): Soundness asks whether each step is itself
-valid; Discipline asks whether the rungs are climbed in order and exist as distinct
-rungs at all.
-
-- **NA:** Not applicable.
-  Discipline tests whether the document moves rung by rung up the ladder (observation →
-  judgment → interpretation → implication).
-  The dimension is engaged when the document moves between *any two* rungs at all,
-  including a single observation that leads to a single implication.
-
-  Signals that **do** engage the dimension (any one suffices):
-  1. A claim drawn from an earlier observation in the same document ("X happened,
-     therefore Y").
-  2. A judgment, conclusion, or implication stated in the document’s own voice (not
-     quoted from a source).
-  3. A causal, evaluative, or predictive statement about something the document has just
-     described.
-  4. Connectives that signal reasoning: “therefore”, “so”, “this means”, “as a result”,
-     “hence”, “it follows that”.
-
-  Reserve NA for artifacts whose entire content is a pure reference table, a fact-only
-  roster, a literal log excerpt, a definition list, or other content that states facts
-  without reasoning *from* them.
-  If the artifact reasons anywhere (even one sentence) score 1-5.
-
-- **ERR:** Cannot assess (process failure; re-run the eval).
-  The artifact attempts inferential reasoning but provides too little to score it: fewer
-  than three sentences of reasoning, or reasoning truncated mid-argument.
-
-- **1:** Rungs systematically blended; observations, judgments, and implications fused
-  inside single clauses throughout.
-  Reader cannot tell which sub-claim carries evidence.
-
-- **2:** Rungs collapsed in key claims.
-  Frequent leaps from observation directly to implication with the intermediate judgment
-  and interpretation skipped or buried.
-
-- **3:** Rungs distinguished in some sections but blended in others.
-  Several key claims fuse observation and interpretation in one sentence; citation
-  legitimacy from the observation rung leaks onto the implication rung.
-
-- **4:** Score-5 mostly satisfied with one or two minor slips: one sentence that bundles
-  observation and judgment, or an implication asserted without the interpretation rung
-  explicitly named.
-
-- **5:** Each key claim sits on a single, identifiable rung.
-  No rung skipped on the way to a conclusion; transitions between rungs signaled ("from
-  this we judge…", “which we interpret as…”, “which implies…”). Each rung carries its
-  own evidence, and citations are tied to the rung they support, not transferred upward.
-  For audits, evals, and high-stakes analysis, rung tags (`[observed]`, `[judged]`,
-  `[interpreted]`, `[implied]`) used; in polished prose, the rung separation holds
-  without tags.
-
-#### R2. Soundness
-
-Logical organization, well-defined terms, mechanisms named where causation is asserted,
-visible chain from evidence to claim.
-Focuses on the document’s logical structure; multiple-perspective consideration is
-scored under J2 Fairness.
-
-- **ERR:** Cannot assess (process failure; re-run the eval).
-  Content missing or fewer than 3 sentences.
-- **1:** Sloppy reasoning; imprecise statements; key terms undefined; arguments rest on
-  unstated premises.
-- **2:** Logical gaps or unclear terms; mechanism not named where causation is asserted;
-  premises the argument depends on slipped in as background.
-- **3:** Generally logical but could be more precise.
-  Some claims asserted rather than argued; counter-evidence in the document not engaged;
-  one or two premises implicit rather than named.
-- **4:** Well-structured with mostly clear reasoning.
-  Mechanisms named where causation is asserted.
-  Internal consistency holds.
-  Most premises are surfaced.
-- **5:** Scientifically precise and logical.
-  Mechanisms named, key terms defined, premises explicitly surfaced (inline
-  `[ASSUMING: ...]` or a “Key assumptions” block), internal consistency tight (same
-  number / fact / claim stated identically across sections), counter-evidence in the
-  document engaged, asserted claims either argued or marked as assertions subject to
-  falsifiable conditions.
-
-#### R3. Precision
-
-Claims and terms specified at the right granularity for the domain and audience.
-Generic vocabulary in place of available specific vocabulary is imprecision, even when
-the generic phrasing is true.
-Distinct from E1 Clarity (register / readability) and P3 Breadth and P4 Depth (scope
-completeness, section development): Precision scores granularity *within* each claim.
-
-- **ERR:** Cannot assess (process failure; re-run the eval).
-  Content missing or fewer than 3 sentences.
-- **1:** Generic vocabulary throughout; entities referred to by category nouns ("the
-  company," “the model,” “the regulation”); umbrella terms used where the
-  sub-distinction matters; vague placeholders ("several," “various,” “many”) for items
-  the doc could count or name.
-- **2:** Frequent imprecision on key claims.
-  Mix of proper and category names; quantitative claims at coarser resolution than the
-  source supports or finer resolution than the measurement supports.
-- **3:** Workable precision; key claims mostly use specific terms but several umbrella
-  terms remain where the sub-distinction matters; one or two vague countables.
-- **4:** Score-5 mostly satisfied with one or two minor slips: a single category-name
-  reference, one quantitative claim with mismatched precision, or one umbrella term
-  where the sub-distinction matters.
-- **5:** Most specific term the audience can parse used throughout; domain entities
-  referred to by proper name (versioned model names, statute sections, filing IDs,
-  product names); umbrella terms avoided where sub-distinctions matter (capex vs
-  maintenance / growth; users vs MAU / DAU / paid; latency vs p50 / p99); quantitative
-  precision matches measurement precision; no vague placeholders for countable items
-  (either counted: “12”, or named: “AWS, Azure, GCP, OCI”).
-
-#### R4. Parsimony
-
-Is each load-bearing reasoning chain the cleanest, simplest sound argument possible for
-its conclusion? Length is not the metric; minimality given the per-step warrants in use
-is. A long chain of strong deductive steps (a formal proof, a multi-step regulatory
-cross-walk) is parsimonious when no shorter chain of the same warrant strength exists; a
-short chain of weak inductive gestures is non-parsimonious when it elides intermediates
-the conclusion requires.
-
-Parsimony presupposes Soundness (R2). When a step is unsound, a longer sound chain would
-do less damage to the conclusion, so the chain as written cannot be the most
-parsimonious sound argument.
-The Soundness → Parsimony cascade (see the rubric front matter) carries NA and ERR
-through cleanly; a low Soundness score (1-2) still leaves Parsimony scorable 1-5 on
-whatever sound chains remain.
-
-Parsimony differs from E3 Concision (prose-level economy: words and paragraphs), from G3
-Relevance (whether each source or section is on-task), from R1 Discipline (whether the
-rungs are climbed in order), and from R2 Soundness (whether each step is valid).
-Parsimony asks specifically: given the warrants in use, is the chain shape the minimum
-sufficient?
-
-- **NA:** Not applicable.
-  Either the document makes no inferential claims (pure reference data, raw
-  measurements, a glossary, or a structured form — no reasoning chain whose minimality
-  could be evaluated), **or** Soundness is NA and the cascade applies (Parsimony NA
-  follows Soundness NA; see *Cross-dimension cascades* in the rubric front matter).
-
-- **ERR:** Cannot assess (process failure; re-run the eval).
-  Either a procedural failure prevents scoring, **or** Soundness is ERR and the cascade
-  applies (Parsimony ERR follows Soundness ERR — Parsimony is defined as the cleanest
-  *sound* chain, so an unscored Soundness leaves nothing to be parsimonious about).
-  A low Soundness score (1-2) is not an ERR trigger; in that case Parsimony is still
-  scored 1-5 on whatever sound chains remain, and the reason may cite the upstream
-  Soundness weakness.
-
-- **1:** Obviously extraneous elements throughout the chains of reasoning: citable facts
-  re-derived where the citation would have served the same purpose, weaker warrants
-  substituted where stronger ones were available, or non-load-bearing rungs piled into
-  chains that the conclusion does not require.
-  The argument bears little resemblance to a minimum sufficient sound chain.
-
-- **2:** Obviously extraneous elements in multiple load-bearing chains, or on the chains
-  that carry headline claims.
-  Substantial padding, weaker-warrant substitution where direct evidence existed, or
-  re-derivation that adds neither inspectability nor confidence.
-
-- **3:** Workable; the chains are roughly the right shape and the headline claims
-  survive a minimum-sufficiency test, but several arguments could be tightened without
-  loss of soundness or precision.
-
-- **4:** A few arguments could be simplified but maintain the same level of soundness
-  and precision; otherwise tight.
-  A single re-derivation that could have been a citation without loss of inspectability,
-  one chain using inductive language where a deductive step is available, or one
-  redundant rung in an otherwise-tight chain.
-
-- **5:** Every line of inference or argument appears to be the most clean and simple
-  argument possible to a sound conclusion.
-  Long chains appear only where the warrant strengths in use require them; short chains
-  appear only where per-step warrants are strong enough to support them.
-  No rung is extraneous; re-derivations are present only where they add inspectability,
-  confidence, or pedagogy that a citation would not; no weaker warrant is substituted
-  where a stronger one was available.
-
 ### Judgment
 
 #### J1. Calibration
@@ -1120,13 +1120,13 @@ the reader has acted on them.
 
 Cross-references to the guidelines:
 
-- **Factual** and **AI-generated** rows operationalize §11.5 Verifiability ("name what
+- **Factual** and **AI-generated** rows operationalize §15.5 Verifiability ("name what
   would invalidate the claim").
-- **Causal** row operationalizes §15.8 Soundness (the counterfactual test).
-- **Quantitative** row operationalizes §12.2 Factuality (rounding/aggregation/unit
+- **Causal** row operationalizes §12.8 Soundness (the counterfactual test).
+- **Quantitative** row operationalizes §16.2 Factuality (rounding/aggregation/unit
   conversion disclosure).
 - **Forecast** row operationalizes J1 Calibration (base-rate anchoring).
-- **Recommendation** row operationalizes §15.3 Soundness (surface unstated assumptions)
+- **Recommendation** row operationalizes §12.3 Soundness (surface unstated assumptions)
   and J3 Robustness (test against alternative interpretive lens).
 - **Summary** row operationalizes P1 Suitability and P4 Depth (what the document doesn’t
   do; section depth matches importance).
@@ -1175,18 +1175,11 @@ Bump it on changes that could shift scores or break loaders once the definition 
 - Score-anchor language tightened in a way that could move scores.
 - Score domain narrowed or widened.
 
-The six groups include **Form** (Organization, Consistency, Formatting), split out from the
-former six-dimension Expression group; Expression now holds Clarity, Coherence, and
-Concision. The dimensions and their anchors are unchanged; only the grouping moved, so the
-change is folded into `pp20v1` without a version bump.
+The six groups are **Purpose**, **Expression** (Clarity, Coherence, Concision),
+**Form** (Organization, Consistency, Formatting), **Reasoning**, **Grounding**, and
+**Judgment**. The version string is `pp20v1` (20 dimensions across 6 groups).
 
 `../scripts/eval_compare.py` warns when comparing across rubric versions.
-On any report whose `rubric_version` is not the current value the eval loader auto-coerces
-`score: 0` to `ERR` and relocates the three Form dimensions out of a legacy `expression`
-block into a `form` block (dropping the stale derived rollup so it recomputes), so older
-reports (legacy `20-dim-v1`, `18-dim-v1-stale-baseline`, `15-dim-v1`, etc.) still load — but
-they should be re-scored against the current schema before being reused as calibration
-baselines.
 
 ## Related docs
 

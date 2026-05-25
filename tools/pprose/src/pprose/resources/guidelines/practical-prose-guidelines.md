@@ -40,13 +40,13 @@ context, evidence, or maintainability is friction.
 | **Form** | F1. Organization | Are sections, headings, sequence, tables, figures, links, and cross-references arranged for navigation? |
 |  | F2. Consistency | Does the document follow the chosen style guide or house style consistently? |
 |  | F3. Formatting | Is the document visually and syntactically clean in its medium? |
-| **Grounding** | G1. Verifiability | Are claims traceable to specific sources, observations, or calculations? |
-|  | G2. Factuality | Are the verifiable claims true and supported by cited evidence? |
-|  | G3. Relevance | Do sources, citations, and reasoning chains bear on the document's stated purpose? |
 | **Reasoning** | R1. Discipline | Are observation, judgment, interpretation, and implication worked through in order, with each higher rung supported by the prior? |
 |  | R2. Soundness | Do claims follow from evidence through valid mechanisms and explicit assumptions? |
 |  | R3. Precision | Are claims and terms specified at the right granularity? |
 |  | R4. Parsimony | Is each load-bearing reasoning chain the cleanest, simplest sound argument possible for its conclusion? |
+| **Grounding** | G1. Verifiability | Are claims traceable to specific sources, observations, or calculations? |
+|  | G2. Factuality | Are the verifiable claims true and supported by cited evidence? |
+|  | G3. Relevance | Do sources, citations, and reasoning chains bear on the document's stated purpose? |
 | **Judgment** | J1. Calibration | Does claim strength match evidence strength? |
 |  | J2. Fairness | Are opposing positions argued at depth proportional to their plausibility and strength? |
 |  | J3. Robustness | Do key claims survive plausible alternative interpretations? |
@@ -62,13 +62,13 @@ A good practical document does these things; the prescriptive rules below say ho
    stakes require (P3, P4).
 3. **Reads cleanly.** Concrete words; one-job paragraphs; earned register; visible
    structure; consistent style; valid markup (E1-E3, F1-F3).
-4. **Makes important claims checkable.** Source-traceable, faithful to the cited
-   evidence, and tied to the document's purpose; the strictness of the bar scaled to
-   stakes (G1–G3).
-5. **Reasons in distinct steps, by the shortest sound path.** Observation, judgment,
+4. **Reasons in distinct steps, by the shortest sound path.** Observation, judgment,
    interpretation, and implication kept on separate rungs; mechanisms named where
    causation is asserted; precision matched to measurement; each load-bearing chain the
    minimum sufficient sound argument (R1–R4).
+5. **Makes important claims checkable.** Source-traceable, faithful to the cited
+   evidence, and tied to the document's purpose; the strictness of the bar scaled to
+   stakes (G1–G3).
 6. **Matches confidence to evidence.** Claim strength tracks evidence strength; opposing
    positions argued proportionally; key claims tested against alternative interpretive
    lenses (J1–J3).
@@ -517,193 +517,6 @@ Formatting is the most deterministic of the three; most rules here are lintable.
    sequences leaking into prose; no Markdown-source artifacts visible in the rendered
    output; no broken images or missing alt text.
 
-## Grounding Dimensions
-
-### G1. Verifiability
-
-*Description:* Claims are stated specifically enough to be checkable, and traceable to
-specific sources, observations, calculations, or explicit assumptions.
-A document scores high on Verifiability when a competent reader could check its claims
-from what the document provides, before any external lookup.
-Verifiability is text-internal: it tests how well the document equips the reader to
-audit. **Factuality (G2)** is world-aware: it tests whether the audit, when performed,
-passes.
-
-A claim that is too vague to check is a Verifiability defect even when sources are
-cited: if “things have grown rapidly” has no quantitative referent, no source can
-confirm or refute it.
-Specificity is the precondition for source-traceability.
-
-**Rules:**
-
-1. **Claims are stated specifically enough to be checkable.** A claim a reader could in
-   principle confirm or refute by consulting sources, observations, or calculations.
-   Vague magnitude words ("rapid," “many,” "in greater volume," “increasingly”) without
-   a stated referent or comparison fail this rule even when the underlying assertion
-   might be true; the document has not made a checkable claim.
-   Score R3 Precision for terminology specificity; this rule covers the claim-level
-   bar.
-
-2. **Quantitative claims are source-traceable; the bar scales with stakes.** For
-   high-stakes, external, or decision-bearing documents (research reports, audits,
-   decision memos, deep research), every quantitative claim has at least one primary
-   source (official documentation, filings, press releases, transcripts, source code,
-   datasets, or first-party measurements).
-   Secondary sources (news aggregators, blog summaries, third-party analyses) can
-   corroborate but don’t substitute.
-   For low-stakes operational notes and lightweight status updates, cite the source when
-   the number is material; otherwise mark the basis or measurement context (for example,
-   “local timing run, n=20” or “Grafana, 7d window”).
-
-3. **Citations are specific enough to verify.** Enough information that a reader can
-   find the exact passage: a URL, a document or accession ID, a date, a commit SHA, a
-   page or section number.
-   “The release notes” is vague; “the v2.4 release notes, §3.2 ('breaking changes')” is
-   verifiable. Social-media posts need post IDs.
-   Press releases need dates.
-   Filings need accession numbers or filing dates.
-
-4. **Confidence tags require a source per claim.** `[VERIFIED]` without naming what was
-   verified or against which source is opaque.
-   Pair every confidence tag with a specific source pointer.
-   For derived facts, show the calculation inline: `[DERIVED: 89.6 / 614.5 = 14.6%]`.
-
-5. **Calibrated uncertainty is not a defect; uncalibrated assertion is.** `[UNVERIFIED]`
-   is preferable to silently inheriting an unverifiable claim.
-   `[ESTIMATED]` with the triangulation method stated is preferable to a bare point
-   estimate. A claim explicitly marked as speculative or unverified, with its basis
-   named, does not lower the Verifiability score.
-   A claim asserted as fact without the certainty the evidence supports does.
-   The point is that the reader knows the claim’s epistemic status, not that every claim
-   is fully resolved.
-
-6. **For central claims, name what would invalidate them.** Beyond citing sources, state
-   what a skeptical reader should inspect to falsify the claim, and what observation
-   would change the conclusion.
-   Feynman’s first principle: you must not fool yourself, and you are the easiest person
-   to fool. See the *Failure-Mode Questions* table in
-   [practical-prose-rubric.md](practical-prose-rubric.md) for claim-type-specific
-   prompts.
-
-### G2. Factuality
-
-*Description:* The document’s verifiable claims hold up when checked against the world,
-at the asserted strength, for the asserted entity, date, and scope.
-Verifiability (G1) is text-internal: does the document let the reader audit?
-Factuality is world-aware: does the audit, when performed, pass?
-
-Truth here means: **the assertion strength matches the available evidence.** A claim
-asserted as certain when the evidence is uncertain is a Factuality defect.
-A claim asserted as speculative, with its speculative status explicit and its basis
-named, is **factually correct** even if the underlying proposition cannot be checked —
-the document is telling the reader the truth about what is known.
-
-Scoring Factuality is corroboration-driven, not citation-driven.
-Cited sources are the cleanest mechanism, but a verifiable claim can be corroborated by
-authoritative external evidence when no citation is present.
-A claim is a Factuality defect when it is *asserted as fact* and *cannot be
-corroborated*; it is **not** a defect when it is flagged as uncertain or speculative
-with a stated basis.
-
-Reviewer access limits are not document defects.
-A claim with a reachable primary source that the reviewer happens to be unable to access
-(paywalled, in a language the reviewer doesn’t read, or in a private system) counts as
-neutral, not a Factuality slip.
-The reason note records the access limit so a later reviewer with access can complete
-the audit.
-
-**Rules:**
-
-1. **Verifiable claims are corroborated.** When the document makes a checkable claim,
-   that claim is supported either (a) by a cited source the reader can reach, or (b) by
-   authoritative external evidence accessible at appropriate effort.
-   A claim that cannot be corroborated and is asserted as fact without hedging is a
-   defect.
-
-2. **Cited sources support the claim at the asserted strength.** A source that says “X
-   is one factor” does not support a claim that “X is the dominant factor.”
-   A source about a prior period does not support a claim about a current period without
-   an explicit bridge.
-
-3. **Numbers in prose match cited sources, or explicitly disclose rounding, aggregation,
-   unit conversion, or derivation.** A measurement of 14.6% in the source can appear as
-   “~15%” in prose only if the rounding is signaled (an approximation marker, a stated
-   rounding policy, or a parenthetical such as “(14.6% rounded)”). Silent rounding,
-   silent aggregation across categories, or silent unit conversion all fail this rule.
-
-4. **Entity, date, and scope of citations match the claim.** Claims about a product
-   should cite that product’s own sources, not third-party commentary about it.
-   Claims about the current period should cite current-period data, not extrapolations
-   from a prior period without an explicit bridge.
-
-5. **Sources represent the cited entity, not its inverse.** An advocate’s note quoted as
-   if it were neutral, an opinion piece quoted as if it were a primary source, or a
-   commentary quoted as if it were the underlying data all fail accuracy even when the
-   citation is technically verifiable.
-
-6. **No hallucinated or invented sources or claims.** Every cited URL, document ID,
-   transcript reference, or author resolves to a real artifact that contains the cited
-   content. The same bar applies to the claims themselves: anything that reads as a fact
-   but is detached from a source or from supporting logic—an invented statistic, a
-   fabricated detail, an asserted specific presented as settled—counts against
-   Factuality even when no source is cited at all. Confidence in this is harder to
-   self-audit than the other rules; pair high-stakes citations with quoted excerpts when
-   feasible.
-
-7. **Calibrated uncertainty satisfies Factuality; uncalibrated certainty fails it.**
-   When a claim cannot be corroborated from available evidence, the document
-   acknowledges this explicitly and states the basis on which the claim is made anyway.
-   A speculative claim labelled speculative, with its basis stated, is factually
-   correct. An unhedged claim made as if it were settled, where the evidence does not
-   settle it, is a Factuality defect, even if the claim happens to be true.
-
-### G3. Relevance
-
-*Description:* Sources, citations, and intermediate reasoning chains relate directly
-to the document's stated purpose. Material that doesn't bear on the main task,
-including tangential sources, performative citations, and digressive arguments,
-should be cut or marked as background. Relevance tests whether each piece of evidence
-and each section does work toward the purpose declared in P1 Suitability and P2 Scope.
-
-Distinguished from neighbors:
-
-- **P2 Scope** declares what the document covers; Relevance tests whether the content
-  inside that boundary earns its place.
-- **E3 Concision** is prose-level economy (words, paragraphs, redundant phrasing).
-  Relevance is content-level economy (sources, sections, points).
-- **G1 Verifiability** asks whether claims trace to sources. Relevance asks whether
-  the traced sources connect to the document's purpose.
-- **G2 Factuality** asks whether sources support the claims made. Relevance asks
-  whether those claims matter for what the document is for.
-- **R4 Parsimony** asks whether each load-bearing reasoning chain uses the minimum
-  sound argument. Relevance asks the same question one level up: whether each source
-  and section is load-bearing at all.
-
-**Rules:**
-
-1. **Cite only sources that bear on the purpose.** A source supplying tangential
-   context can be referenced inline but should not be anchored as evidence for a
-   headline claim. Performative citations, where sources are cited to demonstrate
-   diligence rather than to support a claim, dilute the audit trail and obscure
-   which sources actually load-bear.
-
-2. **Cut sections that don't load-bear on the task.** Test each section by removing
-   it and asking whether any headline conclusion, recommendation, or actionable step
-   changes. If nothing material moves, the section is extraneous and belongs in a
-   separate background document, a marked appendix, or not at all.
-
-3. **Mark digressions as digressions.** When a section is included for completeness
-   but is not load-bearing, signal it with a `Background`, `Related work`, `Aside`,
-   or `Historical note` header so the reader can skip without losing the main thread.
-
-4. **Each source passes the one-sentence test.** For every cited source, the writer
-   should be able to say in one sentence: *this source supports claim X, which bears
-   on purpose Y*. Sources that fail this test are either misused or unnecessary.
-
-5. **Don't pad bibliographies for performative-rigor reasons.** A long reference list
-   is not evidence of thoroughness; it is evidence of thoroughness only when each
-   entry earns its place. Cite the sources that load-bear; cut the rest.
-
 ## Reasoning Dimensions
 
 ### R1. Discipline
@@ -908,6 +721,193 @@ Distinguished from neighbors:
    cited evidence to the document's headline claims, not on every inference in the
    document.
 
+## Grounding Dimensions
+
+### G1. Verifiability
+
+*Description:* Claims are stated specifically enough to be checkable, and traceable to
+specific sources, observations, calculations, or explicit assumptions.
+A document scores high on Verifiability when a competent reader could check its claims
+from what the document provides, before any external lookup.
+Verifiability is text-internal: it tests how well the document equips the reader to
+audit. **Factuality (G2)** is world-aware: it tests whether the audit, when performed,
+passes.
+
+A claim that is too vague to check is a Verifiability defect even when sources are
+cited: if “things have grown rapidly” has no quantitative referent, no source can
+confirm or refute it.
+Specificity is the precondition for source-traceability.
+
+**Rules:**
+
+1. **Claims are stated specifically enough to be checkable.** A claim a reader could in
+   principle confirm or refute by consulting sources, observations, or calculations.
+   Vague magnitude words ("rapid," “many,” "in greater volume," “increasingly”) without
+   a stated referent or comparison fail this rule even when the underlying assertion
+   might be true; the document has not made a checkable claim.
+   Score R3 Precision for terminology specificity; this rule covers the claim-level
+   bar.
+
+2. **Quantitative claims are source-traceable; the bar scales with stakes.** For
+   high-stakes, external, or decision-bearing documents (research reports, audits,
+   decision memos, deep research), every quantitative claim has at least one primary
+   source (official documentation, filings, press releases, transcripts, source code,
+   datasets, or first-party measurements).
+   Secondary sources (news aggregators, blog summaries, third-party analyses) can
+   corroborate but don’t substitute.
+   For low-stakes operational notes and lightweight status updates, cite the source when
+   the number is material; otherwise mark the basis or measurement context (for example,
+   “local timing run, n=20” or “Grafana, 7d window”).
+
+3. **Citations are specific enough to verify.** Enough information that a reader can
+   find the exact passage: a URL, a document or accession ID, a date, a commit SHA, a
+   page or section number.
+   “The release notes” is vague; “the v2.4 release notes, §3.2 ('breaking changes')” is
+   verifiable. Social-media posts need post IDs.
+   Press releases need dates.
+   Filings need accession numbers or filing dates.
+
+4. **Confidence tags require a source per claim.** `[VERIFIED]` without naming what was
+   verified or against which source is opaque.
+   Pair every confidence tag with a specific source pointer.
+   For derived facts, show the calculation inline: `[DERIVED: 89.6 / 614.5 = 14.6%]`.
+
+5. **Calibrated uncertainty is not a defect; uncalibrated assertion is.** `[UNVERIFIED]`
+   is preferable to silently inheriting an unverifiable claim.
+   `[ESTIMATED]` with the triangulation method stated is preferable to a bare point
+   estimate. A claim explicitly marked as speculative or unverified, with its basis
+   named, does not lower the Verifiability score.
+   A claim asserted as fact without the certainty the evidence supports does.
+   The point is that the reader knows the claim’s epistemic status, not that every claim
+   is fully resolved.
+
+6. **For central claims, name what would invalidate them.** Beyond citing sources, state
+   what a skeptical reader should inspect to falsify the claim, and what observation
+   would change the conclusion.
+   Feynman’s first principle: you must not fool yourself, and you are the easiest person
+   to fool. See the *Failure-Mode Questions* table in
+   [practical-prose-rubric.md](practical-prose-rubric.md) for claim-type-specific
+   prompts.
+
+### G2. Factuality
+
+*Description:* The document’s verifiable claims hold up when checked against the world,
+at the asserted strength, for the asserted entity, date, and scope.
+Verifiability (G1) is text-internal: does the document let the reader audit?
+Factuality is world-aware: does the audit, when performed, pass?
+
+Truth here means: **the assertion strength matches the available evidence.** A claim
+asserted as certain when the evidence is uncertain is a Factuality defect.
+A claim asserted as speculative, with its speculative status explicit and its basis
+named, is **factually correct** even if the underlying proposition cannot be checked —
+the document is telling the reader the truth about what is known.
+
+Scoring Factuality is corroboration-driven, not citation-driven.
+Cited sources are the cleanest mechanism, but a verifiable claim can be corroborated by
+authoritative external evidence when no citation is present.
+A claim is a Factuality defect when it is *asserted as fact* and *cannot be
+corroborated*; it is **not** a defect when it is flagged as uncertain or speculative
+with a stated basis.
+
+Reviewer access limits are not document defects.
+A claim with a reachable primary source that the reviewer happens to be unable to access
+(paywalled, in a language the reviewer doesn’t read, or in a private system) counts as
+neutral, not a Factuality slip.
+The reason note records the access limit so a later reviewer with access can complete
+the audit.
+
+**Rules:**
+
+1. **Verifiable claims are corroborated.** When the document makes a checkable claim,
+   that claim is supported either (a) by a cited source the reader can reach, or (b) by
+   authoritative external evidence accessible at appropriate effort.
+   A claim that cannot be corroborated and is asserted as fact without hedging is a
+   defect.
+
+2. **Cited sources support the claim at the asserted strength.** A source that says “X
+   is one factor” does not support a claim that “X is the dominant factor.”
+   A source about a prior period does not support a claim about a current period without
+   an explicit bridge.
+
+3. **Numbers in prose match cited sources, or explicitly disclose rounding, aggregation,
+   unit conversion, or derivation.** A measurement of 14.6% in the source can appear as
+   “~15%” in prose only if the rounding is signaled (an approximation marker, a stated
+   rounding policy, or a parenthetical such as “(14.6% rounded)”). Silent rounding,
+   silent aggregation across categories, or silent unit conversion all fail this rule.
+
+4. **Entity, date, and scope of citations match the claim.** Claims about a product
+   should cite that product’s own sources, not third-party commentary about it.
+   Claims about the current period should cite current-period data, not extrapolations
+   from a prior period without an explicit bridge.
+
+5. **Sources represent the cited entity, not its inverse.** An advocate’s note quoted as
+   if it were neutral, an opinion piece quoted as if it were a primary source, or a
+   commentary quoted as if it were the underlying data all fail accuracy even when the
+   citation is technically verifiable.
+
+6. **No hallucinated or invented sources or claims.** Every cited URL, document ID,
+   transcript reference, or author resolves to a real artifact that contains the cited
+   content. The same bar applies to the claims themselves: anything that reads as a fact
+   but is detached from a source or from supporting logic—an invented statistic, a
+   fabricated detail, an asserted specific presented as settled—counts against
+   Factuality even when no source is cited at all. Confidence in this is harder to
+   self-audit than the other rules; pair high-stakes citations with quoted excerpts when
+   feasible.
+
+7. **Calibrated uncertainty satisfies Factuality; uncalibrated certainty fails it.**
+   When a claim cannot be corroborated from available evidence, the document
+   acknowledges this explicitly and states the basis on which the claim is made anyway.
+   A speculative claim labelled speculative, with its basis stated, is factually
+   correct. An unhedged claim made as if it were settled, where the evidence does not
+   settle it, is a Factuality defect, even if the claim happens to be true.
+
+### G3. Relevance
+
+*Description:* Sources, citations, and intermediate reasoning chains relate directly
+to the document's stated purpose. Material that doesn't bear on the main task,
+including tangential sources, performative citations, and digressive arguments,
+should be cut or marked as background. Relevance tests whether each piece of evidence
+and each section does work toward the purpose declared in P1 Suitability and P2 Scope.
+
+Distinguished from neighbors:
+
+- **P2 Scope** declares what the document covers; Relevance tests whether the content
+  inside that boundary earns its place.
+- **E3 Concision** is prose-level economy (words, paragraphs, redundant phrasing).
+  Relevance is content-level economy (sources, sections, points).
+- **G1 Verifiability** asks whether claims trace to sources. Relevance asks whether
+  the traced sources connect to the document's purpose.
+- **G2 Factuality** asks whether sources support the claims made. Relevance asks
+  whether those claims matter for what the document is for.
+- **R4 Parsimony** asks whether each load-bearing reasoning chain uses the minimum
+  sound argument. Relevance asks the same question one level up: whether each source
+  and section is load-bearing at all.
+
+**Rules:**
+
+1. **Cite only sources that bear on the purpose.** A source supplying tangential
+   context can be referenced inline but should not be anchored as evidence for a
+   headline claim. Performative citations, where sources are cited to demonstrate
+   diligence rather than to support a claim, dilute the audit trail and obscure
+   which sources actually load-bear.
+
+2. **Cut sections that don't load-bear on the task.** Test each section by removing
+   it and asking whether any headline conclusion, recommendation, or actionable step
+   changes. If nothing material moves, the section is extraneous and belongs in a
+   separate background document, a marked appendix, or not at all.
+
+3. **Mark digressions as digressions.** When a section is included for completeness
+   but is not load-bearing, signal it with a `Background`, `Related work`, `Aside`,
+   or `Historical note` header so the reader can skip without losing the main thread.
+
+4. **Each source passes the one-sentence test.** For every cited source, the writer
+   should be able to say in one sentence: *this source supports claim X, which bears
+   on purpose Y*. Sources that fail this test are either misused or unnecessary.
+
+5. **Don't pad bibliographies for performative-rigor reasons.** A long reference list
+   is not evidence of thoroughness; it is evidence of thoroughness only when each
+   entry earns its place. Cite the sources that load-bear; cut the rest.
+
 ## Judgment Dimensions
 
 Calibration matches claim strength to evidence strength.
@@ -1073,15 +1073,15 @@ For a tight self-check before publishing, walk the six groups in order and ask:
 - **Form (F1-F3):** Heading hierarchy logical and sections arranged for the task?
   Style consistent (dialect, casing, parallel lists)?
   Markup valid and footer/frontmatter in place?
-- **Grounding (G1-G3):** Every quantitative claim source-traceable to a specific
-  citation (with stakes-appropriate strictness)?
-  Cited sources support the claim at the asserted strength?
-  Sources and sections bear on the document's purpose?
 - **Reasoning (R1-R4):** Observation, judgment, interpretation, and implication
   worked through in order, each higher rung supported by the prior?
   Mechanisms named where causation is asserted?
   Domain entities referred to by proper name; quantitative precision matches
   measurement? Load-bearing chains the minimum sufficient sound argument?
+- **Grounding (G1-G3):** Every quantitative claim source-traceable to a specific
+  citation (with stakes-appropriate strictness)?
+  Cited sources support the claim at the asserted strength?
+  Sources and sections bear on the document's purpose?
 - **Judgment (J1-J3):** Probability claims anchored in base rates?
   Opposing positions engaged at proportional depth, with any asymmetry declared?
   Key claims tested against the strongest alternative interpretive lens?
