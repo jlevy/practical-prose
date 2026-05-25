@@ -1,0 +1,27 @@
+# Directories and files flowmark should never touch.
+# Uses gitignore syntax; lives at repo root.
+# Flowmark-rs also honors .gitignore, so paths listed there
+# (node_modules/, attic/, research-archive/, evals/, .pytest_cache/, etc.)
+# do not need to be repeated here.
+
+# Source corpora for evaluation: verbatim third-party documents
+# (IRS, NASA, SQLite, etc.) whose formatting must be preserved as-is.
+example-texts/
+
+# Third-party agent state vendored by `tbd setup` and similar; managed
+# externally and overwritten on resync.
+.tbd/
+.claude/skills/tbd/
+.codex/
+
+# Generated / vendored Markdown inside the pprose package. Sources live
+# under docs/, runbooks/, shortcuts/, and skills/; the mirrors below are
+# rebuilt by `tools/pprose/devtools/sync_resources.py` (wired into
+# `make generate`). Format the source — the mirror follows.
+tools/pprose/src/pprose/resources/
+
+# Golden test artifacts: byte-exact comparison outputs and curated
+# Markdown inputs for metric tests. Reformatting them would diverge from
+# the CLI's actual output and break the regression locks.
+tools/pprose/tests/fixtures/
+tools/pprose/tests/test_fixtures/
