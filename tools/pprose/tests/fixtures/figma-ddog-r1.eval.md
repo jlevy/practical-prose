@@ -411,32 +411,27 @@ quant:
 rule_findings:
 - description: Extravagant register flourishes (e.g. 'transformative')
   dimension: Clarity
-  locations:
-  - note: 'TODO: location not specified'
+  locations: []
   rule_number: 4
   verdict: violated
 - description: No pre-research priors; no Bayesian shrinkage on probabilities
   dimension: Calibration
-  locations:
-  - note: 'TODO: location not specified'
+  locations: []
   rule_number: 2
   verdict: violated
 - description: No Pass 0 / Pass 1 / Pass 2 structure
   dimension: Calibration
-  locations:
-  - note: 'TODO: location not specified'
+  locations: []
   rule_number: 4
   verdict: violated
 - description: Risk register missing 2 of 5 classes
   dimension: Fairness
-  locations:
-  - note: 'TODO: location not specified'
+  locations: []
   rule_number: 3
   verdict: violated
 - description: Counterintuitive findings all bull-leaning with no tally
   dimension: Fairness
-  locations:
-  - note: 'TODO: location not specified'
+  locations: []
   rule_number: 4
   verdict: violated
 ---
@@ -479,11 +474,11 @@ rule_findings:
 
 ## Violations
 
-1. **Clarity** (rule 4) — Extravagant register flourishes (e.g. 'transformative') *Location:* TODO: location not specified.
-2. **Calibration** (rule 2) — No pre-research priors; no Bayesian shrinkage on probabilities *Location:* TODO: location not specified.
-3. **Calibration** (rule 4) — No Pass 0 / Pass 1 / Pass 2 structure *Location:* TODO: location not specified.
-4. **Fairness** (rule 3) — Risk register missing 2 of 5 classes *Location:* TODO: location not specified.
-5. **Fairness** (rule 4) — Counterintuitive findings all bull-leaning with no tally *Location:* TODO: location not specified.
+1. **Clarity** (rule 4) — Extravagant register flourishes (e.g. 'transformative')
+2. **Calibration** (rule 2) — No pre-research priors; no Bayesian shrinkage on probabilities
+3. **Calibration** (rule 4) — No Pass 0 / Pass 1 / Pass 2 structure
+4. **Fairness** (rule 3) — Risk register missing 2 of 5 classes
+5. **Fairness** (rule 4) — Counterintuitive findings all bull-leaning with no tally
 
 ## Quantitative
 

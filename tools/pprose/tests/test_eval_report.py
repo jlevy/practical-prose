@@ -300,8 +300,13 @@ def test_location_requires_at_least_one_anchor():
         EvalReport.model_validate(data)
 
 
-def test_miss_finding_requires_location():
-    """A violated/partial finding with no locations is rejected as unactionable."""
+def test_miss_finding_locations_optional():
+    """
+    A violated/partial finding with no locations is accepted (whole-doc findings).
+
+    There is a TODO in eval_report to tighten this once the scorer reliably emits
+    a Location for every miss; for now the validator only enforces structure.
+    """
     data = _minimal_report_dict()
     data["rule_findings"] = [
         {
@@ -312,8 +317,10 @@ def test_miss_finding_requires_location():
             "locations": [],
         }
     ]
-    with pytest.raises(ValidationError, match="must cite at least one Location"):
-        EvalReport.model_validate(data)
+    report = EvalReport.model_validate(data)
+    assert report.rule_findings[0].locations == []
+    # Surfaces in the .violations view because verdict is a miss.
+    assert len(report.violations) == 1
 
 
 def test_met_finding_can_omit_location():

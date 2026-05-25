@@ -412,32 +412,27 @@ rule_findings:
 - description: Register flourishes ("the most narratively charged name", "the most
     violent macro event")
   dimension: Clarity
-  locations:
-  - note: 'TODO: location not specified'
+  locations: []
   rule_number: 4
   verdict: violated
 - description: Zero confidence tags; many derived figures lack inline derivation
   dimension: Factuality
-  locations:
-  - note: 'TODO: location not specified'
+  locations: []
   rule_number: 3
   verdict: violated
 - description: No committed pre-research priors; no Bayesian shrinkage
   dimension: Calibration
-  locations:
-  - note: 'TODO: location not specified'
+  locations: []
   rule_number: 2
   verdict: violated
 - description: No Predictions Registry; scenario probabilities stated without base-rate
   dimension: Calibration
-  locations:
-  - note: 'TODO: location not specified'
+  locations: []
   rule_number: 4
   verdict: violated
 - description: 8 counterintuitive findings without bull/bear/neutral count
   dimension: Fairness
-  locations:
-  - note: 'TODO: location not specified'
+  locations: []
   rule_number: 4
   verdict: violated
 ---
@@ -480,11 +475,11 @@ rule_findings:
 
 ## Violations
 
-1. **Clarity** (rule 4) — Register flourishes ("the most narratively charged name", "the most violent macro event") *Location:* TODO: location not specified.
-2. **Factuality** (rule 3) — Zero confidence tags; many derived figures lack inline derivation *Location:* TODO: location not specified.
-3. **Calibration** (rule 2) — No committed pre-research priors; no Bayesian shrinkage *Location:* TODO: location not specified.
-4. **Calibration** (rule 4) — No Predictions Registry; scenario probabilities stated without base-rate *Location:* TODO: location not specified.
-5. **Fairness** (rule 4) — 8 counterintuitive findings without bull/bear/neutral count *Location:* TODO: location not specified.
+1. **Clarity** (rule 4) — Register flourishes ("the most narratively charged name", "the most violent macro event")
+2. **Factuality** (rule 3) — Zero confidence tags; many derived figures lack inline derivation
+3. **Calibration** (rule 2) — No committed pre-research priors; no Bayesian shrinkage
+4. **Calibration** (rule 4) — No Predictions Registry; scenario probabilities stated without base-rate
+5. **Fairness** (rule 4) — 8 counterintuitive findings without bull/bear/neutral count
 
 ## Quantitative
 

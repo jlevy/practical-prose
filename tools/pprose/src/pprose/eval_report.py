@@ -157,9 +157,7 @@ class QuantMetrics(BaseModel):
 class PurposeScores(BaseModel):
     model_config = ConfigDict(extra="forbid")
     suitability: Score
-    # Scope is a newer addition; default ERR ("cannot assess") lets fixtures predating
-    # this dimension validate. Re-score to a 1-5 value before publication.
-    scope: Score = "ERR"
+    scope: Score
     breadth: Score
     depth: Score
 
@@ -367,7 +365,7 @@ class RuleFinding(BaseModel):
         return v
 
     @model_validator(mode="after")
-    def check_rule_number_and_locations(self) -> RuleFinding:
+    def check_rule_number(self) -> RuleFinding:
         max_rule = rs.rule_count(self.dimension)
         # rule_count == 0 means the dimension has no numbered rules yet; allow any
         # rule_number (the finding will be cited under that dimension generically).
@@ -376,13 +374,11 @@ class RuleFinding(BaseModel):
                 f"rule_number={self.rule_number} out of range for dimension "
                 f"{self.dimension!r} (1-{max_rule})"
             )
-        # A miss without any pointer is unactionable. `met` and `na` can omit
-        # locations because there is nothing for a reader to look up.
-        if self.verdict in _MISS_VERDICTS and not self.locations:
-            raise ValueError(
-                f"RuleFinding with verdict={self.verdict!r} must cite at least one Location "
-                f"(dimension={self.dimension!r}, rule {self.rule_number})"
-            )
+        # TODO: once the prompt + scorer reliably emit a Location for every miss,
+        # tighten this validator to require `locations` non-empty when
+        # `verdict in _MISS_VERDICTS`. Today the scorer sometimes omits a
+        # location when the finding is whole-doc; rejecting those would drop
+        # otherwise-useful findings, so we accept empty locations everywhere.
         return self
 
     @property

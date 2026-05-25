@@ -1175,18 +1175,11 @@ Bump it on changes that could shift scores or break loaders once the definition 
 - Score-anchor language tightened in a way that could move scores.
 - Score domain narrowed or widened.
 
-The six groups include **Form** (Organization, Consistency, Formatting), split out from the
-former six-dimension Expression group; Expression now holds Clarity, Coherence, and
-Concision. The dimensions and their anchors are unchanged; only the grouping moved, so the
-change is folded into `pp20v1` without a version bump.
+The six groups are **Purpose**, **Expression** (Clarity, Coherence, Concision),
+**Form** (Organization, Consistency, Formatting), **Grounding**, **Reasoning**, and
+**Judgment**. The version string is `pp20v1` (20 dimensions across 6 groups).
 
 `../scripts/eval_compare.py` warns when comparing across rubric versions.
-On any report whose `rubric_version` is not the current value the eval loader auto-coerces
-`score: 0` to `ERR` and relocates the three Form dimensions out of a legacy `expression`
-block into a `form` block (dropping the stale derived rollup so it recomputes), so older
-reports (legacy `20-dim-v1`, `18-dim-v1-stale-baseline`, `15-dim-v1`, etc.) still load — but
-they should be re-scored against the current schema before being reused as calibration
-baselines.
 
 ## Related docs
 

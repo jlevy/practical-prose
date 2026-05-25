@@ -416,20 +416,17 @@ rule_findings:
   verdict: violated
 - description: Some duplication remains (RPO +53% across §1.3, §2.0, §2.2, §2.8)
   dimension: Concision
-  locations:
-  - note: 'TODO: location not specified'
+  locations: []
   rule_number: 2
   verdict: violated
 - description: 0 external inline links to primary sources
   dimension: Organization
-  locations:
-  - note: 'TODO: location not specified'
+  locations: []
   rule_number: 5
   verdict: violated
 - description: Engineering telemetry section less deep than its strategic relevance
   dimension: Depth
-  locations:
-  - note: 'TODO: location not specified'
+  locations: []
   rule_number: 4
   verdict: violated
 ---
@@ -473,9 +470,9 @@ rule_findings:
 ## Violations
 
 1. **Clarity** (rule 4) — Residual register choice ("the densest innovation in the window") *Location:* L946.
-2. **Concision** (rule 2) — Some duplication remains (RPO +53% across §1.3, §2.0, §2.2, §2.8) *Location:* TODO: location not specified.
-3. **Organization** (rule 5) — 0 external inline links to primary sources *Location:* TODO: location not specified.
-4. **Depth** (rule 4) — Engineering telemetry section less deep than its strategic relevance *Location:* TODO: location not specified.
+2. **Concision** (rule 2) — Some duplication remains (RPO +53% across §1.3, §2.0, §2.2, §2.8)
+3. **Organization** (rule 5) — 0 external inline links to primary sources
+4. **Depth** (rule 4) — Engineering telemetry section less deep than its strategic relevance
 
 ## Quantitative
 

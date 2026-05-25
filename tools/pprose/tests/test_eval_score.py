@@ -194,7 +194,7 @@ def _all_fives_qual() -> QualScores:
     return QualScores(
         expression=ExpressionScores(clarity=5, coherence=5, concision=5),
         form=FormScores(organization=5, consistency="ERR", formatting="ERR"),
-        purpose=PurposeScores(suitability=5, breadth=5, depth=5),
+        purpose=PurposeScores(suitability=5, scope=5, breadth=5, depth=5),
         grounding=GroundingScores(verifiability=5, factuality=5, relevance=5),
         reasoning=ReasoningScores(discipline=5, soundness=5, precision=5, parsimony=5),
         judgment=JudgmentScores(calibration=5, fairness=5, robustness=5),
@@ -243,7 +243,7 @@ def test_merge_with_proper_violations_passes_alignment(tmp_path: Path):
     qual = QualScores(
         expression=ExpressionScores(clarity=4, coherence=5, concision=5),
         form=FormScores(organization=5, consistency="ERR", formatting="ERR"),
-        purpose=PurposeScores(suitability=5, breadth=5, depth=5),
+        purpose=PurposeScores(suitability=5, scope=5, breadth=5, depth=5),
         grounding=GroundingScores(verifiability=5, factuality=5, relevance=5),
         reasoning=ReasoningScores(discipline=5, soundness=5, precision=5, parsimony=5),
         judgment=JudgmentScores(calibration=5, fairness=5, robustness=5),
@@ -387,7 +387,7 @@ def test_round_trip_merge_then_load(tmp_path: Path):
     qual = QualScores(
         expression=ExpressionScores(clarity=4, coherence=5, concision=4),
         form=FormScores(organization=5, consistency=4, formatting=5),
-        purpose=PurposeScores(suitability=4, breadth=4, depth=4),
+        purpose=PurposeScores(suitability=4, scope=4, breadth=4, depth=4),
         grounding=GroundingScores(verifiability=5, factuality=4, relevance=5),
         reasoning=ReasoningScores(discipline=4, soundness=5, precision=4, parsimony=5),
         judgment=JudgmentScores(calibration=5, fairness=5, robustness=4),
@@ -397,6 +397,7 @@ def test_round_trip_merge_then_load(tmp_path: Path):
         "Concision",
         "Consistency",
         "Suitability",
+        "Scope",
         "Breadth",
         "Depth",
         "Factuality",
@@ -425,7 +426,7 @@ def test_round_trip_merge_then_load(tmp_path: Path):
 
     assert reloaded.qual.expression.clarity == 4
     assert reloaded.qual.expression.coherence == 5
-    assert len(reloaded.violations) == 10
+    assert len(reloaded.violations) == 11
     assert reloaded.metadata.evaluator == "round-trip"
     assert reloaded.metadata.status == "complete"
     assert reloaded.alignment_errors() == []

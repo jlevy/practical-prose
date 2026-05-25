@@ -412,38 +412,32 @@ rule_findings:
 - description: GM compression mentioned 5+ times; DBNRR across 5 places; vinext discussed
     in 7 sections
   dimension: Concision
-  locations:
-  - note: 'TODO: location not specified'
+  locations: []
   rule_number: 2
   verdict: violated
 - description: 0 inline links
   dimension: Organization
-  locations:
-  - note: 'TODO: location not specified'
+  locations: []
   rule_number: 5
   verdict: violated
 - description: Some tags missing source pointer (e.g. SS1.6 GitHub claims)
   dimension: Factuality
-  locations:
-  - note: 'TODO: location not specified'
+  locations: []
   rule_number: 3
   verdict: violated
 - description: No Bayesian shrinkage on probability claims
   dimension: Calibration
-  locations:
-  - note: 'TODO: location not specified'
+  locations: []
   rule_number: 2
   verdict: violated
 - description: Scenario probabilities stated without base-rate triangulation
   dimension: Calibration
-  locations:
-  - note: 'TODO: location not specified'
+  locations: []
   rule_number: 3
   verdict: violated
 - description: 8 counterintuitive findings without bull/bear/neutral count
   dimension: Fairness
-  locations:
-  - note: 'TODO: location not specified'
+  locations: []
   rule_number: 4
   verdict: violated
 ---
@@ -486,12 +480,12 @@ rule_findings:
 
 ## Violations
 
-1. **Concision** (rule 2) — GM compression mentioned 5+ times; DBNRR across 5 places; vinext discussed in 7 sections *Location:* TODO: location not specified.
-2. **Organization** (rule 5) — 0 inline links *Location:* TODO: location not specified.
-3. **Factuality** (rule 3) — Some tags missing source pointer (e.g. SS1.6 GitHub claims) *Location:* TODO: location not specified.
-4. **Calibration** (rule 2) — No Bayesian shrinkage on probability claims *Location:* TODO: location not specified.
-5. **Calibration** (rule 3) — Scenario probabilities stated without base-rate triangulation *Location:* TODO: location not specified.
-6. **Fairness** (rule 4) — 8 counterintuitive findings without bull/bear/neutral count *Location:* TODO: location not specified.
+1. **Concision** (rule 2) — GM compression mentioned 5+ times; DBNRR across 5 places; vinext discussed in 7 sections
+2. **Organization** (rule 5) — 0 inline links
+3. **Factuality** (rule 3) — Some tags missing source pointer (e.g. SS1.6 GitHub claims)
+4. **Calibration** (rule 2) — No Bayesian shrinkage on probability claims
+5. **Calibration** (rule 3) — Scenario probabilities stated without base-rate triangulation
+6. **Fairness** (rule 4) — 8 counterintuitive findings without bull/bear/neutral count
 
 ## Quantitative
 

@@ -411,32 +411,27 @@ quant:
 rule_findings:
 - description: Heavy duplication of canonical numbers across §1.x and §2.x
   dimension: Concision
-  locations:
-  - note: 'TODO: location not specified'
+  locations: []
   rule_number: 2
   verdict: violated
 - description: Zero inline links
   dimension: Organization
-  locations:
-  - note: 'TODO: location not specified'
+  locations: []
   rule_number: 5
   verdict: violated
 - description: Some confidence tags missing source pointers
   dimension: Factuality
-  locations:
-  - note: 'TODO: location not specified'
+  locations: []
   rule_number: 3
   verdict: violated
 - description: No Bayesian shrinkage on probability claims
   dimension: Calibration
-  locations:
-  - note: 'TODO: location not specified'
+  locations: []
   rule_number: 2
   verdict: violated
 - description: Counterintuitive findings 6 bull / 2 neutral / 0 bear with no count
   dimension: Fairness
-  locations:
-  - note: 'TODO: location not specified'
+  locations: []
   rule_number: 4
   verdict: violated
 ---
@@ -479,11 +474,11 @@ rule_findings:
 
 ## Violations
 
-1. **Concision** (rule 2) — Heavy duplication of canonical numbers across §1.x and §2.x *Location:* TODO: location not specified.
-2. **Organization** (rule 5) — Zero inline links *Location:* TODO: location not specified.
-3. **Factuality** (rule 3) — Some confidence tags missing source pointers *Location:* TODO: location not specified.
-4. **Calibration** (rule 2) — No Bayesian shrinkage on probability claims *Location:* TODO: location not specified.
-5. **Fairness** (rule 4) — Counterintuitive findings 6 bull / 2 neutral / 0 bear with no count *Location:* TODO: location not specified.
+1. **Concision** (rule 2) — Heavy duplication of canonical numbers across §1.x and §2.x
+2. **Organization** (rule 5) — Zero inline links
+3. **Factuality** (rule 3) — Some confidence tags missing source pointers
+4. **Calibration** (rule 2) — No Bayesian shrinkage on probability claims
+5. **Fairness** (rule 4) — Counterintuitive findings 6 bull / 2 neutral / 0 bear with no count
 
 ## Quantitative
 

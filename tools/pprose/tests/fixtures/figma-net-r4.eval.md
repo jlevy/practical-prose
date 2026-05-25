@@ -411,20 +411,17 @@ rule_findings:
 - description: Compressed phrasing risks ambiguity in §2.4 Strategic-horizon mapping
     ("Acts 1-4")
   dimension: Clarity
-  locations:
-  - note: 'TODO: location not specified'
+  locations: []
   rule_number: 4
   verdict: violated
 - description: 0 external inline links to primary sources
   dimension: Organization
-  locations:
-  - note: 'TODO: location not specified'
+  locations: []
   rule_number: 5
   verdict: violated
 - description: §1.8 pricing section less deep than its strategic relevance
   dimension: Depth
-  locations:
-  - note: 'TODO: location not specified'
+  locations: []
   rule_number: 4
   verdict: violated
 ---
@@ -467,9 +464,9 @@ rule_findings:
 
 ## Violations
 
-1. **Clarity** (rule 4) — Compressed phrasing risks ambiguity in §2.4 Strategic-horizon mapping ("Acts 1-4") *Location:* TODO: location not specified.
-2. **Organization** (rule 5) — 0 external inline links to primary sources *Location:* TODO: location not specified.
-3. **Depth** (rule 4) — §1.8 pricing section less deep than its strategic relevance *Location:* TODO: location not specified.
+1. **Clarity** (rule 4) — Compressed phrasing risks ambiguity in §2.4 Strategic-horizon mapping ("Acts 1-4")
+2. **Organization** (rule 5) — 0 external inline links to primary sources
+3. **Depth** (rule 4) — §1.8 pricing section less deep than its strategic relevance
 
 ## Quantitative
 
