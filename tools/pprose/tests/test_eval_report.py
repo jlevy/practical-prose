@@ -13,9 +13,24 @@ from pprose.eval_report import (
     EvalReport,
     QualScores,
     QuantMetrics,
-    _migrate_legacy_scores,
     compute_derived,
 )
+
+
+def _miss(
+    dimension: str,
+    rule_number: int = 1,
+    description: str = "x",
+    verdict: str = "violated",
+) -> dict:
+    """Construct a minimally-valid miss RuleFinding dict for tests."""
+    return {
+        "dimension": dimension,
+        "rule_number": rule_number,
+        "verdict": verdict,
+        "description": description,
+        "locations": [{"note": "stub location"}],
+    }
 
 
 def _write_eval_md(path: Path, data: dict) -> None:
@@ -209,29 +224,6 @@ def test_all_err_stub_has_zero_assessed_dimensions():
     assert report.derived.rubric_rollup.overall_mean == 0.0
 
 
-def test_migrate_v1_zero_to_err():
-    """A v1-tagged report with score: 0 loads via the legacy-score migration."""
-    data = _minimal_report_dict()
-    data["metadata"]["rubric_version"] = "20-dim-v1"
-    data["qual"]["expression"]["clarity"] = 0
-    data["qual"]["purpose"]["scope"] = 0
-    report = EvalReport.model_validate(_migrate_legacy_scores(data))
-    assert report.qual.expression.clarity == "ERR"
-    assert report.qual.purpose.scope == "ERR"
-
-
-def test_migrate_idempotent_on_current_version():
-    """No migration fires when rubric_version is already current."""
-    data = _minimal_report_dict()
-    data["metadata"]["rubric_version"] = rs.RUBRIC_VERSION
-    # Build a clean v2 payload (no zeros) and confirm migration leaves it alone.
-    data["qual"]["expression"]["clarity"] = "ERR"
-    migrated = _migrate_legacy_scores(data)
-    # Same object, ERR preserved, nothing introduced.
-    assert migrated["qual"]["expression"]["clarity"] == "ERR"
-    assert migrated["metadata"]["rubric_version"] == rs.RUBRIC_VERSION
-
-
 def test_round_trip_yaml():
     """Pure YAML round-trip (no .eval.md frontmatter), used to verify model_dump
     is stable across reloads. Distinct from the .eval.md round-trip elsewhere."""
@@ -265,26 +257,80 @@ def test_derived_inconsistency_rejected():
         EvalReport.model_validate(data)
 
 
-def test_violations_default_empty():
+def test_rule_findings_default_empty():
     data = _minimal_report_dict()
     report = EvalReport.model_validate(data)
+    assert report.rule_findings == []
     assert report.violations == []
 
 
-def test_violation_field_validation():
+def test_rule_finding_field_validation():
     data = _minimal_report_dict()
-    data["violations"] = [
+    data["rule_findings"] = [
         {
             "dimension": "Concision",
             "rule_number": 2,
+            "verdict": "violated",
             "description": "duplicated fact across §1.3 and §2.1",
-            "location": "§1.3",
+            "locations": [{"section": "§1.3", "quote": "duplicated fact"}],
         }
     ]
     report = EvalReport.model_validate(data)
+    assert len(report.rule_findings) == 1
+    assert report.rule_findings[0].dimension == "Concision"
+    assert report.rule_findings[0].rule_number == 2
+    # The violations convenience view surfaces misses only.
     assert len(report.violations) == 1
     assert report.violations[0].dimension == "Concision"
-    assert report.violations[0].rule_number == 2
+
+
+def test_location_requires_at_least_one_anchor():
+    """A Location without any of quote / section / line_start / note is rejected."""
+    data = _minimal_report_dict()
+    data["rule_findings"] = [
+        {
+            "dimension": "Concision",
+            "rule_number": 2,
+            "verdict": "violated",
+            "description": "x",
+            "locations": [{}],
+        }
+    ]
+    with pytest.raises(ValidationError, match="at least one anchor"):
+        EvalReport.model_validate(data)
+
+
+def test_miss_finding_requires_location():
+    """A violated/partial finding with no locations is rejected as unactionable."""
+    data = _minimal_report_dict()
+    data["rule_findings"] = [
+        {
+            "dimension": "Concision",
+            "rule_number": 2,
+            "verdict": "violated",
+            "description": "x",
+            "locations": [],
+        }
+    ]
+    with pytest.raises(ValidationError, match="must cite at least one Location"):
+        EvalReport.model_validate(data)
+
+
+def test_met_finding_can_omit_location():
+    """A met / na finding does not need locations — there is nothing to look up."""
+    data = _minimal_report_dict()
+    data["rule_findings"] = [
+        {
+            "dimension": "Coherence",
+            "rule_number": 1,
+            "verdict": "met",
+            "description": "Clean topic sentences throughout.",
+        }
+    ]
+    report = EvalReport.model_validate(data)
+    assert report.rule_findings[0].verdict == "met"
+    # `met` findings are not surfaced via the violations view.
+    assert report.violations == []
 
 
 def test_density_ratios_correct():
@@ -675,16 +721,14 @@ class TestB10_AlignmentProperty:
             "Precision",
             "Robustness",
         ]
-        data["violations"] = [
-            {"dimension": d, "rule_number": 1, "description": "x"} for d in sub5_dims
-        ]
+        data["rule_findings"] = [_miss(d) for d in sub5_dims]
         report = EvalReport.model_validate(data)
         assert report.alignment_errors() == []
 
     def test_score_5_with_violation_is_misaligned(self):
         data = _minimal_report_dict()
-        # Add a violation citing Coherence (which is scored 5)
-        data["violations"] = [{"dimension": "Coherence", "rule_number": 1, "description": "x"}]
+        # Add a miss citing Coherence (which is scored 5)
+        data["rule_findings"] = [_miss("Coherence")]
         report = EvalReport.model_validate(data)
         errors = report.alignment_errors()
         assert any("Coherence" in e and "score=5" in e for e in errors)
@@ -699,34 +743,36 @@ class TestB10_AlignmentProperty:
         assert not any("Clarity" in e for e in errors)
 
     def test_dimension_name_must_be_canonical(self):
-        """Violation.dimension is a strict Literal — case variants are rejected.
+        """
+        RuleFinding.dimension uses canonical labels — case variants are rejected.
 
         Replaces the prior case-insensitive policy. Canonical names must match exactly
         so unknown / lookalike dimensions can't sneak past alignment_errors().
         """
         data = _minimal_report_dict()
-        data["violations"] = [
-            {"dimension": "clarity", "rule_number": 1, "description": "x"},
-        ]
+        data["rule_findings"] = [_miss("clarity")]
         with pytest.raises(ValidationError):
             EvalReport.model_validate(data)
 
     def test_canonical_dimension_names_validate(self):
         """All canonical names (from the rubric schema) are accepted as-is."""
         data = _minimal_report_dict()
-        data["violations"] = [
-            {"dimension": "Clarity", "rule_number": 1, "description": "x"},
-            {"dimension": "Concision", "rule_number": 1, "description": "x"},
-            {"dimension": "Suitability", "rule_number": 1, "description": "x"},
-            {"dimension": "Breadth", "rule_number": 1, "description": "x"},
-            {"dimension": "Depth", "rule_number": 1, "description": "x"},
-            {"dimension": "Organization", "rule_number": 1, "description": "x"},
-            {"dimension": "Consistency", "rule_number": 1, "description": "x"},
-            {"dimension": "Formatting", "rule_number": 1, "description": "x"},
-            {"dimension": "Factuality", "rule_number": 1, "description": "x"},
-            {"dimension": "Discipline", "rule_number": 1, "description": "x"},
-            {"dimension": "Precision", "rule_number": 1, "description": "x"},
-            {"dimension": "Robustness", "rule_number": 1, "description": "x"},
+        data["rule_findings"] = [
+            _miss(name)
+            for name in (
+                "Clarity",
+                "Concision",
+                "Suitability",
+                "Breadth",
+                "Depth",
+                "Organization",
+                "Consistency",
+                "Formatting",
+                "Factuality",
+                "Discipline",
+                "Precision",
+                "Robustness",
+            )
         ]
         report = EvalReport.model_validate(data)
         # alignment_errors will report mismatches against the minimal report's scores;
@@ -736,27 +782,21 @@ class TestB10_AlignmentProperty:
     def test_unknown_dimension_rejected(self):
         """A 'Bogus' dimension can't slip past the validator."""
         data = _minimal_report_dict()
-        data["violations"] = [
-            {"dimension": "Bogus", "rule_number": 1, "description": "x"},
-        ]
+        data["rule_findings"] = [_miss("Bogus")]
         with pytest.raises(ValidationError):
             EvalReport.model_validate(data)
 
     def test_rule_number_out_of_range_rejected(self):
-        """Rule 6 cited under Clarity (which has 5 rules) must be rejected."""
+        """Rule 99 cited under Clarity (which has < 99 rules) must be rejected."""
         data = _minimal_report_dict()
-        data["violations"] = [
-            {"dimension": "Clarity", "rule_number": 99, "description": "x"},
-        ]
+        data["rule_findings"] = [_miss("Clarity", rule_number=99)]
         with pytest.raises(ValidationError):
             EvalReport.model_validate(data)
 
     def test_rule_number_zero_rejected(self):
         """rule_number=0 must be rejected; rules are 1-indexed."""
         data = _minimal_report_dict()
-        data["violations"] = [
-            {"dimension": "Clarity", "rule_number": 0, "description": "x"},
-        ]
+        data["rule_findings"] = [_miss("Clarity", rule_number=0)]
         with pytest.raises(ValidationError):
             EvalReport.model_validate(data)
 

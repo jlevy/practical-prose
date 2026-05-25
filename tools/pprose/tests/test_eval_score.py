@@ -5,6 +5,8 @@ from __future__ import annotations
 from pathlib import Path
 
 import pytest
+from pydantic_ai.messages import ModelMessage, ModelResponse, ToolCallPart
+from pydantic_ai.models.function import AgentInfo, FunctionModel
 
 from pprose.eval_render import render_single_doc_rollup
 from pprose.eval_report import (
@@ -13,148 +15,147 @@ from pprose.eval_report import (
     FormScores,
     GroundingScores,
     JudgmentScores,
+    Location,
     PurposeScores,
     QualScores,
     ReasoningScores,
-    Violation,
+    RuleFinding,
 )
 from pprose.eval_score import (
+    ScoredResult,
+    ScoreEntry,
+    ScoringResponse,
+    _to_scored_result,
     build_prompt,
-    extract_json_block,
     main,
     merge_into_report,
-    parse_response,
 )
 
 FIXTURES = Path(__file__).resolve().parent / "test_fixtures" / "practical_prose_metrics"
 
 
-def _full_payload(score: int = 4, with_violation: bool = True) -> dict:
-    """Build a JSON payload covering every rubric dimension at a uniform score."""
+def _full_response(score: int = 4, with_violation: bool = True) -> ScoringResponse:
+    """Build a ScoringResponse covering every rubric dimension at a uniform score."""
     from pprose import rubric_schema as rs
 
-    payload = {
-        "scores": {d.key: {"score": score, "reason": "test"} for d in rs.DIMENSIONS},
-        "violations": [],
-    }
+    findings: list[RuleFinding] = []
     if with_violation:
-        payload["violations"] = [
-            {"dimension": "Clarity", "rule_number": 1, "description": "x", "location": "L1"}
+        findings = [
+            RuleFinding(
+                dimension="Clarity",
+                rule_number=1,
+                verdict="violated",
+                description="x",
+                locations=[Location(line_start=1)],
+            )
         ]
-    return payload
+    return ScoringResponse(
+        scores={d.key: ScoreEntry(score=score, reason="test") for d in rs.DIMENSIONS},
+        rule_findings=findings,
+    )
 
 
 # ---------------------------------------------------------------------------
-# extract_json_block
+# _to_scored_result (replaces the old parse_response tests)
 # ---------------------------------------------------------------------------
 
 
-def test_extract_json_block_basic():
-    text = 'Some prose.\n\n```json\n{"a": 1}\n```\n\nMore prose.'
-    assert extract_json_block(text) == {"a": 1}
-
-
-def test_extract_json_block_no_fence_raises():
-    with pytest.raises(ValueError, match="no .*json.* block"):
-        extract_json_block("just prose, no fence")
-
-
-def test_extract_json_block_invalid_json_raises():
-    with pytest.raises(ValueError, match="did not parse"):
-        extract_json_block("```json\n{not valid}\n```")
-
-
-def test_extract_json_block_takes_first_fence():
-    text = '```json\n{"a": 1}\n```\n```json\n{"b": 2}\n```'
-    assert extract_json_block(text) == {"a": 1}
-
-
-# ---------------------------------------------------------------------------
-# parse_response
-# ---------------------------------------------------------------------------
-
-
-def test_parse_response_full_valid():
-    result = parse_response(_full_payload(score=5, with_violation=False))
+def test_to_scored_result_full_valid():
+    result = _to_scored_result(_full_response(score=5, with_violation=False))
     assert result.qual.expression.clarity == 5
     assert result.qual.judgment.robustness == 5
-    assert result.violations == []
+    assert result.rule_findings == []
 
 
-def test_parse_response_extracts_reasons():
+def test_to_scored_result_extracts_reasons():
     """Per-dimension reason strings should flow into qual_reasons."""
-    payload = _full_payload(score=4, with_violation=False)
-    payload["scores"]["clarity"]["reason"] = "trite phrasing at L412"
-    payload["scores"]["depth"]["reason"] = "scope not declared"
-    result = parse_response(payload)
+    response = _full_response(score=4, with_violation=False)
+    response.scores["clarity"].reason = "trite phrasing at L412"
+    response.scores["depth"].reason = "scope not declared"
+    result = _to_scored_result(response)
     assert result.qual_reasons.expression.clarity == "trite phrasing at L412"
     assert result.qual_reasons.purpose.depth == "scope not declared"
-    # Whitespace-only reasons become None
-    assert result.qual_reasons.judgment.robustness is not None
 
 
-def test_parse_response_missing_dimension_raises():
-    payload = _full_payload()
-    del payload["scores"]["depth"]
+def test_to_scored_result_missing_dimension_raises():
+    response = _full_response()
+    del response.scores["depth"]
     with pytest.raises(ValueError, match="missing dimensions"):
-        parse_response(payload)
+        _to_scored_result(response)
 
 
-def test_parse_response_unknown_dimension_raises():
-    payload = _full_payload()
-    payload["scores"]["mystery"] = {"score": 4, "reason": "x"}
+def test_to_scored_result_unknown_dimension_raises():
+    response = _full_response()
+    response.scores["mystery"] = ScoreEntry(score=4, reason="x")
     with pytest.raises(ValueError, match="unknown dimension"):
-        parse_response(payload)
+        _to_scored_result(response)
 
 
-def test_parse_response_score_out_of_range_raises():
-    payload = _full_payload()
-    payload["scores"]["clarity"] = {"score": 9, "reason": "x"}
-    with pytest.raises(ValueError, match="must be int 0-5 or the literal 'NA'"):
-        parse_response(payload)
+def test_score_entry_rejects_out_of_range():
+    """ScoreEntry's int|NA|ERR field rejects integers outside 1-5 at the structured-output boundary."""
+    # Pydantic accepts any int for the int|Literal union, so we enforce the 1-5 bound
+    # in _to_scored_result after the structured response arrives.
+    response = _full_response()
+    response.scores["clarity"] = ScoreEntry(score=9, reason="x")
+    with pytest.raises(ValueError, match="out of 1-5 range"):
+        _to_scored_result(response)
 
 
-def test_parse_response_score_not_int_raises():
-    payload = _full_payload()
-    payload["scores"]["clarity"] = {"score": "four", "reason": "x"}
-    with pytest.raises(ValueError, match="must be int 0-5 or the literal 'NA'"):
-        parse_response(payload)
-
-
-def test_parse_response_score_na_accepted():
+def test_to_scored_result_na_accepted():
     """The literal 'NA' is a valid score and round-trips into the qual block."""
-    payload = _full_payload()
-    payload["scores"]["calibration"] = {
-        "score": "NA",
-        "reason": "no probability or forecast claims",
-    }
-    result = parse_response(payload)
+    response = _full_response()
+    response.scores["calibration"] = ScoreEntry(
+        score="NA", reason="no probability or forecast claims"
+    )
+    result = _to_scored_result(response)
     assert result.qual.judgment.calibration == "NA"
     assert result.qual_reasons.judgment.calibration == "no probability or forecast claims"
 
 
-def test_parse_response_violations_parsed():
-    payload = _full_payload()
-    payload["violations"] = [
-        {"dimension": "Clarity", "rule_number": 4, "description": "register", "location": "L412"},
-        {"dimension": "Soundness", "rule_number": 3, "description": "method", "location": "§2.7"},
+def test_to_scored_result_keeps_well_formed_findings():
+    response = _full_response()
+    response.rule_findings = [
+        RuleFinding(
+            dimension="Clarity",
+            rule_number=4,
+            verdict="violated",
+            description="register",
+            locations=[Location(line_start=412, line_end=418)],
+        ),
+        RuleFinding(
+            dimension="Soundness",
+            rule_number=3,
+            verdict="violated",
+            description="method",
+            locations=[Location(section="§2.7")],
+        ),
     ]
-    result = parse_response(payload)
-    assert len(result.violations) == 2
-    assert result.violations[0].dimension == "Clarity"
-    assert result.violations[1].rule_number == 3
+    result = _to_scored_result(response)
+    assert len(result.rule_findings) == 2
+    assert result.rule_findings[0].locations[0].line_start == 412
+    assert result.rule_findings[1].locations[0].section == "§2.7"
 
 
-def test_parse_response_violations_optional_location():
-    payload = _full_payload()
-    payload["violations"] = [{"dimension": "Clarity", "rule_number": 4, "description": "x"}]
-    result = parse_response(payload)
-    assert result.violations[0].location is None
-
-
-def test_parse_response_no_scores_object_raises():
-    with pytest.raises(ValueError, match="missing 'scores'"):
-        parse_response({"violations": []})
+def test_to_scored_result_drops_out_of_range_rule_number(capsys):
+    """The model occasionally invents a rule_number past the dimension's bound;
+    the finding is dropped with a stderr warning instead of failing the eval."""
+    response = _full_response(with_violation=False)
+    # Build the finding via model_construct so the validator doesn't reject it
+    # before _to_scored_result has a chance to filter.
+    response.rule_findings = [
+        RuleFinding.model_construct(
+            dimension="Clarity",
+            rule_number=99,
+            verdict="violated",
+            description="phantom rule",
+            locations=[Location(line_start=1)],
+        )
+    ]
+    result = _to_scored_result(response)
+    assert result.rule_findings == []
+    captured = capsys.readouterr()
+    assert "out-of-range" in captured.err
+    assert "rule_number=99" in captured.err
 
 
 # ---------------------------------------------------------------------------
@@ -189,9 +190,8 @@ def test_single_doc_rollup_coalesces_qualitative_groups(tmp_path: Path):
     assert "| **Purpose** | **Mean** |" not in body
 
 
-def test_merge_replaces_qual_and_violations(tmp_path: Path):
-    stub = _stub_report(tmp_path)
-    qual = QualScores(
+def _all_fives_qual() -> QualScores:
+    return QualScores(
         expression=ExpressionScores(clarity=5, coherence=5, concision=5),
         form=FormScores(organization=5, consistency="ERR", formatting="ERR"),
         purpose=PurposeScores(suitability=5, breadth=5, depth=5),
@@ -199,12 +199,15 @@ def test_merge_replaces_qual_and_violations(tmp_path: Path):
         reasoning=ReasoningScores(discipline=5, soundness=5, precision=5, parsimony=5),
         judgment=JudgmentScores(calibration=5, fairness=5, robustness=5),
     )
-    from pprose.eval_score import ScoredResult
 
-    scored = ScoredResult(qual=qual, violations=[])
+
+def test_merge_replaces_qual_and_rule_findings(tmp_path: Path):
+    stub = _stub_report(tmp_path)
+    scored = ScoredResult(qual=_all_fives_qual(), rule_findings=[])
     merged = merge_into_report(stub, scored, evaluator="test-eval")
 
     assert merged.qual.expression.clarity == 5
+    assert merged.rule_findings == []
     assert merged.violations == []
     assert merged.metadata.evaluator == "test-eval"
     # The stub note should be cleared (qual is no longer all-zero)
@@ -215,39 +218,22 @@ def test_merge_replaces_qual_and_violations(tmp_path: Path):
 
 def test_merge_preserves_existing_method(tmp_path: Path):
     stub = _stub_report(tmp_path)
-    # Pre-set a method
     data = stub.model_dump(mode="json", exclude_none=True)
     data["metadata"]["method"] = "12-dim re-baseline"
     stub = EvalReport.model_validate(data)
 
-    qual = QualScores(
-        expression=ExpressionScores(clarity=5, coherence=5, concision=5),
-        form=FormScores(organization=5, consistency="ERR", formatting="ERR"),
-        purpose=PurposeScores(suitability=5, breadth=5, depth=5),
-        grounding=GroundingScores(verifiability=5, factuality=5, relevance=5),
-        reasoning=ReasoningScores(discipline=5, soundness=5, precision=5, parsimony=5),
-        judgment=JudgmentScores(calibration=5, fairness=5, robustness=5),
+    merged = merge_into_report(
+        stub, ScoredResult(qual=_all_fives_qual(), rule_findings=[]), evaluator="x"
     )
-    from pprose.eval_score import ScoredResult
-
-    merged = merge_into_report(stub, ScoredResult(qual=qual, violations=[]), evaluator="x")
     assert merged.metadata.method == "12-dim re-baseline"
 
 
 def test_merge_alignment_clean_passes_strict_validate(tmp_path: Path):
     """Merging score-5-everywhere with no violations produces an alignment-clean report."""
     stub = _stub_report(tmp_path)
-    qual = QualScores(
-        expression=ExpressionScores(clarity=5, coherence=5, concision=5),
-        form=FormScores(organization=5, consistency="ERR", formatting="ERR"),
-        purpose=PurposeScores(suitability=5, breadth=5, depth=5),
-        grounding=GroundingScores(verifiability=5, factuality=5, relevance=5),
-        reasoning=ReasoningScores(discipline=5, soundness=5, precision=5, parsimony=5),
-        judgment=JudgmentScores(calibration=5, fairness=5, robustness=5),
+    merged = merge_into_report(
+        stub, ScoredResult(qual=_all_fives_qual(), rule_findings=[]), evaluator="x"
     )
-    from pprose.eval_score import ScoredResult
-
-    merged = merge_into_report(stub, ScoredResult(qual=qual, violations=[]), evaluator="x")
     assert merged.alignment_errors() == []
 
 
@@ -262,10 +248,18 @@ def test_merge_with_proper_violations_passes_alignment(tmp_path: Path):
         reasoning=ReasoningScores(discipline=5, soundness=5, precision=5, parsimony=5),
         judgment=JudgmentScores(calibration=5, fairness=5, robustness=5),
     )
-    from pprose.eval_score import ScoredResult
-
-    violations = [Violation(dimension="Clarity", rule_number=4, description="x", location="L1")]
-    merged = merge_into_report(stub, ScoredResult(qual=qual, violations=violations), evaluator="x")
+    rule_findings = [
+        RuleFinding(
+            dimension="Clarity",
+            rule_number=4,
+            verdict="violated",
+            description="x",
+            locations=[Location(line_start=1)],
+        )
+    ]
+    merged = merge_into_report(
+        stub, ScoredResult(qual=qual, rule_findings=rule_findings), evaluator="x"
+    )
     assert merged.alignment_errors() == []
 
 
@@ -282,24 +276,21 @@ def test_build_prompt_includes_all_inputs():
     assert "Artifact under review" in prompt
     # The fixture has known h1 content
     assert "h1" in prompt.lower() or "heading" in prompt.lower()
-    # Output-format instructions are present
-    assert "```json" in prompt
+    # Pydantic AI provides the structured-output schema; the prompt should
+    # mention ScoringResponse so the model knows what it's filling.
+    assert "ScoringResponse" in prompt
 
 
 def test_build_prompt_is_schema_derived():
-    """The dimension list, JSON skeleton, and key count are generated from the
-    schema, not hard-coded in the template. Adding a dimension to the YAML must
-    flow into the prompt without editing the template."""
+    """The dimension list and key count are generated from the schema, not hard-coded."""
     import pprose.rubric_schema as rs
 
     prompt = build_prompt(FIXTURES / "all_headings.md")
     # No unsubstituted placeholders leak into the rendered prompt.
-    for placeholder in ("{{CANONICAL_NAMES}}", "{{SCORES_JSON}}", "{{DIMENSION_COUNT}}"):
+    for placeholder in ("{{CANONICAL_NAMES}}", "{{DIMENSION_COUNT}}"):
         assert placeholder not in prompt, f"unsubstituted placeholder: {placeholder}"
-    # Every dimension key appears as a JSON score key, and every label appears in
-    # the canonical-name list.
+    # Every label appears in the canonical-name list.
     for dim in rs.DIMENSIONS:
-        assert f'"{dim.key}":' in prompt, f"missing key {dim.key}"
         assert dim.label in prompt, f"missing label {dim.label}"
     # The hard-coded count matches the schema.
     assert f"all {rs.dimension_count()} keys present" in prompt
@@ -308,6 +299,51 @@ def test_build_prompt_is_schema_derived():
 def test_build_prompt_missing_artifact_raises(tmp_path: Path):
     with pytest.raises(FileNotFoundError):
         build_prompt(tmp_path / "does-not-exist.md")
+
+
+# ---------------------------------------------------------------------------
+# _resolve_model
+# ---------------------------------------------------------------------------
+
+
+def test_resolve_model_handles_aliases_and_full_ids():
+    from pprose.eval_score import _resolve_model
+
+    # Empty / None is rejected: every scoring call must explicitly pick a model.
+    with pytest.raises(ValueError, match="model is required"):
+        _resolve_model("")
+    with pytest.raises(ValueError, match="model is required"):
+        _resolve_model(None)  # pyright: ignore[reportArgumentType]
+    # Short aliases resolve to provider-prefixed strings.
+    assert _resolve_model("opus") == "anthropic:claude-opus-4-7"
+    assert _resolve_model("sonnet") == "anthropic:claude-sonnet-4-6"
+    assert _resolve_model("haiku") == "anthropic:claude-haiku-4-5"
+    assert _resolve_model("gpt") == "openai:gpt-5.5"
+    assert _resolve_model("gpt-mini") == "openai:gpt-5.4-mini"
+    assert _resolve_model("gemini") == "google:gemini-3.5-flash"
+    # Bare claude-* IDs get the anthropic: prefix auto-applied.
+    assert _resolve_model("claude-opus-4-7-20251015") == "anthropic:claude-opus-4-7-20251015"
+    # Provider-prefixed strings pass through unchanged.
+    assert _resolve_model("anthropic:claude-sonnet-4-6") == "anthropic:claude-sonnet-4-6"
+    assert _resolve_model("openai:gpt-5.2") == "openai:gpt-5.2"
+    assert _resolve_model("google:gemini-3-pro-preview") == "google:gemini-3-pro-preview"
+
+
+def test_list_models_includes_all_providers(capsys):
+    """`pprose score --list-models` prints suggestions covering anthropic/openai/google."""
+    rc = main(["--list-models"])
+    assert rc == 0
+    out = capsys.readouterr().out
+    # At least one model from each provider extra appears.
+    assert "anthropic:claude-opus-4-7" in out
+    assert "openai:gpt-5.5" in out
+    assert "google:gemini-3.5-flash" in out
+
+
+def test_main_without_model_errors():
+    """Scoring without --model exits non-zero with a helpful message."""
+    rc = main(["some/path.eval.md"])
+    assert rc != 0
 
 
 # ---------------------------------------------------------------------------
@@ -368,13 +404,18 @@ def test_round_trip_merge_then_load(tmp_path: Path):
         "Precision",
         "Robustness",
     ]
-    violations = [
-        Violation(dimension=d, rule_number=1, description="x", location="L1") for d in sub5_dims
+    rule_findings = [
+        RuleFinding(
+            dimension=d,
+            rule_number=1,
+            verdict="violated",
+            description="x",
+            locations=[Location(line_start=1)],
+        )
+        for d in sub5_dims
     ]
-    from pprose.eval_score import ScoredResult
-
     merged = merge_into_report(
-        stub, ScoredResult(qual=qual, violations=violations), evaluator="round-trip"
+        stub, ScoredResult(qual=qual, rule_findings=rule_findings), evaluator="round-trip"
     )
 
     out_path = tmp_path / "merged.eval.md"
@@ -392,200 +433,135 @@ def test_round_trip_merge_then_load(tmp_path: Path):
 
 def test_merge_populates_reproducibility_metadata(tmp_path: Path):
     """A ReproContext flows through merge_into_report into metadata.*"""
-    from pprose.eval_score import ReproContext, ScoredResult
+    from pprose.eval_score import ReproContext
 
     stub = _stub_report(tmp_path)
-    qual = QualScores(
-        expression=ExpressionScores(clarity=5, coherence=5, concision=5),
-        form=FormScores(organization=5, consistency="ERR", formatting="ERR"),
-        purpose=PurposeScores(suitability=5, breadth=5, depth=5),
-        grounding=GroundingScores(verifiability=5, factuality=5, relevance=5),
-        reasoning=ReasoningScores(discipline=5, soundness=5, precision=5, parsimony=5),
-        judgment=JudgmentScores(calibration=5, fairness=5, robustness=5),
-    )
     repro = ReproContext(
-        model="claude-opus-4-7",
-        command="eval_score.py /tmp/x.eval.md",
+        model="anthropic:claude-opus-4-7",
+        command="pprose score /tmp/x.eval.md",
         prompt_sha256="a" * 64,
         rubric_sha256="b" * 64,
         guidelines_sha256="c" * 64,
         artifact_sha256="d" * 64,
     )
     merged = merge_into_report(
-        stub, ScoredResult(qual=qual, violations=[]), evaluator="test", repro=repro
+        stub,
+        ScoredResult(qual=_all_fives_qual(), rule_findings=[]),
+        evaluator="test",
+        repro=repro,
     )
-    assert merged.metadata.model == "claude-opus-4-7"
-    assert merged.metadata.command == "eval_score.py /tmp/x.eval.md"
+    assert merged.metadata.model == "anthropic:claude-opus-4-7"
+    assert merged.metadata.command == "pprose score /tmp/x.eval.md"
     assert merged.metadata.prompt_sha256 == "a" * 64
     assert merged.metadata.rubric_sha256 == "b" * 64
     assert merged.metadata.guidelines_sha256 == "c" * 64
     assert merged.metadata.artifact_sha256 == "d" * 64
 
 
-# ---------------------------------------------------------------------------
-# SDK message shape (Phase 1)
-# ---------------------------------------------------------------------------
-
-
-def test_build_messages_has_cached_invariant_and_uncached_artifact():
-    """The Anthropic message list must mark the rubric+guidelines block as cached."""
-    from pprose.eval_score import _artifact_block_text, _build_messages, _cached_block_text
-
-    messages = _build_messages(
-        _cached_block_text(), _artifact_block_text(FIXTURES / "all_headings.md")
-    )
-    assert len(messages) == 1
-    blocks = messages[0]["content"]
-    assert len(blocks) == 2, "expected exactly two content blocks: cached + artifact"
-    # Block 1: invariant, marked ephemeral.
-    assert blocks[0]["type"] == "text"
-    assert blocks[0]["cache_control"] == {"type": "ephemeral"}
-    assert "practical-prose-rubric.md" in blocks[0]["text"]
-    assert "Prescriptive guidelines" in blocks[0]["text"]
-    # Block 2: artifact, NOT cached (every doc varies).
-    assert blocks[1]["type"] == "text"
-    assert "cache_control" not in blocks[1]
-    assert "Artifact under review" in blocks[1]["text"]
-
-
-def test_resolve_model_handles_aliases_and_full_ids():
-    from pprose.eval_score import DEFAULT_MODEL, _resolve_model
-
-    assert _resolve_model(None) == DEFAULT_MODEL
-    assert _resolve_model("") == DEFAULT_MODEL
-    assert _resolve_model("sonnet") == "claude-sonnet-4-5"
-    assert _resolve_model("opus") == "claude-opus-4-1"
-    assert _resolve_model("haiku") == "claude-haiku-4-5"
-    # Full IDs pass through unchanged.
-    assert _resolve_model("claude-sonnet-4-6") == "claude-sonnet-4-6"
-    assert _resolve_model("claude-opus-4-7-20251015") == "claude-opus-4-7-20251015"
-
-
-def test_repro_context_persists_sdk_fields(tmp_path: Path):
-    """sdk_version + model_id + cache_stats flow through merge_into_report."""
-    from pprose.eval_score import ReproContext, ScoredResult
+def test_repro_context_persists_pydantic_ai_cache_keys(tmp_path: Path):
+    """cache_stats now mirror Pydantic AI's RunUsage shape (cache_write_tokens / cache_read_tokens)."""
+    from pprose.eval_score import ReproContext
 
     stub = _stub_report(tmp_path)
-    qual = QualScores(
-        expression=ExpressionScores(clarity=5, coherence=5, concision=5),
-        form=FormScores(organization=5, consistency=5, formatting=5),
-        purpose=PurposeScores(suitability=5, breadth=5, depth=5),
-        grounding=GroundingScores(verifiability=5, factuality=5, relevance=5),
-        reasoning=ReasoningScores(discipline=5, soundness=5, precision=5, parsimony=5),
-        judgment=JudgmentScores(calibration=5, fairness=5, robustness=5),
-    )
     repro = ReproContext(
-        model="sonnet",
-        model_id="claude-sonnet-4-5-20250929",
-        sdk_version="0.39.0",
+        model="opus",
+        model_id="claude-opus-4-7",
+        sdk_version="1.93.0",
         cache_stats={
-            "creation_input_tokens": 99000,
-            "read_input_tokens": 0,
+            "cache_write_tokens": 99000,
+            "cache_read_tokens": 0,
             "input_tokens": 1200,
             "output_tokens": 1800,
         },
     )
     merged = merge_into_report(
-        stub, ScoredResult(qual=qual, violations=[]), evaluator="test", repro=repro
+        stub,
+        ScoredResult(qual=_all_fives_qual(), rule_findings=[]),
+        evaluator="test",
+        repro=repro,
     )
-    assert merged.metadata.model == "sonnet"
-    assert merged.metadata.model_id == "claude-sonnet-4-5-20250929"
-    assert merged.metadata.sdk_version == "0.39.0"
+    assert merged.metadata.model == "opus"
+    assert merged.metadata.model_id == "claude-opus-4-7"
+    assert merged.metadata.sdk_version == "1.93.0"
     assert merged.metadata.cache_stats == {
-        "creation_input_tokens": 99000,
-        "read_input_tokens": 0,
+        "cache_write_tokens": 99000,
+        "cache_read_tokens": 0,
         "input_tokens": 1200,
         "output_tokens": 1800,
     }
 
 
-class _FakeBlock:
-    def __init__(self, text: str, type_: str = "text"):
-        self.text = text
-        self.type = type_
+# ---------------------------------------------------------------------------
+# End-to-end score path using Pydantic AI's FunctionModel
+# (replaces the old _FakeAnthropic-based tests; no API calls)
+# ---------------------------------------------------------------------------
 
 
-class _FakeUsage:
-    def __init__(
-        self,
-        cache_creation_input_tokens: int = 99000,
-        cache_read_input_tokens: int = 0,
-        input_tokens: int = 1200,
-        output_tokens: int = 1800,
-    ):
-        self.cache_creation_input_tokens = cache_creation_input_tokens
-        self.cache_read_input_tokens = cache_read_input_tokens
-        self.input_tokens = input_tokens
-        self.output_tokens = output_tokens
+def _make_function_model(response: ScoringResponse) -> FunctionModel:
+    """
+    Build a FunctionModel that always returns `response` as the structured output.
 
+    Pydantic AI calls the function on each request; we look up the
+    structured-output tool name from `info.output_tools` and emit a ToolCallPart
+    with our payload. This lets us exercise the real Agent code path (including
+    output validation) without an API call.
+    """
 
-class _FakeResponse:
-    def __init__(self, text: str, model_id: str, usage: _FakeUsage | None = None):
-        self.content = [_FakeBlock(text)]
-        self.model = model_id
-        self.usage = usage or _FakeUsage()
-
-
-class _FakeMessages:
-    def __init__(self, response: _FakeResponse, capture: dict):
-        self._response = response
-        self._capture = capture
-
-    def create(self, **kwargs):
-        self._capture.update(kwargs)
-        return self._response
-
-
-class _FakeAnthropic:
-    """Drop-in replacement for anthropic.Anthropic for tests."""
-
-    last_capture: dict = {}
-
-    def __init__(self, *args, **kwargs):
-        _FakeAnthropic.last_capture = {"client_kwargs": kwargs}
-        self.messages = _FakeMessages(
-            _FakeAnthropic.next_response,
-            _FakeAnthropic.last_capture,
+    def _call(_messages: list[ModelMessage], info: AgentInfo) -> ModelResponse:
+        assert info.output_tools, "Agent was not configured with output_type"
+        tool_name = info.output_tools[0].name
+        return ModelResponse(
+            parts=[ToolCallPart(tool_name=tool_name, args=response.model_dump())]
         )
 
-    @classmethod
-    def stub(cls, text: str, model_id: str = "claude-sonnet-4-5-fake"):
-        cls.next_response = _FakeResponse(text, model_id)
+    return FunctionModel(_call)
 
 
-def test_call_anthropic_extracts_text_and_usage(monkeypatch):
-    """call_anthropic returns text + cache usage from the SDK response."""
-    import anthropic
+def test_call_scorer_returns_structured_output(monkeypatch):
+    """
+    call_scorer routes through the Agent and returns a CallResult with the
+    structured output. Uses Agent.override to swap in a FunctionModel.
+    """
+    from pprose import eval_score
+    from pprose.eval_score import _build_agent, call_scorer
 
-    from pprose.eval_score import call_anthropic
+    response = _full_response(score=5, with_violation=False)
 
-    _FakeAnthropic.stub("hello world", model_id="claude-sonnet-4-5-fake")
-    monkeypatch.setattr(anthropic, "Anthropic", _FakeAnthropic)
+    # Wrap _build_agent so the override context stays active for the duration
+    # of this test (the override is undone when the agent is garbage-collected;
+    # holding a reference on the test scope keeps it alive).
+    original_build = _build_agent
+    overrides: list = []
 
-    result = call_anthropic([{"role": "user", "content": "x"}], model="sonnet")
-    assert result.text == "hello world"
-    assert result.model_id == "claude-sonnet-4-5-fake"
-    assert result.cache_creation_input_tokens == 99000
-    assert result.cache_read_input_tokens == 0
-    # The SDK invocation gets the resolved model and our default max_tokens.
-    captured = _FakeAnthropic.last_capture
-    assert captured["model"] == "claude-sonnet-4-5"
-    assert captured["max_tokens"] == 8192
+    def wrapped_build(model: str):
+        agent = original_build(model)
+        ctx = agent.override(model=_make_function_model(response))
+        ctx.__enter__()
+        overrides.append(ctx)
+        return agent
+
+    monkeypatch.setattr(eval_score, "_build_agent", wrapped_build)
+
+    try:
+        result = call_scorer("artifact body", model="opus")
+        assert result.output.scores["clarity"].score == 5
+        assert result.output.rule_findings == []
+    finally:
+        for ctx in overrides:
+            ctx.__exit__(None, None, None)
 
 
-def test_main_end_to_end_calls_sdk_and_persists_cache_stats(tmp_path: Path, monkeypatch):
-    """Full main() path: SDK mocked, YAML written, cache_stats recorded."""
-    import anthropic
+def test_main_end_to_end_writes_filled_report(tmp_path: Path, monkeypatch):
+    """
+    Full main() path with the LLM mocked.
 
+    Replaces `call_scorer` with a stub returning a fixed CallResult so we
+    exercise prep -> _to_scored_result -> merge -> render -> write end-to-end
+    without an API call. Verifies the YAML is filled and repro metadata is set.
+    """
+    from pprose import eval_score
     from pprose.eval_report import main as report_main
-    from pprose.eval_score import main as score_main
-
-    # Stub: a model response that scores every dimension at 5 (no violations needed).
-    payload = _full_payload(score=5, with_violation=False)
-    response_text = "Looks good.\n\n```json\n" + __import__("json").dumps(payload) + "\n```\n"
-    _FakeAnthropic.stub(response_text, model_id="claude-sonnet-4-5-fake")
-    monkeypatch.setattr(anthropic, "Anthropic", _FakeAnthropic)
-    monkeypatch.setenv("ANTHROPIC_API_KEY", "sk-test-fake")
+    from pprose.eval_score import CallResult
 
     stub = tmp_path / "stub.eval.md"
     rc = report_main(
@@ -598,20 +574,32 @@ def test_main_end_to_end_calls_sdk_and_persists_cache_stats(tmp_path: Path, monk
     )
     assert rc == 0
 
-    rc = score_main([str(stub), "--model", "sonnet"])
+    response = _full_response(score=5, with_violation=False)
+    fake_call_result = CallResult(
+        output=response,
+        model_id="claude-opus-4-7-fake",
+        cache_write_tokens=99000,
+        cache_read_tokens=0,
+        input_tokens=1200,
+        output_tokens=1800,
+    )
+
+    monkeypatch.setattr(eval_score, "call_scorer", lambda _artifact, *, model: fake_call_result)
+    monkeypatch.setenv("ANTHROPIC_API_KEY", "sk-test-fake")
+
+    rc = main([str(stub), "--model", "opus"])
     assert rc == 0
 
     report = EvalReport.from_eval_md(stub)
     assert report.metadata.status == "complete"
-    assert report.metadata.model == "sonnet"
-    assert report.metadata.model_id == "claude-sonnet-4-5-fake"
+    assert report.metadata.model == "opus"
+    assert report.metadata.model_id == "claude-opus-4-7-fake"
+    assert report.qual.expression.clarity == 5
     assert report.metadata.cache_stats == {
-        "creation_input_tokens": 99000,
-        "read_input_tokens": 0,
+        "cache_write_tokens": 99000,
+        "cache_read_tokens": 0,
         "input_tokens": 1200,
         "output_tokens": 1800,
     }
-    assert report.metadata.sdk_version  # something non-empty
     # The .eval.md hybrid file is the only persisted scoring artifact.
-    raw_path = stub.parent / "stub.eval.raw.txt"
-    assert not raw_path.exists()
+    assert not (stub.parent / "stub.eval.raw.txt").exists()

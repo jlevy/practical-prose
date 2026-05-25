@@ -22,7 +22,8 @@ from pprose import rubric_schema as rs
 # imports this module at top level. Annotating with `EvalReport` (even under
 # TYPE_CHECKING) trips basedpyright's `reportImportCycles` check, and the
 # render functions duck-type the report shape — they only read `.artifact`,
-# `.qual`, `.qual_reasons`, `.derived`, `.violations`, `.metadata`, `.quant`.
+# `.qual`, `.qual_reasons`, `.derived`, `.violations`, `.rule_findings`,
+# `.metadata`, `.quant`.
 EvalReportLike = Any
 
 
@@ -46,6 +47,33 @@ def fmt_score(v: int | str) -> str:
 
 def fmt_float_1(v: float) -> str:
     return f"{v:.1f}"
+
+
+def _format_locations(locations: list[Any]) -> str:
+    """
+    Compact one-line rendering of a list of Locations for the Violations list.
+
+    Prefers `quote` (in inline code), then `section`, then line range, then `note`.
+    Multiple locations are joined with `; `. Returns "" when the list is empty.
+    """
+    parts: list[str] = []
+    for loc in locations:
+        anchors: list[str] = []
+        if loc.quote:
+            quote = loc.quote.replace("\n", " ").strip()
+            anchors.append(f'`"{quote}"`')
+        if loc.section:
+            anchors.append(loc.section)
+        if loc.line_start is not None:
+            end = loc.line_end if loc.line_end is not None else loc.line_start
+            anchors.append(f"L{loc.line_start}-{end}" if end != loc.line_start else f"L{loc.line_start}")
+        if loc.note and not anchors:
+            anchors.append(loc.note)
+        elif loc.note:
+            anchors.append(f"({loc.note})")
+        if anchors:
+            parts.append(" ".join(anchors))
+    return "; ".join(parts)
 
 
 def fmt_float_2(v: float) -> str:
@@ -213,14 +241,18 @@ def render_single_doc_rollup(
     out.append(f"|  | **Overall mean ({rs.dimension_count()} dims)** | **{overall:.2f}** | |")
     out.append("")
 
-    # Violations.
+    # Violations — the miss subset of rule_findings (verdict in {violated, partial}).
     if report.violations:
         out.append(f"{h_sub} Violations")
         out.append("")
         for i, v in enumerate(report.violations, 1):
-            loc = f" *Location:* {v.location}." if v.location else ""
             desc = v.description.replace("\n", " ").strip()
-            out.append(f"{i}. **{v.dimension}** (rule {v.rule_number}) — {desc}{loc}")
+            verdict_tag = "" if v.verdict == "violated" else f" *[{v.verdict}]*"
+            loc_str = _format_locations(v.locations)
+            loc = f" *Location:* {loc_str}." if loc_str else ""
+            out.append(
+                f"{i}. **{v.dimension}** (rule {v.rule_number}){verdict_tag} — {desc}{loc}"
+            )
         out.append("")
 
     # Quantitative table.

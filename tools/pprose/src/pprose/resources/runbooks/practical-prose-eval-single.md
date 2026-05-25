@@ -107,8 +107,12 @@ Useful flags:
 
 - `--dry-run`: print the prompt to stdout without invoking the model.
 - `--out path`: write the filled eval report to a different file.
-- `--model <name>`: passed to the Anthropic SDK. Accepts aliases (`sonnet`, `haiku`,
-  `opus`) or an exact model ID. Defaults to the SDK’s default model.
+- `--model <name>`: **required.** Pydantic AI model spec. Accepts short aliases
+  (`opus`, `sonnet`, `haiku`, `gpt`, `gpt-mini`, `gemini`, ...) or a provider-
+  prefixed string (`anthropic:claude-opus-4-7`, `openai:gpt-5.5`,
+  `google:gemini-3.5-flash`). Run `pprose score --list-models` for the full
+  suggested set; any other Pydantic AI model string is accepted too.
+- `--list-models`: print the suggested model list and exit (no scoring).
 - `--batch`: score multiple eval reports in one invocation:
   `pprose score a.eval.md b.eval.md ... --batch [--max-concurrent 8 --max-rps 4]`.
   See [practical-prose-eval-compare.runbook.md](practical-prose-eval-compare.runbook.md)
@@ -218,7 +222,7 @@ against a fixed reference:
 Use this set to calibrate model-scoring runs:
 
 ```bash
-pprose score path/to/your-artifact.eval.md --model sonnet
+pprose score path/to/your-artifact.eval.md --model opus
 # then run pprose score against the calibration artifacts and compare overall_mean +
 # per-dimension scores to the pinned values above; gap >0.5 on overall or >1 on any
 # dimension flags a calibration drift to investigate.

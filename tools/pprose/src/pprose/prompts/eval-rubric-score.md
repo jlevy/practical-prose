@@ -1,8 +1,8 @@
 # Practical Writing Eval: Qualitative Scoring Prompt
 
 You are scoring a practical writing artifact against the practical writing rubric.
-Your output is consumed by a script: it must include a single JSON block in the exact
-shape specified at the bottom.
+Your response is consumed via a structured-output schema; produce one structured
+`ScoringResponse` covering every dimension defined in the rubric.
 
 ## Inputs
 
@@ -35,41 +35,63 @@ You will be given, in order:
      prereq score (1-2) is not a cascade trigger — the dependent dimension is still
      scored 1-5 on its own anchors. See the rubric's "Cross-dimension cascades"
      section.
-3. For every dimension scored 1-4, identify at least one specific guideline-rule
-   violation. Cite:
+3. For every dimension scored 1-4, emit at least one rule finding with
+   `verdict: "violated"` (or `"partial"` for a near-miss). Cite:
    - the dimension by its canonical name (the exact label used in the rubric:
      {{CANONICAL_NAMES}}),
    - the `rule_number` (the integer in `practical-prose-guidelines.md` for that
      dimension’s rule),
-   - a one-line description,
-   - a location pointer (line range like `L412-418`, section heading like `§2.8`, or
-     quoted phrase).
-4. For every dimension scored 5, `NA`, or `ERR`, do not cite any violation for that
-   dimension. Score 5 means every rule followed; `NA` means the dimension does not
-   engage; `ERR` means you could not apply the rubric.
-5. Cross-check: every score 1-4 must have at least one matching violation; every score
-   5, `NA`, or `ERR` must have zero matching violations.
+   - a one-line `description`,
+   - at least one `Location` (see the Location guidance below).
+   You may additionally emit findings with `verdict: "met"` to record a rule that
+   was followed well, or `verdict: "na"` for a rule that does not engage. Met / na
+   findings may omit `locations`.
+4. For every dimension scored 5, `NA`, or `ERR`, do not emit any `violated` or
+   `partial` finding for that dimension. Score 5 means every rule followed; `NA`
+   means the dimension does not engage; `ERR` means you could not apply the rubric.
+5. Cross-check: every score 1-4 must have at least one matching `violated` /
+   `partial` finding; every score 5, `NA`, or `ERR` must have zero such findings.
 6. When using `NA`, the reason must explain why the dimension does not engage (not just
    “not applicable”). For example:
    `NA — the document makes no probability, forecast, confidence, or uncertainty claims; the task does not require them.`
 7. When using `ERR`, the reason must name the procedural cause (truncated artifact,
    tool failure, etc.). Never use ERR to register a quality complaint.
 
-## Output format
+## Output
 
-Print a brief reasoning paragraph (under 200 words) summarizing your overall read of the
-artifact. Then emit a single JSON code fence with the shape below.
-Use the exact dimension keys listed in the rubric’s “Dimensions” table (snake_case,
-derived from the canonical label by lowercasing).
-
-{{SCORES_JSON}}
+You will be filling a `ScoringResponse` object. The schema is enforced by the
+framework, so format is taken care of — focus on getting the content right. Use
+the dimension keys exactly as listed in the rubric’s “Dimensions” table
+(snake_case, derived from the canonical label by lowercasing).
 
 Hard requirements:
 
-- One score entry per dimension defined in the rubric, all {{DIMENSION_COUNT}} keys present, snake_case.
-- Each `score` is either an integer 1-5 or the literal string `"NA"` or `"ERR"` (no 0).
+- One entry under `scores` per dimension defined in the rubric, all {{DIMENSION_COUNT}} keys present.
+- Each `score` is either an integer 1-5 or the literal string `"NA"` or `"ERR"`.
 - Each `reason` is a short string (under 200 chars).
-- `violations` may be empty only if every dimension scored 5, `NA`, or `ERR`.
-- `dimension` in each violation matches one of the canonical names exactly (all
+- `rule_findings` may be empty only if every dimension scored 5, `NA`, or `ERR`.
+- `dimension` in each finding matches one of the canonical names exactly (all
   single-word labels: e.g. “Discipline”, “Consistency”).
-- Output exactly one JSON code fence; the parser extracts the first ```json block.
+- Each finding's `verdict` is one of: `"violated"`, `"partial"`, `"met"`, `"na"`.
+- Every finding with verdict `"violated"` or `"partial"` must include at least one
+  `Location` in its `locations` array.
+
+## Location guidance
+
+Each `Location` in a finding's `locations` array points into the artifact. Use the
+most robust anchor available:
+
+1. `quote` (preferred) — a verbatim excerpt copied exactly from the artifact, kept
+   to one phrase or sentence. A future reader (or doc-grep) can recover the spot
+   even after line shifts.
+2. `section` — the heading text as it appears (e.g. `"§Justified Deviations"` or
+   `"§2.8"`). Useful alone when the whole section is the locus, or paired with
+   `quote` when the same quote appears more than once.
+3. `line_start` / `line_end` — populate only if you have authoritative line
+   numbers. Fragile across edits but precise when fresh. TODO: scorer should
+   emit line numbers when known.
+4. `note` — free-text refinement (`"near the top of the deviations table"`). Use
+   only as a fallback when no structural anchor fits.
+
+At least one of `quote`, `section`, `line_start`, or `note` must be set. Prefer
+`quote` + `section` together when you can; reach for `note` last.

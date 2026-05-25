@@ -73,7 +73,7 @@ pprose report from-metrics \
   --label "SQLite: Appropriate Uses" \
   --scope-class brief \
   --commit-sha "$COMMIT_SHA" \
-  --evaluator "model:claude-sonnet-4-5" \
+  --evaluator "model:claude-opus-4-7" \
   --method "pprose score" \
   --out "$OUT_DIR/third-party/sqlite-appropriate-uses.eval.md"
 
@@ -82,7 +82,7 @@ pprose report from-metrics \
   --label "NASA SEH: Stakeholder Expectations" \
   --scope-class design_doc \
   --commit-sha "$COMMIT_SHA" \
-  --evaluator "model:claude-sonnet-4-5" \
+  --evaluator "model:claude-opus-4-7" \
   --method "pprose score" \
   --out "$OUT_DIR/third-party/nasa-stakeholder-expectations-definition.eval.md"
 
@@ -91,7 +91,7 @@ pprose report from-metrics \
   --label "IRS 1040: Filing Requirements" \
   --scope-class brief \
   --commit-sha "$COMMIT_SHA" \
-  --evaluator "model:claude-sonnet-4-5" \
+  --evaluator "model:claude-opus-4-7" \
   --method "pprose score" \
   --out "$OUT_DIR/third-party/irs-1040-filing-requirements.eval.md"
 
@@ -100,7 +100,7 @@ pprose report from-metrics \
   --label "Practical Prose Guidelines" \
   --scope-class design_doc \
   --commit-sha "$COMMIT_SHA" \
-  --evaluator "model:claude-sonnet-4-5" \
+  --evaluator "model:claude-opus-4-7" \
   --method "pprose score" \
   --out "$OUT_DIR/self/practical-prose-guidelines.eval.md"
 
@@ -109,7 +109,7 @@ pprose report from-metrics \
   --label "Practical Prose Rubric" \
   --scope-class design_doc \
   --commit-sha "$COMMIT_SHA" \
-  --evaluator "model:claude-sonnet-4-5" \
+  --evaluator "model:claude-opus-4-7" \
   --method "pprose score" \
   --out "$OUT_DIR/self/practical-prose-rubric.eval.md"
 
@@ -118,11 +118,11 @@ pprose report from-metrics \
   --label "Practical Prose Bibliography" \
   --scope-class deep_research \
   --commit-sha "$COMMIT_SHA" \
-  --evaluator "model:claude-sonnet-4-5" \
+  --evaluator "model:claude-opus-4-7" \
   --method "pprose score" \
   --out "$OUT_DIR/self/practical-prose-bibliography.eval.md"
 
-pprose score "$OUT_DIR"/third-party/*.eval.md "$OUT_DIR"/self/*.eval.md --batch
+pprose score "$OUT_DIR"/third-party/*.eval.md "$OUT_DIR"/self/*.eval.md --model opus --batch
 
 for report in "$OUT_DIR"/third-party/*.eval.md "$OUT_DIR"/self/*.eval.md; do
   pprose report validate "$report" --complete
@@ -150,7 +150,7 @@ done
 If a report fails alignment during `pprose score`, retry that specific report:
 
 ```bash
-pprose score "$REPO_ROOT/evals/baselines/path/to/failed.eval.md"
+pprose score "$REPO_ROOT/evals/baselines/path/to/failed.eval.md" --model opus
 ```
 
 Do not use `--allow-misaligned` for a published baseline unless the goal is explicitly
@@ -162,7 +162,7 @@ Use this only when debugging converted source examples.
 The default baseline run should include the self docs too.
 
 ```bash
-pprose score "$REPO_ROOT/evals/baselines/third-party"/*.eval.md --batch
+pprose score "$REPO_ROOT/evals/baselines/third-party"/*.eval.md --model opus --batch
 
 for report in "$REPO_ROOT/evals/baselines/third-party"/*.eval.md; do
   pprose report validate "$report" --complete
@@ -180,7 +180,7 @@ documentation scores.
 The default baseline run should include the third-party examples too.
 
 ```bash
-pprose score "$REPO_ROOT/evals/baselines/self"/*.eval.md --batch
+pprose score "$REPO_ROOT/evals/baselines/self"/*.eval.md --model opus --batch
 
 for report in "$REPO_ROOT/evals/baselines/self"/*.eval.md; do
   pprose report validate "$report" --complete

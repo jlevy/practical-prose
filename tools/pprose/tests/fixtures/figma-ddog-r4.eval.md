@@ -407,27 +407,38 @@ quant:
     code_blocks: 0
     images: 0
     tables: 32
-violations:
+rule_findings:
 - description: Residual register choice ("the densest innovation in the window")
   dimension: Clarity
-  location: L946
+  locations:
+  - line_start: 946
   rule_number: 4
+  verdict: violated
 - description: Some duplication remains (RPO +53% across §1.3, §2.0, §2.2, §2.8)
   dimension: Concision
+  locations:
+  - note: 'TODO: location not specified'
   rule_number: 2
+  verdict: violated
 - description: 0 external inline links to primary sources
   dimension: Organization
+  locations:
+  - note: 'TODO: location not specified'
   rule_number: 5
+  verdict: violated
 - description: Engineering telemetry section less deep than its strategic relevance
   dimension: Depth
+  locations:
+  - note: 'TODO: location not specified'
   rule_number: 4
+  verdict: violated
 ---
 
-## DDOG-r4
+# DDOG-r4
 
 **Source:** `<external artifact not in this repo>`  **Scope:** `—`  **Overall mean (20 dims):** 4.64  **Rubric:** `pp20v1`  **Model:** `—`  **Eval date:** 2026-05-07
 
-### Qualitative
+## Qualitative
 
 | Group | Dimension | Score | Reason |
 | --- | --- | ---: | --- |
@@ -459,14 +470,14 @@ violations:
 |  | **Mean** | **5.00** | |
 |  | **Overall mean (20 dims)** | **4.64** | |
 
-### Violations
+## Violations
 
 1. **Clarity** (rule 4) — Residual register choice ("the densest innovation in the window") *Location:* L946.
-2. **Concision** (rule 2) — Some duplication remains (RPO +53% across §1.3, §2.0, §2.2, §2.8)
-3. **Organization** (rule 5) — 0 external inline links to primary sources
-4. **Depth** (rule 4) — Engineering telemetry section less deep than its strategic relevance
+2. **Concision** (rule 2) — Some duplication remains (RPO +53% across §1.3, §2.0, §2.2, §2.8) *Location:* TODO: location not specified.
+3. **Organization** (rule 5) — 0 external inline links to primary sources *Location:* TODO: location not specified.
+4. **Depth** (rule 4) — Engineering telemetry section less deep than its strategic relevance *Location:* TODO: location not specified.
 
-### Quantitative
+## Quantitative
 
 | Section | Measure | Value |
 | --- | --- | ---: |

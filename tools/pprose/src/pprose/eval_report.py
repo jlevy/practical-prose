@@ -4,7 +4,8 @@ Pydantic schema for practical-writing eval reports.
 Defines the canonical YAML shape for a single-document eval report that combines:
   - quantitative metrics (mirrors the `pprose metrics` Metrics)
   - qualitative rubric scores (one per dimension defined in rubric_schema.yaml, 1-5 scale)
-  - cited guideline-rule violations
+  - per-rule findings (verdict + located evidence; the `violations` view is the
+    miss subset, used by the alignment check and renderers)
   - derived rollups (density ratios, category means, overall mean)
   - eval metadata (date, evaluator, method)
 
@@ -272,12 +273,90 @@ class QualReasons(BaseModel):
         return [getattr(getattr(self, d.group_key), d.key) for d in rs.DIMENSIONS]
 
 
-class Violation(BaseModel):
+# Verdict on a single rubric rule under a dimension.
+#   "met"      = the rule was followed.
+#   "violated" = the rule was broken; the finding documents how and where.
+#   "partial"  = the rule was partly followed; treated like a violation by the
+#                alignment check, but lets the scorer flag a near-miss.
+#   "na"       = the rule does not engage this artifact (rule-level NA, distinct
+#                from a whole dimension's NA score in QualScores).
+Verdict = Literal["met", "violated", "partial", "na"]
+
+# Verdicts that count as a rubric miss — surfaced via `EvalReport.violations`
+# and used by the alignment check that ties scores 1-4 to at least one cited
+# rule miss.
+_MISS_VERDICTS: frozenset[str] = frozenset({"violated", "partial"})
+
+
+class Location(BaseModel):
+    """
+    Pointer into the artifact for a rule finding.
+
+    Anchors are ranked from most to least robust against doc edits:
+      1. `quote` — a verbatim excerpt. Preferred: a doc-grep recovers the
+         location even after line shifts; the scorer always has the source
+         in context.
+      2. `section` — the heading text as written ("Justified Deviations") or
+         a numbered section ("§2.8"). Survives line shifts within a section.
+      3. `line_start` / `line_end` — only when the scorer has authoritative
+         line numbers. Fragile across edits but precise when fresh.
+      4. `note` — free-text refinement ("near the top of the deviations
+         table"). Fallback when nothing structural fits; prefer the others.
+
+    At least one anchor must be populated. Prefer `quote` (with `section` as
+    disambiguation when the same quote appears more than once).
+
+    TODO: tighten the scorer prompt so it emits `line_start`/`line_end` when
+    line numbers are known, and runs a doc-grep to ensure `quote` is verbatim
+    before serializing.
+    """
+
+    model_config = ConfigDict(extra="forbid")
+    quote: str | None = None
+    section: str | None = None
+    line_start: int | None = None
+    line_end: int | None = None
+    note: str | None = None
+
+    @model_validator(mode="after")
+    def at_least_one_anchor(self) -> Location:
+        if not any([self.quote, self.section, self.line_start, self.note]):
+            raise ValueError(
+                "Location needs at least one anchor (quote, section, line_start, or note)"
+            )
+        if self.line_end is not None and self.line_start is None:
+            raise ValueError("Location.line_end requires line_start")
+        if (
+            self.line_start is not None
+            and self.line_end is not None
+            and self.line_end < self.line_start
+        ):
+            raise ValueError(
+                f"Location.line_end={self.line_end} < line_start={self.line_start}"
+            )
+        return self
+
+
+class RuleFinding(BaseModel):
+    """
+    A scorer's judgment about one specific rule under one dimension.
+
+    Each dimension in `rubric_schema.yaml` has an ordered list of rules; the
+    1-indexed `rule_number` points into that list. The unified `verdict`
+    captures both rule misses (the previous `violations` data) and notable
+    rule hits, so a downstream reader can see "rule X was followed well" as
+    explicitly as "rule Y was broken".
+
+    `EvalReport.violations` is a convenience view over findings whose verdict
+    is `violated` or `partial`.
+    """
+
     model_config = ConfigDict(extra="forbid")
     dimension: str
     rule_number: int
+    verdict: Verdict
     description: str
-    location: str | None = None
+    locations: list[Location] = []
 
     @field_validator("dimension")
     @classmethod
@@ -288,18 +367,27 @@ class Violation(BaseModel):
         return v
 
     @model_validator(mode="after")
-    def check_rule_number(self) -> Violation:
+    def check_rule_number_and_locations(self) -> RuleFinding:
         max_rule = rs.rule_count(self.dimension)
         # rule_count == 0 means the dimension has no numbered rules yet; allow any
-        # rule_number (the violation will be cited under that dimension generically).
-        if max_rule == 0:
-            return self
-        if not 1 <= self.rule_number <= max_rule:
+        # rule_number (the finding will be cited under that dimension generically).
+        if max_rule and not 1 <= self.rule_number <= max_rule:
             raise ValueError(
                 f"rule_number={self.rule_number} out of range for dimension "
                 f"{self.dimension!r} (1-{max_rule})"
             )
+        # A miss without any pointer is unactionable. `met` and `na` can omit
+        # locations because there is nothing for a reader to look up.
+        if self.verdict in _MISS_VERDICTS and not self.locations:
+            raise ValueError(
+                f"RuleFinding with verdict={self.verdict!r} must cite at least one Location "
+                f"(dimension={self.dimension!r}, rule {self.rule_number})"
+            )
         return self
+
+    @property
+    def is_miss(self) -> bool:
+        return self.verdict in _MISS_VERDICTS
 
 
 class DensityRatios(BaseModel):
@@ -401,12 +489,26 @@ class EvalReport(BaseModel):
     quant: QuantMetrics
     qual: QualScores
     qual_reasons: QualReasons = QualReasons()
-    violations: list[Violation] = []
+    # Per-rule scorer judgments. Misses (`violated` / `partial`) are required for
+    # every dimension scored 1-4 (enforced by `alignment_errors`); met / na findings
+    # are optional and let a scorer record notable hits.
+    rule_findings: list[RuleFinding] = []
     derived: DerivedRollups | None = None
     metadata: EvalMetadata
     # Portable display metadata. Eval semantics do not depend on this block; table-aware
     # browsers may use it to style generated Markdown tables, and other tools may ignore it.
     display: dict[str, Any] | None = None
+
+    @property
+    def violations(self) -> list[RuleFinding]:
+        """
+        Convenience view: findings whose verdict is a miss (`violated` / `partial`).
+
+        Not serialized — `rule_findings` is the canonical store. Downstream
+        renderers and the alignment check read this property so the "violations"
+        framing stays in the API surface without duplicating data on disk.
+        """
+        return [f for f in self.rule_findings if f.is_miss]
 
     @model_validator(mode="after")
     def populate_derived(self) -> EvalReport:
@@ -441,32 +543,35 @@ class EvalReport(BaseModel):
         return concerns
 
     def alignment_errors(self) -> list[str]:
-        """Return error messages for any rubric-alignment violations.
+        """
+        Return error messages for any rubric-alignment violations.
 
         The alignment property (per practical-prose-rubric.md):
-          - score 1-4: at least one Violation must cite the same dimension
-          - score 5:   no Violation may cite that dimension
+          - score 1-4: at least one rule miss must cite the same dimension
+          - score 5:   no rule miss may cite that dimension
           - NA / ERR:  no constraint (dimension doesn't engage / scorer couldn't
                        assess; outside the alignment scope)
 
-        An empty list means the report is alignment-valid.
+        A miss is a `RuleFinding` with verdict `violated` or `partial`; surfaced
+        via the `violations` property. An empty list means the report is
+        alignment-valid.
         """
         errors: list[str] = []
-        violations_by_dim: dict[str, list[Violation]] = {}
+        misses_by_dim: dict[str, list[RuleFinding]] = {}
         for v in self.violations:
-            violations_by_dim.setdefault(v.dimension.lower(), []).append(v)
+            misses_by_dim.setdefault(v.dimension.lower(), []).append(v)
 
         for dim in rs.DIMENSIONS:
             score = getattr(getattr(self.qual, dim.group_key), dim.key)
-            cited = violations_by_dim.get(dim.label.lower(), [])
+            cited = misses_by_dim.get(dim.label.lower(), [])
             if score in ("NA", "ERR"):
                 continue  # not-applicable or cannot-assess; outside alignment scope
             if 1 <= score <= 4 and not cited:
-                errors.append(f"{dim.label}: score={score} but no violation cites this dimension")
+                errors.append(f"{dim.label}: score={score} but no rule miss cites this dimension")
             elif score == 5 and cited:
                 rules = ", ".join(f"rule {v.rule_number}" for v in cited)
                 errors.append(
-                    f"{dim.label}: score=5 but {len(cited)} violation(s) cite this dimension ({rules})"
+                    f"{dim.label}: score=5 but {len(cited)} rule miss(es) cite this dimension ({rules})"
                 )
         return errors
 
@@ -474,7 +579,6 @@ class EvalReport(BaseModel):
     def from_yaml(cls, source: str | Path) -> EvalReport:
         text = source.read_text(encoding="utf-8") if isinstance(source, Path) else source
         data = yaml.safe_load(text)
-        data = _migrate_legacy_scores(data)
         return cls.model_validate(data)
 
     def to_yaml(self, *, include_table_styles: bool = False) -> str:
@@ -494,7 +598,6 @@ class EvalReport(BaseModel):
         """Load an `.eval.md` file: YAML frontmatter (delimited by ---) + body."""
         text = source.read_text(encoding="utf-8") if isinstance(source, Path) else source
         data = _parse_frontmatter(text)
-        data = _migrate_legacy_scores(data)
         return cls.model_validate(data)
 
     def to_eval_md(self, body: str, *, include_table_styles: bool = True) -> str:
@@ -505,75 +608,6 @@ class EvalReport(BaseModel):
         """
         frontmatter = self.to_yaml(include_table_styles=include_table_styles)
         return f"---\n{frontmatter}---\n\n{body.rstrip()}\n"
-
-
-def _migrate_legacy_scores(data: dict) -> dict:
-    """In-place upgrade of legacy reports to the current rubric.
-
-    On any report whose `metadata.rubric_version` is missing or not the current
-    version, two upgrades run:
-
-    1. Coerce every `score: 0` in the qual block to `"ERR"`. Older drafts used 0
-       to mean both "cannot assess" (per-dim anchors + prompt) and "attempted but
-       missing" (decision tree); LLM scorers in practice almost always emitted 0
-       with the "cannot assess" meaning, which is now `"ERR"` on the current schema.
-    2. Split the legacy 6-dimension `expression` group into the current
-       `expression` (clarity/coherence/concision) + `form`
-       (organization/consistency/formatting) groups, in both `qual` and
-       `qual_reasons`. The stale `derived` rollup (which lacks `form_mean` and
-       carries a 6-dim expression mean) is dropped so it is recomputed on load.
-
-    Reports already tagged with the current version are passed through unchanged
-    so a stray 0 in a current-version report still fails validation as intended.
-
-    Idempotent: a current-version report (or one already migrated) is untouched.
-    """
-    if not isinstance(data, dict):
-        return data
-    metadata = data.get("metadata")
-    if not isinstance(metadata, dict):
-        return data
-    if metadata.get("rubric_version") == CURRENT_RUBRIC_VERSION:
-        return data
-    qual = data.get("qual")
-    if isinstance(qual, dict):
-        for group_dict in qual.values():
-            if not isinstance(group_dict, dict):
-                continue
-            for dim_key, score in list(group_dict.items()):
-                if score == 0:
-                    group_dict[dim_key] = "ERR"
-    _split_expression_into_form(data.get("qual"))
-    _split_expression_into_form(data.get("qual_reasons"))
-    # The stored derived rollup predates the form group (no form_mean); drop it so
-    # the loader recomputes a current-schema rollup from quant + qual.
-    data.pop("derived", None)
-    return data
-
-
-# Dimensions that moved out of the legacy 6-dim Expression group into Form.
-_FORM_DIMS = ("organization", "consistency", "formatting")
-
-
-def _split_expression_into_form(block: object) -> None:
-    """Relocate the three Form dimensions from a legacy `expression` block.
-
-    Operates in place on a qual or qual_reasons mapping. No-op when the block is
-    absent or already split (no Form dims under `expression`).
-    """
-    if not isinstance(block, dict):
-        return
-    expression = block.get("expression")
-    if not isinstance(expression, dict):
-        return
-    if not any(dim in expression for dim in _FORM_DIMS):
-        return
-    form = block.setdefault("form", {})
-    if not isinstance(form, dict):
-        return
-    for dim in _FORM_DIMS:
-        if dim in expression:
-            form.setdefault(dim, expression.pop(dim))
 
 
 def _parse_frontmatter(text: str) -> dict:
@@ -881,7 +915,7 @@ def cmd_from_metrics(args: argparse.Namespace) -> int:
         ),
         quant=quant_from_metrics(metrics, bytes_kb=bytes_kb),
         qual=stub_qual(),
-        violations=[],
+        rule_findings=[],
         metadata=EvalMetadata(
             eval_date=date.today().isoformat(),
             evaluator=args.evaluator or "TODO",
