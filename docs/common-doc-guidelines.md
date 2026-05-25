@@ -164,6 +164,9 @@ Stylistically, emphasize **clarity**, **depth**, **rigor**, and **warmth**.
      “unequivocally,” “massive,” “monumental,” “profound,” “transformational,”
      “seismic,” “paradigm-shifting,” “will revolutionize,” “structurally outmaneuvered,”
      “successfully executing,” or “crushing it.”
+     [ai-prose-corrections.md](ai-prose-corrections.md) extends this list with hollow,
+     mechanical, and marketing-register fingerprints of unedited LLM output (the *delve
+     / leverage / Furthermore / supercharge* registers); both lists apply.
 
 3. **Cut pompousness, meta-commentary, and unnecessary formality**
 
@@ -200,9 +203,9 @@ Stylistically, emphasize **clarity**, **depth**, **rigor**, and **warmth**.
   sentence. Prefer full stops, commas, colons, or semicolons as appropriate.
   When you do use em dashes—like this—follow American style, without spaces around the
   em dash.
-- **Conjunctions:** Write "and" rather than `+` or `&` in prose, list separators, and
+- **Conjunctions:** Write “and” rather than `+` or `&` in prose, list separators, and
   cross-references. Reserve `+` and `&` for code, identifiers, and proper names where
-  they are part of the canonical form (for example, "Strunk & White").
+  they are part of the canonical form (for example, “Strunk & White”).
 - **Section headings:** Use Title Case (Chicago Manual of Style rules) for H1 `#` and H2
   `##` headings (as in this document).
   For H3 `###` and H4 `####`, title case is optional but should be applied consistently.

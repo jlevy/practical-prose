@@ -46,7 +46,7 @@ context, evidence, or maintainability is friction.
 |  | R4. Parsimony | Is each load-bearing reasoning chain the cleanest, simplest sound argument possible for its conclusion? |
 | **Grounding** | G1. Verifiability | Are claims traceable to specific sources, observations, or calculations? |
 |  | G2. Factuality | Are the verifiable claims true and supported by cited evidence? |
-|  | G3. Relevance | Do sources, citations, and reasoning chains bear on the document's stated purpose? |
+|  | G3. Relevance | Do sources, citations, and reasoning chains bear on the document’s stated purpose? |
 | **Judgment** | J1. Calibration | Does claim strength match evidence strength? |
 |  | J2. Fairness | Are opposing positions argued at depth proportional to their plausibility and strength? |
 |  | J3. Robustness | Do key claims survive plausible alternative interpretations? |
@@ -67,7 +67,7 @@ A good practical document does these things; the prescriptive rules below say ho
    causation is asserted; precision matched to measurement; each load-bearing chain the
    minimum sufficient sound argument (R1–R4).
 5. **Makes important claims checkable.** Source-traceable, faithful to the cited
-   evidence, and tied to the document's purpose; the strictness of the bar scaled to
+   evidence, and tied to the document’s purpose; the strictness of the bar scaled to
    stakes (G1–G3).
 6. **Matches confidence to evidence.** Claim strength tracks evidence strength; opposing
    positions argued proportionally; key claims tested against alternative interpretive
@@ -282,9 +282,11 @@ correct spelling and grammar?
    overstate the evidence and are off-limits as emphasis substitutes.
    Use strong language when it carries information, clarifies a distinction, or
    preserves a hard-won idea, and pair it with the citation that earns it on the same
-   line. Honor any domain-specific extension list.
-   Rhetoric is not decoration when it compresses thought; it is decoration when it adds
-   only force.
+   line. Honor any domain-specific extension list, including
+   [ai-prose-corrections.md](ai-prose-corrections.md), which lists hollow and
+   marketing-register fingerprints of unedited LLM output that the §4.2 list doesn’t
+   catch. Rhetoric is not decoration when it compresses thought; it is decoration when it
+   adds only force.
 
 5. **Earn rhetorical force; cut symmetry-for-its-own-sake.** Parallel structures (*“It’s
    not X, it’s Y”*; *“Not just X but Y”*; *“X did A, ours does B”*; *“Where X asks A, Y
@@ -444,8 +446,8 @@ But when these elements are present, they should be well-arranged.
 *Description:* The document follows the chosen style guide or house style consistently.
 A document can be perfectly understandable and still stylistically inconsistent;
 conversely, a document can be style-guide compliant but unclear, overlong, or wrong.
-Consistency isolates the editorial-polish question from the readability question
-(E1 Clarity) and the markup-validity question (F3 Formatting).
+Consistency isolates the editorial-polish question from the readability question (E1
+Clarity) and the markup-validity question (F3 Formatting).
 
 **Rules:**
 
@@ -475,6 +477,9 @@ Consistency isolates the editorial-polish question from the readability question
    words, overblown adjectives, marketing-style intensifiers—even when the rule list is
    short and in the same repo.
    Treat the project’s banned-word list as binding, not advisory.
+   For practical-prose itself, the binding extension is
+   [ai-prose-corrections.md](ai-prose-corrections.md), which catalogs LLM-register tells
+   and their corrections.
 
 7. **Em-dash discipline.** *(Common agent failure mode.)* Use em dashes only when they
    are the best punctuation for the sentence; prefer full stops, commas, colons, or
@@ -488,8 +493,8 @@ Consistency isolates the editorial-polish question from the readability question
 
 *Description:* The document’s markup and visual presentation are clean, valid, and
 compatible with the chosen medium.
-Distinct from F1 Organization (are the parts arranged well) and F2 Consistency
-(does the document follow house style consistently).
+Distinct from F1 Organization (are the parts arranged well) and F2 Consistency (does the
+document follow house style consistently).
 Formatting is the most deterministic of the three; most rules here are lintable.
 
 **Rules:**
@@ -521,17 +526,18 @@ Formatting is the most deterministic of the three; most rules here are lintable.
 
 ### R1. Discipline
 
-*Description:* The practice of climbing the ladder of inference rung by rung in
-order (observation → judgment → interpretation → implication), with each higher
-rung supported by the rung below it. Each rung is named on its own terms; none is
-skipped, none is blended into its neighbor. Implications rest on sound
-interpretations, which rest on sound judgments, which rest on sound observations.
+*Description:* The practice of climbing the ladder of inference rung by rung in order
+(observation → judgment → interpretation → implication), with each higher rung supported
+by the rung below it.
+Each rung is named on its own terms; none is skipped, none is blended into its neighbor.
+Implications rest on sound interpretations, which rest on sound judgments, which rest on
+sound observations.
 
-Discipline is distinct from Soundness (R2). Soundness tests whether each step in
-the chain is itself valid; Discipline tests whether the rungs are climbed in order
-and exist as distinct rungs at all. Both can fail independently: a sound chain can
-still be fused into one sentence or its rungs can be presented out of order, and a
-well-ordered chain can still be unsound.
+Discipline is distinct from Soundness (R2). Soundness tests whether each step in the
+chain is itself valid; Discipline tests whether the rungs are climbed in order and exist
+as distinct rungs at all.
+Both can fail independently: a sound chain can still be fused into one sentence or its
+rungs can be presented out of order, and a well-ordered chain can still be unsound.
 
 The four rungs, with one example carried through them:
 
@@ -662,64 +668,66 @@ Precision is the granularity *within* each individual claim.
 
 ### R4. Parsimony
 
-*Description:* The chain from cited evidence to the document's headline claims uses
-the cleanest, simplest sound argument available. Length is not the metric; minimality
-given the per-step warrants in use is. A long chain of strong deductive steps (a
-formal proof, a multi-step regulatory cross-walk) is parsimonious when no shorter
-chain of the same warrant strength exists; a short chain of weak inductive gestures
-is non-parsimonious when it elides intermediates the conclusion requires.
+*Description:* The chain from cited evidence to the document’s headline claims uses the
+cleanest, simplest sound argument available.
+Length is not the metric; minimality given the per-step warrants in use is.
+A long chain of strong deductive steps (a formal proof, a multi-step regulatory
+cross-walk) is parsimonious when no shorter chain of the same warrant strength exists; a
+short chain of weak inductive gestures is non-parsimonious when it elides intermediates
+the conclusion requires.
 
-Parsimony presupposes Soundness (R2): when a step is unsound, a longer sound chain
-would do less damage to the conclusion, so the chain as written cannot be the most
-parsimonious sound argument. When Soundness fails materially on the headline claims,
-Parsimony is scored 0.
+Parsimony presupposes Soundness (R2): when a step is unsound, a longer sound chain would
+do less damage to the conclusion, so the chain as written cannot be the most
+parsimonious sound argument.
+When Soundness fails materially on the headline claims, Parsimony is scored 0.
 
 Distinguished from neighbors:
 
 - **E3 Concision** is prose-level economy (words, paragraphs, redundant phrasing).
   Parsimony is argument-level economy (rungs in the inferential chain).
-- **G3 Relevance** asks whether each source or section is on-task. Parsimony asks
-  whether the reasoning *within* an on-task chain uses the minimum sound steps.
-- **R1 Discipline** asks whether the rungs are climbed in order and named on
-  their own terms. Parsimony asks whether the chain is the minimum.
-- **R2 Soundness** asks whether each step is valid in itself. Parsimony asks whether
-  the chain *shape* is minimum given the per-step warrants.
+- **G3 Relevance** asks whether each source or section is on-task.
+  Parsimony asks whether the reasoning *within* an on-task chain uses the minimum sound
+  steps.
+- **R1 Discipline** asks whether the rungs are climbed in order and named on their own
+  terms. Parsimony asks whether the chain is the minimum.
+- **R2 Soundness** asks whether each step is valid in itself.
+  Parsimony asks whether the chain *shape* is minimum given the per-step warrants.
 
 **Rules:**
 
-1. **Prefer citation over re-derivation when both serve the same purpose.** Where
-   direct evidence is available (a published result, a measured value, a settled
-   definition), citing it is usually shorter than re-deriving it. Re-derivation is
-   warranted when it adds inspectability (showing the math), confidence (letting the
-   reader audit the step), or pedagogy (explaining for the audience); it is padding
-   when none of those apply and the cited result would do the same work.
+1. **Prefer citation over re-derivation when both serve the same purpose.** Where direct
+   evidence is available (a published result, a measured value, a settled definition),
+   citing it is usually shorter than re-deriving it.
+   Re-derivation is warranted when it adds inspectability (showing the math), confidence
+   (letting the reader audit the step), or pedagogy (explaining for the audience); it is
+   padding when none of those apply and the cited result would do the same work.
 
 2. **Cut non-load-bearing steps.** Each rung in a load-bearing chain should be
-   necessary; if removing it leaves the argument intact, remove it. Steps that restate
-   the preceding rung in different words, add illustrative color, or re-conclude what
-   was already concluded are padding.
+   necessary; if removing it leaves the argument intact, remove it.
+   Steps that restate the preceding rung in different words, add illustrative color, or
+   re-conclude what was already concluded are padding.
 
-3. **Match chain length to warrant strength.** Long chains of strong, deductive steps
-   (a formal proof, a derivation from named axioms, a regulatory cross-walk) are
-   parsimonious when no shorter chain of the same warrant type exists. Short chains
-   of weak, inductive steps are not parsimonious when their brevity was achieved by
-   skipping rungs the conclusion requires.
+3. **Match chain length to warrant strength.** Long chains of strong, deductive steps (a
+   formal proof, a derivation from named axioms, a regulatory cross-walk) are
+   parsimonious when no shorter chain of the same warrant type exists.
+   Short chains of weak, inductive steps are not parsimonious when their brevity was
+   achieved by skipping rungs the conclusion requires.
 
-4. **Don't truncate required intermediates.** Where a claim requires N intermediate
-   inferences to reach with the warrants in use, all N must appear. A 2-step gesture
-   substituted for a 5-step required chain is a Parsimony failure (and typically a
-   Soundness failure as well).
+4. **Don’t truncate required intermediates.** Where a claim requires N intermediate
+   inferences to reach with the warrants in use, all N must appear.
+   A 2-step gesture substituted for a 5-step required chain is a Parsimony failure (and
+   typically a Soundness failure as well).
 
 5. **Prefer the most direct warrant available.** Where deduction will work, use
    deduction; where a measurement exists, cite it; where the mechanism is known, name
    it. Substituting a weaker warrant (“X plausibly causes Y”) when a stronger one is
-   available (“X causes Y via [mechanism], see [source]”) makes the chain longer than
-   it needs to be.
+   available (“X causes Y via [mechanism], see [source]”) makes the chain longer than it
+   needs to be.
 
 6. **Parsimony applies to load-bearing chains.** Illustrative examples, motivational
-   background, and worked-out edge cases are exempt. The test runs on the chain from
-   cited evidence to the document's headline claims, not on every inference in the
-   document.
+   background, and worked-out edge cases are exempt.
+   The test runs on the chain from cited evidence to the document’s headline claims, not
+   on every inference in the document.
 
 ## Grounding Dimensions
 
@@ -742,11 +750,10 @@ Specificity is the precondition for source-traceability.
 
 1. **Claims are stated specifically enough to be checkable.** A claim a reader could in
    principle confirm or refute by consulting sources, observations, or calculations.
-   Vague magnitude words ("rapid," “many,” "in greater volume," “increasingly”) without
+   Vague magnitude words ("rapid," “many,” “in greater volume,” “increasingly”) without
    a stated referent or comparison fail this rule even when the underlying assertion
    might be true; the document has not made a checkable claim.
-   Score R3 Precision for terminology specificity; this rule covers the claim-level
-   bar.
+   Score R3 Precision for terminology specificity; this rule covers the claim-level bar.
 
 2. **Quantitative claims are source-traceable; the bar scales with stakes.** For
    high-stakes, external, or decision-bearing documents (research reports, audits,
@@ -850,9 +857,9 @@ the audit.
    content. The same bar applies to the claims themselves: anything that reads as a fact
    but is detached from a source or from supporting logic—an invented statistic, a
    fabricated detail, an asserted specific presented as settled—counts against
-   Factuality even when no source is cited at all. Confidence in this is harder to
-   self-audit than the other rules; pair high-stakes citations with quoted excerpts when
-   feasible.
+   Factuality even when no source is cited at all.
+   Confidence in this is harder to self-audit than the other rules; pair high-stakes
+   citations with quoted excerpts when feasible.
 
 7. **Calibrated uncertainty satisfies Factuality; uncalibrated certainty fails it.**
    When a claim cannot be corroborated from available evidence, the document
@@ -863,11 +870,12 @@ the audit.
 
 ### G3. Relevance
 
-*Description:* Sources, citations, and intermediate reasoning chains relate directly
-to the document's stated purpose. Material that doesn't bear on the main task,
-including tangential sources, performative citations, and digressive arguments,
-should be cut or marked as background. Relevance tests whether each piece of evidence
-and each section does work toward the purpose declared in P1 Suitability and P2 Scope.
+*Description:* Sources, citations, and intermediate reasoning chains relate directly to
+the document’s stated purpose.
+Material that doesn’t bear on the main task, including tangential sources, performative
+citations, and digressive arguments, should be cut or marked as background.
+Relevance tests whether each piece of evidence and each section does work toward the
+purpose declared in P1 Suitability and P2 Scope.
 
 Distinguished from neighbors:
 
@@ -875,38 +883,38 @@ Distinguished from neighbors:
   inside that boundary earns its place.
 - **E3 Concision** is prose-level economy (words, paragraphs, redundant phrasing).
   Relevance is content-level economy (sources, sections, points).
-- **G1 Verifiability** asks whether claims trace to sources. Relevance asks whether
-  the traced sources connect to the document's purpose.
-- **G2 Factuality** asks whether sources support the claims made. Relevance asks
-  whether those claims matter for what the document is for.
-- **R4 Parsimony** asks whether each load-bearing reasoning chain uses the minimum
-  sound argument. Relevance asks the same question one level up: whether each source
-  and section is load-bearing at all.
+- **G1 Verifiability** asks whether claims trace to sources.
+  Relevance asks whether the traced sources connect to the document’s purpose.
+- **G2 Factuality** asks whether sources support the claims made.
+  Relevance asks whether those claims matter for what the document is for.
+- **R4 Parsimony** asks whether each load-bearing reasoning chain uses the minimum sound
+  argument. Relevance asks the same question one level up: whether each source and
+  section is load-bearing at all.
 
 **Rules:**
 
-1. **Cite only sources that bear on the purpose.** A source supplying tangential
-   context can be referenced inline but should not be anchored as evidence for a
-   headline claim. Performative citations, where sources are cited to demonstrate
-   diligence rather than to support a claim, dilute the audit trail and obscure
-   which sources actually load-bear.
+1. **Cite only sources that bear on the purpose.** A source supplying tangential context
+   can be referenced inline but should not be anchored as evidence for a headline claim.
+   Performative citations, where sources are cited to demonstrate diligence rather than
+   to support a claim, dilute the audit trail and obscure which sources actually
+   load-bear.
 
-2. **Cut sections that don't load-bear on the task.** Test each section by removing
-   it and asking whether any headline conclusion, recommendation, or actionable step
+2. **Cut sections that don’t load-bear on the task.** Test each section by removing it
+   and asking whether any headline conclusion, recommendation, or actionable step
    changes. If nothing material moves, the section is extraneous and belongs in a
    separate background document, a marked appendix, or not at all.
 
-3. **Mark digressions as digressions.** When a section is included for completeness
-   but is not load-bearing, signal it with a `Background`, `Related work`, `Aside`,
-   or `Historical note` header so the reader can skip without losing the main thread.
+3. **Mark digressions as digressions.** When a section is included for completeness but
+   is not load-bearing, signal it with a `Background`, `Related work`, `Aside`, or
+   `Historical note` header so the reader can skip without losing the main thread.
 
 4. **Each source passes the one-sentence test.** For every cited source, the writer
-   should be able to say in one sentence: *this source supports claim X, which bears
-   on purpose Y*. Sources that fail this test are either misused or unnecessary.
+   should be able to say in one sentence: *this source supports claim X, which bears on
+   purpose Y*. Sources that fail this test are either misused or unnecessary.
 
-5. **Don't pad bibliographies for performative-rigor reasons.** A long reference list
-   is not evidence of thoroughness; it is evidence of thoroughness only when each
-   entry earns its place. Cite the sources that load-bear; cut the rest.
+5. **Don’t pad bibliographies for performative-rigor reasons.** A long reference list is
+   not evidence of thoroughness; it is evidence of thoroughness only when each entry
+   earns its place. Cite the sources that load-bear; cut the rest.
 
 ## Judgment Dimensions
 
@@ -1030,8 +1038,8 @@ interpretive frame that a competent reader would dispute.
    claim is brittle to interpretation.
    State that explicitly.
 
-5. **Distinguish Robustness from Fairness.** Fairness (J2) engages opposing positions
-   at proportional evidentiary depth.
+5. **Distinguish Robustness from Fairness.** Fairness (J2) engages opposing positions at
+   proportional evidentiary depth.
    Robustness asks whether the chosen reading survives a different reading of the same
    evidence the opposing cases share.
    The two are complementary, not redundant.
@@ -1073,15 +1081,15 @@ For a tight self-check before publishing, walk the six groups in order and ask:
 - **Form (F1-F3):** Heading hierarchy logical and sections arranged for the task?
   Style consistent (dialect, casing, parallel lists)?
   Markup valid and footer/frontmatter in place?
-- **Reasoning (R1-R4):** Observation, judgment, interpretation, and implication
-  worked through in order, each higher rung supported by the prior?
+- **Reasoning (R1-R4):** Observation, judgment, interpretation, and implication worked
+  through in order, each higher rung supported by the prior?
   Mechanisms named where causation is asserted?
   Domain entities referred to by proper name; quantitative precision matches
   measurement? Load-bearing chains the minimum sufficient sound argument?
 - **Grounding (G1-G3):** Every quantitative claim source-traceable to a specific
   citation (with stakes-appropriate strictness)?
   Cited sources support the claim at the asserted strength?
-  Sources and sections bear on the document's purpose?
+  Sources and sections bear on the document’s purpose?
 - **Judgment (J1-J3):** Probability claims anchored in base rates?
   Opposing positions engaged at proportional depth, with any asymmetry declared?
   Key claims tested against the strongest alternative interpretive lens?
@@ -1137,6 +1145,8 @@ structure depends on.
   recommended frontmatter schema that operationalize these rules.
 - [common-doc-guidelines.md](common-doc-guidelines.md): general style, organization, and
   formatting (the substrate these guidelines extend).
+- [ai-prose-corrections.md](ai-prose-corrections.md): the binding `conventions.md`-style
+  extension that catalogs LLM-register tells and their corrections.
 - Domain-specific `conventions.md` files extend these guidelines with domain-specific
   banned-word lists, confidence-tag conventions, and citation-format requirements.
 
