@@ -29,17 +29,17 @@ The order matters. When two priorities conflict, the earlier one wins.
    Observation, judgment, interpretation, and implication on separate rungs.
    Mechanism named where causation is asserted; counterfactual named where the
    explanation could be wrong.
-   Each load-bearing reasoning chain is the cleanest, simplest sound argument
-   possible: no non-load-bearing rungs, no weaker warrant where a stronger one was
-   available, and no re-derivation that doesn't add inspectability, confidence, or
-   audience understanding beyond what a citation would.
+   Each load-bearing reasoning chain is the cleanest, simplest sound argument possible:
+   no non-load-bearing rungs, no weaker warrant where a stronger one was available, and
+   no re-derivation that doesn’t add inspectability, confidence, or audience
+   understanding beyond what a citation would.
    (R1 Discipline, R2 Soundness, R4 Parsimony.)
 
 4. **Make material claims traceable, and keep cited material on-task.** Every
    quantitative or load-bearing factual claim points to a source the reader can check.
    Confidence tags (`[VERIFIED]`, `[ESTIMATED]`, `[UNVERIFIED]`, `[ASSUMING: ...]`) pair
    with specific source pointers.
-   Each cited source bears on the document's purpose; performative citations and
+   Each cited source bears on the document’s purpose; performative citations and
    tangential sources are cut or marked as background.
    For central claims, also name what would invalidate them.
    (G1 Verifiability, G2 Factuality, G3 Relevance.)
@@ -83,13 +83,13 @@ Local rule compliance is in service of reader outcome, not the other way around.
 
 - [practical-prose-quick-checklist.md](practical-prose-quick-checklist.md): pre-publish
   self-audit for the 20 dimensions.
-- [practical-prose-guidelines.md](../docs/practical-prose-guidelines.md):
-  prescriptive rules, full version (~800 lines).
+- [practical-prose-guidelines.md](../docs/practical-prose-guidelines.md): prescriptive
+  rules, full version (~800 lines).
 - [practical-prose-rubric.md](../docs/practical-prose-rubric.md): scoring anchors,
   Justified Deviations, applicability profiles, audit passes, and the Failure-Mode
   Questions table.
-- [practical-prose-metrics.md](../docs/practical-prose-metrics.md): operational
-  metrics \+ applicability profiles by `risk_level`.
+- [practical-prose-metrics.md](../docs/practical-prose-metrics.md): operational metrics
+  \+ applicability profiles by `risk_level`.
 
 <!-- This document follows common-doc-guidelines.md.
 Review guidelines before editing.

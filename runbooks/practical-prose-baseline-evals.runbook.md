@@ -21,8 +21,8 @@ Use the subset commands only when you are debugging one side of the baseline set
 
 ## Using the `pprose-eval` Skill
 
-When asking an agent to run this workflow, invoke the local `pprose-eval` skill and point
-it at this runbook:
+When asking an agent to run this workflow, invoke the local `pprose-eval` skill and
+point it at this runbook:
 
 > Use `pprose-eval` and run `runbooks/practical-prose-baseline-evals.runbook.md`.
 

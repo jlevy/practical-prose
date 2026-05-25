@@ -20,9 +20,8 @@ description so an agent (and a user) knows what to expect:
 - **Apply** skills modify the target document (rewrite, reformat, add missing pieces).
   `prose-apply-common-guidelines` and `prose-copy-edit` are apply skills.
 - **Audit / evaluate** skills are read-only.
-  They inspect the document and produce findings or scores, but do not change the
-  source file.
-  `prose-quick-check`, `prose-eval`, and `prose-compare` are audit/evaluate skills.
+  They inspect the document and produce findings or scores, but do not change the source
+  file. `prose-quick-check`, `prose-eval`, and `prose-compare` are audit/evaluate skills.
 
 The design treats the repo as the distribution: content and CLI are packaged together,
 the `prose-eval` CLI is invoked as a single `uvx prose-eval ...` entry point, and
@@ -75,9 +74,9 @@ The current Practical Prose surface that maps naturally to skills:
 | `prose-eval` | Evaluate | `runbooks/practical-prose-eval-single.runbook.md` | `uvx prose-eval score …` plus `metrics` / `report` subcommands |
 | `prose-compare` | Evaluate | `runbooks/practical-prose-eval-compare.runbook.md` | `uvx prose-eval compare …` |
 
-Three skills are content-only; two shell out to the Python CLI.
-The shared invocation pattern is “agent reads SKILL.md → agent reads linked reference
-docs as needed → for CLI skills, agent runs `uvx prose-eval <subcommand> …`.”
+Three skills are content-only; two shell out to the Python CLI. The shared invocation
+pattern is “agent reads SKILL.md → agent reads linked reference docs as needed → for CLI
+skills, agent runs `uvx prose-eval <subcommand> …`.”
 
 `prose-apply-common-guidelines` is the lightest-weight skill: it applies the general
 `common-doc-guidelines.md` (organization, structuring, writing style, formatting, and
@@ -140,8 +139,8 @@ Three sections:
    `shortcuts/practical-prose-agent-policy.md`, the priority list.
    This is the part that loads into every session and shapes how the agent writes.
 
-`AGENTS.md` should **not** repeat the guidelines, rubric, or metrics in full; those
-live in `docs/` and are linked from the relevant `SKILL.md` files.
+`AGENTS.md` should **not** repeat the guidelines, rubric, or metrics in full; those live
+in `docs/` and are linked from the relevant `SKILL.md` files.
 
 **`CLAUDE.md` shim.** One line:
 
@@ -181,9 +180,9 @@ The SKILL.md is a router; the existing markdown is the canonical content.
 
 **`.claude/skills/` symlinks.** Five symlinks (one per skill) so Claude Code’s native
 skill discovery picks them up without duplicating files.
-The symlinks are committed; they are nice-to-have, not load-bearing. `AGENTS.md` /
-`CLAUDE.md` also point at the canonical `skills/` paths so Claude works without them
-too.
+The symlinks are committed; they are nice-to-have, not load-bearing.
+`AGENTS.md` / `CLAUDE.md` also point at the canonical `skills/` paths so Claude works
+without them too.
 
 **Single `prose-eval` CLI entry point.** Add `src/prose_eval/cli.py` and publish one
 console script:
@@ -204,16 +203,16 @@ Use subcommands instead of separate top-level script names:
 
 This follows the modern Python CLI pattern: one package-named entry point, a dedicated
 `cli.py` module, command handlers kept testable, useful `--help` output, and
-automation-friendly behavior. Preserve stdout/stderr discipline, respect `CI` and
-`NO_COLOR`, and support `--no-progress` anywhere progress output is introduced.
+automation-friendly behavior.
+Preserve stdout/stderr discipline, respect `CI` and `NO_COLOR`, and support
+`--no-progress` anywhere progress output is introduced.
 Keep the existing scripts as compatibility aliases for the first release if that lowers
 rollout risk, but document only the new `uvx prose-eval ...` form in skills and README.
 
 **PyPI publishing for `prose-eval`.** The `tools/prose-eval` package is already
 structured for PyPI release via GitHub Actions (`tools/prose-eval/docs/publishing.md`
 documents the flow inherited from `simple-modern-uv`). Cut a `v0.1.0` (or first
-appropriate) tagged release so `uvx prose-eval score` and `uvx prose-eval compare`
-work.
+appropriate) tagged release so `uvx prose-eval score` and `uvx prose-eval compare` work.
 
 For local development before/after the first release, run the same entry point from the
 package workspace, for example: `cd tools/prose-eval && uv run prose-eval score ...`.
@@ -239,15 +238,14 @@ the user both know whether running the skill will modify the source document.
 | `prose-compare` | Compare N versions or variants of a document side-by-side using rubric scores and deterministic metrics. Read-only on the source docs; writes a comparison report. Use when the user asks to compare versions, A/B drafts, diff two docs by quality, or pick the best of several variants. |
 
 These should be refined during implementation by trial in both Claude Code and Codex;
-descriptions are the highest-leverage authoring decision and worth iterating on once
-the bodies exist.
+descriptions are the highest-leverage authoring decision and worth iterating on once the
+bodies exist.
 
 Avoid overlap in trigger phrasings.
-"Clean up" is ambiguous between apply-common-guidelines (light, formatting) and
-copy-edit (heavier rewrite); the descriptions resolve it by reserving "clean up,
-tidy, fix formatting" for the apply-common-guidelines skill and "polish, rewrite,
-tighten" for copy-edit.
-"Review" / "audit" are reserved for quick-check.
+“Clean up” is ambiguous between apply-common-guidelines (light, formatting) and
+copy-edit (heavier rewrite); the descriptions resolve it by reserving “clean up, tidy,
+fix formatting” for the apply-common-guidelines skill and “polish, rewrite, tighten” for
+copy-edit. “Review” / “audit” are reserved for quick-check.
 
 ### API Changes
 
@@ -268,30 +266,29 @@ No reference-doc schema changes.
 
 ### File and function design
 
-This implementation must stay aligned with the repo-as-skill research findings:
-portable skill frontmatter only, short router-style `SKILL.md` bodies, progressive
-disclosure into existing docs/runbooks, no setup wizard, no hooks, no docs bundled into
-the CLI package, and a clean `uvx prose-eval ...` command surface.
+This implementation must stay aligned with the repo-as-skill research findings: portable
+skill frontmatter only, short router-style `SKILL.md` bodies, progressive disclosure
+into existing docs/runbooks, no setup wizard, no hooks, no docs bundled into the CLI
+package, and a clean `uvx prose-eval ...` command surface.
 
 **CLI files and functions:**
 
 - **`tools/prose-eval/src/prose_eval/cli.py`** (new): package-named command entry point.
-  - `COMMANDS: dict[str, CommandSpec]`: maps `metrics`, `score`, `report`, and
-    `compare` to their dispatcher functions and short help text.
+  - `COMMANDS: dict[str, CommandSpec]`: maps `metrics`, `score`, `report`, and `compare`
+    to their dispatcher functions and short help text.
   - `main(argv: list[str] | None = None) -> int`: parses the first subcommand, prints
     top-level help for `-h` / `--help`, and delegates the remaining args to the existing
     implementation module.
-  - `_run_with_prog(command: str, func: Callable[[list[str] | None], int], args:
-    list[str]) -> int`: temporarily sets `sys.argv[0]` to `prose-eval <command>` so
-    each delegated `argparse` help page is self-documenting.
+  - `_run_with_prog(command: str, func: Callable[[list[str] | None], int], args: list[str]) -> int`:
+    temporarily sets `sys.argv[0]` to `prose-eval <command>` so each delegated
+    `argparse` help page is self-documenting.
 - **`tools/prose-eval/src/prose_eval/metrics.py`**: change `main() -> int` to
   `main(argv: list[str] | None = None) -> int` and pass `argv` to
   `parser.parse_args(argv)`, matching `eval_score.py`, `eval_report.py`, and
   `eval_compare.py`.
-- **`tools/prose-eval/pyproject.toml`**: add
-  `prose-eval = "prose_eval.cli:main"` under `[project.scripts]`; keep
-  `prose-metrics`, `eval-score`, `eval-report`, and `eval-compare` as compatibility
-  aliases for the first release.
+- **`tools/prose-eval/pyproject.toml`**: add `prose-eval = "prose_eval.cli:main"` under
+  `[project.scripts]`; keep `prose-metrics`, `eval-score`, `eval-report`, and
+  `eval-compare` as compatibility aliases for the first release.
 - **`tools/prose-eval/tests/test_cli.py`** (new): test the new entry point without
   network access.
   - `test_top_level_help_lists_subcommands`
@@ -302,9 +299,9 @@ the CLI package, and a clean `uvx prose-eval ...` command surface.
 
 **Agent-facing files:**
 
-- **`AGENTS.md`** (new): always-on cross-agent guide with one short value statement,
-  a workflow-to-skill table, and condensed authoring rules. It must not duplicate the
-  full rubric, guidelines, or runbooks.
+- **`AGENTS.md`** (new): always-on cross-agent guide with one short value statement, a
+  workflow-to-skill table, and condensed authoring rules.
+  It must not duplicate the full rubric, guidelines, or runbooks.
 - **`CLAUDE.md`** (new): one line, `@AGENTS.md`, matching the Claude Code memory
   workaround recommended in the research.
 - **`skills/prose-apply-common-guidelines/SKILL.md`** (new): apply skill wrapping
@@ -332,8 +329,8 @@ the CLI package, and a clean `uvx prose-eval ...` command surface.
   arguments, hooks, model, or other agent-specific fields.
 - Each description leads with the capability and ends with literal trigger phrases.
   Keep descriptions short enough for large skill collections.
-- Each `SKILL.md` is a router, not a duplicate reference doc. Target 100-200 lines and
-  stay under 300 unless a concrete workflow requires more.
+- Each `SKILL.md` is a router, not a duplicate reference doc.
+  Target 100-200 lines and stay under 300 unless a concrete workflow requires more.
 - Reference chains stay shallow: `SKILL.md` links directly to source docs/runbooks.
 - Apply skills state clearly that they modify source files; audit/evaluate skills state
   clearly that they are read-only on source files.
@@ -355,20 +352,19 @@ the CLI package, and a clean `uvx prose-eval ...` command surface.
   - [ ] Ensure `uvx prose-eval --help` and each subcommand `--help` are useful to a
     human and to an agent.
 - [ ] Create `skills/prose-apply-common-guidelines/SKILL.md`: wraps
-  `common-doc-guidelines.md`; instructs the agent to apply the guidelines and ensure
-  the required footer is present.
+  `common-doc-guidelines.md`; instructs the agent to apply the guidelines and ensure the
+  required footer is present.
 - [ ] Create `skills/prose-quick-check/SKILL.md`: wraps
   `shortcuts/practical-prose-quick-checklist.md`; read-only audit producing a findings
   list.
-- [ ] Create `skills/prose-copy-edit/SKILL.md`: wraps
-  `shortcuts/shortcut-copy-edit.md`; modifies the doc.
+- [ ] Create `skills/prose-copy-edit/SKILL.md`: wraps `shortcuts/shortcut-copy-edit.md`;
+  modifies the doc.
 - [ ] Create `skills/prose-eval/SKILL.md`: wraps
-  `runbooks/practical-prose-eval-single.runbook.md`; documents
-  `uvx prose-eval score`, `uvx prose-eval metrics`, and `uvx prose-eval report`
-  invocations.
+  `runbooks/practical-prose-eval-single.runbook.md`; documents `uvx prose-eval score`,
+  `uvx prose-eval metrics`, and `uvx prose-eval report` invocations.
 - [ ] Create `skills/prose-compare/SKILL.md`: wraps
-  `runbooks/practical-prose-eval-compare.runbook.md`; documents
-  `uvx prose-eval compare` for the multi-input invocation.
+  `runbooks/practical-prose-eval-compare.runbook.md`; documents `uvx prose-eval compare`
+  for the multi-input invocation.
 - [ ] Add `.claude/skills/<name>` symlinks for all five skills.
 - [ ] Cut a first PyPI release of `prose-eval` so `uvx prose-eval ...` resolves.
   (If the package name is taken, pick an alternative whose package name and console
@@ -411,8 +407,7 @@ Per skill, in each target agent (Claude Code and Codex CLI at minimum), verify:
    `uvx prose-eval …` invocation runs cleanly.
 
 Sample input docs for the runs can be drawn from `attic/` or any existing markdown in
-the repo.
-The objective is the workflow firing, not benchmarking output quality; quality
+the repo. The objective is the workflow firing, not benchmarking output quality; quality
 is the job of the rubric itself.
 
 If the manual passes surface deeper CLI behavior bugs, file separate issues rather than
@@ -454,21 +449,22 @@ Rollback is `git revert` of the PR; no migrations, no external state.
 - **Skill description wording.** The proposed descriptions above are a first draft;
   expect to iterate them during manual testing.
 - **Whether a “quick fix” middle-ground skill is needed.** The current split is
-  read-only audit (`prose-quick-check`) vs. full edit pass (`prose-copy-edit`), with
-  `prose-apply-common-guidelines` as a separate, narrower apply.
-  If users routinely ask for "a quick cleanup" expecting modifications but lighter
-  than copy-edit, consider a third apply skill (`prose-quick-fix` or similar) that
-  applies just the obvious fixes from the quick-checklist.
+  read-only audit (`prose-quick-check`) vs.
+  full edit pass (`prose-copy-edit`), with `prose-apply-common-guidelines` as a
+  separate, narrower apply.
+  If users routinely ask for “a quick cleanup” expecting modifications but lighter than
+  copy-edit, consider a third apply skill (`prose-quick-fix` or similar) that applies
+  just the obvious fixes from the quick-checklist.
   Hold for now; revisit after dogfooding.
 
 ## References
 
 - [shortcuts/practical-prose-agent-policy.md](../../../../../shortcuts/practical-prose-agent-policy.md):
   source for the AGENTS.md principles section.
-- [common-doc-guidelines.md](../../../../../docs/common-doc-guidelines.md): source for the
-  `prose-apply-common-guidelines` skill.
-- [shortcuts/shortcut-copy-edit.md](../../../../../shortcuts/shortcut-copy-edit.md): source
-  for the `prose-copy-edit` skill.
+- [common-doc-guidelines.md](../../../../../docs/common-doc-guidelines.md): source for
+  the `prose-apply-common-guidelines` skill.
+- [shortcuts/shortcut-copy-edit.md](../../../../../shortcuts/shortcut-copy-edit.md):
+  source for the `prose-copy-edit` skill.
 - [shortcuts/practical-prose-quick-checklist.md](../../../../../shortcuts/practical-prose-quick-checklist.md):
   source for the `prose-quick-check` skill.
 - [runbooks/practical-prose-eval-single.runbook.md](../../../../../runbooks/practical-prose-eval-single.runbook.md):

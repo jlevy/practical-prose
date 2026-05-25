@@ -34,8 +34,8 @@ fixtures.
 
 `pprose` available on the command line and the provider-specific API key set for the
 model you score with (`ANTHROPIC_API_KEY`, `OPENAI_API_KEY`, or `GOOGLE_API_KEY`) — see
-[Tooling](../AGENTS.md#tooling). Batch eval outputs live under `evals/<round-name>/` at
-the repo root.
+[Tooling](../AGENTS.md#tooling).
+Batch eval outputs live under `evals/<round-name>/` at the repo root.
 
 ## Steps
 
@@ -103,8 +103,9 @@ Flags:
 - `--pairs 'from=to' ...` — emit Δ tables for each pair, dimension by dimension, plus
   mean delta. Useful for “process A → process B” comparisons.
 - `--table-styles` — prepend optional `display.table_styles` frontmatter for browsers
-  that support the table-style microformat. The table body remains ordinary Markdown;
-  omit this flag when you need byte-for-byte plain Markdown output.
+  that support the table-style microformat.
+  The table body remains ordinary Markdown; omit this flag when you need byte-for-byte
+  plain Markdown output.
 
 ### 4. Verify the alignment audit across artifacts
 
@@ -166,10 +167,9 @@ Aim for falsifiable claims grounded in specific table cells, not generic.
   anchors (with `NA` / `ERR` sentinels) and scoring rules.
 - [practical-prose-guidelines.md](../docs/practical-prose-guidelines.md): prescriptive
   rules cited by violations.
-- [eval_compare.py](../tools/pprose/src/pprose/eval_compare.py): the
-  deterministic generator.
-- [eval_report.py](../tools/pprose/src/pprose/eval_report.py): schema and
-  validator.
+- [eval_compare.py](../tools/pprose/src/pprose/eval_compare.py): the deterministic
+  generator.
+- [eval_report.py](../tools/pprose/src/pprose/eval_report.py): schema and validator.
 
 <!-- This document follows common-doc-guidelines.md.
 Review guidelines before editing.

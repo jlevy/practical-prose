@@ -37,11 +37,11 @@ pprose install --agents-md                        # install skills and add AGENT
 ```
 
 `pprose install` writes skills that invoke pprose with a pinned, local-first runner
-(`pprose` if on PATH, else `uvx pprose@<version>`), so they work in any repo. Run
-`pprose --help` or `pprose <command> --help` for full options.
+(`pprose` if on PATH, else `uvx pprose@<version>`), so they work in any repo.
+Run `pprose --help` or `pprose <command> --help` for full options.
 
-`score` requires `ANTHROPIC_API_KEY`; the package auto-loads `.env` and `.env.local` from
-the current directory hierarchy and `$HOME`.
+`score` requires `ANTHROPIC_API_KEY`; the package auto-loads `.env` and `.env.local`
+from the current directory hierarchy and `$HOME`.
 
 ## Project docs
 

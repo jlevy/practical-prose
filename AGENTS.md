@@ -78,7 +78,6 @@ Any work that touches palettes, eval-report rendering, or CSS should follow
 All color values are written in `hsl()`, not hex, so the system’s structure is visible
 in the source.
 
-
 <!-- BEGIN TBD INTEGRATION -->
 **`tbd` helps humans and agents ship code with greater speed, quality, and discipline.**
 

@@ -10,8 +10,8 @@ It writes eval report files.
 Use it when the user wants a formal Practical Prose evaluation of one document.
 
 For the repo’s baseline batch evals, run `pprose runbook practical-prose-baseline-evals`
-and default to running all third-party and self-eval artifacts unless the user asks for a
-subset.
+and default to running all third-party and self-eval artifacts unless the user asks for
+a subset.
 
 ## Inputs
 
