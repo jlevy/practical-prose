@@ -25,11 +25,11 @@ review, use `pprose-full-edit`.
 4. Audit the document, track issues (project issue/bead tooling when available, else the
    agent's to-do/checklist), and apply edits directly.
 5. Preserve factual meaning, claim strength, citations, and intentional voice. Do not
-   edit the substantive dimensions (Purpose, Grounding, Reasoning, Judgment); if those
+   edit the substantive dimensions (Purpose, Reasoning, Grounding, Judgment); if those
    need work, note it and recommend `pprose-full-edit`.
 6. Re-scan the diff for regressions before reporting.
 
 ## Output
 
 Report the changed file, the Expression issue classes fixed, and any substantive
-(Purpose / Grounding / Reasoning / Judgment) issues you noticed but did not edit.
+(Purpose / Reasoning / Grounding / Judgment) issues you noticed but did not edit.

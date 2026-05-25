@@ -66,7 +66,9 @@ def _format_locations(locations: list[Any]) -> str:
             anchors.append(loc.section)
         if loc.line_start is not None:
             end = loc.line_end if loc.line_end is not None else loc.line_start
-            anchors.append(f"L{loc.line_start}-{end}" if end != loc.line_start else f"L{loc.line_start}")
+            anchors.append(
+                f"L{loc.line_start}-{end}" if end != loc.line_start else f"L{loc.line_start}"
+            )
         if loc.note and not anchors:
             anchors.append(loc.note)
         elif loc.note:
@@ -250,9 +252,7 @@ def render_single_doc_rollup(
             verdict_tag = "" if v.verdict == "violated" else f" *[{v.verdict}]*"
             loc_str = _format_locations(v.locations)
             loc = f" *Location:* {loc_str}." if loc_str else ""
-            out.append(
-                f"{i}. **{v.dimension}** (rule {v.rule_number}){verdict_tag} — {desc}{loc}"
-            )
+            out.append(f"{i}. **{v.dimension}** (rule {v.rule_number}){verdict_tag} — {desc}{loc}")
         out.append("")
 
     # Quantitative table.

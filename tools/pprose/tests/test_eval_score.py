@@ -22,6 +22,7 @@ from pprose.eval_report import (
     RuleFinding,
 )
 from pprose.eval_score import (
+    RawRuleFinding,
     ScoredResult,
     ScoreEntry,
     ScoringResponse,
@@ -38,10 +39,10 @@ def _full_response(score: int = 4, with_violation: bool = True) -> ScoringRespon
     """Build a ScoringResponse covering every rubric dimension at a uniform score."""
     from pprose import rubric_schema as rs
 
-    findings: list[RuleFinding] = []
+    findings: list[RawRuleFinding] = []
     if with_violation:
         findings = [
-            RuleFinding(
+            RawRuleFinding(
                 dimension="Clarity",
                 rule_number=1,
                 verdict="violated",
@@ -115,14 +116,14 @@ def test_to_scored_result_na_accepted():
 def test_to_scored_result_keeps_well_formed_findings():
     response = _full_response()
     response.rule_findings = [
-        RuleFinding(
+        RawRuleFinding(
             dimension="Clarity",
             rule_number=4,
             verdict="violated",
             description="register",
             locations=[Location(line_start=412, line_end=418)],
         ),
-        RuleFinding(
+        RawRuleFinding(
             dimension="Soundness",
             rule_number=3,
             verdict="violated",
@@ -132,6 +133,8 @@ def test_to_scored_result_keeps_well_formed_findings():
     ]
     result = _to_scored_result(response)
     assert len(result.rule_findings) == 2
+    # Each survivor is re-validated as the strict RuleFinding.
+    assert isinstance(result.rule_findings[0], RuleFinding)
     assert result.rule_findings[0].locations[0].line_start == 412
     assert result.rule_findings[1].locations[0].section == "§2.7"
 
@@ -140,10 +143,8 @@ def test_to_scored_result_drops_out_of_range_rule_number(capsys):
     """The model occasionally invents a rule_number past the dimension's bound;
     the finding is dropped with a stderr warning instead of failing the eval."""
     response = _full_response(with_violation=False)
-    # Build the finding via model_construct so the validator doesn't reject it
-    # before _to_scored_result has a chance to filter.
     response.rule_findings = [
-        RuleFinding.model_construct(
+        RawRuleFinding(
             dimension="Clarity",
             rule_number=99,
             verdict="violated",
@@ -156,6 +157,54 @@ def test_to_scored_result_drops_out_of_range_rule_number(capsys):
     captured = capsys.readouterr()
     assert "out-of-range" in captured.err
     assert "rule_number=99" in captured.err
+
+
+def test_scoring_response_accepts_out_of_range_rule_number_at_boundary():
+    """The structured-output boundary must accept (not reject) hallucinated
+    rule_numbers, so `_to_scored_result()` can drop the bad finding while
+    keeping the rest of the eval. Regression test for the unreachable-filter
+    bug where strict `RuleFinding` validation killed the whole call."""
+    from pprose import rubric_schema as rs
+
+    payload = {
+        "scores": {d.key: {"score": 4, "reason": "x"} for d in rs.DIMENSIONS},
+        "rule_findings": [
+            {
+                "dimension": "Clarity",
+                "rule_number": 99,
+                "verdict": "violated",
+                "description": "phantom",
+                "locations": [{"line_start": 1}],
+            }
+        ],
+    }
+    response = ScoringResponse.model_validate(payload)
+    assert response.rule_findings[0].rule_number == 99
+    result = _to_scored_result(response)
+    assert result.rule_findings == []
+
+
+def test_scoring_response_drops_unknown_dimension_at_filter(capsys):
+    """Hallucinated dimension labels must also be filtered (not rejected at
+    the boundary) so a single bad entry doesn't fail the eval."""
+    from pprose import rubric_schema as rs
+
+    payload = {
+        "scores": {d.key: {"score": 4, "reason": "x"} for d in rs.DIMENSIONS},
+        "rule_findings": [
+            {
+                "dimension": "Charisma",  # not in the rubric
+                "rule_number": 1,
+                "verdict": "violated",
+                "description": "phantom dim",
+                "locations": [{"line_start": 1}],
+            }
+        ],
+    }
+    response = ScoringResponse.model_validate(payload)
+    result = _to_scored_result(response)
+    assert result.rule_findings == []
+    assert "unknown dimension" in capsys.readouterr().err
 
 
 # ---------------------------------------------------------------------------
@@ -511,9 +560,7 @@ def _make_function_model(response: ScoringResponse) -> FunctionModel:
     def _call(_messages: list[ModelMessage], info: AgentInfo) -> ModelResponse:
         assert info.output_tools, "Agent was not configured with output_type"
         tool_name = info.output_tools[0].name
-        return ModelResponse(
-            parts=[ToolCallPart(tool_name=tool_name, args=response.model_dump())]
-        )
+        return ModelResponse(parts=[ToolCallPart(tool_name=tool_name, args=response.model_dump())])
 
     return FunctionModel(_call)
 

@@ -7,14 +7,15 @@
   },
   "files": {
     "ignoreUnknown": false,
-    "ignore": [
-      "**/.venv/**",
-      "**/__pycache__/**",
-      "**/node_modules/**",
-      "**/_generated/**",
-      "attic/**",
-      "tools/pprose/.venv/**",
-      "tools/pprose/dist/**"
+    "includes": [
+      "**",
+      "!**/.venv",
+      "!**/__pycache__",
+      "!**/node_modules",
+      "!**/_generated",
+      "!attic",
+      "!tools/pprose/.venv",
+      "!tools/pprose/dist"
     ]
   },
   "formatter": {
@@ -25,8 +26,12 @@
     "lineEnding": "lf",
     "formatWithErrors": false
   },
-  "organizeImports": {
-    "enabled": true
+  "assist": {
+    "actions": {
+      "source": {
+        "organizeImports": "on"
+      }
+    }
   },
   "linter": {
     "enabled": true,

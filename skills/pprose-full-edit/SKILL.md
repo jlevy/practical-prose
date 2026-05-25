@@ -6,12 +6,12 @@ description: Full editorial pass over a practical document across all 20 Practic
 
 This is the deepest edit tier (an apply skill: it may modify the target document) and a
 **superset of `pprose-copy-edit`**. It works the document across all six groups and 20
-dimensions of the Practical Prose guidelines (Purpose, Expression, Form, Grounding, Reasoning,
+dimensions of the Practical Prose guidelines (Purpose, Expression, Form, Reasoning, Grounding,
 Judgment), and it writes an **editorial-review side document** with strengths,
 weaknesses, and suggested fixes for the author or other editors.
 
 Apply-vs-flag: auto-apply the safe Expression and formatting fixes; **flag** substantive
-Purpose / Grounding / Reasoning / Judgment issues in the review rather than silently
+Purpose / Reasoning / Grounding / Judgment issues in the review rather than silently
 rewriting — never change factual meaning, claim strength, scope, or citations.
 
 ## Inputs

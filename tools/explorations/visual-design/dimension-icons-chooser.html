@@ -193,6 +193,7 @@
         box-sizing: border-box;
       }
       .frame--none {
+        /* No frame; sized-only wrapper. */
       }
       .frame--thin {
         border: 1px solid var(--rule);
@@ -855,19 +856,19 @@
         p: "Purpose",
         e: "Expression",
         f: "Form",
-        g: "Grounding",
         r: "Reasoning",
+        g: "Grounding",
         j: "Judgment",
       };
-      const DIM_ORDER = ["p", "e", "f", "g", "r", "j"];
+      const DIM_ORDER = ["p", "e", "f", "r", "g", "j"];
 
       // ----- Lookups -----
       const LIB_INFO = {};
-      SECTIONS.forEach((sec) =>
+      SECTIONS.forEach((sec) => {
         sec.libs.forEach((lib) => {
           LIB_INFO[lib.id] = { lib, isMath: !!sec.math };
-        }),
-      );
+        });
+      });
 
       // What concepts (icon names or glyphs) can this cell cycle through, in priority order?
       function availableChoices(libId, dim) {
@@ -879,15 +880,15 @@
 
       // ----- Per-cell state: cellState[libId][dim] = current concept (or glyph) -----
       const cellState = {};
-      SECTIONS.forEach((sec) =>
+      SECTIONS.forEach((sec) => {
         sec.libs.forEach((lib) => {
           cellState[lib.id] = {};
           DIM_ORDER.forEach((dim) => {
             const choices = availableChoices(lib.id, dim);
             cellState[lib.id][dim] = choices.length ? choices[0] : null;
           });
-        }),
-      );
+        });
+      });
 
       // ----- Render -----
       function getFrame() {
@@ -926,7 +927,7 @@
 
       function renderCard(lib) {
         const cells = DIM_ORDER.map((dim) => renderCell(lib.id, dim)).join("");
-        const extraClass = lib.fontClass ? " " + lib.fontClass : "";
+        const extraClass = lib.fontClass ? ` ${lib.fontClass}` : "";
         const home = LIB_HOME[lib.id];
         const sourceLink = home
           ? ` <a class="source" href="${home}" target="_blank" rel="noopener" title="Open source for ${lib.name}">↗</a>`
@@ -979,8 +980,8 @@
 
       // ----- Controls -----
       function updateSize(val) {
-        document.documentElement.style.setProperty("--size", val + "px");
-        document.getElementById("sizeVal").textContent = val + "px";
+        document.documentElement.style.setProperty("--size", `${val}px`);
+        document.getElementById("sizeVal").textContent = `${val}px`;
       }
       document
         .getElementById("size")

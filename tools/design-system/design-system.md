@@ -83,8 +83,8 @@ at call sites:
   --accent-p: hsl(72 62% 44%);      /* Purpose */
   --accent-e: hsl(206 59% 44%);     /* Expression */
   --accent-f: hsl(30 60% 38%);      /* Form */
-  --accent-g: hsl(162 55% 40%);     /* Grounding */
   --accent-r: hsl(329 60% 44%);     /* Reasoning */
+  --accent-g: hsl(162 55% 40%);     /* Grounding */
   --accent-j: hsl(278 30% 55%);     /* Judgment */
 
   /* Group surfaces — pale family-hue background tints (same H and S as the
@@ -129,7 +129,7 @@ Both share the same hue family.
 
 | Tier | Visual weight | Role |
 | --- | --- | --- |
-| Group (6: Purpose, Expression, Form, Grounding, Reasoning, Judgment) | Light surface, dark ink | Cards, section headers, group-mean rollups |
+| Group (6: Purpose, Expression, Form, Reasoning, Grounding, Judgment) | Light surface, dark ink | Cards, section headers, group-mean rollups |
 | Dimension (20, distributed across the 6 groups) | Darker mark, often with a small hue offset | Per-dimension row accents, score chips, drill-down headers |
 
 Scores are an **orthogonal axis** with their own red-to-green valence ramp.
@@ -151,8 +151,8 @@ surface / ink / dimension roles.
 | Purpose | 72 | 62% | `hsl(72 62% 92%)` | `hsl(72 62% 18%)` | `hsl(72 62% 44%)` | `hsl(72 62% 68%)` | `mdi:compass-rose` |
 | Expression | 206 | 59% | `hsl(206 59% 92%)` | `hsl(206 59% 18%)` | `hsl(206 59% 44%)` | `hsl(206 59% 68%)` | `mdi:quill` |
 | Form | 30 | 60% | `hsl(30 60% 92%)` | `hsl(30 60% 18%)` | `hsl(30 60% 38%)` | `hsl(30 60% 68%)` | `mdi:scroll` |
-| Grounding | 162 | 55% | `hsl(162 55% 92%)` | `hsl(162 55% 16%)` | `hsl(162 55% 40%)` | `hsl(162 55% 62%)` | `mdi:anchor` |
 | Reasoning | 329 | 60% | `hsl(329 60% 92%)` | `hsl(329 60% 18%)` | `hsl(329 60% 44%)` | `hsl(329 60% 68%)` | `mdi:ruler` |
+| Grounding | 162 | 55% | `hsl(162 55% 92%)` | `hsl(162 55% 16%)` | `hsl(162 55% 40%)` | `hsl(162 55% 62%)` | `mdi:anchor` |
 | Judgment | 278 | 30% | `hsl(278 30% 92%)` | `hsl(278 30% 18%)` | `hsl(278 30% 55%)` | `hsl(278 30% 72%)` | `mdi:scale-balance` |
 
 ## Dimension Palette
@@ -176,13 +176,13 @@ within the group. Dark variants share the same `H` and `S` and only shift `L` up
 | Organization | Form | `hsl(26 60% 38%)` | `hsl(26 60% 64%)` |
 | Consistency | Form | `hsl(30 60% 35%)` | `hsl(30 60% 61%)` |
 | Formatting | Form | `hsl(34 60% 32%)` | `hsl(34 60% 58%)` |
-| Verifiability | Grounding | `hsl(158 55% 32%)` | `hsl(158 55% 62%)` |
-| Factuality | Grounding | `hsl(162 55% 29%)` | `hsl(162 55% 58%)` |
-| Relevance | Grounding | `hsl(166 55% 26%)` | `hsl(166 55% 54%)` |
 | Discipline | Reasoning | `hsl(323 60% 40%)` | `hsl(323 60% 68%)` |
 | Soundness | Reasoning | `hsl(326 60% 37%)` | `hsl(326 60% 65%)` |
 | Precision | Reasoning | `hsl(329 60% 34%)` | `hsl(329 60% 62%)` |
 | Parsimony | Reasoning | `hsl(332 60% 31%)` | `hsl(332 60% 59%)` |
+| Verifiability | Grounding | `hsl(158 55% 32%)` | `hsl(158 55% 62%)` |
+| Factuality | Grounding | `hsl(162 55% 29%)` | `hsl(162 55% 58%)` |
+| Relevance | Grounding | `hsl(166 55% 26%)` | `hsl(166 55% 54%)` |
 | Calibration | Judgment | `hsl(272 30% 42%)` | `hsl(272 30% 70%)` |
 | Fairness | Judgment | `hsl(278 30% 39%)` | `hsl(278 30% 67%)` |
 | Robustness | Judgment | `hsl(284 30% 36%)` | `hsl(284 30% 64%)` |
@@ -250,8 +250,8 @@ The local SVGs are inlined verbatim with attribution in a leading XML comment.
 | Purpose | `mdi:compass-rose` | [purpose.svg](assets/icons/purpose.svg) | orientation toward the reader’s task |
 | Expression | `mdi:quill` | [expression.svg](assets/icons/expression.svg) | language, surface form |
 | Form | `mdi:scroll` | [form.svg](assets/icons/form.svg) | the document as a structured artifact |
-| Grounding | `mdi:anchor` | [grounding.svg](assets/icons/grounding.svg) | tied to sources and facts |
 | Reasoning | `mdi:ruler` | [reasoning.svg](assets/icons/reasoning.svg) | inference, measurement, rigor |
+| Grounding | `mdi:anchor` | [grounding.svg](assets/icons/grounding.svg) | tied to sources and facts |
 | Judgment | `mdi:scale-balance` | [judgment.svg](assets/icons/judgment.svg) | weighing claims, calibration |
 
 ### Presentation modes

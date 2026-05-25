@@ -24,13 +24,10 @@
  * styles should read those tokens.
  */
 
-(function () {
-  "use strict";
-
+(() => {
   const fontStacks = {
     sans: {
-      system:
-        '-apple-system, BlinkMacSystemFont, "Inter", "Helvetica Neue", Arial, sans-serif',
+      system: '-apple-system, BlinkMacSystemFont, "Inter", "Helvetica Neue", Arial, sans-serif',
       inter: '"Inter", -apple-system, BlinkMacSystemFont, sans-serif',
       helvetica: '"Helvetica Neue", Helvetica, Arial, sans-serif',
       arial: "Arial, Helvetica, sans-serif",
@@ -93,8 +90,7 @@
 
   function _resolve(elOrSelector) {
     if (!elOrSelector) return null;
-    if (typeof elOrSelector === "string")
-      return document.querySelector(elOrSelector);
+    if (typeof elOrSelector === "string") return document.querySelector(elOrSelector);
     return elOrSelector;
   }
 

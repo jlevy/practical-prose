@@ -81,17 +81,6 @@ groups:
     icon: mdi:scroll
     sense: the document as a structured artifact
 
-  - id: G
-    label: Grounding
-    h: 162
-    s: 55
-    spread: 30
-    ink:     { light: 45, dark: 62 }
-    text:    { light: 25, dark: 75 }
-    surface: { light: 92, dark: 16 }
-    icon: mdi:anchor
-    sense: tied to sources and facts
-
   - id: R
     label: Reasoning
     h: 329
@@ -102,6 +91,17 @@ groups:
     surface: { light: 92, dark: 18 }
     icon: mdi:ruler
     sense: inference, measurement, rigor
+
+  - id: G
+    label: Grounding
+    h: 162
+    s: 55
+    spread: 30
+    ink:     { light: 45, dark: 62 }
+    text:    { light: 25, dark: 75 }
+    surface: { light: 92, dark: 16 }
+    icon: mdi:anchor
+    sense: tied to sources and facts
 
   - id: J
     label: Judgment
@@ -132,15 +132,15 @@ dimensions:
   - { id: F1, label: Organization,   short: Org,    group: F, h_offset: -4, l: { light: 38, dark: 64 } }
   - { id: F2, label: Consistency,    short: Cons,   group: F, h_offset:  0, l: { light: 35, dark: 61 } }
   - { id: F3, label: Formatting,     short: Fmt,    group: F, h_offset:  4, l: { light: 32, dark: 58 } }
-  # Grounding
-  - { id: G1, label: Verifiability,  short: Ver,    group: G, h_offset: -4, l: { light: 32, dark: 62 } }
-  - { id: G2, label: Factuality,     short: Fact,   group: G, h_offset:  0, l: { light: 29, dark: 58 } }
-  - { id: G3, label: Relevance,      short: Rel,    group: G, h_offset:  4, l: { light: 26, dark: 54 } }
   # Reasoning
   - { id: R1, label: Discipline,     short: Disc,   group: R, h_offset: -6, l: { light: 40, dark: 68 } }
   - { id: R2, label: Soundness,      short: Snd,    group: R, h_offset: -3, l: { light: 37, dark: 65 } }
   - { id: R3, label: Precision,      short: Prec,   group: R, h_offset:  0, l: { light: 34, dark: 62 } }
   - { id: R4, label: Parsimony,      short: Pars,   group: R, h_offset:  3, l: { light: 31, dark: 59 } }
+  # Grounding
+  - { id: G1, label: Verifiability,  short: Ver,    group: G, h_offset: -4, l: { light: 32, dark: 62 } }
+  - { id: G2, label: Factuality,     short: Fact,   group: G, h_offset:  0, l: { light: 29, dark: 58 } }
+  - { id: G3, label: Relevance,      short: Rel,    group: G, h_offset:  4, l: { light: 26, dark: 54 } }
   # Judgment
   - { id: J1, label: Calibration,    short: Cal,    group: J, h_offset: -6, l: { light: 42, dark: 70 } }
   - { id: J2, label: Fairness,       short: Fair,   group: J, h_offset:  0, l: { light: 39, dark: 67 } }

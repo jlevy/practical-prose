@@ -8,7 +8,7 @@ Your response is consumed via a structured-output schema; produce one structured
 
 You will be given, in order:
 
-1. **The rubric** (`practical-prose-rubric.md`): the rubric dimensions across five
+1. **The rubric** (`practical-prose-rubric.md`): the rubric dimensions across six
    groups with score anchors 1-5 (and the `NA` and `ERR` sentinels) and the alignment
    operating principle.
 2. **The prescriptive guidelines** (`practical-prose-guidelines.md`): the rules cited by

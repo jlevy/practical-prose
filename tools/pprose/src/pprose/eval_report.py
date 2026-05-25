@@ -176,19 +176,19 @@ class FormScores(BaseModel):
     formatting: Score
 
 
-class GroundingScores(BaseModel):
-    model_config = ConfigDict(extra="forbid")
-    verifiability: Score
-    factuality: Score
-    relevance: Score
-
-
 class ReasoningScores(BaseModel):
     model_config = ConfigDict(extra="forbid")
     discipline: Score
     soundness: Score
     precision: Score
     parsimony: Score
+
+
+class GroundingScores(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    verifiability: Score
+    factuality: Score
+    relevance: Score
 
 
 class JudgmentScores(BaseModel):
@@ -203,8 +203,8 @@ class QualScores(BaseModel):
     purpose: PurposeScores
     expression: ExpressionScores
     form: FormScores
-    grounding: GroundingScores
     reasoning: ReasoningScores
+    grounding: GroundingScores
     judgment: JudgmentScores
 
     def all_scores(self) -> list[int | str]:
@@ -236,19 +236,19 @@ class FormReasons(BaseModel):
     formatting: str | None = None
 
 
-class GroundingReasons(BaseModel):
-    model_config = ConfigDict(extra="forbid")
-    verifiability: str | None = None
-    factuality: str | None = None
-    relevance: str | None = None
-
-
 class ReasoningReasons(BaseModel):
     model_config = ConfigDict(extra="forbid")
     discipline: str | None = None
     soundness: str | None = None
     precision: str | None = None
     parsimony: str | None = None
+
+
+class GroundingReasons(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    verifiability: str | None = None
+    factuality: str | None = None
+    relevance: str | None = None
 
 
 class JudgmentReasons(BaseModel):
@@ -263,8 +263,8 @@ class QualReasons(BaseModel):
     purpose: PurposeReasons = PurposeReasons()
     expression: ExpressionReasons = ExpressionReasons()
     form: FormReasons = FormReasons()
-    grounding: GroundingReasons = GroundingReasons()
     reasoning: ReasoningReasons = ReasoningReasons()
+    grounding: GroundingReasons = GroundingReasons()
     judgment: JudgmentReasons = JudgmentReasons()
 
     def all_reasons(self) -> list[str | None]:
@@ -329,9 +329,7 @@ class Location(BaseModel):
             and self.line_end is not None
             and self.line_end < self.line_start
         ):
-            raise ValueError(
-                f"Location.line_end={self.line_end} < line_start={self.line_start}"
-            )
+            raise ValueError(f"Location.line_end={self.line_end} < line_start={self.line_start}")
         return self
 
 
@@ -409,8 +407,8 @@ class RubricRollup(BaseModel):
     purpose_mean: float
     expression_mean: float
     form_mean: float
-    grounding_mean: float
     reasoning_mean: float
+    grounding_mean: float
     judgment_mean: float
     overall_mean: float
     # Count of dimensions actually scored (1-5). NA and ERR are both excluded from
@@ -683,8 +681,8 @@ def compute_derived(quant: QuantMetrics, qual: QualScores) -> DerivedRollups:
         purpose_mean=group_means["purpose"],
         expression_mean=group_means["expression"],
         form_mean=group_means["form"],
-        grounding_mean=group_means["grounding"],
         reasoning_mean=group_means["reasoning"],
+        grounding_mean=group_means["grounding"],
         judgment_mean=group_means["judgment"],
         overall_mean=overall_mean,
         assessed_dimensions=assessed_dimensions,

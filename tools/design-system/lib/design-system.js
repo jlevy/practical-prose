@@ -18,8 +18,8 @@
 import { z } from "https://esm.sh/zod@3.23.8";
 import {
   designSystem as _designSystem,
-  groupsById as _groupsById,
   dimensionsById as _dimensionsById,
+  groupsById as _groupsById,
   scoresByLevel as _scoresByLevel,
 } from "../_generated/design_system.js";
 
@@ -28,7 +28,9 @@ import {
 // Modern space-separated HSL, with optional /alpha. No commas, no hex.
 const HSL = z
   .string()
-  .regex(/^hsl\(\s*\d+(?:\.\d+)?\s+\d+(?:\.\d+)?%\s+\d+(?:\.\d+)?%(?:\s*\/\s*\d*(?:\.\d+)?)?\s*\)$/);
+  .regex(
+    /^hsl\(\s*\d+(?:\.\d+)?\s+\d+(?:\.\d+)?%\s+\d+(?:\.\d+)?%(?:\s*\/\s*\d*(?:\.\d+)?)?\s*\)$/,
+  );
 
 const LightDarkHsl = z.object({ light: HSL, dark: HSL }).strict();
 
@@ -43,7 +45,7 @@ const Surfaces = z
   })
   .strict();
 
-const GroupId = z.enum(["P", "E", "F", "G", "R", "J"]);
+const GroupId = z.enum(["P", "E", "F", "R", "G", "J"]);
 
 const Group = z
   .object({
@@ -64,7 +66,7 @@ const Group = z
 
 const Dimension = z
   .object({
-    id: z.string().regex(/^[PEFGRJ]\d+$/),
+    id: z.string().regex(/^[PEFRGJ]\d+$/),
     label: z.string().min(1),
     short: z.string().min(1).max(10),
     group: GroupId,
@@ -116,10 +118,7 @@ export const scoresByLevel = _scoresByLevel;
  */
 export const dimensionsByGroup = Object.freeze(
   Object.fromEntries(
-    designSystem.groups.map((g) => [
-      g.id,
-      designSystem.dimensions.filter((d) => d.group === g.id),
-    ]),
+    designSystem.groups.map((g) => [g.id, designSystem.dimensions.filter((d) => d.group === g.id)]),
   ),
 );
 

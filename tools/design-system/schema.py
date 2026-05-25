@@ -32,7 +32,7 @@ HSL_PATTERN = re.compile(
     r"^hsl\(\s*\d+(?:\.\d+)?\s+\d+(?:\.\d+)?%\s+\d+(?:\.\d+)?%(?:\s*/\s*\d*(?:\.\d+)?)?\s*\)$"
 )
 
-GroupId = Literal["P", "E", "F", "G", "R", "J"]
+GroupId = Literal["P", "E", "F", "R", "G", "J"]
 DimId = str  # validated by regex in Dimension.id_must_match_pattern
 ScoreLevel = Literal["0", "1", "2", "3", "4", "5", "NA", "ERR"]
 
@@ -140,8 +140,8 @@ class Dimension(_Frozen):
     @field_validator("id")
     @classmethod
     def _id_pattern(cls, v: str) -> str:
-        if not re.match(r"^[PEFGRJ]\d+$", v):
-            raise ValueError(f"dimension id must match /^[PEFGRJ]\\d+$/, got {v!r}")
+        if not re.match(r"^[PEFRGJ]\d+$", v):
+            raise ValueError(f"dimension id must match /^[PEFRGJ]\\d+$/, got {v!r}")
         return v
 
 

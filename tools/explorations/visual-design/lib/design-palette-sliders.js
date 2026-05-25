@@ -28,14 +28,11 @@
  * Pass either the element or `'#palette-grid'`.
  */
 
-(function () {
-  "use strict";
-
+(() => {
   // ────────────── Setup ──────────────
 
   const isDarkMode = () =>
-    (globalThis.PracticalProseDesignColorControls &&
-      globalThis.PracticalProseDesignColorControls.isDarkMode()) ||
+    globalThis.PracticalProseDesignColorControls?.isDarkMode() ||
     document.documentElement.getAttribute("data-theme") === "dark";
 
   /** Build the runtime per-group palette state from the YAML data. */
@@ -52,10 +49,8 @@
       const dims = ds.designSystem.dimensions.filter((d) => d.group === g.id);
       // Per-dim L offsets relative to the group ink L, in source order.
       // These are what the slider tweaks (everything else flows from H/S/L/spread).
-      const dimOffsetsLight = dims.map((d) =>
-        d.color.light
-          ? Math.round(_lOf(d.color.light) - g.ink && _lOf(g.ink.light))
-          : 0,
+      const _dimOffsetsLight = dims.map((d) =>
+        d.color.light ? Math.round(_lOf(d.color.light) - g.ink && _lOf(g.ink.light)) : 0,
       );
       // We re-derive the offset from the resolved colors so we don't need
       // separate per-mode arrays.  L_dim_light - L_group_ink_light is the
@@ -95,27 +90,20 @@
       const gL = dark ? st.lDark : st.lLight;
       const surfaceL = dark ? st.surfaceLDark : st.surfaceLLight;
       const cssId = gId.toLowerCase();
-      root.style.setProperty(
-        `--accent-${cssId}`,
-        `hsl(${st.h} ${st.s}% ${gL}%)`,
-      );
-      root.style.setProperty(
-        `--surface-${cssId}`,
-        `hsl(${st.h} ${st.s}% ${surfaceL}%)`,
-      );
+      root.style.setProperty(`--accent-${cssId}`, `hsl(${st.h} ${st.s}% ${gL}%)`);
+      root.style.setProperty(`--surface-${cssId}`, `hsl(${st.h} ${st.s}% ${surfaceL}%)`);
       const n = st.dims.length;
       const step = n > 1 ? st.spread / (n - 1) : 0;
       st.dims.forEach((dimId, i) => {
         const hueOffset = (i - (n - 1) / 2) * step;
         const dimH = (((st.h + hueOffset) % 360) + 360) % 360;
         const dimL = Math.max(5, Math.min(95, gL + (st.dimOffsets[i] || 0)));
-        root.style.setProperty(
-          `--dim-${dimId}`,
-          `hsl(${dimH.toFixed(1)} ${st.s}% ${dimL}%)`,
-        );
+        root.style.setProperty(`--dim-${dimId}`, `hsl(${dimH.toFixed(1)} ${st.s}% ${dimL}%)`);
       });
     });
-    refreshers.forEach((r) => r());
+    refreshers.forEach((r) => {
+      r();
+    });
   }
 
   // ────────────── Mount ──────────────
@@ -127,10 +115,7 @@
    * @param {HTMLElement|string} container `<div id="palette-grid">` or selector
    */
   function mountPaletteSliders(container) {
-    const grid =
-      typeof container === "string"
-        ? document.querySelector(container)
-        : container;
+    const grid = typeof container === "string" ? document.querySelector(container) : container;
     if (!grid) return () => {};
     if (!palette) palette = _initialPalette();
 
@@ -182,7 +167,7 @@
     };
   }
 
-  function _channel(g, st, key, name, min, max) {
+  function _channel(_g, st, key, name, min, max) {
     const wrap = _el("div", { class: "palette-channel" });
     wrap.appendChild(_el("span", { class: "ch-name" }, name));
     const slider = _el("input", {
@@ -238,7 +223,7 @@
     return wrap;
   }
 
-  function _spread(g, st) {
+  function _spread(_g, st) {
     const wrap = _el("div", { class: "palette-channel" });
     wrap.appendChild(_el("span", { class: "ch-name" }, "Spread"));
     const input = _el("input", {

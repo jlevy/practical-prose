@@ -35,7 +35,7 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Literal
 
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 from pydantic_ai import Agent
 from pydantic_ai.models.anthropic import AnthropicModelSettings
 from pydantic_ai.settings import ModelSettings
@@ -53,6 +53,7 @@ from pprose.eval_report import (
     GroundingScores,
     JudgmentReasons,
     JudgmentScores,
+    Location,
     PurposeReasons,
     PurposeScores,
     QualReasons,
@@ -60,6 +61,7 @@ from pprose.eval_report import (
     ReasoningReasons,
     ReasoningScores,
     RuleFinding,
+    Verdict,
 )
 
 PACKAGE_ROOT = Path(__file__).resolve().parent
@@ -113,16 +115,16 @@ DEFAULT_TIMEOUT_S = 600.0  # 10 minutes — Q10 decision
 # it. An unknown provider prefix raises at the agent boundary.
 SUGGESTED_MODELS: tuple[tuple[str, str, str], ...] = (
     # (alias, full model string, one-line description)
-    ("opus",   "anthropic:claude-opus-4-7",     "Anthropic Claude Opus 4.7 (flagship)"),
-    ("sonnet", "anthropic:claude-sonnet-4-6",   "Anthropic Claude Sonnet 4.6 (balanced)"),
-    ("haiku",  "anthropic:claude-haiku-4-5",    "Anthropic Claude Haiku 4.5 (fast/cheap)"),
-    ("gpt",       "openai:gpt-5.5",             "OpenAI GPT-5.5 (flagship)"),
-    ("gpt-pro",   "openai:gpt-5.5-pro",         "OpenAI GPT-5.5 Pro (deep reasoning)"),
-    ("gpt-mini",  "openai:gpt-5.4-mini",        "OpenAI GPT-5.4 Mini (mid-tier)"),
-    ("gpt-nano",  "openai:gpt-5.4-nano",        "OpenAI GPT-5.4 Nano (cheapest)"),
-    ("gemini",      "google:gemini-3.5-flash",  "Google Gemini 3.5 Flash"),
-    ("gemini-pro",  "google:gemini-3.1-pro-preview",  "Google Gemini 3.1 Pro (preview)"),
-    ("gemini-lite", "google:gemini-3.1-flash-lite",   "Google Gemini 3.1 Flash Lite"),
+    ("opus", "anthropic:claude-opus-4-7", "Anthropic Claude Opus 4.7 (flagship)"),
+    ("sonnet", "anthropic:claude-sonnet-4-6", "Anthropic Claude Sonnet 4.6 (balanced)"),
+    ("haiku", "anthropic:claude-haiku-4-5", "Anthropic Claude Haiku 4.5 (fast/cheap)"),
+    ("gpt", "openai:gpt-5.5", "OpenAI GPT-5.5 (flagship)"),
+    ("gpt-pro", "openai:gpt-5.5-pro", "OpenAI GPT-5.5 Pro (deep reasoning)"),
+    ("gpt-mini", "openai:gpt-5.4-mini", "OpenAI GPT-5.4 Mini (mid-tier)"),
+    ("gpt-nano", "openai:gpt-5.4-nano", "OpenAI GPT-5.4 Nano (cheapest)"),
+    ("gemini", "google:gemini-3.5-flash", "Google Gemini 3.5 Flash"),
+    ("gemini-pro", "google:gemini-3.1-pro-preview", "Google Gemini 3.1 Pro (preview)"),
+    ("gemini-lite", "google:gemini-3.1-flash-lite", "Google Gemini 3.1 Flash Lite"),
 )
 _ALIAS_TO_MODEL = {alias: model for alias, model, _ in SUGGESTED_MODELS}
 
@@ -188,16 +190,16 @@ _SCORES_CLS = {
     "purpose": PurposeScores,
     "expression": ExpressionScores,
     "form": FormScores,
-    "grounding": GroundingScores,
     "reasoning": ReasoningScores,
+    "grounding": GroundingScores,
     "judgment": JudgmentScores,
 }
 _REASONS_CLS = {
     "purpose": PurposeReasons,
     "expression": ExpressionReasons,
     "form": FormReasons,
-    "grounding": GroundingReasons,
     "reasoning": ReasoningReasons,
+    "grounding": GroundingReasons,
     "judgment": JudgmentReasons,
 }
 VALID_DIMENSION_KEYS = set(rs.dimension_keys())
@@ -311,11 +313,30 @@ class ScoreEntry(BaseModel):
     reason: str = ""
 
 
+class RawRuleFinding(BaseModel):
+    """
+    Permissive variant of RuleFinding used as the scorer's structured output.
+
+    Mirrors RuleFinding's fields but skips the dimension/rule_number range
+    validators so a single hallucinated value can be dropped in
+    `_to_scored_result()` rather than failing the whole call. Surviving
+    entries are re-validated through the strict RuleFinding before they reach
+    the report.
+    """
+
+    model_config = ConfigDict(extra="forbid")
+    dimension: str
+    rule_number: int
+    verdict: Verdict
+    description: str
+    locations: list[Location] = []
+
+
 class ScoringResponse(BaseModel):
     """The validated shape of what the scoring agent emits per artifact."""
 
     scores: dict[str, ScoreEntry]
-    rule_findings: list[RuleFinding] = []
+    rule_findings: list[RawRuleFinding] = []
 
 
 def _to_scored_result(response: ScoringResponse) -> ScoredResult:
@@ -323,10 +344,12 @@ def _to_scored_result(response: ScoringResponse) -> ScoredResult:
     Regroup the flat ScoringResponse into the nested QualScores / QualReasons
     pair that downstream report code expects.
 
-    Out-of-range `rule_number` values are dropped with a stderr warning rather
-    than crashing the whole eval — the model occasionally invents a number past
-    a dimension's bound even with the bounds appendix in the prompt; the score
-    and other findings remain useful.
+    Unknown dimension labels and out-of-range `rule_number` values are dropped
+    with a stderr warning rather than crashing the whole eval — the model
+    occasionally hallucinates one even with the bounds appendix in the prompt;
+    the score and other findings remain useful. `ScoringResponse` uses
+    `RawRuleFinding` (permissive) at the SDK boundary so the bad entry reaches
+    this filter instead of being rejected by Pydantic AI.
     """
     missing = VALID_DIMENSION_KEYS - set(response.scores.keys())
     if missing:
@@ -360,10 +383,13 @@ def _to_scored_result(response: ScoringResponse) -> ScoredResult:
 
     kept_findings: list[RuleFinding] = []
     for finding in response.rule_findings:
-        try:
-            max_rule = rs.rule_count(finding.dimension)
-        except KeyError:
-            max_rule = 0
+        if finding.dimension not in rs.DIMENSIONS_BY_LABEL:
+            sys.stderr.write(
+                f"warning: dropping rule_finding with unknown dimension {finding.dimension!r}; "
+                f"description: {finding.description[:120]!r}\n"
+            )
+            continue
+        max_rule = rs.rule_count(finding.dimension)
         if max_rule and not (1 <= finding.rule_number <= max_rule):
             sys.stderr.write(
                 f"warning: dropping out-of-range rule_finding rule_number={finding.rule_number} "
@@ -371,7 +397,7 @@ def _to_scored_result(response: ScoringResponse) -> ScoredResult:
                 f"description: {finding.description[:120]!r}\n"
             )
             continue
-        kept_findings.append(finding)
+        kept_findings.append(RuleFinding.model_validate(finding.model_dump()))
 
     return ScoredResult(qual=qual, qual_reasons=qual_reasons, rule_findings=kept_findings)
 
@@ -516,7 +542,15 @@ def merge_into_report(
     data["qual_reasons"] = scored.qual_reasons.model_dump(mode="json")
     data["rule_findings"] = [v.model_dump(mode="json") for v in scored.rule_findings]
     data["metadata"]["evaluator"] = evaluator
-    data["metadata"]["method"] = data["metadata"].get("method") or "model (anthropic SDK)"
+    # Default `method` to the resolved provider so audit/comparison traceability
+    # records which API actually scored the report (Anthropic, OpenAI, Google,
+    # ...). Falls back to a provider-agnostic label when no repro context is
+    # given (e.g. the manual-scoring + merge path in tests).
+    default_method = "model (pydantic-ai)"
+    if repro is not None and repro.model:
+        provider = _provider_of(_resolve_model(repro.model))
+        default_method = f"model ({provider} via pydantic-ai)"
+    data["metadata"]["method"] = data["metadata"].get("method") or default_method
     data["metadata"]["status"] = "complete"
     if repro is not None:
         for key, value in (

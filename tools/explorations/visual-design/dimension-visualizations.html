@@ -30,7 +30,7 @@
     <style>
       /* Colors expressed as hsl() per tools/design-system/design-system.md.
      Group hues come from the design system (Purpose=72, Expression=206,
-     Form=30, Grounding=162, Reasoning=329, Judgment=278; one hue + saturation
+     Form=30, Reasoning=329, Grounding=162, Judgment=278; one hue + saturation
      per group, lightness shifts for light/dark). The cream-paper reading surface is local to
      this report; the score ramp (red→green valence) is the design
      system's prescribed encoding for score cells, orthogonal to group. */
@@ -2100,7 +2100,7 @@
         return nums.reduce((a, b) => a + b, 0) / nums.length;
       }
 
-      function groupBreaks() {
+      function _groupBreaks() {
         /* indices in `dims` where a new group starts */
         const out = [];
         let last = null;
@@ -2166,7 +2166,7 @@
 
       /* ────────────────────── Visual 1: Heatmap (tabular) ──────────────────── */
       function renderHeatmap() {
-        const cols = dims.length + 1; // doc label + 20 dims
+        const _cols = dims.length + 1; // doc label + 20 dims
         const grid = el("div", {
           class: "heatmap",
           style: {
@@ -2313,10 +2313,10 @@
       function renderHex() {
         const body = el("div", {});
         /* layout: rows of [count, indexStart] — designed for 20 cells */
-        const rows = [
+        const _rows = [
           [4, 0], // Purpose
           [6, 4], // Expression
-          [4, 10], // Grounding (3) + first Reasoning slot → adjust below
+          [4, 10], // Reasoning (3) + first Grounding slot → adjust below
         ];
         /* Simpler: stack 6 rows of (4, 3, 3, 3, 4, 3) for direct group correspondence. */
         const grpRows = groups.map((g) =>
@@ -2404,7 +2404,7 @@
           const a = (Math.PI / 3) * i;
           pts.push([cx + r * Math.cos(a), cy + r * Math.sin(a)]);
         }
-        return "M" + pts.map((p) => p.join(",")).join(" L ") + " Z";
+        return `M${pts.map((p) => p.join(",")).join(" L ")} Z`;
       }
 
       /* ───────────── Visual 4: Radar / Spider (one card per doc) ──────────── */
@@ -2619,7 +2619,9 @@
       /* ──────────── Visual 5: Coxcomb / Nightingale Rose ──────────── */
       function renderCoxcomb() {
         const body = el("div", { class: "chart-row" });
-        docs.forEach((doc) => body.appendChild(coxcombCard(doc)));
+        docs.forEach((doc) => {
+          body.appendChild(coxcombCard(doc));
+        });
         root.appendChild(
           panel(
             "Visual 5 · Coxcomb (Nightingale Rose)",
@@ -2760,7 +2762,9 @@
       /* ───────────── Visual 6: Sunburst (group → dim, score = arc width) ───────────── */
       function renderSunburst() {
         const body = el("div", { class: "chart-row" });
-        docs.forEach((doc) => body.appendChild(sunburstCard(doc)));
+        docs.forEach((doc) => {
+          body.appendChild(sunburstCard(doc));
+        });
         root.appendChild(
           panel(
             "Visual 6 · Sunburst",
@@ -2989,7 +2993,9 @@
       /* ───────────── Visual 8: Overlay-text Bar Cards ─────────────── */
       function renderTableBars() {
         const body = el("div", { class: "bartable-row" });
-        docs.forEach((doc) => body.appendChild(bartableCard(doc)));
+        docs.forEach((doc) => {
+          body.appendChild(bartableCard(doc));
+        });
         root.appendChild(
           panel(
             "Visual 8 · Bar Cards",
@@ -3084,12 +3090,14 @@
       function renderBidirectional() {
         const body = el("div", { class: "bi-stack" });
         const biDocs = docs.filter((d) => biDocIds.includes(d.id));
-        biDocs.forEach((doc) => body.appendChild(biCard(doc)));
+        biDocs.forEach((doc) => {
+          body.appendChild(biCard(doc));
+        });
         root.appendChild(
           panel(
             "Visual 9 · Bidirectional Bars",
             "Bars grow outward from a central numeric spine · per-dim hues",
-            "A compromise between a bar chart and a starburst. The left column lists Purpose (4) + Expression (3) + Form (3) = 10 dims with bars growing leftward; the right column lists Reasoning (4) + Grounding (3) + Judgment (3) = 10 dims with bars growing rightward. Reasoning sits at the top of the right column so its 4 dims pair row-for-row with Purpose. Dim ids (P1, E1, F1…) form the central spine; scores sit just outside the outer edge of each bar. Each dim uses a slightly different hue within its group family — Purpose 68–80, Expression 201–207, Form 26–34, Grounding 158–166, Reasoning 323–332, Judgment 272–284 — so the colors are not monochromatic. Unit ticks at 1/2/3/4 cut visible gaps in the bar. NA rows get a subtle bar close to the page bg; ERR rows get a subtle red-tinted bar with a saturated ERR badge as the indicator.",
+            "A compromise between a bar chart and a starburst. The left column lists Purpose (4) + Expression (3) + Form (3) = 10 dims with bars growing leftward; the right column lists Reasoning (4) + Grounding (3) + Judgment (3) = 10 dims with bars growing rightward. Reasoning sits at the top of the right column so its 4 dims pair row-for-row with Purpose. Dim ids (P1, E1, F1…) form the central spine; scores sit just outside the outer edge of each bar. Each dim uses a slightly different hue within its group family — Purpose 68–80, Expression 201–207, Form 26–34, Reasoning 323–332, Grounding 158–166, Judgment 272–284 — so the colors are not monochromatic. Unit ticks at 1/2/3/4 cut visible gaps in the bar. NA rows get a subtle bar close to the page bg; ERR rows get a subtle red-tinted bar with a saturated ERR badge as the indicator.",
             body,
           ),
         );
@@ -3119,7 +3127,9 @@
           );
           dims
             .filter((d) => d.g === g.id)
-            .forEach((d) => left.appendChild(biDim(doc, d, "left")));
+            .forEach((d) => {
+              left.appendChild(biDim(doc, d, "left"));
+            });
         });
         grid.appendChild(left);
 
@@ -3140,7 +3150,9 @@
           );
           dims
             .filter((d) => d.g === g.id)
-            .forEach((d) => right.appendChild(biDim(doc, d, "right")));
+            .forEach((d) => {
+              right.appendChild(biDim(doc, d, "right"));
+            });
         });
         grid.appendChild(right);
 
@@ -3213,7 +3225,7 @@
      sits at k*20%. */
         for (let k = 1; k <= 4; k++) {
           const tick = el("div", { class: "bi-tick" });
-          tick.style.left = (side === "left" ? 100 - k * 20 : k * 20) + "%";
+          tick.style.left = `${side === "left" ? 100 - k * 20 : k * 20}%`;
           track.appendChild(tick);
         }
 

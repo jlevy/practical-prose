@@ -40,7 +40,7 @@ default: install generate lint test
 
 install:
 	cd tools/pprose && uv sync --all-extras
-	npm install --silent
+	npm ci --silent
 
 hooks-install: install
 	npx --no-install lefthook install

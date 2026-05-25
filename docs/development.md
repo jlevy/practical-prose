@@ -14,12 +14,11 @@ Bun is **not** required.
 ## Daily commands
 
 ```bash
-make generate    # regenerate design-system derivatives from the YAML
-make format      # auto-format Python + JS/CSS/HTML/JSON
-make lint        # lint Python + JS + verify generated files are up-to-date
-make test        # run pprose tests
-make check       # everything in --check mode (no writes) — what CI runs
-make default     # format + lint + generate-check + test (the daily loop)
+make generate     # regenerate design-system derivatives from the YAML
+make lint         # auto-fix: format + lint Python + JS
+make test         # run pprose tests
+make lint-check   # CI-mode lint: read-only, fails on any drift — what CI runs
+make default      # install + generate + lint + test (the daily loop)
 ```
 
 ## Toolchain
@@ -29,8 +28,11 @@ make default     # format + lint + generate-check + test (the daily loop)
 | Python | `ruff format` | `ruff check` | `basedpyright` |
 | JS / CSS / HTML / JSON | `biome format` | `biome check` | — |
 
-Versions are pinned in `tools/pprose/pyproject.toml` (Python) and
-`package.json` (JS) following the
+Versions are pinned exactly in `tools/pprose/pyproject.toml` + `tools/pprose/uv.lock`
+(Python), `package.json` + `package-lock.json` (JS), and the PEP 723 header of
+`tools/design-system/generate.py` (the design-system generator's two deps).
+`make install` uses `npm ci` so the JS toolchain comes from the lockfile, not a
+fresh resolve. All three layers follow the
 [14-day package-age rule](https://github.com/jlevy/tbd/blob/main/docs/guidelines/bun-monorepo-patterns.md#supply-chain-mitigation):
 no dependency upgrade lands until the published version is at least 14 days
 old, to give the ecosystem time to surface supply-chain compromises.
@@ -62,7 +64,7 @@ score ramp, and icon mapping.
 | `tools/design-system/_generated/design_system.js` | ES-module consumers |
 | `tools/design-system/_generated/design_system.global.js` | Static HTML pages (`window.PracticalProseDesignSystem`) |
 | `tools/design-system/_generated/design_system.css` | Any HTML page that wants the tokens via `<link>` |
-| `tools/pprose/src/pprose/design_system_generated.py` | The Python runtime (consumed by `table_styles.py`) |
+| `tools/pprose/src/pprose/_generated/design_system.py` | The Python runtime (consumed by `table_styles.py`) |
 
 **All four generated files are checked in.**
 This keeps the repo zero-build for consumers: clone, open an HTML page, run

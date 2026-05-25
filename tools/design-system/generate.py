@@ -2,8 +2,8 @@
 # /// script
 # requires-python = ">=3.11"
 # dependencies = [
-#   "pyyaml>=6.0",
-#   "pydantic>=2.6",
+#   "pyyaml==6.0.3",
+#   "pydantic==2.13.4",
 # ]
 # ///
 """CLI: validate ``design-system.yaml`` and emit derivative JS / CSS / Python.

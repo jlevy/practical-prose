@@ -32,7 +32,8 @@ fixtures.
 
 ## Prerequisites
 
-`pprose` available on the command line and `ANTHROPIC_API_KEY` set for scoring — see
+`pprose` available on the command line and the provider-specific API key set for the
+model you score with (`ANTHROPIC_API_KEY`, `OPENAI_API_KEY`, or `GOOGLE_API_KEY`) — see
 [Tooling](../AGENTS.md#tooling). Batch eval outputs live under `evals/<round-name>/` at
 the repo root.
 

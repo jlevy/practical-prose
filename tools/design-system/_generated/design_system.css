@@ -13,24 +13,24 @@ Regenerate with: uv run --script tools/design-system/generate.py */
   --accent-p: hsl(72 51% 44%);
   --accent-e: hsl(206 59% 51%);
   --accent-f: hsl(30 37% 61%);
-  --accent-g: hsl(162 55% 45%);
   --accent-r: hsl(329 47% 53%);
+  --accent-g: hsl(162 55% 45%);
   --accent-j: hsl(278 30% 55%);
 
   /* Group text (emphasized accent for group label + icon) */
   --text-p: hsl(72 51% 24%);
   --text-e: hsl(206 59% 31%);
   --text-f: hsl(30 37% 41%);
-  --text-g: hsl(162 55% 25%);
   --text-r: hsl(329 47% 33%);
+  --text-g: hsl(162 55% 25%);
   --text-j: hsl(278 30% 35%);
 
   /* Group surface (pale family-hue background) */
   --surface-p: hsl(72 51% 92%);
   --surface-e: hsl(206 59% 92%);
   --surface-f: hsl(30 37% 92%);
-  --surface-g: hsl(162 55% 92%);
   --surface-r: hsl(329 47% 92%);
+  --surface-g: hsl(162 55% 92%);
   --surface-j: hsl(278 30% 92%);
 
   /* Per-dimension colors */
@@ -44,13 +44,13 @@ Regenerate with: uv run --script tools/design-system/generate.py */
   --dim-F1: hsl(26 37% 38%);
   --dim-F2: hsl(30 37% 35%);
   --dim-F3: hsl(34 37% 32%);
-  --dim-G1: hsl(158 55% 32%);
-  --dim-G2: hsl(162 55% 29%);
-  --dim-G3: hsl(166 55% 26%);
   --dim-R1: hsl(323 47% 40%);
   --dim-R2: hsl(326 47% 37%);
   --dim-R3: hsl(329 47% 34%);
   --dim-R4: hsl(332 47% 31%);
+  --dim-G1: hsl(158 55% 32%);
+  --dim-G2: hsl(162 55% 29%);
+  --dim-G3: hsl(166 55% 26%);
   --dim-J1: hsl(272 30% 42%);
   --dim-J2: hsl(278 30% 39%);
   --dim-J3: hsl(284 30% 36%);
@@ -91,24 +91,24 @@ Regenerate with: uv run --script tools/design-system/generate.py */
     --accent-p: hsl(72 51% 68%);
     --accent-e: hsl(206 59% 68%);
     --accent-f: hsl(30 37% 68%);
-    --accent-g: hsl(162 55% 62%);
     --accent-r: hsl(329 47% 68%);
+    --accent-g: hsl(162 55% 62%);
     --accent-j: hsl(278 30% 72%);
 
     /* Group text (emphasized accent for group label + icon) */
     --text-p: hsl(72 51% 81%);
     --text-e: hsl(206 59% 81%);
     --text-f: hsl(30 37% 81%);
-    --text-g: hsl(162 55% 75%);
     --text-r: hsl(329 47% 81%);
+    --text-g: hsl(162 55% 75%);
     --text-j: hsl(278 30% 85%);
 
     /* Group surface (pale family-hue background) */
     --surface-p: hsl(72 51% 18%);
     --surface-e: hsl(206 59% 18%);
     --surface-f: hsl(30 37% 18%);
-    --surface-g: hsl(162 55% 16%);
     --surface-r: hsl(329 47% 18%);
+    --surface-g: hsl(162 55% 16%);
     --surface-j: hsl(278 30% 18%);
 
     /* Per-dimension colors */
@@ -122,13 +122,13 @@ Regenerate with: uv run --script tools/design-system/generate.py */
     --dim-F1: hsl(26 37% 64%);
     --dim-F2: hsl(30 37% 61%);
     --dim-F3: hsl(34 37% 58%);
-    --dim-G1: hsl(158 55% 62%);
-    --dim-G2: hsl(162 55% 58%);
-    --dim-G3: hsl(166 55% 54%);
     --dim-R1: hsl(323 47% 68%);
     --dim-R2: hsl(326 47% 65%);
     --dim-R3: hsl(329 47% 62%);
     --dim-R4: hsl(332 47% 59%);
+    --dim-G1: hsl(158 55% 62%);
+    --dim-G2: hsl(162 55% 58%);
+    --dim-G3: hsl(166 55% 54%);
     --dim-J1: hsl(272 30% 70%);
     --dim-J2: hsl(278 30% 67%);
     --dim-J3: hsl(284 30% 64%);
@@ -158,24 +158,24 @@ Regenerate with: uv run --script tools/design-system/generate.py */
   --accent-p: hsl(72 51% 68%);
   --accent-e: hsl(206 59% 68%);
   --accent-f: hsl(30 37% 68%);
-  --accent-g: hsl(162 55% 62%);
   --accent-r: hsl(329 47% 68%);
+  --accent-g: hsl(162 55% 62%);
   --accent-j: hsl(278 30% 72%);
 
   /* Group text (emphasized accent for group label + icon) */
   --text-p: hsl(72 51% 81%);
   --text-e: hsl(206 59% 81%);
   --text-f: hsl(30 37% 81%);
-  --text-g: hsl(162 55% 75%);
   --text-r: hsl(329 47% 81%);
+  --text-g: hsl(162 55% 75%);
   --text-j: hsl(278 30% 85%);
 
   /* Group surface (pale family-hue background) */
   --surface-p: hsl(72 51% 18%);
   --surface-e: hsl(206 59% 18%);
   --surface-f: hsl(30 37% 18%);
-  --surface-g: hsl(162 55% 16%);
   --surface-r: hsl(329 47% 18%);
+  --surface-g: hsl(162 55% 16%);
   --surface-j: hsl(278 30% 18%);
 
   /* Per-dimension colors */
@@ -189,13 +189,13 @@ Regenerate with: uv run --script tools/design-system/generate.py */
   --dim-F1: hsl(26 37% 64%);
   --dim-F2: hsl(30 37% 61%);
   --dim-F3: hsl(34 37% 58%);
-  --dim-G1: hsl(158 55% 62%);
-  --dim-G2: hsl(162 55% 58%);
-  --dim-G3: hsl(166 55% 54%);
   --dim-R1: hsl(323 47% 68%);
   --dim-R2: hsl(326 47% 65%);
   --dim-R3: hsl(329 47% 62%);
   --dim-R4: hsl(332 47% 59%);
+  --dim-G1: hsl(158 55% 62%);
+  --dim-G2: hsl(162 55% 58%);
+  --dim-G3: hsl(166 55% 54%);
   --dim-J1: hsl(272 30% 70%);
   --dim-J2: hsl(278 30% 67%);
   --dim-J3: hsl(284 30% 64%);
@@ -222,24 +222,24 @@ Regenerate with: uv run --script tools/design-system/generate.py */
   --accent-p: hsl(72 51% 44%);
   --accent-e: hsl(206 59% 51%);
   --accent-f: hsl(30 37% 61%);
-  --accent-g: hsl(162 55% 45%);
   --accent-r: hsl(329 47% 53%);
+  --accent-g: hsl(162 55% 45%);
   --accent-j: hsl(278 30% 55%);
 
   /* Group text (emphasized accent for group label + icon) */
   --text-p: hsl(72 51% 24%);
   --text-e: hsl(206 59% 31%);
   --text-f: hsl(30 37% 41%);
-  --text-g: hsl(162 55% 25%);
   --text-r: hsl(329 47% 33%);
+  --text-g: hsl(162 55% 25%);
   --text-j: hsl(278 30% 35%);
 
   /* Group surface (pale family-hue background) */
   --surface-p: hsl(72 51% 92%);
   --surface-e: hsl(206 59% 92%);
   --surface-f: hsl(30 37% 92%);
-  --surface-g: hsl(162 55% 92%);
   --surface-r: hsl(329 47% 92%);
+  --surface-g: hsl(162 55% 92%);
   --surface-j: hsl(278 30% 92%);
 
   /* Per-dimension colors */
@@ -253,13 +253,13 @@ Regenerate with: uv run --script tools/design-system/generate.py */
   --dim-F1: hsl(26 37% 38%);
   --dim-F2: hsl(30 37% 35%);
   --dim-F3: hsl(34 37% 32%);
-  --dim-G1: hsl(158 55% 32%);
-  --dim-G2: hsl(162 55% 29%);
-  --dim-G3: hsl(166 55% 26%);
   --dim-R1: hsl(323 47% 40%);
   --dim-R2: hsl(326 47% 37%);
   --dim-R3: hsl(329 47% 34%);
   --dim-R4: hsl(332 47% 31%);
+  --dim-G1: hsl(158 55% 32%);
+  --dim-G2: hsl(162 55% 29%);
+  --dim-G3: hsl(166 55% 26%);
   --dim-J1: hsl(272 30% 42%);
   --dim-J2: hsl(278 30% 39%);
   --dim-J3: hsl(284 30% 36%);

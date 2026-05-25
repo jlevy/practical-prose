@@ -102,27 +102,6 @@ DESIGN_SYSTEM: dict[str, Any] = {
             "sense": "the document as a structured artifact"
         },
         {
-            "id": "G",
-            "label": "Grounding",
-            "h": 162.0,
-            "s": 55.0,
-            "spread": 30.0,
-            "ink": {
-                "light": "hsl(162 55% 45%)",
-                "dark": "hsl(162 55% 62%)"
-            },
-            "text": {
-                "light": "hsl(162 55% 25%)",
-                "dark": "hsl(162 55% 75%)"
-            },
-            "surface": {
-                "light": "hsl(162 55% 92%)",
-                "dark": "hsl(162 55% 16%)"
-            },
-            "icon": "mdi:anchor",
-            "sense": "tied to sources and facts"
-        },
-        {
             "id": "R",
             "label": "Reasoning",
             "h": 329.0,
@@ -142,6 +121,27 @@ DESIGN_SYSTEM: dict[str, Any] = {
             },
             "icon": "mdi:ruler",
             "sense": "inference, measurement, rigor"
+        },
+        {
+            "id": "G",
+            "label": "Grounding",
+            "h": 162.0,
+            "s": 55.0,
+            "spread": 30.0,
+            "ink": {
+                "light": "hsl(162 55% 45%)",
+                "dark": "hsl(162 55% 62%)"
+            },
+            "text": {
+                "light": "hsl(162 55% 25%)",
+                "dark": "hsl(162 55% 75%)"
+            },
+            "surface": {
+                "light": "hsl(162 55% 92%)",
+                "dark": "hsl(162 55% 16%)"
+            },
+            "icon": "mdi:anchor",
+            "sense": "tied to sources and facts"
         },
         {
             "id": "J",
@@ -277,39 +277,6 @@ DESIGN_SYSTEM: dict[str, Any] = {
             }
         },
         {
-            "id": "G1",
-            "label": "Verifiability",
-            "short": "Ver",
-            "group": "G",
-            "h_offset": -4.0,
-            "color": {
-                "light": "hsl(158 55% 32%)",
-                "dark": "hsl(158 55% 62%)"
-            }
-        },
-        {
-            "id": "G2",
-            "label": "Factuality",
-            "short": "Fact",
-            "group": "G",
-            "h_offset": 0.0,
-            "color": {
-                "light": "hsl(162 55% 29%)",
-                "dark": "hsl(162 55% 58%)"
-            }
-        },
-        {
-            "id": "G3",
-            "label": "Relevance",
-            "short": "Rel",
-            "group": "G",
-            "h_offset": 4.0,
-            "color": {
-                "light": "hsl(166 55% 26%)",
-                "dark": "hsl(166 55% 54%)"
-            }
-        },
-        {
             "id": "R1",
             "label": "Discipline",
             "short": "Disc",
@@ -351,6 +318,39 @@ DESIGN_SYSTEM: dict[str, Any] = {
             "color": {
                 "light": "hsl(332 47% 31%)",
                 "dark": "hsl(332 47% 59%)"
+            }
+        },
+        {
+            "id": "G1",
+            "label": "Verifiability",
+            "short": "Ver",
+            "group": "G",
+            "h_offset": -4.0,
+            "color": {
+                "light": "hsl(158 55% 32%)",
+                "dark": "hsl(158 55% 62%)"
+            }
+        },
+        {
+            "id": "G2",
+            "label": "Factuality",
+            "short": "Fact",
+            "group": "G",
+            "h_offset": 0.0,
+            "color": {
+                "light": "hsl(162 55% 29%)",
+                "dark": "hsl(162 55% 58%)"
+            }
+        },
+        {
+            "id": "G3",
+            "label": "Relevance",
+            "short": "Rel",
+            "group": "G",
+            "h_offset": 4.0,
+            "color": {
+                "light": "hsl(166 55% 26%)",
+                "dark": "hsl(166 55% 54%)"
             }
         },
         {

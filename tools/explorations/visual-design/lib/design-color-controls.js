@@ -29,9 +29,7 @@
  * working unchanged.
  */
 
-(function () {
-  "use strict";
-
+(() => {
   // ────────────── Theme toggle ──────────────
 
   /**
@@ -60,17 +58,17 @@
         html.setAttribute("data-theme-mode", mode);
       }
       const active = html.getAttribute("data-theme-mode");
-      buttons.forEach((b) =>
-        b.classList.toggle("active", b.dataset.themeSet === active),
-      );
+      buttons.forEach((b) => {
+        b.classList.toggle("active", b.dataset.themeSet === active);
+      });
     }
     mq.addEventListener("change", () => {
       if (html.getAttribute("data-theme-mode") === "auto") apply("auto");
     });
-    buttons.forEach((b) =>
-      b.addEventListener("click", () => apply(b.dataset.themeSet)),
-    );
-    apply((opts && opts.default) || "auto");
+    buttons.forEach((b) => {
+      b.addEventListener("click", () => apply(b.dataset.themeSet));
+    });
+    apply(opts?.default || "auto");
   }
 
   /** Current resolved theme reads `data-theme` on <html>. */
@@ -97,22 +95,21 @@
     function apply(scheme) {
       if (scheme === "paper") html.removeAttribute("data-surface");
       else html.setAttribute("data-surface", scheme);
-      buttons.forEach((b) =>
-        b.classList.toggle("active", b.dataset.surfaceSet === scheme),
-      );
+      buttons.forEach((b) => {
+        b.classList.toggle("active", b.dataset.surfaceSet === scheme);
+      });
     }
-    buttons.forEach((b) =>
-      b.addEventListener("click", () => apply(b.dataset.surfaceSet)),
-    );
-    apply((opts && opts.default) || "white");
+    buttons.forEach((b) => {
+      b.addEventListener("click", () => apply(b.dataset.surfaceSet));
+    });
+    apply(opts?.default || "white");
   }
 
   // ────────────── Helpers ──────────────
 
   function _resolve(elOrSelector) {
     if (!elOrSelector) return null;
-    if (typeof elOrSelector === "string")
-      return document.querySelector(elOrSelector);
+    if (typeof elOrSelector === "string") return document.querySelector(elOrSelector);
     return elOrSelector;
   }
 

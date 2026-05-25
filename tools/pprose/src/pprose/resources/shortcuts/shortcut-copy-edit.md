@@ -27,8 +27,8 @@ short of the substantive dimensions (use the full-edit playbook for those).
    - **Otherwise:** use the agent's normal to-do or checklist tooling.
 
 4. Apply all fixes. **Preserve factual meaning, claim strength, citations, and
-   intentional voice.** Do not edit the substantive dimensions (Purpose, Grounding,
-   Reasoning, Judgment) — if those need work, note it and recommend `pprose-full-edit`.
+   intentional voice.** Do not edit the substantive dimensions (Purpose, Reasoning,
+   Grounding, Judgment) — if those need work, note it and recommend `pprose-full-edit`.
    Close or update any external issues as you fix them.
 
 5. Verify:
