@@ -526,6 +526,11 @@ def test_call_scorer_returns_structured_output(monkeypatch):
     from pprose import eval_score
     from pprose.eval_score import _build_agent, call_scorer
 
+    # The real Anthropic provider is constructed before override kicks in, so
+    # it demands a key; the value is never used because the FunctionModel
+    # override takes over for the actual call.
+    monkeypatch.setenv("ANTHROPIC_API_KEY", "sk-test-fake")
+
     response = _full_response(score=5, with_violation=False)
 
     # Wrap _build_agent so the override context stays active for the duration
