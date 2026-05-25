@@ -55,6 +55,7 @@ const Group = z
     // The resolved generated JS expands ink/surface to full HSL strings
     // (the YAML stores L only — resolution happens in the generator).
     ink: LightDarkHsl,
+    text: LightDarkHsl,
     surface: LightDarkHsl,
     icon: z.string().regex(/^[a-z0-9_-]+:[a-z0-9_-]+$/),
     sense: z.string().min(1),

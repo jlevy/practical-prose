@@ -107,6 +107,13 @@ class Group(_Frozen):
         ),
     )
     ink: LightDarkLightness
+    text: LightDarkLightness = Field(
+        description=(
+            "More-emphasized version of the group's central color, used for the "
+            "group's icon + label.  Same H + S as the group; L pushed darker "
+            "(light mode) / lighter (dark mode) than ink."
+        ),
+    )
     surface: LightDarkLightness
     icon: str = Field(
         pattern=r"^[a-z0-9_-]+:[a-z0-9_-]+$",
@@ -210,6 +217,11 @@ def group_ink_color(g: Group, mode: Literal["light", "dark"]) -> str:
 
 def group_surface_color(g: Group, mode: Literal["light", "dark"]) -> str:
     lightness = g.surface.light if mode == "light" else g.surface.dark
+    return fmt_hsl(g.h, g.s, lightness)
+
+
+def group_text_color(g: Group, mode: Literal["light", "dark"]) -> str:
+    lightness = g.text.light if mode == "light" else g.text.dark
     return fmt_hsl(g.h, g.s, lightness)
 
 

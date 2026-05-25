@@ -46,6 +46,7 @@ from schema import (  # noqa: E402 — adjusted path above
     dim_color,
     group_ink_color,
     group_surface_color,
+    group_text_color,
 )
 
 # Resolve project paths relative to this file so the script runs from anywhere.
@@ -92,6 +93,10 @@ def _resolve(ds: DesignSystem) -> dict:
             "ink": {
                 "light": group_ink_color(g, "light"),
                 "dark": group_ink_color(g, "dark"),
+            },
+            "text": {
+                "light": group_text_color(g, "light"),
+                "dark": group_text_color(g, "dark"),
             },
             "surface": {
                 "light": group_surface_color(g, "light"),
@@ -195,6 +200,11 @@ def emit_css(resolved: dict) -> str:
         lines.append("  /* Group ink (primary accent per group) */")
         for g in groups:
             lines.append(f"  --accent-{g['id'].lower()}: {g['ink'][mode]};")
+        lines.append("")
+        # Group text (--text-*) — emphasized version of ink for label/icon
+        lines.append("  /* Group text (emphasized accent for group label + icon) */")
+        for g in groups:
+            lines.append(f"  --text-{g['id'].lower()}: {g['text'][mode]};")
         lines.append("")
         # Group surface (--surface-*)
         lines.append("  /* Group surface (pale family-hue background) */")

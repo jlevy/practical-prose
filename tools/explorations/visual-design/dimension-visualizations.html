@@ -50,7 +50,7 @@
      NA/ERR washes, rung strokes, bar overlay text.  Light values. */
       :root,
       :root[data-theme="light"] {
-        --score-na: hsl(
+        --score-na-fill: hsl(
           40 12% 83%
         ); /* NA bar fill — close to --bg, subtly darker */
         --score-na-bg: hsl(220 8% 55% / 0.18);
@@ -75,7 +75,7 @@
 
       @media (prefers-color-scheme: dark) {
         :root {
-          --score-na: hsl(40 6% 18%);
+          --score-na-fill: hsl(40 6% 18%);
           --score-na-bg: hsl(220 10% 60% / 0.2);
           --score-err-fill: hsl(0 15% 20%);
           --score-err: hsl(0 60% 65%);
@@ -93,14 +93,14 @@
      near-white surface; data-surface="gray" gives a cool light-gray
      surface.  Default (no attribute) is the warm cream paper above.
      Each scheme overrides --bg, --card, --border, and the bg-adjacent
-     --score-na / --score-err-fill tokens for both light and dark. */
+     --score-na-fill / --score-err-fill tokens for both light and dark. */
 
       /* White — light */
       :root[data-surface="white"] {
         --bg: hsl(0 0% 100%);
         --card: hsl(0 0% 98%);
         --border: hsl(0 0% 88%);
-        --score-na: hsl(0 0% 90%);
+        --score-na-fill: hsl(0 0% 90%);
         --score-err-fill: hsl(0 35% 93%);
       }
       /* White — dark (via OS preference) */
@@ -109,7 +109,7 @@
           --bg: hsl(0 0% 6%);
           --card: hsl(0 0% 10%);
           --border: hsl(0 0% 18%);
-          --score-na: hsl(0 0% 16%);
+          --score-na-fill: hsl(0 0% 16%);
           --score-err-fill: hsl(0 25% 18%);
         }
       }
@@ -118,7 +118,7 @@
         --bg: hsl(0 0% 6%);
         --card: hsl(0 0% 10%);
         --border: hsl(0 0% 18%);
-        --score-na: hsl(0 0% 16%);
+        --score-na-fill: hsl(0 0% 16%);
         --score-err-fill: hsl(0 25% 18%);
       }
 
@@ -127,7 +127,7 @@
         --bg: hsl(220 8% 96%);
         --card: hsl(220 8% 99%);
         --border: hsl(220 8% 85%);
-        --score-na: hsl(220 8% 85%);
+        --score-na-fill: hsl(220 8% 85%);
         --score-err-fill: hsl(0 30% 90%);
       }
       /* Gray — dark (via OS preference) */
@@ -136,7 +136,7 @@
           --bg: hsl(220 8% 12%);
           --card: hsl(220 8% 16%);
           --border: hsl(220 8% 24%);
-          --score-na: hsl(220 8% 22%);
+          --score-na-fill: hsl(220 8% 22%);
           --score-err-fill: hsl(0 18% 20%);
         }
       }
@@ -145,7 +145,7 @@
         --bg: hsl(220 8% 12%);
         --card: hsl(220 8% 16%);
         --border: hsl(220 8% 24%);
-        --score-na: hsl(220 8% 22%);
+        --score-na-fill: hsl(220 8% 22%);
         --score-err-fill: hsl(0 18% 20%);
       }
 
@@ -179,7 +179,7 @@
         --score-4: hsl(140 45% 55%);
         --score-5: hsl(140 50% 45%);
 
-        --score-na: hsl(
+        --score-na-fill: hsl(
           40 6% 18%
         ); /* NA bar fill — close to --bg, subtly lighter */
         --score-na-bg: hsl(220 10% 60% / 0.2);
@@ -235,10 +235,9 @@
         max-width: 1400px;
       }
       h1 {
-        font-size: 1.7rem;
+        font-size: 1.8rem;
         font-weight: 600;
-        margin: 0 0 0.35rem;
-        letter-spacing: -0.005em;
+        margin: 0;
       }
       .lede {
         color: var(--muted);
@@ -589,7 +588,6 @@
         font-size: 1.15rem;
         font-weight: 600;
         margin: 0 0 0.2rem;
-        letter-spacing: -0.005em;
       }
       .panel .note {
         color: var(--muted);
@@ -620,13 +618,12 @@
         font-variant-numeric: tabular-nums;
         font-weight: 500;
       }
-      .heatmap .hm-cell.na {
-        color: var(--muted);
-        font-size: 0.65rem;
-      }
+      /* NA/ERR text matches the regular score color/weight in each visual,
+         so the indicator stays readable instead of fading out. */
+      .heatmap .hm-cell.na,
       .heatmap .hm-cell.err {
-        color: #fff;
         font-size: 0.65rem;
+        font-weight: 800;
       }
       .heatmap .hm-axis {
         width: 38px;
@@ -839,46 +836,24 @@
         font-weight: 600;
       }
 
-      /* ─────────── Group icons (mdi via mask-image) ───────────
-     Inherits color from `currentColor`, so the icon takes the surrounding
-     group hue automatically. Source: tools/design-system/assets/icons/. */
+      /* ─────────── Group icons (single SVG sprite) ───────────
+     Renders an <svg><use href="…icons.svg#icon-X"/></svg>; the symbols
+     use fill="currentColor" so the icon takes its color from the
+     parent's CSS color property. Sprite source:
+     tools/design-system/assets/icons.svg. */
       .grp-icon {
-        display: inline-block;
+        display: inline-flex;
         width: 1em;
         height: 1em;
-        background-color: currentColor;
-        mask-size: contain;
-        mask-repeat: no-repeat;
-        mask-position: center;
-        -webkit-mask-size: contain;
-        -webkit-mask-repeat: no-repeat;
-        -webkit-mask-position: center;
         vertical-align: -0.15em;
         flex-shrink: 0;
+        color: inherit;
       }
-      .grp-icon.p {
-        mask-image: url("../../design-system/assets/icons/purpose.svg");
-        -webkit-mask-image: url("../../design-system/assets/icons/purpose.svg");
-      }
-      .grp-icon.e {
-        mask-image: url("../../design-system/assets/icons/expression.svg");
-        -webkit-mask-image: url("../../design-system/assets/icons/expression.svg");
-      }
-      .grp-icon.f {
-        mask-image: url("../../design-system/assets/icons/form.svg");
-        -webkit-mask-image: url("../../design-system/assets/icons/form.svg");
-      }
-      .grp-icon.g {
-        mask-image: url("../../design-system/assets/icons/grounding.svg");
-        -webkit-mask-image: url("../../design-system/assets/icons/grounding.svg");
-      }
-      .grp-icon.r {
-        mask-image: url("../../design-system/assets/icons/reasoning.svg");
-        -webkit-mask-image: url("../../design-system/assets/icons/reasoning.svg");
-      }
-      .grp-icon.j {
-        mask-image: url("../../design-system/assets/icons/judgment.svg");
-        -webkit-mask-image: url("../../design-system/assets/icons/judgment.svg");
+      .grp-icon svg {
+        width: 100%;
+        height: 100%;
+        display: block;
+        fill: currentColor;
       }
 
       /* ─────────── Visual 8: Overlay-text Bar Cards ───────────
@@ -982,7 +957,6 @@
         font-family: var(--font-sans);
         font-size: 1.05rem;
         font-weight: 500;
-        letter-spacing: 0;
         white-space: nowrap;
         pointer-events: none;
         line-height: 1;
@@ -996,22 +970,26 @@
         width: 1.3rem;
         text-align: right;
       }
+      /* NA stays --fg (matches the numeric scores in this row); ERR keeps the
+         saturated red so the error meaning carries.  Both bump to weight 800,
+         matching the heavier labels — readable even though the glyph is small. */
       .bt-num.na {
-        color: var(--muted);
         font-size: 0.68rem;
-        font-weight: 600;
+        font-weight: 800;
       }
       .bt-num.err {
         color: var(--score-err);
         font-size: 0.68rem;
-        font-weight: 600;
+        font-weight: 800;
       }
 
       /* ─────────── Visual 9: Bidirectional Bars ─────────── */
+      /* Responsive: cards flow into rows when they fit (each ≥ 28rem),
+         dropping to a single centered column on narrow screens. */
       .bi-stack {
-        display: flex;
-        flex-direction: column;
-        align-items: center; /* centers cards horizontally */
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(28rem, 1fr));
+        justify-items: center;
         gap: 1.25rem;
       }
       .bi-card {
@@ -1023,18 +1001,25 @@
         width: 100%;
         max-width: 32rem; /* ~500px; keeps bars from getting too wide */
       }
-      .bi-card .doc-name {
-        font-size: 1.05rem;
-        font-weight: 600;
-        margin: 0 0 0.1rem;
-        color: var(--fg);
-      }
-      .bi-card .doc-meta {
-        font-size: 0.72rem;
-        color: var(--muted);
+      /* Matches .bi-dim-name: sans, 0.9rem, weight 800, uppercase, 0.09em. */
+      .bi-card .doc-kicker {
+        font-family: var(--font-sans);
+        font-size: 0.9rem;
+        font-weight: 800;
         text-transform: uppercase;
-        letter-spacing: 0.07em;
-        margin-bottom: 0.7rem;
+        letter-spacing: 0.09em;
+        text-align: center;
+        color: var(--muted);
+        margin: 0 0 0.25rem;
+      }
+      .bi-card .doc-name {
+        font-family: var(--font-serif);
+        font-style: italic;
+        font-size: 2.1rem;
+        font-weight: 600;
+        text-align: center;
+        margin: 0 0 0.9rem;
+        color: var(--fg);
       }
       .bi-grid {
         display: grid;
@@ -1050,32 +1035,34 @@
      inner edge (near the center spine). */
       .bi-group-header {
         display: flex;
-        align-items: center;
+        align-items: center;           /* icon + label share the same center line */
+        justify-content: space-between;
         gap: 0.4rem;
-        font-size: 0.78rem;
-        font-weight: 700;
-        text-transform: uppercase;
-        letter-spacing: 0.09em;
+        font-family: var(--font-serif);
+        font-size: 1.5rem;
+        font-weight: 600;
         margin: 0.7rem 0 0.3rem;
       }
       /* Padded so the category label lands at the same x as the dim
-     labels below it (right edge sits over the bar's inner edge). */
+     labels below it (right edge sits over the bar's inner edge).  No
+     more bi-group-line — justify-content: space-between pushes the
+     icon to the outer edge and the label to the inner edge. */
       .bi-col.left .bi-group-header {
-        justify-content: flex-end;
         padding-right: calc(1.92rem + 0.45rem);
       }
       .bi-col.right .bi-group-header {
-        justify-content: flex-start;
         padding-left: calc(1.92rem + 0.45rem);
       }
-      .bi-group-line {
-        flex: 1;
-        height: 1px;
-        background: currentColor;
-        opacity: 0.3;
-      }
+      .bi-group-line { display: none; }
       .bi-group-header .grp-icon {
-        font-size: 0.95rem;
+        font-size: 2.6rem;             /* ~2× the previous size; anchors the outer corner */
+        line-height: 1;
+      }
+      /* Group label text sits between --muted and --fg — more prominent
+         than the dim names (which use --muted) but a step under the title
+         (which uses --fg).  color-mix keeps it theme-aware. */
+      .bi-group-header .label {
+        color: color-mix(in oklch, var(--fg) 70%, var(--muted));
       }
 
       /* Two-row dim entry: head (full dim name on the outer side + brief id
@@ -1093,11 +1080,17 @@
         gap: 0.45rem;
         margin-bottom: 0;
       }
+      /* Toggled via the "Show dim labels" checkbox in the controls
+         panel.  Default-off: the head row (dim name + id) is hidden
+         and the spine circles carry the dim identity by color alone. */
+      body.no-dim-labels .bi-dim-head { display: none; }
       .bi-dim-name {
         flex: 1;
         font-family: var(--font-sans);
         font-size: 0.9rem;
-        font-weight: 600;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 0.09em;
         color: var(--muted);
         line-height: 1.2;
         white-space: nowrap;
@@ -1115,11 +1108,12 @@
         width: 1.92rem; /* matches .bi-num-circle below */
         flex-shrink: 0;
         font-family: var(--font-sans);
-        font-size: 0.82rem;
-        font-weight: 600;
+        font-size: 0.9rem;             /* matches .bi-dim-name */
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 0.09em;        /* matches .bi-dim-name */
         color: var(--muted);
         line-height: 1.2;
-        letter-spacing: 0.02em;
         font-variant-numeric: tabular-nums;
         text-align: center;
       }
@@ -1176,19 +1170,17 @@
         line-height: 1;
         flex-shrink: 0;
       }
+      /* NA/ERR circles match numeric prominence — white text (same as numeric
+         circles) at weight 800 (matches the heavier labels). */
       .bi-num-circle.na {
         background: var(--score-na);
-        color: var(--muted);
         font-size: 0.62rem;
-        font-weight: 700;
-        letter-spacing: 0.02em;
+        font-weight: 800;
       }
       .bi-num-circle.err {
         background: var(--score-err);
-        color: #fff;
         font-size: 0.62rem;
-        font-weight: 700;
-        letter-spacing: 0.04em;
+        font-weight: 800;
       }
 
       /* Group-header padding aligns the category label with the id label
@@ -1237,7 +1229,6 @@
         font-size: 1.02rem;
         font-weight: 600;
         margin: 0 0 0.15rem;
-        letter-spacing: -0.005em;
       }
       .note-card .accent-bar {
         display: inline-block;
@@ -1315,9 +1306,42 @@
       footer code {
         font-size: 0.85em;
       }
+      /* Per-card credit — sits at the bottom of each bi-card so each
+         doc card is a self-contained, shareable widget.  Same
+         typographic treatment as the dim labels, but lowercase. */
+      .bi-card-credit {
+        font-family: var(--font-sans);
+        font-size: 0.9rem;
+        font-weight: 800;
+        text-align: center;
+        text-transform: lowercase;
+        margin-top: 1rem;
+      }
+      .bi-card-credit a {
+        color: var(--muted);
+        text-decoration: none;
+        transition: color 220ms ease;
+      }
+      .bi-card-credit a:hover {
+        color: var(--fg);
+        text-decoration: none;
+      }
     </style>
   </head>
   <body>
+    <!-- Group icon sprite (inlined copy of tools/design-system/assets/icons.svg).
+         Inlined here because browsers block cross-file <use href> references
+         when the page is loaded via file://.  Same content as the canonical
+         sprite file; update both together. -->
+    <svg xmlns="http://www.w3.org/2000/svg" style="display:none" aria-hidden="true">
+      <symbol id="icon-purpose" viewBox="0 0 24 24"><path fill="currentColor" d="m15 9l-3-9l-3 9l-9 3l9 3l3 9l3-9l9-3zM4 12l6-2l1 2zm8 8l-2-6l2-1zm0-16l2 6l-2 1zm2 10l-1-2h7zm-5.3 3.3L5 19l1.7-3.7l1.6.5zm8.6-2L19 19l-3.7-1.7l.5-1.6zM6.7 8.7L5 5l3.7 1.7l-.5 1.5zm8.6-2L19 5l-1.7 3.7l-1.6-.5z"/></symbol>
+      <symbol id="icon-expression" viewBox="0 0 24 24"><path fill="currentColor" d="M22 2s-7.64-.37-13.66 7.88C3.72 16.21 2 22 2 22l1.94-1c1.44-2.5 2.19-3.53 3.6-5c2.53.74 5.17.65 7.46-2c-2-.56-3.6-.43-5.96-.19C11.69 12 13.5 11.6 16 12l1-2c-1.8-.34-3-.37-4.78.04C14.19 8.65 15.56 7.87 18 8l1.21-1.93c-1.56-.11-2.5.06-4.29.5c1.61-1.46 3.08-2.12 5.22-2.25c0 0 1.05-1.89 1.86-2.32"/></symbol>
+      <symbol id="icon-form" viewBox="0 0 24 24"><path fill="currentColor" d="M17.8 20c-.4 1.2-1.5 2-2.8 2H5c-1.7 0-3-1.3-3-3v-1h12.2c.4 1.2 1.5 2 2.8 2zM19 2H8C6.3 2 5 3.3 5 5v11h11v1c0 .6.4 1 1 1h1V5c0-.6.4-1 1-1s1 .4 1 1v1h2V5c0-1.7-1.3-3-3-3"/></symbol>
+      <symbol id="icon-grounding" viewBox="0 0 24 24"><path fill="currentColor" d="M12 2a3 3 0 0 0-3 3a3 3 0 0 0 2 2.83V9H8v2h3v8.92c-.74-.13-1.5-.34-2.21-.65c-.74-.32-1.39-.71-1.97-1.18s-1.04-.98-1.38-1.54L7 15l-4-3v3c0 .97.27 1.88.82 2.72A8.2 8.2 0 0 0 6 19.95c.87.64 1.84 1.14 2.88 1.5c1.05.36 2.09.55 3.12.55s2.07-.2 3.12-.56c1.04-.36 2.01-.86 2.88-1.49c.92-.64 1.63-1.38 2.18-2.23c.55-.84.82-1.75.82-2.72v-3l-4 3l1.56 1.55c-.34.56-.8 1.07-1.38 1.54s-1.23.86-1.97 1.18c-.71.31-1.47.52-2.21.65V11h3V9h-3V7.82A3 3 0 0 0 15 5a3 3 0 0 0-3-3m0 2a1 1 0 0 1 1 1a1 1 0 0 1-1 1a1 1 0 0 1-1-1a1 1 0 0 1 1-1"/></symbol>
+      <symbol id="icon-reasoning" viewBox="0 0 24 24"><path fill="currentColor" d="m1.39 18.36l1.77-1.76L4.58 18l1.06-1.05l-1.42-1.41l1.42-1.42l2.47 2.48l1.06-1.06l-2.47-2.48l1.41-1.41l1.42 1.41L10.59 12l-1.42-1.41l1.42-1.42l2.47 2.48l1.06-1.06l-2.47-2.48l1.41-1.41l1.41 1.41l1.07-1.06l-1.42-1.41l1.42-1.42L18 6.7l1.07-1.06l-2.47-2.48l1.76-1.77l4.25 4.25L5.64 22.61z"/></symbol>
+      <symbol id="icon-judgment" viewBox="0 0 24 24"><path fill="currentColor" d="M12 3c-1.27 0-2.4.8-2.82 2H3v2h1.95L2 14c-.47 2 1 3 3.5 3s4.06-1 3.5-3L6.05 7h3.12c.33.85.98 1.5 1.83 1.83V20H2v2h20v-2h-9V8.82c.85-.32 1.5-.97 1.82-1.82h3.13L15 14c-.47 2 1 3 3.5 3s4.06-1 3.5-3l-2.95-7H21V5h-6.17C14.4 3.8 13.27 3 12 3m0 2a1 1 0 0 1 1 1a1 1 0 0 1-1 1a1 1 0 0 1-1-1a1 1 0 0 1 1-1m-6.5 5.25L7 14H4zm13 0L20 14h-3z"/></symbol>
+    </svg>
+
     <header>
       <div class="header-bar">
         <div>
@@ -1407,6 +1431,18 @@
       <div class="controls-section controls-palette-section">
         <span class="controls-label">Palette</span>
         <div class="palette-grid" id="palette-grid"></div>
+      </div>
+      <div class="controls-section">
+        <span class="controls-label">Layout</span>
+        <label class="controls-field">
+          <input type="checkbox" id="show-dim-labels">
+          Show dim labels (Visual 9)
+        </label>
+        <span class="controls-hint"
+          >Show the dim name + id above each bar in the bidirectional bars
+          visual.  Default off — the colored circle + score number on the
+          spine is usually enough.</span
+        >
       </div>
       <div class="controls-section">
         <span class="controls-label">Export</span>
@@ -1993,6 +2029,31 @@
          window.PracticalProseDesignSystem.  Mount call is alongside the
          render calls below. */
 
+      /* Repo-credit URL — single const so it lives in one place.
+         Appended at the bottom of each bi-card (V9), making each
+         doc card a self-contained, shareable widget. */
+      const REPO_URL = "github.com/jlevy/practical-prose";
+      function repoCredit() {
+        const div = document.createElement("div");
+        div.className = "bi-card-credit";
+        div.innerHTML = `<a href="https://${REPO_URL}">${REPO_URL}</a>`;
+        return div;
+      }
+
+      /* Layout flag — Show dim labels in Visual 9.  Default-off: the
+         head row (dim name + id) is hidden so the spine carries the
+         dim identity by colored circle alone.  Toggle to bring the
+         text labels back. */
+      (function setupShowDimLabels() {
+        const cb = document.getElementById("show-dim-labels");
+        if (!cb) return;
+        const apply = () => {
+          document.body.classList.toggle("no-dim-labels", !cb.checked);
+        };
+        cb.addEventListener("change", apply);
+        apply(); /* honor initial checkbox state (default: unchecked → hidden) */
+      })();
+
       /* Copy-design button — serializes current slider state to YAML. */
       (function setupCopyDesignButton() {
         const btn = document.getElementById("copy-design-btn");
@@ -2023,8 +2084,11 @@
    The groupId parameter is accepted but unused, kept for call-site
    compatibility. */
       function scoreTint(score, _groupId) {
+        // NA/ERR use translucent bg washes on the card; text uses --fg
+        // (full body color) so the indicator reads at the same weight as a
+        // numeric score, rather than fading toward the surface.
         if (score === "NA")
-          return { bg: "var(--score-na-bg)", fg: "var(--muted)" };
+          return { bg: "var(--score-na-bg)", fg: "var(--fg)" };
         if (score === "ERR")
           return { bg: "var(--score-err-bg)", fg: "var(--score-err)" };
         return { bg: `var(--score-${score})`, fg: "#fff" };
@@ -2063,6 +2127,28 @@
           e.appendChild(typeof c === "string" ? document.createTextNode(c) : c);
         });
         return e;
+      }
+
+      /* Render a group icon as <svg><use href=".../icons.svg#icon-X"/></svg>
+         inside a styled span.  Using <use> from the sprite means
+         fill="currentColor" in the symbol is resolved from the parent's
+         CSS color — much more reliable than the mask-image approach. */
+      /* Empty string → <use href="#icon-X"/> references the inlined
+         sprite at the top of <body>.  Browsers block cross-file <use>
+         references when the page is loaded via file://, so the
+         canonical sprite at tools/design-system/assets/icons.svg is
+         duplicated inline below for same-document reference. */
+      const ICON_SPRITE = "";
+      function groupIcon(g) {
+        const span = document.createElement("span");
+        span.className = `grp-icon ${g.id.toLowerCase()}`;
+        span.setAttribute("aria-hidden", "true");
+        const symbol = g.label.toLowerCase();
+        span.innerHTML =
+          `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">` +
+          `<use href="${ICON_SPRITE}#icon-${symbol}"/>` +
+          `</svg>`;
+        return span;
       }
 
       function panel(kicker, title, note, body) {
@@ -2510,8 +2596,8 @@
               .attr("text-anchor", "middle")
               .attr("class", "axis-label bold")
               .style("font-size", "8px")
-              .style("letter-spacing", "0.06em")
-              .style("fill", s === "ERR" ? "var(--score-err)" : "var(--muted)")
+              
+              .style("fill", s === "ERR" ? "var(--score-err)" : "var(--fg)")
               .text(s);
           } else {
             svg
@@ -2609,8 +2695,8 @@
               .attr("text-anchor", "middle")
               .attr("class", "axis-label bold")
               .style("font-size", "8px")
-              .style("letter-spacing", "0.06em")
-              .style("fill", s === "ERR" ? "var(--score-err)" : "var(--muted)")
+              
+              .style("fill", s === "ERR" ? "var(--score-err)" : "var(--fg)")
               .text(s);
           }
         });
@@ -2762,7 +2848,7 @@
                 ? "#fff"
                 : s === "ERR"
                   ? "var(--score-err)"
-                  : "var(--muted)",
+                  : "var(--fg)",
             )
             .text(s);
         });
@@ -2927,10 +3013,7 @@
             { class: "bt-group-sep", style: { color: groupColor(g.id) } },
             el("span", { class: "label" }, g.label),
             el("span", { class: "bt-group-line", "aria-hidden": "true" }),
-            el("span", {
-              class: `grp-icon ${g.id.toLowerCase()}`,
-              "aria-hidden": "true",
-            }),
+            groupIcon(g),
           );
           card.appendChild(sep);
 
@@ -2955,7 +3038,7 @@
                 num.classList.add("err");
               } else {
                 pct = 100;
-                fill.style.background = "var(--score-na)"; /* subtle bar */
+                fill.style.background = "var(--score-na-fill)"; /* subtle bar */
                 num.textContent = "NA";
                 num.classList.add("na");
               }
@@ -3014,8 +3097,8 @@
 
       function biCard(doc) {
         const card = el("div", { class: "bi-card" });
+        card.appendChild(el("div", { class: "doc-kicker" }, "Practical Prose Evaluation"));
         card.appendChild(el("div", { class: "doc-name" }, doc.name));
-        card.appendChild(el("div", { class: "doc-meta" }, doc.meta));
 
         const grid = el("div", { class: "bi-grid" });
 
@@ -3028,11 +3111,8 @@
           left.appendChild(
             el(
               "div",
-              { class: "bi-group-header", style: { color: groupColor(g.id) } },
-              el("span", {
-                class: `grp-icon ${g.id.toLowerCase()}`,
-                "aria-hidden": "true",
-              }),
+              { class: "bi-group-header", style: { color: `var(--text-${g.id.toLowerCase()})` } },
+              groupIcon(g),
               el("span", { class: "bi-group-line", "aria-hidden": "true" }),
               el("span", { class: "label" }, g.label),
             ),
@@ -3052,13 +3132,10 @@
           right.appendChild(
             el(
               "div",
-              { class: "bi-group-header", style: { color: groupColor(g.id) } },
+              { class: "bi-group-header", style: { color: `var(--text-${g.id.toLowerCase()})` } },
               el("span", { class: "label" }, g.label),
               el("span", { class: "bi-group-line", "aria-hidden": "true" }),
-              el("span", {
-                class: `grp-icon ${g.id.toLowerCase()}`,
-                "aria-hidden": "true",
-              }),
+              groupIcon(g),
             ),
           );
           dims
@@ -3068,6 +3145,7 @@
         grid.appendChild(right);
 
         card.appendChild(grid);
+        card.appendChild(repoCredit());
         return card;
       }
 
@@ -3079,7 +3157,10 @@
    were stripped. */
       function biDim(doc, d, side) {
         const s = doc.scores[d.id];
-        const entry = el("div", { class: "bi-dim" });
+        const entry = el("div", {
+          class: "bi-dim",
+          style: { color: `var(--dim-${d.id})` },
+        });
 
         /* Head row: dim name + id label. */
         const head = el("div", { class: "bi-dim-head" });
@@ -3117,8 +3198,9 @@
         } else {
           /* NA */
           pct = 100;
-          fill.style.background = "var(--score-na)";
-          circle.style.background = "var(--score-na)";
+          fill.style.background = "var(--score-na-fill)"; /* subtle bar */
+          circle.style.background =
+            "var(--score-na)"; /* saturated gray — the NA indicator */
           circle.textContent = "NA";
           circle.classList.add("na");
         }

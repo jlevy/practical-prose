@@ -44,12 +44,17 @@ surfaces:
 # across the group's dimensions — informational + used by the slider UI.
 # Ink and surface lightnesses are the only per-mode variation.
 groups:
+  # `text` is a more-emphasized version of the group's central color used
+  # for the group's icon + name (header) and any place we want the group's
+  # identity in a highly legible form.  Same H + S as the group; L pushed
+  # darker (light mode) / lighter (dark mode) than `ink`.
   - id: P
     label: Purpose
     h: 72
-    s: 62
-    spread: 12
+    s: 51
+    spread: 30
     ink:     { light: 44, dark: 68 }
+    text:    { light: 24, dark: 81 }
     surface: { light: 92, dark: 18 }
     icon: mdi:compass-rose
     sense: orientation toward the reader's task
@@ -58,8 +63,9 @@ groups:
     label: Expression
     h: 206
     s: 59
-    spread: 6
-    ink:     { light: 44, dark: 68 }
+    spread: 30
+    ink:     { light: 51, dark: 68 }
+    text:    { light: 31, dark: 81 }
     surface: { light: 92, dark: 18 }
     icon: mdi:quill
     sense: language, surface form
@@ -67,9 +73,10 @@ groups:
   - id: F
     label: Form
     h: 30
-    s: 60
-    spread: 8
-    ink:     { light: 38, dark: 68 }
+    s: 37
+    spread: 30
+    ink:     { light: 61, dark: 68 }
+    text:    { light: 41, dark: 81 }
     surface: { light: 92, dark: 18 }
     icon: mdi:scroll
     sense: the document as a structured artifact
@@ -78,8 +85,9 @@ groups:
     label: Grounding
     h: 162
     s: 55
-    spread: 8
-    ink:     { light: 40, dark: 62 }
+    spread: 30
+    ink:     { light: 45, dark: 62 }
+    text:    { light: 25, dark: 75 }
     surface: { light: 92, dark: 16 }
     icon: mdi:anchor
     sense: tied to sources and facts
@@ -87,9 +95,10 @@ groups:
   - id: R
     label: Reasoning
     h: 329
-    s: 60
-    spread: 9
-    ink:     { light: 44, dark: 68 }
+    s: 47
+    spread: 30
+    ink:     { light: 53, dark: 68 }
+    text:    { light: 33, dark: 81 }
     surface: { light: 92, dark: 18 }
     icon: mdi:ruler
     sense: inference, measurement, rigor
@@ -98,8 +107,9 @@ groups:
     label: Judgment
     h: 278
     s: 30
-    spread: 12
+    spread: 30
     ink:     { light: 55, dark: 72 }
+    text:    { light: 35, dark: 85 }
     surface: { light: 92, dark: 18 }
     icon: mdi:scale-balance
     sense: weighing claims, calibration

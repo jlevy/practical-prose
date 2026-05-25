@@ -206,6 +206,33 @@ document) and `NA` (not assessed).
 Font weight tracks score strength; opacity is reserved for the muted `0` and `NA`
 states.
 
+## Typography
+
+A small number of universal rules to keep the type consistent across surfaces.
+
+### Letter-spacing
+
+**Letter-spacing is only applied to small-caps text** (text rendered uppercase via
+`text-transform: uppercase`).
+Lowercase and mixed-case text always uses the font's default tracking
+(`letter-spacing: normal` / `0`).
+
+Why: uppercase letters are visually heavier and read better with a small positive
+tracking (typical range `0.06em`–`0.10em`); lowercase has a natural rhythm that
+extra spacing only damages.
+This rule is universal — apply it to every surface that consumes the design
+system (HTML, generated reports, future renderers).
+
+In practice that means a surface either has both:
+
+```css
+text-transform: uppercase;
+letter-spacing: 0.09em;   /* or any value in 0.06–0.10em */
+```
+
+…or neither.
+No half-state.
+
 ## Icons
 
 Each top-level group has one icon, drawn from

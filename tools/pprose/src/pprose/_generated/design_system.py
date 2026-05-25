@@ -42,15 +42,19 @@ DESIGN_SYSTEM: dict[str, Any] = {
             "id": "P",
             "label": "Purpose",
             "h": 72.0,
-            "s": 62.0,
-            "spread": 12.0,
+            "s": 51.0,
+            "spread": 30.0,
             "ink": {
-                "light": "hsl(72 62% 44%)",
-                "dark": "hsl(72 62% 68%)"
+                "light": "hsl(72 51% 44%)",
+                "dark": "hsl(72 51% 68%)"
+            },
+            "text": {
+                "light": "hsl(72 51% 24%)",
+                "dark": "hsl(72 51% 81%)"
             },
             "surface": {
-                "light": "hsl(72 62% 92%)",
-                "dark": "hsl(72 62% 18%)"
+                "light": "hsl(72 51% 92%)",
+                "dark": "hsl(72 51% 18%)"
             },
             "icon": "mdi:compass-rose",
             "sense": "orientation toward the reader's task"
@@ -60,10 +64,14 @@ DESIGN_SYSTEM: dict[str, Any] = {
             "label": "Expression",
             "h": 206.0,
             "s": 59.0,
-            "spread": 6.0,
+            "spread": 30.0,
             "ink": {
-                "light": "hsl(206 59% 44%)",
+                "light": "hsl(206 59% 51%)",
                 "dark": "hsl(206 59% 68%)"
+            },
+            "text": {
+                "light": "hsl(206 59% 31%)",
+                "dark": "hsl(206 59% 81%)"
             },
             "surface": {
                 "light": "hsl(206 59% 92%)",
@@ -76,15 +84,19 @@ DESIGN_SYSTEM: dict[str, Any] = {
             "id": "F",
             "label": "Form",
             "h": 30.0,
-            "s": 60.0,
-            "spread": 8.0,
+            "s": 37.0,
+            "spread": 30.0,
             "ink": {
-                "light": "hsl(30 60% 38%)",
-                "dark": "hsl(30 60% 68%)"
+                "light": "hsl(30 37% 61%)",
+                "dark": "hsl(30 37% 68%)"
+            },
+            "text": {
+                "light": "hsl(30 37% 41%)",
+                "dark": "hsl(30 37% 81%)"
             },
             "surface": {
-                "light": "hsl(30 60% 92%)",
-                "dark": "hsl(30 60% 18%)"
+                "light": "hsl(30 37% 92%)",
+                "dark": "hsl(30 37% 18%)"
             },
             "icon": "mdi:scroll",
             "sense": "the document as a structured artifact"
@@ -94,10 +106,14 @@ DESIGN_SYSTEM: dict[str, Any] = {
             "label": "Grounding",
             "h": 162.0,
             "s": 55.0,
-            "spread": 8.0,
+            "spread": 30.0,
             "ink": {
-                "light": "hsl(162 55% 40%)",
+                "light": "hsl(162 55% 45%)",
                 "dark": "hsl(162 55% 62%)"
+            },
+            "text": {
+                "light": "hsl(162 55% 25%)",
+                "dark": "hsl(162 55% 75%)"
             },
             "surface": {
                 "light": "hsl(162 55% 92%)",
@@ -110,15 +126,19 @@ DESIGN_SYSTEM: dict[str, Any] = {
             "id": "R",
             "label": "Reasoning",
             "h": 329.0,
-            "s": 60.0,
-            "spread": 9.0,
+            "s": 47.0,
+            "spread": 30.0,
             "ink": {
-                "light": "hsl(329 60% 44%)",
-                "dark": "hsl(329 60% 68%)"
+                "light": "hsl(329 47% 53%)",
+                "dark": "hsl(329 47% 68%)"
+            },
+            "text": {
+                "light": "hsl(329 47% 33%)",
+                "dark": "hsl(329 47% 81%)"
             },
             "surface": {
-                "light": "hsl(329 60% 92%)",
-                "dark": "hsl(329 60% 18%)"
+                "light": "hsl(329 47% 92%)",
+                "dark": "hsl(329 47% 18%)"
             },
             "icon": "mdi:ruler",
             "sense": "inference, measurement, rigor"
@@ -128,10 +148,14 @@ DESIGN_SYSTEM: dict[str, Any] = {
             "label": "Judgment",
             "h": 278.0,
             "s": 30.0,
-            "spread": 12.0,
+            "spread": 30.0,
             "ink": {
                 "light": "hsl(278 30% 55%)",
                 "dark": "hsl(278 30% 72%)"
+            },
+            "text": {
+                "light": "hsl(278 30% 35%)",
+                "dark": "hsl(278 30% 85%)"
             },
             "surface": {
                 "light": "hsl(278 30% 92%)",
@@ -149,8 +173,8 @@ DESIGN_SYSTEM: dict[str, Any] = {
             "group": "P",
             "h_offset": -4.0,
             "color": {
-                "light": "hsl(68 62% 40%)",
-                "dark": "hsl(68 62% 65%)"
+                "light": "hsl(68 51% 40%)",
+                "dark": "hsl(68 51% 65%)"
             }
         },
         {
@@ -160,8 +184,8 @@ DESIGN_SYSTEM: dict[str, Any] = {
             "group": "P",
             "h_offset": 0.0,
             "color": {
-                "light": "hsl(72 62% 37%)",
-                "dark": "hsl(72 62% 62%)"
+                "light": "hsl(72 51% 37%)",
+                "dark": "hsl(72 51% 62%)"
             }
         },
         {
@@ -171,8 +195,8 @@ DESIGN_SYSTEM: dict[str, Any] = {
             "group": "P",
             "h_offset": 4.0,
             "color": {
-                "light": "hsl(76 62% 34%)",
-                "dark": "hsl(76 62% 59%)"
+                "light": "hsl(76 51% 34%)",
+                "dark": "hsl(76 51% 59%)"
             }
         },
         {
@@ -182,8 +206,8 @@ DESIGN_SYSTEM: dict[str, Any] = {
             "group": "P",
             "h_offset": 8.0,
             "color": {
-                "light": "hsl(80 62% 31%)",
-                "dark": "hsl(80 62% 56%)"
+                "light": "hsl(80 51% 31%)",
+                "dark": "hsl(80 51% 56%)"
             }
         },
         {
@@ -226,8 +250,8 @@ DESIGN_SYSTEM: dict[str, Any] = {
             "group": "F",
             "h_offset": -4.0,
             "color": {
-                "light": "hsl(26 60% 38%)",
-                "dark": "hsl(26 60% 64%)"
+                "light": "hsl(26 37% 38%)",
+                "dark": "hsl(26 37% 64%)"
             }
         },
         {
@@ -237,8 +261,8 @@ DESIGN_SYSTEM: dict[str, Any] = {
             "group": "F",
             "h_offset": 0.0,
             "color": {
-                "light": "hsl(30 60% 35%)",
-                "dark": "hsl(30 60% 61%)"
+                "light": "hsl(30 37% 35%)",
+                "dark": "hsl(30 37% 61%)"
             }
         },
         {
@@ -248,8 +272,8 @@ DESIGN_SYSTEM: dict[str, Any] = {
             "group": "F",
             "h_offset": 4.0,
             "color": {
-                "light": "hsl(34 60% 32%)",
-                "dark": "hsl(34 60% 58%)"
+                "light": "hsl(34 37% 32%)",
+                "dark": "hsl(34 37% 58%)"
             }
         },
         {
@@ -292,8 +316,8 @@ DESIGN_SYSTEM: dict[str, Any] = {
             "group": "R",
             "h_offset": -6.0,
             "color": {
-                "light": "hsl(323 60% 40%)",
-                "dark": "hsl(323 60% 68%)"
+                "light": "hsl(323 47% 40%)",
+                "dark": "hsl(323 47% 68%)"
             }
         },
         {
@@ -303,8 +327,8 @@ DESIGN_SYSTEM: dict[str, Any] = {
             "group": "R",
             "h_offset": -3.0,
             "color": {
-                "light": "hsl(326 60% 37%)",
-                "dark": "hsl(326 60% 65%)"
+                "light": "hsl(326 47% 37%)",
+                "dark": "hsl(326 47% 65%)"
             }
         },
         {
@@ -314,8 +338,8 @@ DESIGN_SYSTEM: dict[str, Any] = {
             "group": "R",
             "h_offset": 0.0,
             "color": {
-                "light": "hsl(329 60% 34%)",
-                "dark": "hsl(329 60% 62%)"
+                "light": "hsl(329 47% 34%)",
+                "dark": "hsl(329 47% 62%)"
             }
         },
         {
@@ -325,8 +349,8 @@ DESIGN_SYSTEM: dict[str, Any] = {
             "group": "R",
             "h_offset": 3.0,
             "color": {
-                "light": "hsl(332 60% 31%)",
-                "dark": "hsl(332 60% 59%)"
+                "light": "hsl(332 47% 31%)",
+                "dark": "hsl(332 47% 59%)"
             }
         },
         {
