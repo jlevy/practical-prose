@@ -71,8 +71,8 @@ family — only the lightness flips.
 
 Surfaces that consume the palette in CSS should expose the tokens under stable, short
 names at the `:root` level, then override the same names inside the dark media query.
-Use single-letter group codes (`p / e / f / g / r / j`) in CSS so the tokens stay compact
-at call sites:
+Use single-letter group codes (`p / e / f / g / r / j`) in CSS so the tokens stay
+compact at call sites:
 
 ```css
 :root {
@@ -206,6 +206,36 @@ document) and `NA` (not assessed).
 Font weight tracks score strength; opacity is reserved for the muted `0` and `NA`
 states.
 
+## Interactions
+
+Hover affordances are tokenized so every surface that exposes interactive triggers —
+tooltips, hoverable cells, score chips, dimension names — animates the same way.
+These tokens are theme-independent: they use neutral-gray with alpha so the lift reads
+on light or dark backgrounds without committing to a hue.
+
+| Token | Value | Use |
+| --- | --- | --- |
+| `--hover-bg` | `hsl(0 0% 50% / 0.08)` | Faint background pill for ambient text triggers (dim names, links, list items) |
+| `--hover-bg-strong` | `hsl(0 0% 50% / 0.16)` | Box-shadow ring for triggers whose own fill should not be muddied (bars, score chips) |
+| `--hover-duration` | `180ms` | Single duration for all hover transitions |
+| `--hover-easing` | `cubic-bezier(0.2, 0, 0, 1)` | Single easing curve |
+| `--hover-transition` | precomposed | `background-color`, `color`, `border-color`, `transform` |
+
+```css
+[data-tip-kind] {
+  cursor: help;
+  transition: var(--hover-transition);
+  border-radius: 4px;
+}
+.dim-name:hover  { background-color: var(--hover-bg); }      /* text triggers */
+.score-cell:hover { box-shadow: 0 0 0 2px var(--hover-bg-strong); } /* fills */
+```
+
+Use `--hover-bg` on text or background-less elements; use `--hover-bg-strong` via
+`box-shadow` on elements that already carry a colored fill, since changing their
+background would dilute the family color.
+A single duration + easing keeps the page reading as one motion system.
+
 ## Typography
 
 A small number of universal rules to keep the type consistent across surfaces.
@@ -213,15 +243,14 @@ A small number of universal rules to keep the type consistent across surfaces.
 ### Letter-spacing
 
 **Letter-spacing is only applied to small-caps text** (text rendered uppercase via
-`text-transform: uppercase`).
-Lowercase and mixed-case text always uses the font's default tracking
-(`letter-spacing: normal` / `0`).
+`text-transform: uppercase`). Lowercase and mixed-case text always uses the font’s
+default tracking (`letter-spacing: normal` / `0`).
 
 Why: uppercase letters are visually heavier and read better with a small positive
-tracking (typical range `0.06em`–`0.10em`); lowercase has a natural rhythm that
-extra spacing only damages.
-This rule is universal — apply it to every surface that consumes the design
-system (HTML, generated reports, future renderers).
+tracking (typical range `0.06em`–`0.10em`); lowercase has a natural rhythm that extra
+spacing only damages.
+This rule is universal — apply it to every surface that consumes the design system
+(HTML, generated reports, future renderers).
 
 In practice that means a surface either has both:
 
@@ -230,8 +259,146 @@ text-transform: uppercase;
 letter-spacing: 0.09em;   /* or any value in 0.06–0.10em */
 ```
 
-…or neither.
-No half-state.
+…or neither. No half-state.
+
+### Small-caps eyebrow tokens
+
+The “eyebrow” pattern — a small uppercase, letter-spaced sans label that sits above a
+heading or labels a small region — recurs constantly across surfaces (panel kickers,
+section headers, stat labels, navigation overlines).
+These three tokens travel as a set so every eyebrow reads consistently:
+
+| Token | Value | Use |
+| --- | --- | --- |
+| `--tracking-caps` | `0.09em` | Canonical small-caps tracking (mid-range of the 0.06–0.10em window) |
+| `--weight-caps` | `600` | Normal eyebrow weight — section headers, panel kickers |
+| `--weight-caps-strong` | `800` | Stronger variant — prominent data labels (e.g. dim names on bars) where the eyebrow *is* the heading rather than a kicker |
+
+A typical eyebrow:
+
+```css
+.my-section-label {
+  font-family: var(--font-sans);
+  font-size: 0.72rem;
+  font-weight: var(--weight-caps);
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-caps);
+  color: var(--muted);
+}
+```
+
+Font-size and color stay widget-specific (a stat label is smaller than a card kicker; a
+tip-panel section header uses a different color than a notes overline).
+The tokens unify the parts that should never drift.
+
+**Two roles, two weights** — pick consistently:
+
+| Role | Examples | Token |
+| --- | --- | --- |
+| **Structural heading** — identifies a section, divider, or major eyebrow | "Evaluation Detail" panel header, `## Rules` / `## Assessment` panel sections, the bi-card `.doc-kicker`, large dim labels on bars | `var(--weight-caps-strong)` (800) |
+| **Quiet label** — chrome metadata, tiny sublabels | "Rule N · violated" finding meta, stat-tile labels | `var(--weight-caps)` (600) |
+
+Tracking is always `var(--tracking-caps)` and family is always sans. The only knobs
+that change between contexts are **size**, **color**, and the **weight** above.
+No small-caps element invents its own tracking, weight, or family — that's how
+the page drifts.
+
+### Content vs chrome — when to use serif vs sans
+
+The two faces of the type system split along a single line:
+
+- **Serif** is for *content* — the codified, fixed, reliable language of the
+  rubric.  Group names ("Purpose", "Reasoning"), dimension names ("Suitability",
+  "Clarity"), the question and rules attached to a dimension, the title of a
+  document being evaluated.  These are the durable concepts a reader is meant
+  to learn and trust.
+- **Sans** is for *chrome* — UI affordances, interactive hints, hover prompts,
+  short labels and tags (`P1`, `R3`), and every quantitative readout (scores,
+  counts, percentages, bar values).  These are the apparatus around the
+  content, not the content itself.
+
+The italic-serif variant carries an additional meaning: **"we are looking at
+this concept in detail."**  It's used for the question that describes a
+dimension and the dimension's name when the tip panel zooms in on it — same
+voice as a document's *italic-serif title*.  A *group* name doesn't get the
+italic, even when zoomed in, because groups are containers, not detail
+subjects.
+
+A useful test when adding a new element: would the same word appear unchanged
+in a printed rubric document?  If yes, it's content → serif.  If it only
+exists to help the reader navigate the surface → sans.
+
+### Quantitative numbers
+
+Every quantitative readout — scores, counts, percentages, stat callouts, bar
+value labels — uses one numeric voice: **sans, tabular nums, `--weight-num`**.
+Scores never appear in serif; serif is reserved for prose.
+
+| Token | Value | Use |
+| --- | --- | --- |
+| `--weight-num` | `600` | Single weight for every quantitative number, anywhere |
+
+Canonical example (matches the score circles on the bidirectional bars):
+
+```css
+.score-readout {
+  font-family: var(--font-sans);
+  font-weight: var(--weight-num);
+  font-variant-numeric: tabular-nums;
+}
+```
+
+Size and color vary per widget; family + weight + tabular-nums never do. This
+applies even when a number sits next to a serif title or body paragraph — the
+number is chrome data, not content text.
+
+### Score alpha gradient
+
+Scored marks (bar fills, score chips) encode their value through alpha on the
+dimension's base color: a 5 reads vivid, a 1 reads faint. The step is set by
+a single token so every surface that shows scored marks moves together.
+
+| Token | Value | Use |
+| --- | --- | --- |
+| `--score-alpha-step` | `0.14` | Alpha decrement per score step. Inner segments (low index) mix at lower alpha (toward the surface); the outermost segment of a score-`s` bar lands at `(1 - (5 - s) * step) * 100%` of the dim color. |
+
+Canonical usage (JS — `color-mix` keeps it symmetric in light + dark mode
+because the surface shows through the alpha):
+
+```js
+const step = parseFloat(
+  getComputedStyle(document.documentElement).getPropertyValue("--score-alpha-step")
+);
+const alpha = Math.max(0, 1 - (5 - score) * step);
+fill.style.background = `color-mix(in srgb, var(--dim-${id}) ${alpha * 100}%, transparent)`;
+```
+
+Tune `alpha_step` in `design-system.yaml` to make the gradient steeper (more
+visible value encoding) or shallower (subtler).
+
+### Adjacent triggers must be one trigger
+
+A single semantic action (one hover panel, one click) must not be split across
+multiple adjacent UI elements. If the dimension name, the bar, and the score
+chip all bring up the same detail panel, they form one hover zone — typically
+the parent row — and one tooltip target, not three.
+
+This is forbidden by the design system:
+
+```
+[name]   ← hover shows panel X
+[bar  ]  ← hover shows panel X  (duplicate)
+[chip]   ← hover shows panel X  (duplicate)
+```
+
+Required:
+
+```
+[name  bar  chip]   ← whole row is one hover zone, one panel X
+```
+
+Items that are *not adjacent* are free to fire the same action — the rule is
+only about confusion-by-proximity.
 
 ## Icons
 

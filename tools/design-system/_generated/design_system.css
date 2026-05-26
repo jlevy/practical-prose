@@ -76,6 +76,24 @@ Regenerate with: uv run --script tools/design-system/generate.py */
   --score-na-weight: 400;
   --score-na-opacity: 0.65;
   --score-err-weight: 700;
+
+  /* Hover affordance (theme-independent) */
+  --hover-bg: hsl(0 0% 50% / 0.15);
+  --hover-bg-strong: hsl(0 0% 50% / 0.28);
+  --hover-duration: 280ms;
+  --hover-easing: cubic-bezier(0.2, 0, 0, 1);
+  --hover-transition: background-color 280ms cubic-bezier(0.2, 0, 0, 1), color 280ms cubic-bezier(0.2, 0, 0, 1), border-color 280ms cubic-bezier(0.2, 0, 0, 1), transform 280ms cubic-bezier(0.2, 0, 0, 1);
+
+  /* Typography — small-caps eyebrow tokens */
+  --tracking-caps: 0.09em;
+  --weight-caps: 600;
+  --weight-caps-strong: 800;
+
+  /* Typography — quantitative numbers (scores, counts, stats) */
+  --weight-num: 600;
+
+  /* Scoring presentation — alpha modulation per score level */
+  --score-alpha-step: 0.14;
 }
 
 @media (prefers-color-scheme: dark) {

@@ -155,6 +155,76 @@ class Score(_Frozen):
     opacity: float | None = Field(default=None, ge=0, le=1)
 
 
+# ──────────────── Interactions ────────────────
+
+
+class HoverTokens(_Frozen):
+    """Hover affordance tokens — theme-independent.
+
+    ``bg`` / ``bg_strong`` are translucent neutral grays that lift subtly on any
+    background (light or dark) without committing to a hue.  ``duration`` is a
+    CSS time string; ``easing`` is a CSS timing-function string.
+    """
+
+    bg: str = Field(min_length=1)
+    bg_strong: str = Field(min_length=1)
+    duration: str = Field(pattern=r"^\d+m?s$")
+    easing: str = Field(min_length=1)
+
+
+class Interactions(_Frozen):
+    hover: HoverTokens
+
+
+# ──────────────── Typography ────────────────
+
+
+class CapsTokens(_Frozen):
+    """Tokens shared by every small-caps eyebrow on every surface.
+
+    These travel together: per ``design-system.md`` letter-spacing is only
+    applied to uppercase text, so any consumer that opts into small caps
+    needs all three (tracking, weight, weight_strong) to be consistent
+    with the rest of the system.
+    """
+
+    tracking: str = Field(min_length=1)
+    weight: int = Field(ge=100, le=900)
+    weight_strong: int = Field(ge=100, le=900)
+
+
+class NumericTokens(_Frozen):
+    """Tokens for quantitative numbers (scores, counts, statistics).
+
+    Every place that shows a number — score chips, stat callouts, bar
+    value readouts, score numerals in the bidirectional bars — uses
+    these so the numeric voice of the document is consistent: sans,
+    tabular nums, single weight.
+    """
+
+    weight: int = Field(ge=100, le=900)
+
+
+class Typography(_Frozen):
+    caps: CapsTokens
+    numeric: NumericTokens
+
+
+# ──────────────── Scoring presentation ────────────────
+
+
+class Scoring(_Frozen):
+    """Score-value-driven presentation tokens.
+
+    `alpha_step` modulates how vivid a scored mark reads: bar fills and
+    score chips mix with `transparent` by ``(5 - score) * alpha_step``
+    so a 5 reads vivid and a 1 reads faint.  The effect is symmetric in
+    light + dark mode because the surface shows through the alpha.
+    """
+
+    alpha_step: float = Field(ge=0, le=0.5)
+
+
 # ──────────────── Root ────────────────
 
 
@@ -164,6 +234,9 @@ class DesignSystem(_Frozen):
     groups: list[Group]
     dimensions: list[Dimension]
     scores: list[Score]
+    interactions: Interactions
+    typography: Typography
+    scoring: Scoring
 
     @field_validator("dimensions")
     @classmethod

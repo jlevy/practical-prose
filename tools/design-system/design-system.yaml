@@ -174,3 +174,41 @@ scores:
   - level: "ERR"
     color: { light: "hsl(0 85% 40%)",   dark: "hsl(0 75% 65%)" }
     weight: 700
+
+# Interaction tokens — theme-independent.  Hover background uses neutral-gray
+# with alpha so it lifts subtly on any background (light or dark) without
+# committing to a hue.  Two intensities cover most hover affordances:
+# `bg` for ambient triggers (cells, names, links) and `bg_strong` for primary
+# action triggers (buttons, scoring cells).  Duration + easing are picked for
+# "gentle" feedback (slow enough to read as intentional, fast enough not to
+# lag the cursor) per design-system.md.
+interactions:
+  hover:
+    bg:         "hsl(0 0% 50% / 0.15)"
+    bg_strong:  "hsl(0 0% 50% / 0.28)"
+    # Gentle pace — every hover affordance + tip-panel slide + content
+    # fade uses this single duration so the page reads as one motion
+    # system.  280ms sits in the "noticeable, not sluggish" sweet spot.
+    duration:   "280ms"
+    easing:     "cubic-bezier(0.2, 0, 0, 1)"
+
+# Typography tokens — small-caps eyebrow pattern that's used everywhere the
+# design system has a small overline-style heading (panel kickers, section
+# headers, stat labels, navigation eyebrows).  Per design-system.md the
+# letter-spacing rule fires only on uppercase text, so these tokens travel
+# together; widgets that opt into small caps reach for all three.
+typography:
+  caps:
+    tracking:       "0.09em"   # canonical small-caps tracking (range 0.06-0.10em)
+    weight:         600         # normal eyebrow weight (.eyebrow utility)
+    weight_strong:  800         # bolder variant for prominent labels (e.g. data labels on bars)
+  numeric:
+    weight:         600         # quantitative numbers everywhere (scores, counts, stats)
+
+# Scoring presentation — encodes a score's *value* through alpha on the
+# dimension's base color.  Each step below the maximum (5) reduces alpha
+# by `alpha_step`, so a high score reads as a vivid bar, a low score as
+# a faint one.  The effect is symmetric in light + dark mode because we
+# mix toward `transparent`, letting the surface show through.
+scoring:
+  alpha_step: 0.14              # alpha decrement per score step below 5

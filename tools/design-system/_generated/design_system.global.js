@@ -447,7 +447,28 @@ Regenerate with: uv run --script tools/design-system/generate.py */
       },
       "weight": 700
     }
-  ]
+  ],
+  "interactions": {
+    "hover": {
+      "bg": "hsl(0 0% 50% / 0.15)",
+      "bg_strong": "hsl(0 0% 50% / 0.28)",
+      "duration": "280ms",
+      "easing": "cubic-bezier(0.2, 0, 0, 1)"
+    }
+  },
+  "typography": {
+    "caps": {
+      "tracking": "0.09em",
+      "weight": 600,
+      "weight_strong": 800
+    },
+    "numeric": {
+      "weight": 600
+    }
+  },
+  "scoring": {
+    "alpha_step": 0.14
+  }
 });
   const groupsById     = Object.freeze(Object.fromEntries(designSystem.groups.map(g => [g.id, g])));
   const dimensionsById = Object.freeze(Object.fromEntries(designSystem.dimensions.map(d => [d.id, d])));
