@@ -5,7 +5,7 @@ title: "Spec: Structural document decomposition for pprose metrics"
 kind: epic
 status: open
 priority: 2
-version: 23
+version: 38
 spec_path: tools/docs/project/specs/active/plan-2026-05-25-structural-document-metrics.md
 labels: []
 dependencies: []
@@ -32,6 +32,21 @@ child_order_hints:
   - is-01kshmv08ryehatcvk2yksy7em
   - is-01kshmv0mbpraakcdy7yy6qdh7
   - is-01kshmv10796azvj3qqvdkdg9e
+  - is-01kskbrfg7jkcdrpn90edbscsz
+  - is-01kskbrfrj81ddq5x7jwf9kpkr
+  - is-01kskbrg0px9w2baeeeryg896a
+  - is-01kskbrg8zxz91ccbjtpmffnct
+  - is-01kskbrggva8sp3ssqraq86a4t
+  - is-01kskbs23rrda0270vpc2wxn7j
+  - is-01kskbs2bmqjrb8884yn6yb5q7
+  - is-01kskbs2nwx1aveqsnpn9txak8
+  - is-01kskbs2ymzshjbfvnsg1wp8n9
+  - is-01kskbswph34xyby79hz0adr8v
+  - is-01kskbsx1f7fm5cmj1j6hca4qb
+  - is-01kskbsxbhfccjwmeh5sxmg8qm
+  - is-01kskbsxp15rfdps3qynmb3pft
+  - is-01kskbsxyw2mnmd6byddwy1kge
+  - is-01kskbsy6cmb5dxs9mdh75we1z
 created_at: 2026-05-26T06:57:40.871Z
-updated_at: 2026-05-26T08:01:24.997Z
+updated_at: 2026-05-27T00:02:01.034Z
 ---
