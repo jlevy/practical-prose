@@ -1141,5 +1141,5 @@ structure depends on.
   banned-word lists, confidence-tag conventions, and citation-format requirements.
 
 <!-- This document follows common-doc-guidelines.md.
-Review guidelines before editing.
+See github.com/jlevy/practical-prose and review guidelines before editing.
 -->

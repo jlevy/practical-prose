@@ -107,5 +107,5 @@ If the user asks to review without editing, run passes 1-2 and 5-7 but make no c
 the source: produce the editorial review (and findings) only, and say so in the report.
 
 <!-- This document follows common-doc-guidelines.md.
-Review guidelines before editing.
+See github.com/jlevy/practical-prose and review guidelines before editing.
 -->

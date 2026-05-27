@@ -1196,5 +1196,5 @@ The six groups are **Purpose**, **Expression** (Clarity, Coherence, Concision),
   operational steps for comparing N evals.
 
 <!-- This document follows common-doc-guidelines.md.
-Review guidelines before editing.
+See github.com/jlevy/practical-prose and review guidelines before editing.
 -->
