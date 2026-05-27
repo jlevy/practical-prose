@@ -135,5 +135,5 @@ This checklist stays in sync with the full
 guidelines change, update this checklist in the same edit.
 
 <!-- This document follows common-doc-guidelines.md.
-Review guidelines before editing.
+See github.com/jlevy/practical-prose and review guidelines before editing.
 -->

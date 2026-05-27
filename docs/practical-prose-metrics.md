@@ -171,5 +171,5 @@ See the *Audit passes for high-stakes evals* section in
   end-to-end single-document eval procedure.
 
 <!-- This document follows common-doc-guidelines.md.
-Review guidelines before editing.
+See github.com/jlevy/practical-prose and review guidelines before editing.
 -->

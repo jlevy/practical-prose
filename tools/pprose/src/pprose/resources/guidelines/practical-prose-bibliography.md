@@ -863,5 +863,5 @@ legal-domain anchors specifically.
     <https://mitpress.mit.edu/9780262031639/the-nurnberg-funnel/>.
 
 <!-- This document follows common-doc-guidelines.md.
-Review guidelines before editing.
+See github.com/jlevy/practical-prose and review guidelines before editing.
 -->

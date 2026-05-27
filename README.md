@@ -21,20 +21,20 @@ skills into `.claude/skills/`; `--agents-md` also adds a short routing block to
 Clear writing and clear thinking are inseparable.
 A document is an instrument by which thought becomes visible, testable, and useful.
 
-**Practical prose** is writing meant to help a reader—human or agent—understand, decide,
-do, verify, or maintain something.
-It includes technical documents, research reports, specifications, memos, essays of
-practical analysis, operational plans, and all other artifacts whose value depends on
-usefulness.
-
 Good prose serves human needs and reflects human qualities.
 Usefulness is not in opposition to style, beauty, or human expression.
-The best practical writing joins the classic virtues of structure, precision, evidence,
-and method with the romantic virtues of voice, proportion, rhythm, and felt meaning.
+The best practical writing often joins the classic virtues of structure, precision, and
+evidence with the romantic virtues of voice, rhythm, and feeling.
+
+**Practical prose** is writing that helps a reader—human or agent—understand, decide,
+do, or verify something.
+It includes technical documents, research reports, specifications, memos, essays of
+practical analysis, operational plans, and all other artifacts where value depends on
+usefulness.
 
 ## Practical Writing in the Age of AI
 
-The rise of AI makes the need to focus on quality more urgent than ever.
+The rise of AI makes the need to focus on quality more acute.
 Language is now drafted, transformed, summarized, and evaluated by LLMs in greater
 volume than by humans.
 
@@ -240,5 +240,5 @@ See the runbooks for end-to-end operation and
 development.
 
 <!-- This document follows common-doc-guidelines.md.
-Review guidelines before editing.
+See github.com/jlevy/practical-prose and review guidelines before editing.
 -->
