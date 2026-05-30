@@ -271,6 +271,7 @@ def emit_css(resolved: dict) -> str:
         f"  --icon-color: {tones['icon']};",
         f"  --dim-label-color: {tones['dim_label']};",
         f"  --na-color: {tones['na']};",
+        f"  --na-label-color: {tones['na_label']};",
     ]
     tone_block = "\n".join(tone_lines)
 

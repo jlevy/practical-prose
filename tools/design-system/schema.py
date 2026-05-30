@@ -92,8 +92,9 @@ class Tones(_Frozen):
     icon: str = Field(min_length=1)
     dim_label: str = Field(min_length=1)
     na: str = Field(min_length=1)
+    na_label: str = Field(min_length=1)
 
-    @field_validator("icon", "dim_label", "na")
+    @field_validator("icon", "dim_label", "na", "na_label")
     @classmethod
     def _hsl(cls, v: str) -> str:
         return _validate_hsl(v)

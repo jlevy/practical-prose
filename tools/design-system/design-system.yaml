@@ -26,6 +26,7 @@ tones:
   icon:      "hsl(40 0% 28%)"
   dim_label: "hsl(40 0% 28%)"
   na:        "hsl(220 10% 78%)"
+  na_label:  "hsl(40 0% 60%)"   # dim label color when the score is NA
 
 # Surface tokens are arbitrary HSL — they are page-level and don't belong to a
 # group's hue family.

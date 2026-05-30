@@ -50,9 +50,7 @@
       // Per-dim L offsets relative to the group ink L, in source order.
       // These are what the slider tweaks (everything else flows from H/S/L/spread).
       const _dimOffsetsLight = dims.map((d) =>
-        d.color.light
-          ? Math.round(_lOf(d.color.light) - g.ink && _lOf(g.ink.light))
-          : 0,
+        d.color.light ? Math.round(_lOf(d.color.light) - g.ink && _lOf(g.ink.light)) : 0,
       );
       // We re-derive the offset from the resolved colors so we don't need
       // separate per-mode arrays.  L_dim_light - L_group_ink_light is the
@@ -75,14 +73,10 @@
          Without normalization, a YAML with much-lighter group L than
          dim L produces 40+ unit offsets that push dim L straight to 0
          (pure black, no saturation visible) at most slider positions. */
-      const rawOffsets = dims.map(
-        (d) => _lOf(d.color.light) - inkLightL,
-      );
+      const rawOffsets = dims.map((d) => _lOf(d.color.light) - inkLightL);
       const TARGET_DIM_L_SPREAD = 8;
       const maxAbsOffset = Math.max(1, ...rawOffsets.map(Math.abs));
-      const dimOffsets = rawOffsets.map(
-        (o) => (o * TARGET_DIM_L_SPREAD) / maxAbsOffset,
-      );
+      const dimOffsets = rawOffsets.map((o) => (o * TARGET_DIM_L_SPREAD) / maxAbsOffset);
 
       palette[g.id] = {
         h: hue,
@@ -130,14 +124,8 @@
       const gL = dark ? st.lDark : st.lLight;
       const surfaceL = dark ? st.surfaceLDark : st.surfaceLLight;
       const cssId = gId.toLowerCase();
-      root.style.setProperty(
-        `--accent-${cssId}`,
-        `hsl(${st.h} ${st.s}% ${gL}%)`,
-      );
-      root.style.setProperty(
-        `--surface-${cssId}`,
-        `hsl(${st.h} ${st.s}% ${surfaceL}%)`,
-      );
+      root.style.setProperty(`--accent-${cssId}`, `hsl(${st.h} ${st.s}% ${gL}%)`);
+      root.style.setProperty(`--surface-${cssId}`, `hsl(${st.h} ${st.s}% ${surfaceL}%)`);
       const n = st.dims.length;
       const step = n > 1 ? st.spread / (n - 1) : 0;
       /* Dim offsets are stored as raw-L deltas from the group ink in
@@ -152,14 +140,8 @@
       st.dims.forEach((dimId, i) => {
         const hueOffset = (i - (n - 1) / 2) * step;
         const dimH = (((st.h + hueOffset) % 360) + 360) % 360;
-        const dimL = Math.max(
-          0,
-          Math.min(100, gL + offsetSign * (st.dimOffsets[i] || 0)),
-        );
-        root.style.setProperty(
-          `--dim-${dimId}`,
-          `hsl(${dimH.toFixed(1)} ${st.s}% ${dimL}%)`,
-        );
+        const dimL = Math.max(0, Math.min(100, gL + offsetSign * (st.dimOffsets[i] || 0)));
+        root.style.setProperty(`--dim-${dimId}`, `hsl(${dimH.toFixed(1)} ${st.s}% ${dimL}%)`);
       });
     });
     refreshers.forEach((r) => {
@@ -176,10 +158,7 @@
    * @param {HTMLElement|string} container `<div id="palette-grid">` or selector
    */
   function mountPaletteSliders(container) {
-    const grid =
-      typeof container === "string"
-        ? document.querySelector(container)
-        : container;
+    const grid = typeof container === "string" ? document.querySelector(container) : container;
     if (!grid) return () => {};
     if (!palette) palette = _initialPalette();
 
@@ -360,11 +339,11 @@
       ["icon", "--icon-color", ds.tones && ds.tones.icon],
       ["dim_label", "--dim-label-color", ds.tones && ds.tones.dim_label],
       ["na", "--na-color", ds.tones && ds.tones.na],
+      ["na_label", "--na-label-color", ds.tones && ds.tones.na_label],
     ];
     lines.push("", "tones:");
     tonePairs.forEach(([key, token, fallback]) => {
-      const v =
-        root.style.getPropertyValue(token).trim() || fallback || "";
+      const v = root.style.getPropertyValue(token).trim() || fallback || "";
       lines.push(`  ${key}:${" ".repeat(Math.max(1, 10 - key.length))}"${v}"`);
     });
 
@@ -375,11 +354,7 @@
       getComputedStyle(root).getPropertyValue("--score-alpha-step").trim() ||
       String(ds.scoring && ds.scoring.alpha_step);
     const alphaStep = parseFloat(alphaRaw);
-    lines.push(
-      "",
-      "scoring:",
-      `  alpha_step: ${Number.isFinite(alphaStep) ? alphaStep : 0}`,
-    );
+    lines.push("", "scoring:", `  alpha_step: ${Number.isFinite(alphaStep) ? alphaStep : 0}`);
     return lines.join("\n");
   }
 

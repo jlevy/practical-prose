@@ -1359,9 +1359,6 @@
         text-transform: uppercase;
         letter-spacing: 0.09em;
       }
-      /* (Removed: .tip-reason, .tip-finding, .tip-finding-meta — those
-         classes were the old card-style findings rendering, replaced by
-         the bullet list inside .tip-assessment.) */
       /* ─── Hover affordance on tip triggers ────────────────────────────
          At-rest appearance is unchanged from the original widget.  Only the
          hover state adds anything visible — no cursor changes, no global
@@ -1449,9 +1446,6 @@
       .bi-col.right .bi-group-header {
         padding-left: calc(2.4rem + 0.5rem);
       }
-      .bi-group-line {
-        display: none;
-      }
       .bi-group-header .grp-icon {
         font-size: 2.6rem; /* ~2× the previous size; anchors the outer corner */
         line-height: 1;
@@ -1485,7 +1479,9 @@
         text-transform: uppercase;
         letter-spacing: var(--tracking-caps);
         /* Dim-label color — fallback to --muted, override via the
-           "Dim-label color" slider (writes --dim-label-color). */
+           "Dim-label color" slider (writes --dim-label-color).  When
+           the score is NA, .bi-dim.is-na switches the color to the
+           lighter --na-label-color. */
         color: var(--dim-label-color, var(--muted));
         line-height: 1.2;
         white-space: nowrap;
@@ -1495,6 +1491,12 @@
       /* Label aligns with the inner edge of the bar (not the row width,
          which extends past the bar into the circle).  Pad by the
          circle's reserved column (2.4rem) + the bar/circle gap (0.5rem). */
+      /* NA rows get a lighter dim-label color so the row reads as
+         "not applicable" at a glance, before the user sees the bar /
+         NA chip.  Drives --na-label-color from the design system tones. */
+      .bi-dim.is-na .bi-dim-name {
+        color: var(--na-label-color, var(--muted));
+      }
       .bi-dim.left .bi-dim-name {
         text-align: right;
         padding-right: calc(2.4rem + 0.5rem);
@@ -2699,6 +2701,11 @@
             ...parseHsl(tones.dim_label),
           },
           { token: "--na-color", name: "NA bg", ...parseHsl(tones.na) },
+          {
+            token: "--na-label-color",
+            name: "NA label",
+            ...parseHsl(tones.na_label),
+          },
         ];
         rows.forEach((cfg) => host.appendChild(buildToneRow(cfg)));
       })();
@@ -3953,8 +3960,8 @@
      the rightmost edge (touching the center spine). */
         const left = el("div", { class: "bi-col left" });
         biLeftGroups.forEach((g) => {
-          /* Order: icon (outer) → line → label (inner-most, aligned with
-       the dim labels below thanks to the header's padding-right). */
+          /* Order: icon (outer) → label (inner, aligned with dim labels
+       below via the header's padding-right). */
           left.appendChild(
             el(
               "div",
@@ -3967,7 +3974,6 @@
                 "data-tip-key": g.id,
               },
               groupIcon(g),
-              el("span", { class: "bi-group-line", "aria-hidden": "true" }),
               el("span", { class: "label" }, g.label),
             ),
           );
@@ -3983,8 +3989,8 @@
      (touching the center spine). */
         const right = el("div", { class: "bi-col right" });
         biRightGroups.forEach((g) => {
-          /* Order: label (inner-most, aligned with the dim labels below
-       thanks to the header's padding-left) → line → icon (outer). */
+          /* Order: label (inner, aligned with dim labels below via the
+       header's padding-left) → icon (outer). */
           right.appendChild(
             el(
               "div",
@@ -3997,7 +4003,6 @@
                 "data-tip-key": g.id,
               },
               el("span", { class: "label" }, g.label),
-              el("span", { class: "bi-group-line", "aria-hidden": "true" }),
               groupIcon(g),
             ),
           );
@@ -4014,12 +4019,6 @@
         return card;
       }
 
-      /* Build one dim entry: a head row (full name on the outer side, brief
-   id on the inner / center-spine side) plus a body row (bar on the outer
-   side, colored score circle on the inner side).  The inner column
-   alone — id stacked over circle, per dim — is the "summary view"; the
-   outer column adds detail.  The two would stand alone if the bars
-   were stripped. */
       /* Read --score-alpha-step fresh on every call so the slider in
          the design controls (which writes the CSS var live) updates the
          bar / chip color immediately. */
@@ -4038,7 +4037,8 @@
           a * 100,
         )}%, transparent)`;
       }
-      /* Score → circle alpha (legacy single-color modulation). */
+      /* Score → score-chip color: fade the dim's base color toward the
+         surface by --score-alpha-step per step below 5. */
       function scoreColor(dimId, score) {
         const step = _readScoreAlphaStep();
         return dimColorMix(dimId, 1 - (5 - score) * step);
@@ -4060,8 +4060,14 @@
            tooltip target: dim label, bar, and score chip all refer to
            the same dim/doc.  Per design system: adjacent UI elements
            that fire the same action must share one trigger. */
+        const classes = ["bi-dim", side];
+        /* Treat anything that's not a numeric score and not ERR as NA
+           — covers explicit "NA" and dims missing from the fixture
+           (older eval files used legacy keys that don't map to the
+           current schema, e.g. "inference_discipline" → Discipline). */
+        if (typeof s !== "number" && s !== "ERR") classes.push("is-na");
         const entry = el("div", {
-          class: `bi-dim ${side}`,
+          class: classes.join(" "),
           style: { color: `var(--dim-${d.id})` },
           "data-tip-kind": "dim",
           "data-tip-key": d.id,

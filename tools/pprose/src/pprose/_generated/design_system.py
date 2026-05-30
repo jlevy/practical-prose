@@ -40,7 +40,8 @@ DESIGN_SYSTEM: dict[str, Any] = {
     "tones": {
         "icon": "hsl(40 0% 28%)",
         "dim_label": "hsl(40 0% 28%)",
-        "na": "hsl(220 10% 78%)"
+        "na": "hsl(220 10% 78%)",
+        "na_label": "hsl(40 0% 60%)"
     },
     "groups": [
         {

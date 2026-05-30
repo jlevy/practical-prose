@@ -88,6 +88,7 @@ Regenerate with: uv run --script tools/design-system/generate.py */
   --icon-color: hsl(40 0% 28%);
   --dim-label-color: hsl(40 0% 28%);
   --na-color: hsl(220 10% 78%);
+  --na-label-color: hsl(40 0% 60%);
 
   /* Scoring presentation — alpha modulation per score level */
   --score-alpha-step: 0.0;
