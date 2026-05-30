@@ -46,7 +46,6 @@ from schema import (  # noqa: E402 — adjusted path above
     dim_color,
     group_ink_color,
     group_surface_color,
-    group_text_color,
 )
 
 # Resolve project paths relative to this file so the script runs from anywhere.
@@ -87,16 +86,10 @@ def _resolve(ds: DesignSystem) -> dict:
         return {
             "id": g.id,
             "label": g.label,
-            "h": g.h,
-            "s": g.s,
             "spread": g.spread,
             "ink": {
                 "light": group_ink_color(g, "light"),
                 "dark": group_ink_color(g, "dark"),
-            },
-            "text": {
-                "light": group_text_color(g, "light"),
-                "dark": group_text_color(g, "dark"),
             },
             "surface": {
                 "light": group_surface_color(g, "light"),
@@ -133,6 +126,7 @@ def _resolve(ds: DesignSystem) -> dict:
     return {
         "version": ds.version,
         "surfaces": ds.surfaces.model_dump(),
+        "tones": ds.tones.model_dump(),
         "groups": [group_dict(g) for g in ds.groups],
         "dimensions": [dim_dict(d) for d in ds.dimensions],
         "scores": [score_dict(s) for s in ds.scores],
@@ -204,11 +198,6 @@ def emit_css(resolved: dict) -> str:
         for g in groups:
             lines.append(f"  --accent-{g['id'].lower()}: {g['ink'][mode]};")
         lines.append("")
-        # Group text (--text-*) — emphasized version of ink for label/icon
-        lines.append("  /* Group text (emphasized accent for group label + icon) */")
-        for g in groups:
-            lines.append(f"  --text-{g['id'].lower()}: {g['text'][mode]};")
-        lines.append("")
         # Group surface (--surface-*)
         lines.append("  /* Group surface (pale family-hue background) */")
         for g in groups:
@@ -273,6 +262,18 @@ def emit_css(resolved: dict) -> str:
     ]
     typography_block = "\n".join(typography_lines)
 
+    # Tone tokens — single mode-independent colors used in chrome
+    # decoration (icons, dim labels, NA bg).  Edited live via the
+    # Tone-overrides panel in the slider exploration HTML.
+    tones = resolved["tones"]
+    tone_lines = [
+        "  /* Tones — mode-independent chrome tokens */",
+        f"  --icon-color: {tones['icon']};",
+        f"  --dim-label-color: {tones['dim_label']};",
+        f"  --na-color: {tones['na']};",
+    ]
+    tone_block = "\n".join(tone_lines)
+
     # Scoring presentation — alpha step modulates how vivid a scored
     # mark reads.  Used by JS consumers to compute the bar / chip color
     # via `color-mix(in srgb, var(--dim-XN) <pct>%, transparent)`.
@@ -294,6 +295,8 @@ def emit_css(resolved: dict) -> str:
         f"{interaction_block}\n"
         "\n"
         f"{typography_block}\n"
+        "\n"
+        f"{tone_block}\n"
         "\n"
         f"{scoring_block}\n"
         "}\n"

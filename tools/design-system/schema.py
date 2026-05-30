@@ -82,6 +82,23 @@ class Surfaces(_Frozen):
     rule: LightDarkHsl
 
 
+class Tones(_Frozen):
+    """Mode-independent tone tokens used in chrome decoration.
+
+    Each value is a single ``hsl()`` string applied identically in light
+    and dark mode (overriding any per-mode fallbacks in the viz).
+    """
+
+    icon: str = Field(min_length=1)
+    dim_label: str = Field(min_length=1)
+    na: str = Field(min_length=1)
+
+    @field_validator("icon", "dim_label", "na")
+    @classmethod
+    def _hsl(cls, v: str) -> str:
+        return _validate_hsl(v)
+
+
 # ──────────────── Groups ────────────────
 
 
@@ -96,8 +113,6 @@ class LightDarkLightness(_Frozen):
 class Group(_Frozen):
     id: GroupId
     label: str = Field(min_length=1)
-    h: float = Field(ge=0, le=360, description="Family hue, in degrees.")
-    s: float = Field(ge=0, le=100, description="Family saturation, in percent.")
     spread: float = Field(
         ge=0,
         le=60,
@@ -106,20 +121,20 @@ class Group(_Frozen):
             "design parameter — not part of any single color."
         ),
     )
-    ink: LightDarkLightness
-    text: LightDarkLightness = Field(
-        description=(
-            "More-emphasized version of the group's central color, used for the "
-            "group's icon + label.  Same H + S as the group; L pushed darker "
-            "(light mode) / lighter (dark mode) than ink."
-        ),
-    )
-    surface: LightDarkLightness
+    ink_light: str = Field(min_length=1, description="hsl(H S% L%) for light mode ink.")
+    ink_dark: str = Field(min_length=1, description="hsl(H S% L%) for dark mode ink.")
+    surface_light: str = Field(min_length=1)
+    surface_dark: str = Field(min_length=1)
     icon: str = Field(
         pattern=r"^[a-z0-9_-]+:[a-z0-9_-]+$",
         description="Iconify-style name: <prefix>:<icon> (e.g. mdi:compass-rose).",
     )
     sense: str = Field(min_length=1)
+
+    @field_validator("ink_light", "ink_dark", "surface_light", "surface_dark")
+    @classmethod
+    def _hsl(cls, v: str) -> str:
+        return _validate_hsl(v)
 
 
 # ──────────────── Dimensions ────────────────
@@ -231,6 +246,7 @@ class Scoring(_Frozen):
 class DesignSystem(_Frozen):
     version: int = Field(ge=1)
     surfaces: Surfaces
+    tones: Tones
     groups: list[Group]
     dimensions: list[Dimension]
     scores: list[Score]
@@ -283,22 +299,37 @@ def fmt_hsl(h: float, s: float, lightness: float) -> str:
     return f"hsl({n(h)} {n(s)}% {n(lightness)}%)"
 
 
+_HSL_PARSE = re.compile(
+    r"^hsl\(\s*([\d.]+)\s+([\d.]+)%\s+([\d.]+)%(?:\s*/\s*[\d.]+)?\s*\)$"
+)
+
+
+def _parse_hsl(s: str) -> tuple[float, float, float]:
+    """Parse 'hsl(H S% L%)' → (h, s, l) tuple."""
+    m = _HSL_PARSE.match(s)
+    if not m:
+        raise ValueError(f"bad HSL string: {s!r}")
+    return float(m.group(1)), float(m.group(2)), float(m.group(3))
+
+
+def group_hs(g: Group) -> tuple[float, float]:
+    """Family (H, S) — the constants every member of the group shares.
+
+    Read from the LIGHT ink as the canonical source; light/dark vary only L."""
+    h, s, _ = _parse_hsl(g.ink_light)
+    return h, s
+
+
 def group_ink_color(g: Group, mode: Literal["light", "dark"]) -> str:
-    lightness = g.ink.light if mode == "light" else g.ink.dark
-    return fmt_hsl(g.h, g.s, lightness)
+    return g.ink_light if mode == "light" else g.ink_dark
 
 
 def group_surface_color(g: Group, mode: Literal["light", "dark"]) -> str:
-    lightness = g.surface.light if mode == "light" else g.surface.dark
-    return fmt_hsl(g.h, g.s, lightness)
-
-
-def group_text_color(g: Group, mode: Literal["light", "dark"]) -> str:
-    lightness = g.text.light if mode == "light" else g.text.dark
-    return fmt_hsl(g.h, g.s, lightness)
+    return g.surface_light if mode == "light" else g.surface_dark
 
 
 def dim_color(d: Dimension, g: Group, mode: Literal["light", "dark"]) -> str:
-    h = (g.h + d.h_offset) % 360
+    gh, gs = group_hs(g)
+    h = (gh + d.h_offset) % 360
     lightness = d.l.light if mode == "light" else d.l.dark
-    return fmt_hsl(h, g.s, lightness)
+    return fmt_hsl(h, gs, lightness)

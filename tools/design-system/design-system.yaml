@@ -18,99 +18,98 @@
 
 version: 1
 
+# Tone tokens — single colors (mode-independent) used in chrome decoration:
+# the dark text used for icons, the muted secondary text on dim labels, and
+# the NA background.  Each is a plain hsl() string; the slider Tone-overrides
+# panel reflects + edits these at runtime.
+tones:
+  icon:      "hsl(40 0% 28%)"
+  dim_label: "hsl(40 0% 28%)"
+  na:        "hsl(220 10% 78%)"
+
 # Surface tokens are arbitrary HSL — they are page-level and don't belong to a
 # group's hue family.
 surfaces:
   bg:
     light: "hsl(40 38% 93%)"
-    dark:  "hsl(40 8% 8%)"
+    dark: "hsl(40 8% 8%)"
   fg:
     light: "hsl(30 12% 10%)"
-    dark:  "hsl(40 25% 88%)"
+    dark: "hsl(40 25% 88%)"
   muted:
     light: "hsl(40 9% 39%)"
-    dark:  "hsl(40 11% 53%)"
+    dark: "hsl(40 11% 53%)"
   card:
     light: "hsl(40 50% 96%)"
-    dark:  "hsl(34 12% 10%)"
+    dark: "hsl(34 12% 10%)"
   border:
     light: "hsl(40 26% 79%)"
-    dark:  "hsl(40 13% 17%)"
+    dark: "hsl(40 13% 17%)"
   rule:
     light: "hsl(30 12% 10%)"
-    dark:  "hsl(40 25% 88%)"
+    dark: "hsl(40 25% 88%)"
 
 # Each group claims one hue (H) and one saturation (S).  Spread is the H range
 # across the group's dimensions — informational + used by the slider UI.
 # Ink and surface lightnesses are the only per-mode variation.
 groups:
-  # `text` is a more-emphasized version of the group's central color used
-  # for the group's icon + name (header) and any place we want the group's
-  # identity in a highly legible form.  Same H + S as the group; L pushed
-  # darker (light mode) / lighter (dark mode) than `ink`.
   - id: P
     label: Purpose
-    h: 72
-    s: 51
-    spread: 30
-    ink:     { light: 44, dark: 68 }
-    text:    { light: 24, dark: 81 }
-    surface: { light: 92, dark: 18 }
+    spread: 45
+    ink_light:     "hsl(72 19% 73%)"
+    ink_dark:      "hsl(72 19% 27%)"
+    surface_light: "hsl(72 19% 92%)"
+    surface_dark:  "hsl(72 19% 18%)"
     icon: mdi:compass-rose
     sense: orientation toward the reader's task
 
   - id: E
     label: Expression
-    h: 206
-    s: 59
     spread: 30
-    ink:     { light: 51, dark: 68 }
-    text:    { light: 31, dark: 81 }
-    surface: { light: 92, dark: 18 }
+    ink_light:     "hsl(206 19% 73%)"
+    ink_dark:      "hsl(206 19% 27%)"
+    surface_light: "hsl(206 19% 92%)"
+    surface_dark:  "hsl(206 19% 18%)"
     icon: mdi:quill
     sense: language, surface form
 
   - id: F
     label: Form
-    h: 30
-    s: 37
-    spread: 30
-    ink:     { light: 61, dark: 68 }
-    text:    { light: 41, dark: 81 }
-    surface: { light: 92, dark: 18 }
+    spread: 20
+    ink_light:     "hsl(35 19% 73%)"
+    ink_dark:      "hsl(35 19% 27%)"
+    surface_light: "hsl(35 19% 92%)"
+    surface_dark:  "hsl(35 19% 18%)"
     icon: mdi:scroll
     sense: the document as a structured artifact
 
   - id: R
     label: Reasoning
-    h: 329
-    s: 47
-    spread: 30
-    ink:     { light: 53, dark: 68 }
-    text:    { light: 33, dark: 81 }
-    surface: { light: 92, dark: 18 }
+    spread: 40
+    ink_light:     "hsl(0 19% 73%)"
+    ink_dark:      "hsl(0 19% 27%)"
+    surface_light: "hsl(0 19% 92%)"
+    surface_dark:  "hsl(0 19% 18%)"
     icon: mdi:ruler
     sense: inference, measurement, rigor
 
   - id: G
     label: Grounding
-    h: 162
-    s: 55
-    spread: 30
-    ink:     { light: 45, dark: 62 }
-    text:    { light: 25, dark: 75 }
-    surface: { light: 92, dark: 16 }
+    spread: 40
+    ink_light:     "hsl(162 19% 73%)"
+    ink_dark:      "hsl(162 19% 27%)"
+    surface_light: "hsl(162 19% 92%)"
+    surface_dark:  "hsl(162 19% 16%)"
     icon: mdi:anchor
     sense: tied to sources and facts
 
   - id: J
     label: Judgment
-    h: 278
-    s: 30
-    spread: 30
-    ink:     { light: 55, dark: 72 }
-    text:    { light: 35, dark: 85 }
-    surface: { light: 92, dark: 18 }
+    spread: 45
+    ink_light:     "hsl(265 19% 73%)"
+    ink_dark:      "hsl(265 19% 27%)"
+    surface_light: "hsl(265 19% 92%)"
+    surface_dark:  "hsl(265 19% 18%)"
     icon: mdi:scale-balance
     sense: weighing claims, calibration
 
@@ -120,31 +119,171 @@ groups:
 #   l = (mode == 'light' ? l.light : l.dark)
 dimensions:
   # Purpose
-  - { id: P1, label: Suitability,    short: Suit,   group: P, h_offset: -4, l: { light: 40, dark: 65 } }
-  - { id: P2, label: Scope,          short: Scope,  group: P, h_offset:  0, l: { light: 37, dark: 62 } }
-  - { id: P3, label: Breadth,        short: Brd,    group: P, h_offset:  4, l: { light: 34, dark: 59 } }
-  - { id: P4, label: Depth,          short: Dep,    group: P, h_offset:  8, l: { light: 31, dark: 56 } }
+  - {
+      id: P1,
+      label: Suitability,
+      short: Suit,
+      group: P,
+      h_offset: -4,
+      l: { light: 40, dark: 65 },
+    }
+  - {
+      id: P2,
+      label: Scope,
+      short: Scope,
+      group: P,
+      h_offset: 0,
+      l: { light: 37, dark: 62 },
+    }
+  - {
+      id: P3,
+      label: Breadth,
+      short: Brd,
+      group: P,
+      h_offset: 4,
+      l: { light: 34, dark: 59 },
+    }
+  - {
+      id: P4,
+      label: Depth,
+      short: Dep,
+      group: P,
+      h_offset: 8,
+      l: { light: 31, dark: 56 },
+    }
   # Expression
-  - { id: E1, label: Clarity,        short: Clar,   group: E, h_offset: -5, l: { light: 35, dark: 68 } }
-  - { id: E2, label: Coherence,      short: Coh,    group: E, h_offset: -2, l: { light: 32, dark: 66 } }
-  - { id: E3, label: Concision,      short: Conc,   group: E, h_offset:  1, l: { light: 30, dark: 64 } }
+  - {
+      id: E1,
+      label: Clarity,
+      short: Clar,
+      group: E,
+      h_offset: -5,
+      l: { light: 35, dark: 68 },
+    }
+  - {
+      id: E2,
+      label: Coherence,
+      short: Coh,
+      group: E,
+      h_offset: -2,
+      l: { light: 32, dark: 66 },
+    }
+  - {
+      id: E3,
+      label: Concision,
+      short: Conc,
+      group: E,
+      h_offset: 1,
+      l: { light: 30, dark: 64 },
+    }
   # Form
-  - { id: F1, label: Organization,   short: Org,    group: F, h_offset: -4, l: { light: 38, dark: 64 } }
-  - { id: F2, label: Consistency,    short: Cons,   group: F, h_offset:  0, l: { light: 35, dark: 61 } }
-  - { id: F3, label: Formatting,     short: Fmt,    group: F, h_offset:  4, l: { light: 32, dark: 58 } }
+  - {
+      id: F1,
+      label: Organization,
+      short: Org,
+      group: F,
+      h_offset: -4,
+      l: { light: 38, dark: 64 },
+    }
+  - {
+      id: F2,
+      label: Consistency,
+      short: Cons,
+      group: F,
+      h_offset: 0,
+      l: { light: 35, dark: 61 },
+    }
+  - {
+      id: F3,
+      label: Formatting,
+      short: Fmt,
+      group: F,
+      h_offset: 4,
+      l: { light: 32, dark: 58 },
+    }
   # Reasoning
-  - { id: R1, label: Discipline,     short: Disc,   group: R, h_offset: -6, l: { light: 40, dark: 68 } }
-  - { id: R2, label: Soundness,      short: Snd,    group: R, h_offset: -3, l: { light: 37, dark: 65 } }
-  - { id: R3, label: Precision,      short: Prec,   group: R, h_offset:  0, l: { light: 34, dark: 62 } }
-  - { id: R4, label: Parsimony,      short: Pars,   group: R, h_offset:  3, l: { light: 31, dark: 59 } }
+  - {
+      id: R1,
+      label: Discipline,
+      short: Disc,
+      group: R,
+      h_offset: -6,
+      l: { light: 40, dark: 68 },
+    }
+  - {
+      id: R2,
+      label: Soundness,
+      short: Snd,
+      group: R,
+      h_offset: -3,
+      l: { light: 37, dark: 65 },
+    }
+  - {
+      id: R3,
+      label: Precision,
+      short: Prec,
+      group: R,
+      h_offset: 0,
+      l: { light: 34, dark: 62 },
+    }
+  - {
+      id: R4,
+      label: Parsimony,
+      short: Pars,
+      group: R,
+      h_offset: 3,
+      l: { light: 31, dark: 59 },
+    }
   # Grounding
-  - { id: G1, label: Verifiability,  short: Ver,    group: G, h_offset: -4, l: { light: 32, dark: 62 } }
-  - { id: G2, label: Factuality,     short: Fact,   group: G, h_offset:  0, l: { light: 29, dark: 58 } }
-  - { id: G3, label: Relevance,      short: Rel,    group: G, h_offset:  4, l: { light: 26, dark: 54 } }
+  - {
+      id: G1,
+      label: Verifiability,
+      short: Ver,
+      group: G,
+      h_offset: -4,
+      l: { light: 32, dark: 62 },
+    }
+  - {
+      id: G2,
+      label: Factuality,
+      short: Fact,
+      group: G,
+      h_offset: 0,
+      l: { light: 29, dark: 58 },
+    }
+  - {
+      id: G3,
+      label: Relevance,
+      short: Rel,
+      group: G,
+      h_offset: 4,
+      l: { light: 26, dark: 54 },
+    }
   # Judgment
-  - { id: J1, label: Calibration,    short: Cal,    group: J, h_offset: -6, l: { light: 42, dark: 70 } }
-  - { id: J2, label: Fairness,       short: Fair,   group: J, h_offset:  0, l: { light: 39, dark: 67 } }
-  - { id: J3, label: Robustness,     short: Rob,    group: J, h_offset:  6, l: { light: 36, dark: 64 } }
+  - {
+      id: J1,
+      label: Calibration,
+      short: Cal,
+      group: J,
+      h_offset: -6,
+      l: { light: 42, dark: 70 },
+    }
+  - {
+      id: J2,
+      label: Fairness,
+      short: Fair,
+      group: J,
+      h_offset: 0,
+      l: { light: 39, dark: 67 },
+    }
+  - {
+      id: J3,
+      label: Robustness,
+      short: Rob,
+      group: J,
+      h_offset: 6,
+      l: { light: 36, dark: 64 },
+    }
 
 # Score palette — orthogonal to family.  Valence ramp plus muted 0/NA/ERR.
 scores:
@@ -153,13 +292,13 @@ scores:
     weight: 400
     opacity: 0.75
   - level: "1"
-    color: { light: "hsl(0 70% 35%)",   dark: "hsl(0 70% 60%)" }
+    color: { light: "hsl(0 70% 35%)", dark: "hsl(0 70% 60%)" }
     weight: 800
   - level: "2"
-    color: { light: "hsl(28 80% 30%)",  dark: "hsl(28 70% 60%)" }
+    color: { light: "hsl(28 80% 30%)", dark: "hsl(28 70% 60%)" }
     weight: 650
   - level: "3"
-    color: { light: "hsl(40 80% 32%)",  dark: "hsl(40 70% 60%)" }
+    color: { light: "hsl(40 80% 32%)", dark: "hsl(40 70% 60%)" }
     weight: 700
   - level: "4"
     color: { light: "hsl(140 60% 28%)", dark: "hsl(140 50% 55%)" }
@@ -172,7 +311,7 @@ scores:
     weight: 400
     opacity: 0.65
   - level: "ERR"
-    color: { light: "hsl(0 85% 40%)",   dark: "hsl(0 75% 65%)" }
+    color: { light: "hsl(0 85% 40%)", dark: "hsl(0 75% 65%)" }
     weight: 700
 
 # Interaction tokens — theme-independent.  Hover background uses neutral-gray
@@ -184,13 +323,13 @@ scores:
 # lag the cursor) per design-system.md.
 interactions:
   hover:
-    bg:         "hsl(0 0% 50% / 0.15)"
-    bg_strong:  "hsl(0 0% 50% / 0.28)"
+    bg: "hsl(0 0% 50% / 0.15)"
+    bg_strong: "hsl(0 0% 50% / 0.28)"
     # Gentle pace — every hover affordance + tip-panel slide + content
     # fade uses this single duration so the page reads as one motion
     # system.  280ms sits in the "noticeable, not sluggish" sweet spot.
-    duration:   "280ms"
-    easing:     "cubic-bezier(0.2, 0, 0, 1)"
+    duration: "280ms"
+    easing: "cubic-bezier(0.2, 0, 0, 1)"
 
 # Typography tokens — small-caps eyebrow pattern that's used everywhere the
 # design system has a small overline-style heading (panel kickers, section
@@ -199,11 +338,11 @@ interactions:
 # together; widgets that opt into small caps reach for all three.
 typography:
   caps:
-    tracking:       "0.09em"   # canonical small-caps tracking (range 0.06-0.10em)
-    weight:         600         # normal eyebrow weight (.eyebrow utility)
-    weight_strong:  800         # bolder variant for prominent labels (e.g. data labels on bars)
+    tracking: "0.09em" # canonical small-caps tracking (range 0.06-0.10em)
+    weight: 600 # normal eyebrow weight (.eyebrow utility)
+    weight_strong: 800 # bolder variant for prominent labels (e.g. data labels on bars)
   numeric:
-    weight:         600         # quantitative numbers everywhere (scores, counts, stats)
+    weight: 600 # quantitative numbers everywhere (scores, counts, stats)
 
 # Scoring presentation — encodes a score's *value* through alpha on the
 # dimension's base color.  Each step below the maximum (5) reduces alpha
@@ -211,4 +350,4 @@ typography:
 # a faint one.  The effect is symmetric in light + dark mode because we
 # mix toward `transparent`, letting the surface show through.
 scoring:
-  alpha_step: 0.14              # alpha decrement per score step below 5
+  alpha_step: 0.14 # alpha decrement per score step below 5
