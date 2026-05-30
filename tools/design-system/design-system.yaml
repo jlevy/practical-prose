@@ -350,4 +350,4 @@ typography:
 # a faint one.  The effect is symmetric in light + dark mode because we
 # mix toward `transparent`, letting the surface show through.
 scoring:
-  alpha_step: 0.14 # alpha decrement per score step below 5
+  alpha_step: 0 # alpha decrement per score step below 5 (0 = no gradient)

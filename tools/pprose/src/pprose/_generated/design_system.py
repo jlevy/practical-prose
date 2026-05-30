@@ -443,7 +443,7 @@ DESIGN_SYSTEM: dict[str, Any] = {
         }
     },
     "scoring": {
-        "alpha_step": 0.14
+        "alpha_step": 0.0
     }
 }
 

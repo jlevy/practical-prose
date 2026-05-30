@@ -367,6 +367,19 @@
         root.style.getPropertyValue(token).trim() || fallback || "";
       lines.push(`  ${key}:${" ".repeat(Math.max(1, 10 - key.length))}"${v}"`);
     });
+
+    /* Scoring presentation — alpha gradient on the bar segments.
+       Read --score-alpha-step from <html> (the alpha-step slider in
+       the controls panel writes here on every input). */
+    const alphaRaw =
+      getComputedStyle(root).getPropertyValue("--score-alpha-step").trim() ||
+      String(ds.scoring && ds.scoring.alpha_step);
+    const alphaStep = parseFloat(alphaRaw);
+    lines.push(
+      "",
+      "scoring:",
+      `  alpha_step: ${Number.isFinite(alphaStep) ? alphaStep : 0}`,
+    );
     return lines.join("\n");
   }
 

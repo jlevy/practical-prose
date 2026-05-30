@@ -90,7 +90,7 @@ Regenerate with: uv run --script tools/design-system/generate.py */
   --na-color: hsl(220 10% 78%);
 
   /* Scoring presentation — alpha modulation per score level */
-  --score-alpha-step: 0.14;
+  --score-alpha-step: 0.0;
 }
 
 @media (prefers-color-scheme: dark) {

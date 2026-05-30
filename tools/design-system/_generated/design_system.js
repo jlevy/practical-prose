@@ -436,7 +436,7 @@ export const designSystem = Object.freeze({
     }
   },
   "scoring": {
-    "alpha_step": 0.14
+    "alpha_step": 0.0
   }
 });
 

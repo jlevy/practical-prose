@@ -2712,6 +2712,12 @@
         const range = document.getElementById("score-alpha-step");
         const readout = document.getElementById("score-alpha-step-readout");
         if (!range || !readout) return;
+        /* Sync the slider's initial position with the design-system
+           default (so the slider, the CSS var, and the YAML always
+           agree on page load). */
+        const initialStep = _readScoreAlphaStep();
+        range.value = initialStep.toString();
+        readout.textContent = `${Math.round(initialStep * 100)}%`;
         const apply = () => {
           const v = parseFloat(range.value);
           document.documentElement.style.setProperty(

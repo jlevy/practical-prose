@@ -436,7 +436,7 @@ Regenerate with: uv run --script tools/design-system/generate.py */
     }
   },
   "scoring": {
-    "alpha_step": 0.14
+    "alpha_step": 0.0
   }
 });
   const groupsById     = Object.freeze(Object.fromEntries(designSystem.groups.map(g => [g.id, g])));
