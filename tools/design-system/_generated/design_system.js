@@ -422,8 +422,8 @@ export const designSystem = Object.freeze({
     "hover": {
       "bg": "hsl(0 0% 50% / 0.15)",
       "bg_strong": "hsl(0 0% 50% / 0.28)",
-      "duration": "280ms",
-      "easing": "cubic-bezier(0.2, 0, 0, 1)"
+      "duration": "480ms",
+      "easing": "cubic-bezier(0.32, 0.72, 0, 1)"
     }
   },
   "typography": {

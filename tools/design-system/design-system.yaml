@@ -23,10 +23,10 @@ version: 1
 # the NA background.  Each is a plain hsl() string; the slider Tone-overrides
 # panel reflects + edits these at runtime.
 tones:
-  icon:      "hsl(40 0% 28%)"
+  icon: "hsl(40 0% 28%)"
   dim_label: "hsl(40 0% 28%)"
-  na:        "hsl(220 10% 78%)"
-  na_label:  "hsl(40 0% 60%)"   # dim label color when the score is NA
+  na: "hsl(220 10% 78%)"
+  na_label: "hsl(40 0% 60%)" # dim label color when the score is NA
 
 # Surface tokens are arbitrary HSL — they are page-level and don't belong to a
 # group's hue family.
@@ -57,60 +57,60 @@ groups:
   - id: P
     label: Purpose
     spread: 45
-    ink_light:     "hsl(72 19% 73%)"
-    ink_dark:      "hsl(72 19% 27%)"
+    ink_light: "hsl(72 19% 73%)"
+    ink_dark: "hsl(72 19% 27%)"
     surface_light: "hsl(72 19% 92%)"
-    surface_dark:  "hsl(72 19% 18%)"
+    surface_dark: "hsl(72 19% 18%)"
     icon: mdi:compass-rose
     sense: orientation toward the reader's task
 
   - id: E
     label: Expression
     spread: 30
-    ink_light:     "hsl(206 19% 73%)"
-    ink_dark:      "hsl(206 19% 27%)"
+    ink_light: "hsl(206 19% 73%)"
+    ink_dark: "hsl(206 19% 27%)"
     surface_light: "hsl(206 19% 92%)"
-    surface_dark:  "hsl(206 19% 18%)"
+    surface_dark: "hsl(206 19% 18%)"
     icon: mdi:quill
     sense: language, surface form
 
   - id: F
     label: Form
     spread: 20
-    ink_light:     "hsl(35 19% 73%)"
-    ink_dark:      "hsl(35 19% 27%)"
+    ink_light: "hsl(35 19% 73%)"
+    ink_dark: "hsl(35 19% 27%)"
     surface_light: "hsl(35 19% 92%)"
-    surface_dark:  "hsl(35 19% 18%)"
+    surface_dark: "hsl(35 19% 18%)"
     icon: mdi:scroll
     sense: the document as a structured artifact
 
   - id: R
     label: Reasoning
     spread: 40
-    ink_light:     "hsl(0 19% 73%)"
-    ink_dark:      "hsl(0 19% 27%)"
+    ink_light: "hsl(0 19% 73%)"
+    ink_dark: "hsl(0 19% 27%)"
     surface_light: "hsl(0 19% 92%)"
-    surface_dark:  "hsl(0 19% 18%)"
+    surface_dark: "hsl(0 19% 18%)"
     icon: mdi:ruler
     sense: inference, measurement, rigor
 
   - id: G
     label: Grounding
     spread: 40
-    ink_light:     "hsl(162 19% 73%)"
-    ink_dark:      "hsl(162 19% 27%)"
+    ink_light: "hsl(162 19% 73%)"
+    ink_dark: "hsl(162 19% 27%)"
     surface_light: "hsl(162 19% 92%)"
-    surface_dark:  "hsl(162 19% 16%)"
+    surface_dark: "hsl(162 19% 16%)"
     icon: mdi:anchor
     sense: tied to sources and facts
 
   - id: J
     label: Judgment
     spread: 45
-    ink_light:     "hsl(265 19% 73%)"
-    ink_dark:      "hsl(265 19% 27%)"
+    ink_light: "hsl(265 19% 73%)"
+    ink_dark: "hsl(265 19% 27%)"
     surface_light: "hsl(265 19% 92%)"
-    surface_dark:  "hsl(265 19% 18%)"
+    surface_dark: "hsl(265 19% 18%)"
     icon: mdi:scale-balance
     sense: weighing claims, calibration
 
@@ -328,9 +328,11 @@ interactions:
     bg_strong: "hsl(0 0% 50% / 0.28)"
     # Gentle pace — every hover affordance + tip-panel slide + content
     # fade uses this single duration so the page reads as one motion
-    # system.  280ms sits in the "noticeable, not sluggish" sweet spot.
-    duration: "280ms"
-    easing: "cubic-bezier(0.2, 0, 0, 1)"
+    # system.  480ms reads as deliberately unhurried; the easing curve
+    # is a slow-finish (cubic out) so the motion glides to rest rather
+    # than snapping into place at the end.
+    duration: "480ms"
+    easing: "cubic-bezier(0.32, 0.72, 0, 1)"
 
 # Typography tokens — small-caps eyebrow pattern that's used everywhere the
 # design system has a small overline-style heading (panel kickers, section

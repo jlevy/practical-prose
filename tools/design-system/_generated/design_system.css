@@ -72,9 +72,9 @@ Regenerate with: uv run --script tools/design-system/generate.py */
   /* Hover affordance (theme-independent) */
   --hover-bg: hsl(0 0% 50% / 0.15);
   --hover-bg-strong: hsl(0 0% 50% / 0.28);
-  --hover-duration: 280ms;
-  --hover-easing: cubic-bezier(0.2, 0, 0, 1);
-  --hover-transition: background-color 280ms cubic-bezier(0.2, 0, 0, 1), color 280ms cubic-bezier(0.2, 0, 0, 1), border-color 280ms cubic-bezier(0.2, 0, 0, 1), transform 280ms cubic-bezier(0.2, 0, 0, 1);
+  --hover-duration: 480ms;
+  --hover-easing: cubic-bezier(0.32, 0.72, 0, 1);
+  --hover-transition: background-color 480ms cubic-bezier(0.32, 0.72, 0, 1), color 480ms cubic-bezier(0.32, 0.72, 0, 1), border-color 480ms cubic-bezier(0.32, 0.72, 0, 1), transform 480ms cubic-bezier(0.32, 0.72, 0, 1);
 
   /* Typography — small-caps eyebrow tokens */
   --tracking-caps: 0.09em;

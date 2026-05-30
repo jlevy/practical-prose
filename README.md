@@ -2,20 +2,6 @@
 
 Joshua Levy (github.com/jlevy) with agent assistance
 
-## Quick Start
-
-After the package is published, use the Practical Prose CLI in any repo with
-[uv](https://docs.astral.sh/uv/):
-
-```bash
-uvx pprose --help
-uvx pprose install --agents-md
-```
-
-The package name and command are both `pprose`. `pprose install` writes portable agent
-skills into `.claude/skills/`; `--agents-md` also adds a short routing block to
-`AGENTS.md` when a repo uses that file.
-
 ## Why Practical Prose Matters
 
 Clear writing and clear thinking are inseparable.
@@ -34,9 +20,8 @@ and method with the romantic virtues of voice, proportion, rhythm, and felt mean
 
 ## Practical Writing in the Age of AI
 
-The rise of AI makes the need to focus on quality more urgent than ever.
-Language is now drafted, transformed, summarized, and evaluated by LLMs in greater
-volume than by humans.
+The rise of AI writing means language is now drafted, transformed, summarized, and
+evaluated by LLMs in greater volume than by humans.
 
 Fluency is cheap. Judgment remains precious.
 
@@ -80,6 +65,19 @@ common to each language.
 The aim of standards is not simply to follow rules but to promote quality in service of
 a purpose: prose where form, evidence, reasoning, and human effect fit the work to be
 done.
+
+## Quick Start
+
+Use the Practical Prose CLI in any repo with [uv](https://docs.astral.sh/uv/):
+
+```bash
+uvx pprose --help
+uvx pprose install --agents-md
+```
+
+The package name and command are both `pprose`. `pprose install` writes portable agent
+skills into `.claude/skills/`; `--agents-md` also adds a short routing block to
+`AGENTS.md` when a repo uses that file.
 
 ## Principles of Quality in Practical Writing
 
