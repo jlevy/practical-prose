@@ -1,15 +1,30 @@
 """`pprose install` and `pprose skill` — install Practical Prose skills into a repo.
 
-`pprose install` writes generated `SKILL.md` files into a target repo's project-local
-agent surfaces — `.agents/skills/<name>/SKILL.md` for Codex/Gemini CLI/pi, plus a Claude
-Code mirror at `.claude/skills/<name>/SKILL.md` — and a marker-bounded block in
-`AGENTS.md`. Each generated artifact carries a `format=fNN surface=<id>` stamp so a
-future pprose can detect older layouts and refresh them, and refuses to clobber any
-artifact stamped with a newer format than it understands.
+`pprose install` runs in one of two **scopes**:
 
-The bootstrap line baked into each generated skill points at the *installed* pprose
-version, so the same `pprose <cmd>` invocations in the skill body work even when the
-agent doesn't have `pprose` on its PATH (the `uvx pprose@<ver>` fallback handles it).
+- **Project** (`--project`, the default when cwd is unambiguously inside a git repo)
+  writes into `<target>/.agents/skills/<name>/SKILL.md` (Codex/Gemini CLI/pi),
+  `<target>/.claude/skills/<name>/SKILL.md` (Claude Code), and a marker-bounded
+  block in `<target>/AGENTS.md`.
+- **User-global** (`--global`) writes into `$HOME/.agents/skills/<name>/SKILL.md`
+  and `$HOME/.claude/skills/<name>/SKILL.md`, making the skills available across
+  every project. Global mode never writes `$HOME/.codex/AGENTS.md` (skills are
+  on-demand; the global AGENTS.md should stay compact and user-authored).
+
+Outside an unambiguous project context (e.g. `$HOME`, `/tmp/scratch`, or any other
+directory not inside a git repo), `--project` or `--global` must be passed explicitly
+— there's no silent default.
+
+The `--surfaces=portable,claude,agents-md` flag selects install destinations within
+the chosen scope. `portable` → `.agents/skills/`; `claude` → `.claude/skills/`;
+`agents-md` → marker block in `AGENTS.md` (project mode only).
+
+Every generated artifact carries a `format=fNN` stamp so future pprose versions can
+detect and refresh older layouts, and refuse to clobber any artifact stamped with a
+newer format than they understand. The artifact type is identified by its location
+(a `SKILL.md` under `.agents/skills/<name>/` or `.claude/skills/<name>/`, or the
+BEGIN/END-bounded block inside `AGENTS.md`) rather than by an in-file tag, so the
+portable and Claude `SKILL.md` copies stay byte-identical.
 """
 
 from __future__ import annotations
@@ -26,32 +41,27 @@ from pprose import resources
 PACKAGE_NAME = "pprose"
 
 # Single monotonically-increasing format version stamped onto every pprose-generated
-# artifact (skill SKILL.md mirrors + the AGENTS.md block). Bump when the on-disk shape
-# of any generated artifact changes so a future pprose can detect and upgrade older
-# layouts (and a forward-compat guard can refuse to clobber a newer format).
+# artifact. Bump when the on-disk shape changes so a future pprose can upgrade older
+# layouts and a forward-compat guard can refuse to clobber a newer format.
 PPROSE_FORMAT = "f01"
 
 # Pinned skill bootstrap fallback when an editable/dev pprose is installed. A dev build
-# reports a PEP 440 dev/local segment (e.g. `0.0.1.dev53+f22b2cb`) that was never
-# published to PyPI, so `uvx pprose@<dev-pin>` won't resolve. Bump this on each real
-# PyPI release so the bootstrap line points at an installable version, and re-render
+# reports a PEP 440 dev/local segment that was never published to PyPI, so
+# `uvx pprose@<dev-pin>` won't resolve. Bump on each real PyPI release and re-render
 # the committed discovery copies under `skills/` at the repo root.
 DISCOVERY_VERSION = "0.1.0"
 
-# Surfaces touched by a project-local install. Two skill surfaces are byte-identical
-# (`SURFACE_SKILL_MD`) — both portable (`.agents/skills/`) and Claude
-# (`.claude/skills/`) write the same file; the marker only needs to identify it as a
-# generated skill artifact, not which directory it lives in. `agents-md` is a
-# marker-bounded block inside an `AGENTS.md` shared with other tools.
-SURFACE_SKILL_MD = "skill-md"
-SURFACE_AGENTS_MD = "agents-md"
+# Install scopes.
+SCOPE_PROJECT = "project"
+SCOPE_GLOBAL = "global"
 
-# Per-target identifiers used for action reporting and the `--<target>` / `--skip-<target>`
-# flag tri-state. `codex` covers `.agents/skills/` and the `AGENTS.md` block (Codex reads
-# `.agents/skills/` natively and `AGENTS.md` is its primary instruction surface).
-TARGET_CLAUDE = "claude"
-TARGET_CODEX = "codex"
-ALL_TARGETS = frozenset({TARGET_CLAUDE, TARGET_CODEX})
+# Install-selector surfaces (the `--surfaces=` flag values + InstallResult.surface).
+# These are install *destinations*, not artifact identities.
+SURFACE_PORTABLE = "portable"  # .agents/skills/<name>/SKILL.md
+SURFACE_CLAUDE = "claude"  # .claude/skills/<name>/SKILL.md
+SURFACE_AGENTS_MD = "agents-md"  # marker block in AGENTS.md (project mode only)
+ALL_INSTALL_SURFACES = frozenset({SURFACE_PORTABLE, SURFACE_CLAUDE, SURFACE_AGENTS_MD})
+_VALID_SURFACE_TOKENS = sorted(ALL_INSTALL_SURFACES | {"all"})
 
 PORTABLE_SKILLS_DIR = Path(".agents") / "skills"
 CLAUDE_SKILLS_DIR = Path(".claude") / "skills"
@@ -61,17 +71,22 @@ AGENTS_END_MARKER = "<!-- END PPROSE INTEGRATION -->"
 _AGENTS_BLOCK_RE = re.compile(
     re.escape(AGENTS_BEGIN_PREFIX) + r".*?" + re.escape(AGENTS_END_MARKER), re.DOTALL
 )
-# Anchored on the BEGIN prefix so a stray `format=fXX` elsewhere in the file can't
-# fool the forward-compatibility guard.
+# Anchored on the BEGIN prefix so a stray `format=fXX` elsewhere can't fool the guard.
 _AGENTS_BEGIN_STAMP_RE = re.compile(re.escape(AGENTS_BEGIN_PREFIX) + r"\s+format=f(\d+)")
 
-# Format-stamp inside a generated SKILL.md (DO NOT EDIT marker line).
-_SKILL_STAMP_RE = re.compile(r"format=f(\d+)\s+surface=skill-md")
+# Format-stamp inside a generated SKILL.md (DO NOT EDIT marker line). Anchored on
+# `pprose install` so it doesn't match a stray `format=fNN` from another tool.
+_SKILL_STAMP_RE = re.compile(r"generated by `pprose install`.*?format=f(\d+)")
 
-# PEP 440 release identifier: digits + dots, optional `.postN`. Dev (`.devN`), pre-release
-# (`aN`/`bN`/`rcN`/`cN`), and local (`+<hash>`) versions are deliberately rejected — they
+# PEP 440 release identifier: digits + dots, optional `.postN`. Dev (`.devN`), pre-
+# release (`aN`/`bN`/`rcN`/`cN`), and local (`+<hash>`) versions are rejected — they
 # were never uploaded to PyPI, so `uvx pprose@<dev-pin>` against them can't resolve.
 _PYPI_RELEASE_RE = re.compile(r"^\d+(?:\.\d+)*(?:\.post\d+)?$")
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Version pin handling
+# ─────────────────────────────────────────────────────────────────────────────
 
 
 def is_pypi_release(version_str: str) -> bool:
@@ -97,6 +112,96 @@ def _format_num() -> int:
     return int(PPROSE_FORMAT.lstrip("f"))
 
 
+# ─────────────────────────────────────────────────────────────────────────────
+# Scope resolution and pre-flight guards
+# ─────────────────────────────────────────────────────────────────────────────
+
+
+def _is_within_git_repo(path: Path) -> bool:
+    """Whether `path` or any ancestor contains a `.git` entry.
+
+    `.git` is a directory in a regular repo and a file in a worktree/submodule, so
+    `.exists()` covers both.
+    """
+    for p in (path, *path.parents):
+        if (p / ".git").exists():
+            return True
+    return False
+
+
+def _protected_target_reason(path: Path) -> str | None:
+    """Return a human-readable reason if `path` is a path project-mode refuses to write to.
+
+    `$HOME` and the filesystem root are the cases where a project-local install would
+    silently land on the user's *global* agent surfaces (`~/.claude/skills/`,
+    `~/.agents/skills/`, `~/AGENTS.md`). Anywhere else outside a git repo is caught
+    by the git-repo guard.
+    """
+    resolved = path.resolve()
+    if resolved.parent == resolved:
+        return "filesystem root"
+    try:
+        if resolved == Path.home().resolve():
+            return "home directory ($HOME)"
+    except (OSError, RuntimeError):
+        # Path.home() can raise on misconfigured systems; better safe than sorry.
+        pass
+    return None
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Surface parsing
+# ─────────────────────────────────────────────────────────────────────────────
+
+
+class SurfaceSpec(NamedTuple):
+    """Parsed `--surfaces` value plus a flag for whether `agents-md` was named explicitly.
+
+    Tracking explicit `agents-md` lets `install_main` distinguish "user passed
+    `--surfaces=all` (silently drop agents-md in global mode)" from "user passed
+    `--surfaces=agents-md` (error in global mode)".
+    """
+
+    surfaces: frozenset[str]
+    agents_md_explicit: bool
+
+
+def parse_surfaces(raw: str | None) -> SurfaceSpec:
+    """Parse a `--surfaces=<comma-list>` value.
+
+    `None` or omitted → all install surfaces.
+    Tokens: any subset of `{portable, claude, agents-md}` plus the `all` alias.
+    Empty or unknown tokens raise `ValueError` with a clear valid-values message.
+    """
+    if raw is None:
+        return SurfaceSpec(ALL_INSTALL_SURFACES, agents_md_explicit=False)
+    tokens = [t.strip() for t in raw.split(",") if t.strip()]
+    if not tokens:
+        raise ValueError(
+            "--surfaces is empty; pass a comma-separated list of: "
+            + ", ".join(_VALID_SURFACE_TOKENS)
+        )
+    expanded: set[str] = set()
+    agents_md_explicit = False
+    for tok in tokens:
+        if tok == "all":
+            expanded |= ALL_INSTALL_SURFACES
+        elif tok in ALL_INSTALL_SURFACES:
+            expanded.add(tok)
+            if tok == SURFACE_AGENTS_MD:
+                agents_md_explicit = True
+        else:
+            raise ValueError(
+                f"unknown surface {tok!r}; valid: " + ", ".join(_VALID_SURFACE_TOKENS)
+            )
+    return SurfaceSpec(frozenset(expanded), agents_md_explicit)
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Skill content composition
+# ─────────────────────────────────────────────────────────────────────────────
+
+
 def _split_frontmatter(raw: str) -> tuple[str, str]:
     """Return (frontmatter_without_delimiters, body). Empty frontmatter if absent."""
     lines = raw.splitlines()
@@ -109,11 +214,10 @@ def _split_frontmatter(raw: str) -> tuple[str, str]:
 
 def _skill_marker() -> str:
     # No internal `.` in the marker text so a flowmark/sentence-wrap pass leaves the
-    # line intact (matches flowmark's pattern).
-    return (
-        f"<!-- DO NOT EDIT: generated by `pprose install` "
-        f"(format={PPROSE_FORMAT} surface={SURFACE_SKILL_MD}) -->"
-    )
+    # line intact. The artifact type is identified by file location (SKILL.md under a
+    # `.agents/skills/<name>/` or `.claude/skills/<name>/` directory); the only
+    # load-bearing field here is the format stamp.
+    return f"<!-- DO NOT EDIT: generated by `pprose install` (format={PPROSE_FORMAT}) -->"
 
 
 def _bootstrap_line(pin: str) -> str:
@@ -130,8 +234,8 @@ def compose_skill(name: str, pin: str | None = None) -> str:
     """Render an installable SKILL.md: frontmatter + DO-NOT-EDIT marker + bootstrap + body.
 
     Deterministic: same inputs produce byte-identical output (no timestamps, no machine
-    paths), so the drift test for the committed discovery copies under `skills/` is
-    stable across machines and CI.
+    paths), so the drift test for committed discovery copies under `skills/` is stable
+    across machines and CI.
     """
     pin = pin if pin is not None else pinned_version()
     fm, body = _split_frontmatter(resources.read_doc("skills", name))
@@ -171,13 +275,13 @@ def agents_md_block(pin: str | None = None, skills: list[str] | None = None) -> 
 
     Compact (so it doesn't dominate the always-on AGENTS.md context). Routes the agent
     to `pprose --help` and the resource list commands rather than duplicating their
-    output; the `format=fNN` field on the BEGIN marker lets a future pprose detect and
-    upgrade older blocks (and refuse to clobber a newer one).
+    output; the `format=fNN` field on the BEGIN marker lets a future pprose detect
+    and upgrade older blocks (and refuse to clobber a newer one).
     """
     pin = pin if pin is not None else pinned_version()
     skills = skills if skills is not None else resources.list_names("skills")
     lines = [
-        f"{AGENTS_BEGIN_PREFIX} format={PPROSE_FORMAT} surface={SURFACE_AGENTS_MD} -->",
+        f"{AGENTS_BEGIN_PREFIX} format={PPROSE_FORMAT} -->",
         "## Practical Prose (pprose)",
         "",
         "Practical Prose tooling: deterministic metrics, rubric scoring, evaluation",
@@ -201,11 +305,15 @@ def agents_md_block(pin: str | None = None, skills: list[str] | None = None) -> 
     return "\n".join(lines)
 
 
+# ─────────────────────────────────────────────────────────────────────────────
+# Filesystem writes
+# ─────────────────────────────────────────────────────────────────────────────
+
+
 class InstallResult(NamedTuple):
     """Per-artifact result from a `pprose install` run."""
 
-    target: str  # TARGET_CLAUDE or TARGET_CODEX (or "agents-md" for the shared block)
-    surface: str  # SURFACE_SKILL_MD or SURFACE_AGENTS_MD
+    surface: str  # SURFACE_PORTABLE, SURFACE_CLAUDE, or SURFACE_AGENTS_MD
     skill: str | None  # skill name for a SKILL.md write, else None
     path: Path
     action: str  # "installed" | "updated" | "unchanged" | "blocked-newer"
@@ -227,33 +335,31 @@ def _write_atomic(path: Path, content: str) -> None:
 
 
 def _write_skill_file(
-    skill_dir: Path, target: str, name: str, content: str
+    skill_dir: Path, surface: str, name: str, content: str
 ) -> InstallResult:
     out = skill_dir / "SKILL.md"
     existing = _existing_skill_format(out)
     # Forward-compatibility guard: never clobber a newer-format artifact.
     if existing is not None and existing > _format_num():
-        return InstallResult(target, SURFACE_SKILL_MD, name, out, "blocked-newer")
+        return InstallResult(surface, name, out, "blocked-newer")
     if out.is_file() and out.read_text(encoding="utf-8") == content:
-        return InstallResult(target, SURFACE_SKILL_MD, name, out, "unchanged")
+        return InstallResult(surface, name, out, "unchanged")
     action = "updated" if out.exists() else "installed"
     _write_atomic(out, content)
-    return InstallResult(target, SURFACE_SKILL_MD, name, out, action)
+    return InstallResult(surface, name, out, action)
 
 
 def _update_agents_md(path: Path, block: str) -> InstallResult:
     """Insert or refresh the pprose block in `AGENTS.md`, preserving content outside markers.
 
-    Collapses duplicate or stale blocks (e.g. left by an older install) to one current
-    block at the position of the first stale block.
+    Collapses duplicate or stale blocks to one current block at the position of the
+    first stale block.
     """
     existing = path.read_text(encoding="utf-8") if path.is_file() else None
 
     if existing is not None and (m := _AGENTS_BEGIN_STAMP_RE.search(existing)):
         if int(m.group(1)) > _format_num():
-            return InstallResult(
-                "agents-md", SURFACE_AGENTS_MD, None, path, "blocked-newer"
-            )
+            return InstallResult(SURFACE_AGENTS_MD, None, path, "blocked-newer")
 
     if existing is None or AGENTS_BEGIN_PREFIX not in existing:
         if not existing:
@@ -273,26 +379,23 @@ def _update_agents_md(path: Path, block: str) -> InstallResult:
         new_content = head + block + "".join(tail_parts)
 
     if existing == new_content:
-        return InstallResult("agents-md", SURFACE_AGENTS_MD, None, path, "unchanged")
+        return InstallResult(SURFACE_AGENTS_MD, None, path, "unchanged")
     action = "updated" if existing is not None else "installed"
     _write_atomic(path, new_content)
-    return InstallResult("agents-md", SURFACE_AGENTS_MD, None, path, action)
+    return InstallResult(SURFACE_AGENTS_MD, None, path, action)
 
 
 def install(
     target_root: Path,
-    targets: frozenset[str] = ALL_TARGETS,
+    surfaces: frozenset[str] = ALL_INSTALL_SURFACES,
     *,
     pin: str | None = None,
-    write_agents_md: bool = True,
 ) -> list[InstallResult]:
     """Install pprose skills into `target_root`, returning per-artifact results.
 
-    `targets` selects which agent integrations to write. Pass any subset of
-    {`TARGET_CLAUDE`, `TARGET_CODEX`}. The Codex target includes both
-    `.agents/skills/<name>/SKILL.md` (read natively by Codex/Gemini CLI/pi) and the
-    `AGENTS.md` marker block; pass `write_agents_md=False` to suppress only the
-    AGENTS.md update while keeping the portable `.agents/skills/` mirror.
+    `surfaces` is any subset of {`SURFACE_PORTABLE`, `SURFACE_CLAUDE`,
+    `SURFACE_AGENTS_MD`}. The caller is responsible for scope-specific filtering
+    (e.g. user-global mode should drop `SURFACE_AGENTS_MD` before calling).
 
     `pin` overrides the version pin baked into generated skills (defaults to the
     running pprose version when it's a real PyPI release, else `DISCOVERY_VERSION`).
@@ -303,35 +406,45 @@ def install(
     skills = resources.list_names("skills")
     results: list[InstallResult] = []
 
-    if TARGET_CODEX in targets:
+    if SURFACE_PORTABLE in surfaces:
         for name in skills:
             content = compose_skill(name, pin)
             results.append(
                 _write_skill_file(
-                    target_root / PORTABLE_SKILLS_DIR / name, TARGET_CODEX, name, content
+                    target_root / PORTABLE_SKILLS_DIR / name,
+                    SURFACE_PORTABLE,
+                    name,
+                    content,
                 )
             )
-        if write_agents_md:
-            block = agents_md_block(pin, skills)
-            results.append(_update_agents_md(target_root / "AGENTS.md", block))
-
-    if TARGET_CLAUDE in targets:
+    if SURFACE_CLAUDE in surfaces:
         for name in skills:
             content = compose_skill(name, pin)
             results.append(
                 _write_skill_file(
-                    target_root / CLAUDE_SKILLS_DIR / name, TARGET_CLAUDE, name, content
+                    target_root / CLAUDE_SKILLS_DIR / name,
+                    SURFACE_CLAUDE,
+                    name,
+                    content,
                 )
             )
+    if SURFACE_AGENTS_MD in surfaces:
+        block = agents_md_block(pin, skills)
+        results.append(_update_agents_md(target_root / "AGENTS.md", block))
 
     return results
 
 
+# ─────────────────────────────────────────────────────────────────────────────
+# CLI entry point
+# ─────────────────────────────────────────────────────────────────────────────
+
+
 def _print_summary(results: list[InstallResult], pin: str) -> None:
-    print(f"\npprose skill installation (pinned pprose@{pin}):")
     if not results:
-        print("  (no surfaces selected)")
+        print("\npprose install: no surfaces selected (nothing to do).")
         return
+    print(f"\npprose skill installation (pinned pprose@{pin}):")
     counts: dict[str, int] = {}
     blocked: list[InstallResult] = []
     for r in results:
@@ -342,7 +455,7 @@ def _print_summary(results: list[InstallResult], pin: str) -> None:
         if action in counts:
             print(f"  {action}: {counts[action]}")
     for r in results:
-        tag = f"{r.target}:{r.skill}" if r.skill else r.target
+        tag = f"{r.surface}:{r.skill}" if r.skill else r.surface
         marker = "!" if r.action == "blocked-newer" else " "
         print(f"  {marker} [{r.action}] {tag}\t{r.path}")
     if blocked:
@@ -353,45 +466,66 @@ def _print_summary(results: list[InstallResult], pin: str) -> None:
         )
 
 
+_HELP_EPILOG = """\
+Scope:
+  In a git repo (and not $HOME), --project is implicit.
+  Outside a git repo or in $HOME, pass --project or --global explicitly.
+  $HOME is always refused in --project mode; use --global for a user-wide install.
+
+Cross-scope coexistence: project-scope skills shadow user-scope skills of the same
+name in modern agents (Codex documents this; Claude Code's two discovery paths
+imply the same layering). Installing both globally and per-project is a supported
+pattern, not a conflict.
+"""
+
+
 def install_main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(
+        prog="pprose install",
         description=(
-            "Install Practical Prose skills into a repo "
-            "(.agents/skills + .claude/skills + an AGENTS.md block)."
+            "Install Practical Prose skills into a project (--project, default when "
+            "cwd is unambiguously inside a git repo) or globally for the current user "
+            "(--global). Outside an unambiguous project context, --project or --global "
+            "must be passed explicitly."
         ),
+        epilog=_HELP_EPILOG,
+        formatter_class=argparse.RawDescriptionHelpFormatter,
     )
-    parser.add_argument("--dir", default=".", help="target repo root (default: cwd)")
+    # `--project` and `--global` are mutually exclusive, but we check that manually
+    # so the error message uses our own wording (and returns an exit code rather
+    # than the SystemExit that add_mutually_exclusive_group raises).
     parser.add_argument(
-        "--auto", action="store_true", help="non-interactive (for agents)"
-    )
-    parser.add_argument(
-        "--print",
+        "--project",
         action="store_true",
-        help="print the generated SKILL.md files to stdout; write nothing",
+        help="install project-locally (default when cwd is inside a git repo)",
     )
+    # `dest='global_'` because `global` is a Python keyword.
     parser.add_argument(
-        "--all", action="store_true", help="install every supported target (default)"
-    )
-    parser.add_argument(
-        "--claude",
+        "--global",
         action="store_true",
-        help=f"install/refresh the Claude Code target ({CLAUDE_SKILLS_DIR})",
+        dest="global_",
+        help=f"install for the current user ({PORTABLE_SKILLS_DIR} + {CLAUDE_SKILLS_DIR} under $HOME)",
     )
     parser.add_argument(
-        "--codex",
+        "--dir",
+        default=None,
+        help="project root for --project (default: cwd; incompatible with --global)",
+    )
+    parser.add_argument(
+        "--no-repo-check",
         action="store_true",
-        help=f"install/refresh the Codex target ({PORTABLE_SKILLS_DIR} + AGENTS.md block)",
+        help="allow --project outside a git repo (still refuses $HOME)",
     )
     parser.add_argument(
-        "--skip-claude", action="store_true", help="suppress the Claude Code target"
-    )
-    parser.add_argument(
-        "--skip-codex", action="store_true", help="suppress the Codex target"
-    )
-    parser.add_argument(
-        "--no-agents-md",
-        action="store_true",
-        help="suppress only the AGENTS.md block (keep .agents/skills/)",
+        "--surfaces",
+        default=None,
+        metavar="LIST",
+        help=(
+            "comma-separated subset of surfaces to install. "
+            "Values: portable (.agents/skills/), claude (.claude/skills/), "
+            "agents-md (AGENTS.md block; project mode only), all (default if omitted). "
+            "Example: --surfaces=portable,agents-md"
+        ),
     )
     parser.add_argument(
         "--pin",
@@ -401,43 +535,107 @@ def install_main(argv: list[str] | None = None) -> int:
             "(default: installed pprose if it's a real PyPI release, else DISCOVERY_VERSION)"
         ),
     )
+    parser.add_argument(
+        "--auto",
+        action="store_true",
+        help="non-interactive (for agents); does not relax the ambiguity check",
+    )
     args = parser.parse_args(argv)
 
-    pin = args.pin if args.pin else pinned_version()
-    skills = resources.list_names("skills")
-    target = Path(args.dir).resolve()
+    # Parse --surfaces first; argument-shape errors return exit 2 (argparse convention).
+    try:
+        spec = parse_surfaces(args.surfaces)
+    except ValueError as exc:
+        print(f"pprose install: error: {exc}", file=sys.stderr)
+        return 2
 
-    if args.print:
-        for name in skills:
-            print(f"# === {PORTABLE_SKILLS_DIR}/{name}/SKILL.md ===")
-            print(f"# === {CLAUDE_SKILLS_DIR}/{name}/SKILL.md ===")
-            print(compose_skill(name, pin))
-        print(f"# === AGENTS.md (pprose block) ===\n{agents_md_block(pin, skills)}")
-        return 0
+    # Mutually exclusive scope flags.
+    if args.project and args.global_:
+        print(
+            "pprose install: error: --project and --global are mutually exclusive.",
+            file=sys.stderr,
+        )
+        return 2
+    if args.global_ and args.dir is not None:
+        print(
+            "pprose install: error: --global and --dir are mutually exclusive "
+            "(--global always writes under $HOME).",
+            file=sys.stderr,
+        )
+        return 2
 
-    # Surface selection: a positive `--<target>` flag forces just that target
-    # (suppressing the unflagged ones); `--skip-<target>` forces it off. No flag
-    # means install everything (no detection needed; pprose installs from scratch).
-    has_positive = args.all or args.claude or args.codex
-    if has_positive:
-        selected: set[str] = set()
-        if args.all or args.claude:
-            selected.add(TARGET_CLAUDE)
-        if args.all or args.codex:
-            selected.add(TARGET_CODEX)
+    # Resolve scope and target.
+    if args.global_:
+        scope = SCOPE_GLOBAL
+        target = Path.home()
     else:
-        selected = set(ALL_TARGETS)
-    if args.skip_claude:
-        selected.discard(TARGET_CLAUDE)
-    if args.skip_codex:
-        selected.discard(TARGET_CODEX)
+        target = Path(args.dir if args.dir is not None else ".").resolve()
+        if args.project:
+            scope = SCOPE_PROJECT
+        else:
+            # Implicit: project iff cwd is unambiguously a project.
+            protected = _protected_target_reason(target)
+            if protected:
+                print(
+                    f"pprose install: ambiguous scope ({target} is your "
+                    f"{protected}). Pass --project (with --dir <project-root>) or "
+                    f"--global explicitly.",
+                    file=sys.stderr,
+                )
+                return 2
+            if not _is_within_git_repo(target):
+                print(
+                    f"pprose install: ambiguous scope ({target} is not inside a "
+                    f"git repository). Pass --project --no-repo-check or --global "
+                    f"explicitly, or cd into your project root.",
+                    file=sys.stderr,
+                )
+                return 2
+            scope = SCOPE_PROJECT
 
-    results = install(
-        target,
-        frozenset(selected),
-        pin=pin,
-        write_agents_md=not args.no_agents_md,
-    )
+    # Scope-specific guards and surface filtering.
+    if scope == SCOPE_PROJECT:
+        protected = _protected_target_reason(target)
+        if protected:
+            print(
+                f"pprose install --project: refusing to install into {target} "
+                f"({protected}). That would write to your global agent surfaces "
+                f"(~/.agents/skills/, ~/.claude/skills/, ~/AGENTS.md). Use "
+                f"--global for a user-wide install, or pass --dir <project-root>.",
+                file=sys.stderr,
+            )
+            return 2
+        if not args.no_repo_check and not _is_within_git_repo(target):
+            print(
+                f"pprose install --project: {target} is not inside a git repository. "
+                f"Pass --no-repo-check to install here anyway, or cd into your project root.",
+                file=sys.stderr,
+            )
+            return 2
+        selected = spec.surfaces
+        mode_label = "project mode"
+    else:  # SCOPE_GLOBAL
+        if spec.agents_md_explicit:
+            print(
+                "pprose install --global: agents-md is not supported in --global mode "
+                "(the global Codex AGENTS.md at ~/.codex/AGENTS.md should stay "
+                "user-authored). Drop agents-md from --surfaces, or use --project.",
+                file=sys.stderr,
+            )
+            return 2
+        # `--surfaces=all` (or omitted) silently drops agents-md in global mode.
+        selected = spec.surfaces - {SURFACE_AGENTS_MD}
+        mode_label = "user-global mode"
+
+    pin = args.pin if args.pin else pinned_version()
+
+    # Pre-write target message — last thing printed before any filesystem writes,
+    # so an interactive user can ctrl-c if the resolved target or surface list is wrong.
+    print(f"Installing pprose skills ({mode_label}) into: {target}")
+    if selected:
+        print(f"  surfaces: {', '.join(sorted(selected))}")
+
+    results = install(target, selected, pin=pin)
     _print_summary(results, pin)
 
     blocked = any(r.action == "blocked-newer" for r in results)

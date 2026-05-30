@@ -65,8 +65,7 @@ COMMANDS: dict[str, CommandSpec] = {
         "Reference",
     ),
     "install": CommandSpec(
-        "Install the Practical Prose skills into a repo "
-        "(.agents/skills + .claude/skills + AGENTS.md block).",
+        "Install Practical Prose skills (--project to a repo, --global for the user).",
         install.install_main,
         "Setup",
     ),
