@@ -4,7 +4,8 @@ description: Compare evaluated document versions or variants; read-only on sourc
 ---
 # Compare Practical Prose Evaluations
 
-This is read-only on source documents. It writes or prints comparison reports.
+This is read-only on source documents.
+It writes or prints comparison reports.
 
 Use it after each input document already has a validated Practical Prose eval report.
 
@@ -16,6 +17,7 @@ Use it after each input document already has a validated Practical Prose eval re
 ## Steps
 
 1. Run `pprose runbook practical-prose-eval-compare` for the full procedure.
+
 2. Validate each input:
 
    ```bash

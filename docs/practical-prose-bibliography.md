@@ -463,6 +463,151 @@ legal-domain anchors specifically.
   2021)[^kovach-rosenstiel]. The standard statement of journalism’s principles.
   Verification as the central discipline; widely assigned in J-school.
 
+## Critique of AI-Authored Prose
+
+Work on the register, vocabulary, and rhetorical fingerprints of LLM-generated prose,
+and the editorial response.
+[ai-prose-corrections.md](ai-prose-corrections.md) is the binding extension that turns
+this body of work into a checkable list.
+
+**Empirical and linguistic studies.**
+
+- **Liang et al., “Mapping the Increasing Use of LLMs in Scientific Papers”** (2024)
+  [^liang-llm-mapping]. The Stanford study that established the marker-word methodology
+  now widely adopted: models scientific corpora as a mixture of human and LLM text and
+  tracks the post-ChatGPT shift in word frequencies.
+- **Kobak et al., “Delving into LLM-Assisted Writing in Biomedical Publications through
+  Excess Vocabulary”** (2025)[^kobak-delving]. Population-scale evidence for the LLM
+  “fingerprint” across millions of PubMed abstracts.
+  Identifies excess words (*delve*, *showcasing*, *underscores*, *pivotal*) appearing in
+  ~10–30% of 2024 abstracts using a COVID-style excess-frequency method.
+- **Juzek & Ward, “Why Does ChatGPT ‘Delve’ So Much?
+  Exploring the Sources of Lexical Overrepresentation in Large Language Models”**
+  (2024)[^juzek-ward-delve]. Tests and rules out architecture, algorithm, and
+  training-data explanations, locating the cause of LLM lexical tells in RLHF feedback
+  rather than the training corpus.
+
+**Style criticism and conceptual frames.**
+
+- **Chiang, “ChatGPT Is a Blurry JPEG of the Web”** (2023)[^chiang-blurry-jpeg]. The
+  lossy-compression metaphor that most subsequent style critiques borrow: LLM prose
+  reads as competent-but-blurred paraphrase rather than original thought.
+- **Hoel, “The Banality of ChatGPT”** (2022)[^hoel-banality]. A practicing-writer
+  critique of LLM register as statistically average prose; the durable essayistic
+  counterpart to the later tweet-thread taxonomies of tells.
+- **Bajohr, “Artificial and Post-Artificial Texts: On Machine Learning and the Reader’s
+  Expectations of Literary and Non-Literary Writing”** (2024) [^bajohr-post-artificial].
+  A literary-theoretic account of how LLM prose reshapes the reader’s default assumption
+  of human authorship, distinguishing artificial style from a coming “post-artificial”
+  style that performs humanness.
+
+**Editor and writing-craft guidance.**
+
+- **Sword, “Writing Critically with AI”** (2024)[^sword-writing-critically-with-ai].
+  Extends *Stylish Academic Writing* with concrete avoidance: run AI drafts through the
+  Writer’s Diet diagnostic for nominalizations (“zombie nouns”), prepositional pile-ups,
+  and abstract-noun bloat, the exact bloat AI register defaults to.
+- **Garner, “Prompting Prose: When Used Correctly, AI in Legal Writing Can Be a Useful
+  Tool”** (2024) and *LawProse Lesson #458*[^garner-prompting-prose]. Garner’s rule: use
+  AI as “amplifier, not author.”
+  Specifically warns against accepting LLM cadence in argumentative prose because it
+  flattens the rhetorical compression *Garner’s Modern English Usage* prizes.
+- **Michel, “Criticism in the Age of AI”** (*Counter Craft*, 2025)[^michel-criticism].
+  Argues for “very visible prose”: sentences that bear individual marks rather than the
+  “generic averaging” LLMs produce.
+  Concrete test: if a passage could be reproduced by a prompt, rewrite it.
+- **Clark, Q&A in *Poynter*** (2025)[^clark-poynter-qa]. Concrete craft test against AI
+  register: read the draft aloud, then have a trusted reader read it back; if the voice
+  does not sound like a recognizable person who is “a little better” than the writer’s
+  everyday speech, it has slid into machine-default tone.
+- **Folta, “Here’s a Handy Guide to Help You Spot AI Writing”** (*Literary Hub*,
+  2025)[^folta-handy-guide]. Editor-facing checklist of register tells (formulaic
+  transitions, hedged universals, reflexive both-sides framing) with a rewrite
+  heuristic: when you find one, replace it with a sentence containing a verifiable
+  detail only the author could know.
+
+**Practitioner rule sets and banned-phrase lists.**
+
+Working rule sheets published by practitioners.
+Quality varies; entries are publicly hosted, durably addressable, and present an
+enumerated rule set rather than a complaint.
+
+- **Lehmann, “Voice DNA”** (X/Twitter thread, 2026)[^lehmann-voice-dna]. Compact rule
+  sheet circulating widely among writers using LLMs.
+  Names the fatal self-negating parallel construction (“This isn’t X. This is Y.”) as
+  the highest-priority deletion; lists ~50 banned phrases across dead AI language, dead
+  transitions, engagement bait, AI cringe, and insider-claim framings.
+- **Pandya, “stop-slop: a skill file for removing AI tells from prose”** (2025)
+  [^pandya-stop-slop]. Packaged as a Claude-agent skill, combining a phrases.md banlist
+  (~60–80 entries across 8 categories) with a 5-dimension 1-10 prose rescoring rubric
+  for post-revision evaluation.
+  The only entry that pairs a banlist with a self-grading rubric.
+- **Cook, “How to write with ChatGPT: without it sounding like ChatGPT”** (2025)
+  [^cook-banlist]. Extensive (~200+ items across 10+ categories) banlist.
+  Includes categories the others lack: “therapist mode,” “validation before dismissal,”
+  “internal references,” and 10 contrast-reframe variations beyond the base “It’s not X,
+  it’s Y.” template.
+- **Hassid, “Ban”** (*How to AI* Substack, 2025)[^hassid-ban]. The only practitioner
+  list whose rule formulations are derived from empirical frequency analysis (cross-LLM
+  deep-research runs compared against arXiv corpus stats).
+  Names patterns like “In a world where…” and the triple-negation setup as
+  moralizing-generalization templates.
+- **Orbach, “The ‘Anti-AI’ Writing Cheat Sheet”** (*Marketing Ideas* Substack,
+  2026)[^orbach-anti-ai-cheat-sheet]. Every pattern in the 13-core-pattern, 24-rule set
+  is paired with concrete before/after rewrite examples; closest thing in this corpus to
+  a worked-example training set.
+  Ships a ready-to-paste meta-prompt that bakes the rule set into an LLM session.
+- **ai-boost, *awesome-prompts*: “29 signs of AI-generated text editor”** (2024–2025)
+  [^ai-boost-awesome-prompts]. A 29-tell registry packaged as a prompt asset; uniquely
+  includes “inflated symbolism” and “vague attributions” as distinct named tells
+  alongside vocabulary and passive-voice categories.
+
+**Negative finding:** as of mid-2026, no dedicated Vale style pack targets LLM register
+specifically. Vale supports it through `existence` and `substitution` rules (see the
+*Tools* section below), but no community pack exists yet.
+
+## Tools for AI-Prose Detection and Linting
+
+Open-source tools that help diagnose or remove AI register from drafts.
+None ships a rule pack explicitly targeting LLM tells (*delve*, *Furthermore*,
+self-negating parallels); the *Critique of AI-Authored Prose* section above lists the
+practitioner rule sheets that would feed such a pack.
+
+**AI-detection tools** (statistical, not rule-based).
+
+- **GLTR (Giant Language model Test Room)**[^gltr]. Visualizes per-token likelihood
+  under GPT-2 to surface the distributional fingerprints of machine-generated text.
+  Apache 2.0; the early reference work (2019).
+- **Binoculars**[^binoculars]. Zero-shot LLM-text detector that scores a passage by
+  comparing perplexity across two closely related base models (Hans et al., ICML 2024).
+  BSD-3-Clause.
+- **Ghostbuster**[^ghostbuster]. Trains a classifier on token-probability features
+  passed through weaker LMs to detect AI-generated text (Verma et al., 2023).
+
+**Prose linters** (rule-based; AI-tell coverage incomplete).
+
+- **proselint**[^proselint]. Python linter implementing rules drawn from named style
+  authorities (Strunk, Garner, Pinker, etc.). Has adjacent rules for hedges, cliches,
+  jargon, and corporate-speak that catch some AI tells (e.g., *leverage*, *utilize*) but
+  no module specifically targeting LLM register.
+  BSD-3-Clause; actively maintained.
+- **Vale**[^vale]. Markup-aware prose linter built around configurable style packages
+  (Microsoft, Google, write-good ports, custom YAML). No official AI-prose style pack,
+  but the `existence` and `substitution` rule types make a community AI-tell pack
+  straightforward to ship.
+  MIT.
+- **write-good**[^write-good]. Small Node linter flagging passive voice, weasel words,
+  wordy phrases, and adverbs.
+  MIT.
+- **alex**[^alex]. retext-based linter for insensitive or inconsiderate language; often
+  cited as the reference retext/unified plugin for building custom prose rules.
+  MIT.
+- **LanguageTool**[^languagetool]. Multilingual grammar, style, and spell checker with a
+  large XML-rule engine and community style ruleset.
+  Adjacent rules for redundancy, cliches, and register; no rules specifically calling
+  out LLM-flavored prose.
+  LGPL-2.1.
+
 ## Related Docs
 
 - [../README.md](../README.md): how the practical-prose layers fit together.
@@ -473,6 +618,9 @@ legal-domain anchors specifically.
   derived from the principles.
 - [practical-prose-rubric.md](practical-prose-rubric.md): descriptive 0-5 scoring
   anchors for the 20 dimensions.
+- [ai-prose-corrections.md](ai-prose-corrections.md): binding catalog of LLM-register
+  tells and their corrections; turns the *Critique of AI-Authored Prose* section above
+  into a checkable list.
 - [common-doc-guidelines.md](common-doc-guidelines.md): general style, organization, and
   formatting.
 
@@ -861,6 +1009,104 @@ legal-domain anchors specifically.
     Instruction for Practical Computer Skill*. Cambridge, MA: MIT Press, 1990. Also
     *Minimalism Beyond the Nurnberg Funnel*, MIT Press, 1998.
     <https://mitpress.mit.edu/9780262031639/the-nurnberg-funnel/>.
+
+[^liang-llm-mapping]: Liang, Weixin, Yaohui Zhang, Zhengxuan Wu, Haley Lepp, Wenlong Ji,
+    Xuandong Zhao, Hancheng Cao, Sheng Liu, Siyu He, Zhi Huang, Diyi Yang, Christopher
+    Potts, Christopher D. Manning, and James Y. Zou.
+    “Mapping the Increasing Use of LLMs in Scientific Papers.”
+    arXiv preprint arXiv:2404.01268, April 1, 2024. <https://arxiv.org/abs/2404.01268>.
+
+[^kobak-delving]: Kobak, Dmitry, Rita González-Márquez, Emőke-Ágnes Horvát, and Jan
+    Lause. “Delving into LLM-Assisted Writing in Biomedical Publications through Excess
+    Vocabulary.” *Science Advances* 11, no.
+    27 (2025). arXiv preprint, June 11, 2024. <https://arxiv.org/abs/2406.07016>.
+
+[^juzek-ward-delve]: Juzek, Tom S., and Zina B. Ward.
+    “Why Does ChatGPT ‘Delve’ So Much?
+    Exploring the Sources of Lexical Overrepresentation in Large Language Models.”
+    arXiv preprint arXiv:2412.11385, December 16, 2024.
+    <https://arxiv.org/abs/2412.11385>.
+
+[^chiang-blurry-jpeg]: Chiang, Ted. “ChatGPT Is a Blurry JPEG of the Web.”
+    *The New Yorker*, February 9, 2023.
+    <https://www.newyorker.com/tech/annals-of-technology/chatgpt-is-a-blurry-jpeg-of-the-web>.
+
+[^hoel-banality]: Hoel, Erik. “The Banality of ChatGPT.” *The Intrinsic Perspective*, December 7, 2022.
+    <https://www.theintrinsicperspective.com/p/the-banality-of-chatgpt>.
+
+[^bajohr-post-artificial]: Bajohr, Hannes. “Artificial and Post-Artificial Texts: On Machine Learning and the
+    Reader’s Expectations of Literary and Non-Literary Writing.”
+    *Poetics Today* 45, no.
+    2 (2024): 331–61. <https://doi.org/10.1215/03335372-11092990>.
+
+[^sword-writing-critically-with-ai]: Sword, Helen. “Writing Critically with AI.” helensword.com, 2024.
+    <https://www.helensword.com/helen-sword-blog/writing-critically-with-ai>.
+
+[^garner-prompting-prose]: Garner, Bryan A. “Prompting Prose: When Used Correctly, AI in
+    Legal Writing Can Be a Useful Tool.”
+    *ABA Journal*, 2024.
+    <https://www.abajournal.com/magazine/article/prompting-prose-when-used-correctly-ai-in-legal-writing-can-be-a-useful-tool>.
+    See also *LawProse Lesson #458, “The Best Uses of AI in Brief-Writing.”*
+    <https://lawprose.org/lawprose-lesson-458-the-best-uses-of-ai-in-brief-writing/>.
+
+[^michel-criticism]: Michel, Lincoln. “Criticism in the Age of AI.” *Counter Craft*, September 2025.
+    <https://countercraft.substack.com/p/criticism-in-the-age-of-ai>.
+
+[^clark-poynter-qa]: Clark, Roy Peter. “Q&A: Personal Essay Writing Tips from Roy Peter Clark, ‘America’s
+    Writing Coach.’” *Poynter*, 2025.
+    <https://www.poynter.org/reporting-editing/2025/roy-peter-clark-writing-tools-college-admissions-essay/>.
+
+[^folta-handy-guide]: Folta, James. “Here’s a Handy Guide to Help You Spot AI Writing.”
+    *Literary Hub*, September 28, 2025.
+    <https://lithub.com/heres-a-handy-guide-to-help-you-spot-ai-writing/>.
+
+[^lehmann-voice-dna]: Lehmann, Ole. “Voice DNA” (X/Twitter thread on getting Claude to match a writer’s
+    voice and on AI-prose banned phrases).
+    @itsolelehmann, 2026. <https://x.com/itsolelehmann/status/2058498037362905304>.
+
+[^pandya-stop-slop]: Pandya, Hardik. “stop-slop: a skill file for removing AI tells from prose.”
+    GitHub, 2025. MIT license.
+    <https://github.com/hardikpandya/stop-slop>.
+
+[^cook-banlist]: Cook, Jodie. “How to write with ChatGPT: without it sounding like ChatGPT.”
+    jodiecook.com, 2025. <https://www.jodiecook.com/ban-list/>.
+
+[^hassid-ban]: Hassid, Ruben. “Ban.”
+    *How to AI* Substack, November 9, 2025. <https://ruben.substack.com/p/delve>.
+
+[^orbach-anti-ai-cheat-sheet]: Orbach, Tom. “The ‘Anti-AI’ Writing Cheat Sheet.”
+    *Marketing Ideas* Substack, February 26, 2026.
+    <https://www.marketingideas.com/p/the-anti-ai-writing-cheat-sheet>.
+
+[^ai-boost-awesome-prompts]: ai-boost. *awesome-prompts*: “29 signs of AI-generated text editor.”
+    GitHub, 2024–2025. <https://github.com/ai-boost/awesome-prompts>.
+
+[^gltr]: Strobelt, Hendrik, Sebastian Gehrmann, Alexander M. Rush.
+    *GLTR (Giant Language model Test Room)*. GitHub, 2019. Apache 2.0.
+    <https://github.com/HendrikStrobelt/detecting-fake-text>.
+
+[^binoculars]: Hans, Abhimanyu, et al.
+    *Binoculars: Zero-Shot Detection of LLM-Generated Text*. GitHub, 2024. BSD-3-Clause.
+    ICML 2024. <https://github.com/ahans30/Binoculars>.
+
+[^ghostbuster]: Verma, Vivek, et al.
+    *Ghostbuster: Detecting Text Ghostwritten by Large Language Models*. GitHub, 2023.
+    <https://github.com/vivek3141/ghostbuster>.
+
+[^proselint]: Amperser Labs. *proselint*. GitHub.
+    BSD-3-Clause. <https://github.com/amperser/proselint>.
+
+[^vale]: Errata AI. *Vale*. GitHub.
+    MIT. <https://github.com/errata-ai/vale>.
+
+[^write-good]: Ford, Brett. *write-good*. GitHub.
+    MIT. <https://github.com/btford/write-good>.
+
+[^alex]: *alex: Catch insensitive, inconsiderate writing*. GitHub.
+    MIT. <https://github.com/get-alex/alex>.
+
+[^languagetool]: LanguageTool team. *LanguageTool*. GitHub.
+    LGPL-2.1. <https://github.com/languagetool-org/languagetool>.
 
 <!-- This document follows common-doc-guidelines.md.
 See github.com/jlevy/practical-prose and review guidelines before editing.

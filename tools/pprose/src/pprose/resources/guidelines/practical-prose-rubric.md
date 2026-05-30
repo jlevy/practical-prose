@@ -1166,18 +1166,20 @@ Current revision: **`pp20v1`**. Eval YAMLs produced under it set
 `metadata.rubric_version: pp20v1`. The `from-metrics` subcommand of
 `../scripts/eval_report.py` writes this automatically.
 
-The rubric is still under active development; `pp20v1` is a pre-release definition that is
-still being refined in place rather than a frozen release. The version tag is the identity
-stamp for “what schema this report was scored against,” not a release-stability promise.
-Bump it on changes that could shift scores or break loaders once the definition stabilizes:
+The rubric is still under active development; `pp20v1` is a pre-release definition that
+is still being refined in place rather than a frozen release.
+The version tag is the identity stamp for “what schema this report was scored against,”
+not a release-stability promise.
+Bump it on changes that could shift scores or break loaders once the definition
+stabilizes:
 
 - Dimension added, removed, renamed, or regrouped.
 - Score-anchor language tightened in a way that could move scores.
 - Score domain narrowed or widened.
 
-The six groups are **Purpose**, **Expression** (Clarity, Coherence, Concision),
-**Form** (Organization, Consistency, Formatting), **Reasoning**, **Grounding**, and
-**Judgment**. The version string is `pp20v1` (20 dimensions across 6 groups).
+The six groups are **Purpose**, **Expression** (Clarity, Coherence, Concision), **Form**
+(Organization, Consistency, Formatting), **Reasoning**, **Grounding**, and **Judgment**.
+The version string is `pp20v1` (20 dimensions across 6 groups).
 
 `../scripts/eval_compare.py` warns when comparing across rubric versions.
 

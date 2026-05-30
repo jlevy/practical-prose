@@ -2,8 +2,9 @@
 # full workflow.  Convention follows simple-modern-uv:
 #
 #   make install      # one-time: uv sync + npm install + git hooks
-#   make              # default: install + lint + test  (after `make generate`)
-#   make generate     # regenerate design-system derivatives from the YAML
+#   make              # default: install + format + generate + lint + test
+#   make generate     # regenerate derivatives (design system + pprose resources)
+#   make format       # auto-format Markdown with flowmark-rs (pinned)
 #   make lint         # auto-fix: format + lint Python + JS, refresh generated
 #   make lint-check   # CI-mode lint: read-only, fails on any drift
 #   make test         # run pprose tests
@@ -30,11 +31,16 @@ ROOT := $(CURDIR)
 
 .DEFAULT_GOAL := default
 .PHONY: default install hooks-install \
-        generate generate-check \
+        generate generate-check format \
         lint lint-check lint-py lint-py-check lint-js lint-js-check \
         test clean
 
-default: install generate lint test
+# Pinned for security/stability — bump deliberately, honoring the 14-day rule.
+FLOWMARK := uvx flowmark-rs@0.2.6
+
+# Order matters: format the canonical sources first, then `generate` syncs the
+# vendored mirrors and design-system derivatives off those formatted sources.
+default: install format generate lint test
 
 ## ─────────────── Install ───────────────
 
@@ -47,13 +53,34 @@ hooks-install: install
 
 ## ─────────────── Generate ───────────────
 
-# Regenerate every design-system derivative from the YAML.
+# Regenerate every derivative the repo carries:
+#   1. design-system derivatives (JS / CSS / Python) from the YAML
+#   2. pprose package resource mirrors (vendored copies of docs/,
+#      runbooks/, shortcuts/, skills/) from their canonical sources
+# Both are checked in; consumers should not need a build step.
 generate:
 	uv run --script tools/design-system/generate.py
+	cd tools/pprose && uv run python devtools/sync_resources.py
 
-# Verify checked-in derivatives match the YAML; fails on drift.
+# Verify checked-in derivatives match their sources; fails on any drift.
 generate-check:
 	uv run --script tools/design-system/generate.py --check
+	cd tools/pprose && uv run python devtools/sync_resources.py --check
+
+## ─────────────── Format (Markdown) ───────────────
+
+# Auto-format all Markdown with flowmark-rs (semantic line breaks, smart
+# quotes, safe cleanups). Pass `.` as the sole target so flowmark traverses
+# the repo and honors .flowmarkignore + .gitignore. Flowmark-rs only reads
+# .flowmarkignore relative to its target arg, so passing subdirs or globs
+# bypasses it.
+#
+# INVARIANT: lefthook's `format-markdown` pre-commit hook delegates to this
+# target. There must be exactly one flowmark invocation across the repo —
+# do not add per-directory variants or pass {staged_files} to flowmark
+# (that bypasses .flowmarkignore).
+format:
+	$(FLOWMARK) --auto .
 
 ## ─────────────── Lint (auto-fix) ───────────────
 

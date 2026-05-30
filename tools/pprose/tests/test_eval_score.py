@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import re
 from pathlib import Path
 
 import pytest
@@ -341,8 +342,9 @@ def test_build_prompt_is_schema_derived():
     # Every label appears in the canonical-name list.
     for dim in rs.DIMENSIONS:
         assert dim.label in prompt, f"missing label {dim.label}"
-    # The hard-coded count matches the schema.
-    assert f"all {rs.dimension_count()} keys present" in prompt
+    # The hard-coded count matches the schema. Allow flowmark to wrap the
+    # template across a line break between the number and "keys present".
+    assert re.search(rf"all {rs.dimension_count()}\s+keys present", prompt)
 
 
 def test_build_prompt_missing_artifact_raises(tmp_path: Path):

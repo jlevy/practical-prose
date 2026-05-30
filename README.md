@@ -2,20 +2,6 @@
 
 Joshua Levy (github.com/jlevy) with agent assistance
 
-## Quick Start
-
-After the package is published, use the Practical Prose CLI in any repo with
-[uv](https://docs.astral.sh/uv/):
-
-```bash
-uvx pprose --help
-uvx pprose install --agents-md
-```
-
-The package name and command are both `pprose`. `pprose install` writes portable agent
-skills into `.claude/skills/`; `--agents-md` also adds a short routing block to
-`AGENTS.md` when a repo uses that file.
-
 ## Why Practical Prose Matters
 
 Clear writing and clear thinking are inseparable.
@@ -28,21 +14,20 @@ evidence with the romantic virtues of voice, rhythm, and feeling.
 
 **Practical prose** is writing that helps a reader—human or agent—understand, decide,
 do, or verify something.
-It includes technical documents, research reports, specifications, memos, essays of
-practical analysis, operational plans, and all other artifacts where value depends on
-usefulness.
+It includes technical documents, research reports, specifications, memos, plans, and
+other artifacts where value depends on usefulness.
 
 ## Practical Writing in the Age of AI
 
-The rise of AI makes the need to focus on quality more acute.
-Language is now drafted, transformed, summarized, and evaluated by LLMs in greater
-volume than by humans.
+The rise of AI makes the need for writing quality more acute.
+AI writing means language is now drafted, transformed, summarized, and evaluated by LLMs
+in greater volume than by humans.
 
 Fluency is cheap. Judgment remains precious.
 
 There is not enough human attention for the job of filtering and editing AI slop.
-By codifying standards for quality, we can not only help humans remember how to write
-clearly but help machines assist us in the process.
+By codifying standards for quality, we can not only help humans write better but help
+machines assist us in thinking and writing clearly.
 Evidence can be checked, reasoning can be inspected, uncertainty can be calibrated.
 As technical writers and editors have known for centuries, the best way to validate
 written ideas is through disciplined editorial review.
@@ -56,17 +41,17 @@ The Practical Prose project aims to improve practical writing in several ways:
 3. **Tooling** and a **rubric** to help humans and agents evaluate quality consistently
 4. A **bibliography** of notable works on practical writing
 
-These are intended for humans and for AI systems.
+The goal is to improve practical thinking as expressed in language.
+In addition to being readable by humans, the documents and tools are organized to be
+useful and easy for agents to apply in any project where they are creating documents.
 
-These tools also aim to serve a higher goal: a durable standard for practical thought
-expressed in language.
-The documents in this repository attempt to reunite traditions that are too often
-separated. From plain-language writers we inherit economy, directness, and respect for
-the reader’s time. From scientists and engineers we inherit accuracy, mechanism,
-calibration, and reproducibility.
-From journalists and historians we inherit verification, proportion, and fairness.
-From literary writers we inherit attention to language, structure, narrative, and the
-human force of a sentence.
+The principles and guidelines aim to reunite traditions that are often separated.
+From plain-language writers we inherit economy, directness, and respect for the reader’s
+time. From scientists and engineers we inherit accuracy, mechanism, calibration, and
+reproducibility.
+From journalists and historians we inherit verification, proportion, and
+fairness. From literary writers we inherit attention to language, structure, narrative,
+and the human force of a sentence.
 From technical communicators we inherit maintainability, usability, and documents that
 work as part of larger systems.
 
@@ -74,17 +59,29 @@ This project focuses on English practical prose.
 But its principles—purpose, truth, proportion, verifiability, maintainability, respect
 for the reader—are deeper than any one language.
 With the help of sensitive native speakers and increasingly powerful AI translations,
-it’s likely we could adapt them to other languages effectively while preserving nuances
-common to each language.
+it’s likely we could adapt them to other languages effectively while preserving the
+nuances specific to each language.
 
-The aim of standards is not simply to follow rules but to promote quality in service of
-a purpose: prose where form, evidence, reasoning, and human effect fit the work to be
-done.
+The aim is not consistency for its own sake but to encourage prose where form, evidence,
+reasoning, and human effect fit the work to be done.
+
+## Quick Start
+
+Use the Practical Prose CLI in any repo with [uv](https://docs.astral.sh/uv/):
+
+```bash
+uvx pprose --help
+uvx pprose install --agents-md
+```
+
+The package name and command are both `pprose`. `pprose install` writes portable agent
+skills into `.claude/skills/`; `--agents-md` also adds a short routing block to
+`AGENTS.md` when a repo uses that file.
 
 ## Principles of Quality in Practical Writing
 
 Quality is fit: the parts of a document work when purpose, truth, form, evidence,
-language, and reader need support the same task.
+language, and reader needs support the same task.
 
 A clear sentence can still mislead; a cited claim can still overstate the evidence; a
 well-organized document can still fail if it does not help the reader do the needed
@@ -137,7 +134,7 @@ scoring anchors in [practical-prose-rubric.md](docs/practical-prose-rubric.md).
 
 ## Layers
 
-The system has five reference layers and two operational layers.
+The system has six reference layers and two operational layers.
 Each layer answers a different question.
 
 | Layer | Doc | Answers |
@@ -223,8 +220,8 @@ reference subcommands (`pprose guidelines|shortcut|runbook|skill <name>`, `--lis
 enumerate), so the skills work in any repo.
 `pprose install` writes the five Practical Prose skills into a repo’s `.claude/skills/`,
 each referencing pprose with a pinned, local-first invocation (`pprose` if on PATH, else
-`uvx pprose@<version>` — the trusted version that ran install — else a message telling
-the user to install uv or pprose).
+`uvx pprose@<version>`—the trusted version that ran install—else a message telling the
+user to install uv or pprose).
 
 Quick start:
 

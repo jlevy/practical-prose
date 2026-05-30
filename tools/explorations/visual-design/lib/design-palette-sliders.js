@@ -56,25 +56,59 @@
       // separate per-mode arrays.  L_dim_light - L_group_ink_light is the
       // offset; the same offset applied to L_group_ink_dark gives the dark
       // dim L (close to the YAML's recorded dark, within rounding).
+      /* Canonical contrast value = lDark (raw L in dark mode = how vivid
+         the color reads against the dark surface).  Light-mode raw L is
+         derived as `100 - contrast` so the two modes always look like
+         mirror-images of one slider value.  YAML's separate ink.light is
+         only used to seed dim-offset relations below. */
+      /* H and S are intrinsic to the HSL string — we parse them out of
+         the canonical (light) ink color rather than expecting separate
+         fields from the runtime data. */
+      const { h: hue, s: sat, l: inkLightL } = _parseHsl(g.ink.light);
+      const inkDarkL = _lOf(g.ink.dark);
+
+      /* Dim L offsets — captured from the YAML to preserve the authored
+         per-dim hierarchy (which dim is "more emphasized" than which),
+         then normalized so the maximum absolute offset is small.
+         Without normalization, a YAML with much-lighter group L than
+         dim L produces 40+ unit offsets that push dim L straight to 0
+         (pure black, no saturation visible) at most slider positions. */
+      const rawOffsets = dims.map((d) => _lOf(d.color.light) - inkLightL);
+      const TARGET_DIM_L_SPREAD = 8;
+      const maxAbsOffset = Math.max(1, ...rawOffsets.map(Math.abs));
+      const dimOffsets = rawOffsets.map((o) => (o * TARGET_DIM_L_SPREAD) / maxAbsOffset);
+
       palette[g.id] = {
-        h: g.h,
-        s: g.s,
+        h: hue,
+        s: sat,
         spread: g.spread,
-        lLight: _lOf(g.ink.light),
-        lDark: _lOf(g.ink.dark),
+        lDark: inkDarkL,
+        lLight: inkLightL,
         surfaceLLight: _lOf(g.surface.light),
         surfaceLDark: _lOf(g.surface.dark),
-        dimOffsets: dims.map((d) => _lOf(d.color.light) - _lOf(g.ink.light)),
+        dimOffsets,
         dims: dims.map((d) => d.id),
       };
     });
     return palette;
   }
 
-  /** Parse `hsl(H S% L%)` → just the L value. */
+  /** Parse `hsl(H S% L%)` → { h, s, l }.  The HSL string is the unit
+      of color in the design system; we only decompose it inside this
+      lib (which genuinely needs the three components for its three
+      sliders). */
+  function _parseHsl(hslStr) {
+    const m = /hsl\(\s*([\d.]+)\s+([\d.]+)%\s+([\d.]+)%/.exec(hslStr);
+    if (!m) return { h: 0, s: 0, l: 0 };
+    return {
+      h: parseFloat(m[1]),
+      s: parseFloat(m[2]),
+      l: parseFloat(m[3]),
+    };
+  }
+  /** Shortcut for callers that only want the L component. */
   function _lOf(hslStr) {
-    const m = /hsl\(\s*[\d.]+\s+[\d.]+%\s+([\d.]+)%/.exec(hslStr);
-    return m ? parseFloat(m[1]) : 0;
+    return _parseHsl(hslStr).l;
   }
 
   // ────────────── Apply ──────────────
@@ -94,10 +128,19 @@
       root.style.setProperty(`--surface-${cssId}`, `hsl(${st.h} ${st.s}% ${surfaceL}%)`);
       const n = st.dims.length;
       const step = n > 1 ? st.spread / (n - 1) : 0;
+      /* Dim offsets are stored as raw-L deltas from the group ink in
+         LIGHT mode (a negative offset = "darker than group" = more
+         contrast on a light surface).  Flip the sign in dark mode so
+         that the same "more contrast" relationship holds — there a
+         dim wants to be LIGHTER than the group to read more vividly
+         against the dark surface.  Without this flip, the group's
+         most-contrasty dim in light mode becomes the LEAST contrasty
+         in dark mode (invisible against the surface). */
+      const offsetSign = dark ? -1 : 1;
       st.dims.forEach((dimId, i) => {
         const hueOffset = (i - (n - 1) / 2) * step;
         const dimH = (((st.h + hueOffset) % 360) + 360) % 360;
-        const dimL = Math.max(5, Math.min(95, gL + (st.dimOffsets[i] || 0)));
+        const dimL = Math.max(0, Math.min(100, gL + offsetSign * (st.dimOffsets[i] || 0)));
         root.style.setProperty(`--dim-${dimId}`, `hsl(${dimH.toFixed(1)} ${st.s}% ${dimL}%)`);
       });
     });
@@ -145,7 +188,7 @@
       );
       row.appendChild(_channel(g, st, "h", "Hue", 0, 359));
       row.appendChild(_channel(g, st, "s", "Sat", 0, 100));
-      row.appendChild(_channel(g, st, "l", "L", 5, 95));
+      row.appendChild(_channel(g, st, "l", "L", 0, 100));
       row.appendChild(_spread(g, st));
       grid.appendChild(row);
     });
@@ -178,14 +221,20 @@
       class: `ch-${key}`,
     });
     const value = _el("span", { class: "ch-value" });
+    /* Slider's L value is a single "contrast" amount.  Slider 0 means
+       "matches the surface" (V=0 → lLight=100 = white on cream / lDark=0
+       = black on dark, both low contrast).  Slider 100 means "max
+       contrast" (V=100 → lLight=0 = black on cream / lDark=100 = white
+       on dark).  In light mode the rendered color is hsl(H S% (100-V)%);
+       in dark mode it's hsl(H S% V%).  Lockstep is enforced. */
     function get() {
-      if (key === "l") return isDarkMode() ? st.lDark : st.lLight;
+      if (key === "l") return st.lDark;
       return st[key];
     }
     function set(v) {
       if (key === "l") {
-        if (isDarkMode()) st.lDark = v;
-        else st.lLight = v;
+        st.lDark = v;
+        st.lLight = 100 - v;
       } else {
         st[key] = v;
       }
@@ -201,15 +250,20 @@
           `linear-gradient(to right, hsl(${st.h} 0% ${L}%), hsl(${st.h} 100% ${L}%))`,
         );
       } else if (key === "l") {
+        /* Gradient: left edge matches the surface (low contrast), right
+           edge is max contrast.  In light mode that's white→black; in
+           dark mode it's black→white. */
+        const leftL = isDarkMode() ? 0 : 100;
+        const rightL = isDarkMode() ? 100 : 0;
         slider.style.setProperty(
           "--track-gradient",
-          `linear-gradient(to right, hsl(${st.h} ${st.s}% 0%), hsl(${st.h} ${st.s}% 50%), hsl(${st.h} ${st.s}% 100%))`,
+          `linear-gradient(to right, hsl(${st.h} ${st.s}% ${leftL}%), hsl(${st.h} ${st.s}% ${rightL}%))`,
         );
       }
       let thumbColor;
       if (key === "h") thumbColor = `hsl(${v} 100% 50%)`;
       else if (key === "s") thumbColor = `hsl(${st.h} ${v}% ${L}%)`;
-      else thumbColor = `hsl(${st.h} ${st.s}% ${v}%)`;
+      else thumbColor = `hsl(${st.h} ${st.s}% ${L}%)`;
       slider.style.setProperty("--thumb-color", thumbColor);
     }
     slider.addEventListener("input", () => {
@@ -263,18 +317,44 @@
     ];
     ds.groups.forEach((g) => {
       const st = palette[g.id];
+      const hsl = (l) => `"hsl(${st.h} ${st.s}% ${l}%)"`;
       lines.push(
         `  - id: ${g.id}\n` +
           `    label: ${g.label}\n` +
-          `    h: ${st.h}\n` +
-          `    s: ${st.s}\n` +
           `    spread: ${st.spread}\n` +
-          `    ink:     { light: ${st.lLight}, dark: ${st.lDark} }\n` +
-          `    surface: { light: ${st.surfaceLLight}, dark: ${st.surfaceLDark} }\n` +
+          `    ink_light:     ${hsl(st.lLight)}\n` +
+          `    ink_dark:      ${hsl(st.lDark)}\n` +
+          `    surface_light: ${hsl(st.surfaceLLight)}\n` +
+          `    surface_dark:  ${hsl(st.surfaceLDark)}\n` +
           `    icon: ${g.icon}\n` +
           `    sense: ${g.sense}`,
       );
     });
+
+    /* Tone overrides — read whatever the Tone-overrides panel has
+       pushed onto <html>, or fall back to the design system defaults
+       so the snapshot is always complete. */
+    const root = document.documentElement;
+    const tonePairs = [
+      ["icon", "--icon-color", ds.tones && ds.tones.icon],
+      ["dim_label", "--dim-label-color", ds.tones && ds.tones.dim_label],
+      ["na", "--na-color", ds.tones && ds.tones.na],
+      ["na_label", "--na-label-color", ds.tones && ds.tones.na_label],
+    ];
+    lines.push("", "tones:");
+    tonePairs.forEach(([key, token, fallback]) => {
+      const v = root.style.getPropertyValue(token).trim() || fallback || "";
+      lines.push(`  ${key}:${" ".repeat(Math.max(1, 10 - key.length))}"${v}"`);
+    });
+
+    /* Scoring presentation — alpha gradient on the bar segments.
+       Read --score-alpha-step from <html> (the alpha-step slider in
+       the controls panel writes here on every input). */
+    const alphaRaw =
+      getComputedStyle(root).getPropertyValue("--score-alpha-step").trim() ||
+      String(ds.scoring && ds.scoring.alpha_step);
+    const alphaStep = parseFloat(alphaRaw);
+    lines.push("", "scoring:", `  alpha_step: ${Number.isFinite(alphaStep) ? alphaStep : 0}`);
     return lines.join("\n");
   }
 

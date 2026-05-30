@@ -7,9 +7,9 @@ description: Apply the common Markdown documentation guidelines to any document;
 This is the basic, universal edit tier (an apply skill: it may modify the target
 document). It applies only the common documentation guidelines (read them with
 `pprose guidelines common-doc-guidelines`) — organization, structure, writing style,
-Markdown formatting, links, headings, lists,
-frontmatter, and footer — so it is safe for almost any Markdown document, workflow, or
-repo, whether or not it is a Practical Prose artifact.
+Markdown formatting, links, headings, lists, frontmatter, and footer — so it is safe for
+almost any Markdown document, workflow, or repo, whether or not it is a Practical Prose
+artifact.
 
 For a deeper language-and-formatting pass (the Expression and Form dimensions) use
 `pprose-copy-edit`; for a full all-dimension editorial pass use `pprose-full-edit`. Each
@@ -18,7 +18,7 @@ tier is a superset of the one before.
 ## Inputs
 
 - Path to one Markdown document.
-- Optional scope note from the user, such as "format only" or "make all obvious fixes."
+- Optional scope note from the user, such as “format only” or “make all obvious fixes.”
 
 ## Steps
 
@@ -27,7 +27,7 @@ tier is a superset of the one before.
    formatting, links, headings, lists, frontmatter, and footer rules.
 3. Apply fixes directly to the document while preserving its intended content and voice.
 4. Ensure the required guideline footer is present when the document is part of this
-   repo's durable documentation.
+   repo’s durable documentation.
 5. Re-read the diff and check that no edit changed factual meaning.
 
 ## Output

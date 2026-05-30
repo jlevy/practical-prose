@@ -6,6 +6,15 @@
     <meta name="viewport" content="width=device-width,initial-scale=1" />
 
     <script src="https://cdn.jsdelivr.net/npm/d3@7.9.0/dist/d3.min.js"></script>
+    <!-- js-yaml is used to parse the in-repo rubric YAML + the YAML frontmatter
+         in each *.eval.md fixture so the bidirectional viz (and its tooltips)
+         render against real eval data.  fetch() requires a local server —
+         serve the repo root with `python -m http.server` and open this file. -->
+    <script src="https://cdn.jsdelivr.net/npm/js-yaml@4.1.0/dist/js-yaml.min.js"></script>
+    <!-- marked is used to render the tip-panel's content from compact markdown
+         strings — cleaner authoring than manual DOM construction, and naturally
+         supports headers / bullets / emphasis. -->
+    <script src="https://cdn.jsdelivr.net/npm/marked@12.0.2/marked.min.js"></script>
 
     <!-- Design-system tokens (surfaces, group accents, dimension colors, score
      ramp) come from the YAML via the generated CSS.  Viz-specific tokens
@@ -35,6 +44,28 @@
      this report; the score ramp (red→green valence) is the design
      system's prescribed encoding for score cells, orthogonal to group. */
 
+      /* ──────────────────────────────────────────────────────────────────
+         STYLE LAYERING — three tiers, declared most-general to most-specific:
+
+         1. Design system  (loaded above via design_system.css)
+            Project-wide tokens — colors, hover affordance, typography
+            caps (--tracking-caps, --weight-caps, --weight-caps-strong),
+            font-family vars.  Edits go in tools/design-system/design-
+            system.yaml + a `generate.py` run.
+
+         2. Document shared utilities  (this file, just below)
+            Patterns common to this entire document — the small-caps
+            eyebrow class (.eyebrow / .eyebrow-lg), viz-only color
+            washes (--score-na-fill etc.).  Defined once and composed
+            by widgets so we don't repeat the same six declarations in
+            22 places.
+
+         3. Widget-specific rules  (rest of this <style> block)
+            Card chrome, bar geometry, layout grids, per-viz overrides.
+            These reach for tokens from layers 1 + 2 rather than
+            inlining their own values.
+         ─────────────────────────────────────────────────────────────── */
+
       /* Font stacks — overridden live by the font chooser in the controls
      panel below the header.  Defaults match the original cream-paper
      book typography (serif body, system sans for UI). */
@@ -44,6 +75,44 @@
           sans-serif;
         --font-serif:
           "Iowan Old Style", "Charter", "Hoefler Text", Georgia, serif;
+      }
+
+      /* ─── LAYER 2 — Shared utilities ────────────────────────────────────
+         Document-wide patterns that get composed by widgets below.
+         Adjust SIZE / COLOR per widget; everything else (tracking, weight,
+         transform, family) inherits from the design-system tokens. */
+
+      /* Small-caps eyebrow — the universal "overline" heading.  Used for
+         section labels, panel kickers, stat labels, tag chips.  Drop the
+         class on any element to opt in; override font-size / color
+         locally when a widget needs a variant. */
+      .eyebrow {
+        font-family: var(--font-sans);
+        font-size: 0.72rem;
+        font-weight: var(--weight-caps);
+        text-transform: uppercase;
+        letter-spacing: var(--tracking-caps);
+        color: var(--muted);
+      }
+      /* Larger eyebrow — for prominent dim labels / data labels where
+         the eyebrow IS the heading rather than a kicker. */
+      .eyebrow-lg {
+        font-family: var(--font-sans);
+        font-size: 0.9rem;
+        font-weight: var(--weight-caps-strong);
+        text-transform: uppercase;
+        letter-spacing: var(--tracking-caps);
+        color: var(--muted);
+      }
+      /* Quantitative number — every score, count, stat, or bar value.
+         Always sans, tabular nums, --weight-num.  Size and color stay
+         widget-local.  Numeric voice of the document is consistent
+         across the bidirectional bar circles, the tip-panel score,
+         the Visual 10 stat callouts, and any future score chip. */
+      .num {
+        font-family: var(--font-sans);
+        font-weight: var(--weight-num);
+        font-variant-numeric: tabular-nums;
       }
 
       /* Viz-specific tokens NOT provided by the generated design-system CSS:
@@ -390,6 +459,17 @@
         font-size: 0.7rem;
         color: var(--muted);
       }
+      .controls-field input[type="range"] {
+        width: 8rem;
+      }
+      .controls-field .controls-value {
+        font-family: var(--font-sans);
+        font-size: 0.72rem;
+        font-weight: var(--weight-num);
+        font-variant-numeric: tabular-nums;
+        color: var(--fg);
+        min-width: 2rem;
+      }
       .controls-field select {
         font-family: var(--font-sans);
         font-size: 0.78rem;
@@ -414,6 +494,9 @@
       /* Flex (not grid) so the children pack with a fixed gap and any
      extra row width stays at the right — never distributes between
      the sliders. */
+      /* Tone-rows reuse .palette-row + .palette-channel below — same
+         visual chrome, hover saturation, gradient tracks, and numeric
+         readouts as the per-group palette sliders. */
       .palette-row {
         display: flex;
         align-items: center;
@@ -574,12 +657,13 @@
         padding: 1.25rem 1.5rem 1.5rem;
         margin-bottom: 1.5rem;
       }
+      /* Visual kicker — eyebrow pattern at canonical small-caps tokens. */
       .panel h2 {
         font-family: var(--font-sans);
         font-size: 0.78rem;
-        font-weight: 600;
+        font-weight: var(--weight-caps);
         text-transform: uppercase;
-        letter-spacing: 0.09em;
+        letter-spacing: var(--tracking-caps);
         color: var(--muted);
         margin: 0 0 0.2rem;
       }
@@ -594,6 +678,52 @@
         font-size: 0.9rem;
         margin: 0 0 1rem;
         max-width: 75ch;
+      }
+
+      /* "About this visual" disclosure — collapsed by default, expands
+         to show the visual's title + rationale paragraph.  Subtle muted
+         summary so the visual itself stays the focal point. */
+      .panel-about {
+        margin: 0.1rem 0 1rem;
+      }
+      .panel-about summary {
+        cursor: pointer;
+        list-style: none;
+        user-select: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.35rem;
+        padding: 0.15rem 0;
+        /* Eyebrow heading — composes the canonical small-caps tokens. */
+        font-family: var(--font-sans);
+        font-size: 0.72rem;
+        font-weight: var(--weight-caps);
+        text-transform: uppercase;
+        letter-spacing: var(--tracking-caps);
+        color: var(--muted);
+        transition: var(--hover-transition);
+      }
+      .panel-about summary::-webkit-details-marker {
+        display: none;
+      }
+      .panel-about summary::before {
+        content: "›";
+        display: inline-block;
+        font-size: 1em;
+        line-height: 1;
+        transition: transform var(--hover-duration) var(--hover-easing);
+      }
+      .panel-about[open] summary::before {
+        transform: rotate(90deg);
+      }
+      .panel-about summary:hover {
+        color: var(--fg);
+      }
+      .panel-about-body {
+        margin-top: 0.5rem;
+      }
+      .panel-about-body .note {
+        margin-bottom: 0;
       }
 
       /* ─────────── Heatmap (tabular) ─────────── */
@@ -983,14 +1113,298 @@
         font-weight: 800;
       }
 
-      /* ─────────── Visual 9: Bidirectional Bars ─────────── */
-      /* Responsive: cards flow into rows when they fit (each ≥ 28rem),
-         dropping to a single centered column on narrow screens. */
+      /* ─────────── Visual 9A + 9B: Bidirectional Bars ─────────── */
+      /* Centered flex layout: bi-stack and tip panel sit adjacent (with a
+         1.5rem gap) and the whole pair centers in the available space.
+         On wide layouts the panel uses `position: relative` + JS-driven
+         `top` to slide vertically to align with whichever bi-card the
+         cursor is on (no gap between card and panel — the panel always
+         sits directly to the right of the card it's describing).
+         Below 72rem the panel drops below the stack and JS leaves its
+         top alone. */
+      .bi-layout {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 1.5rem;
+        position: relative;
+      }
+      @media (min-width: 72rem) {
+        .bi-layout {
+          flex-direction: row;
+          align-items: flex-start;
+          justify-content: center;
+        }
+      }
       .bi-stack {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(28rem, 1fr));
-        justify-items: center;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
         gap: 1.25rem;
+        width: 100%;
+      }
+      @media (min-width: 72rem) {
+        .bi-stack {
+          flex: 0 0 32rem;
+          width: 32rem;
+        }
+      }
+
+      /* ─── Side detail panel (right of bi-stack) ────────────────────────
+         Updates contents on hover of any element carrying
+         `data-tip-kind` (dim | score | group).  A small fade between
+         content swaps; the panel itself is always visible. */
+      .bi-tip-panel {
+        background: var(--card);
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        padding: 1.1rem 1.25rem 1.25rem;
+        font-family: var(--font-sans);
+        font-size: 1.05rem;
+        line-height: 1.5;
+        color: var(--fg);
+        min-height: 12rem;
+        width: 100%;
+        max-width: 32rem;
+        /* `position: relative` + JS-driven `top` slides the panel
+           vertically to align with the hovered card (on wide layouts).
+           Below 72rem the panel sits in flex flow below the stack and
+           we leave its top alone. */
+        position: relative;
+        top: 0;
+        transition:
+          top var(--hover-duration) var(--hover-easing),
+          background-color var(--hover-duration) var(--hover-easing),
+          border-color var(--hover-duration) var(--hover-easing);
+      }
+      /* `.is-empty` keeps the panel in flow (so the row doesn't shift
+         when one panel goes quiet) but drops the chrome and content.
+         Used for the initial / pointer-leave state and for group hovers
+         where there's no per-doc assessment to show. */
+      .bi-tip-panel.is-empty {
+        background: transparent;
+        border-color: transparent;
+      }
+      .bi-tip-panel.is-empty > * {
+        visibility: hidden;
+      }
+      @media (min-width: 72rem) {
+        .bi-tip-panel {
+          flex: 0 0 18rem;
+          max-width: none;
+          align-self: flex-start;
+        }
+      }
+      /* Permanent panel header — sits at the top of the panel and never
+         changes.  Identifies the panel itself; content below it swaps.
+         Weight + centering match the bi-card's .doc-kicker so the
+         tooltip and the visual read as parallel artifacts.  No rule
+         underneath — the bi-card doesn't have one either. */
+      .bi-tip-panel .tip-panel-heading {
+        font-size: 0.9rem;
+        font-weight: var(--weight-caps-strong);
+        text-align: center;
+        margin-bottom: 0.75rem;
+      }
+
+      /* Content fade-in on every swap.  Uses the same design-system
+         tokens (--hover-duration + --hover-easing) as the hover affordance
+         so the page reads as one motion system. */
+      @keyframes bi-tip-fade-in {
+        from {
+          opacity: 0;
+          transform: translateY(2px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+      .bi-tip-panel .tip-content.fade-in {
+        animation: bi-tip-fade-in var(--hover-duration) var(--hover-easing);
+      }
+      /* UI hint text — chrome, not content.  Always sans gray, never
+         italic, never serif.  Selectors scoped under .tip-content so they
+         out-specify the .tip-content p rule (which sets serif for body
+         prose).  See design-system.md "Content vs chrome". */
+      .bi-tip-panel .tip-content .tip-empty {
+        font-family: var(--font-sans);
+        font-style: normal;
+        font-size: 0.95rem;
+        line-height: 1.5;
+        color: var(--muted);
+      }
+      /* ─── Tip panel content — markdown-rendered ──────────────────────
+         The body of the tip panel is produced by `marked.parse(md)`.
+         CSS targets the resulting semantic elements (h1, h2, p, ul, li,
+         em, strong, hr) so authors write compact markdown strings in JS
+         and the typography rules in one place handle the look. */
+
+      /* Parent-group context label — shown above the title in dim/score
+         panels.  Codified-concept name in serif, not italic. */
+      .bi-tip-panel .tip-content .tip-context {
+        font-family: var(--font-serif);
+        font-weight: 600;
+        font-size: 1.15rem;
+        color: var(--fg);
+        margin: 0 0 0.2rem;
+        line-height: 1.2;
+      }
+
+      /* h1 — primary heading.  Group titles render as `# Reasoning`
+         (plain h1, serif).  Dim titles render as `# *Discipline*` so
+         the <em> inside the h1 carries dim-label voice: sans, uppercase
+         small caps, weight-caps-strong, tracking-caps — mirroring the
+         .bi-dim-name treatment on the card so the panel and the card
+         agree on what a dim's "name" looks like.  Sized ~1.35rem (a
+         step up from the 0.9rem on-card label so it reads as a heading
+         in the panel). */
+      .bi-tip-panel .tip-content h1 {
+        font-family: var(--font-serif);
+        font-weight: 600;
+        font-size: 1.9rem;
+        letter-spacing: -0.005em;
+        margin: 0 0 0.45rem;
+        color: var(--fg);
+        line-height: 1.1;
+      }
+      .bi-tip-panel .tip-content h1 em {
+        font-family: var(--font-sans);
+        font-size: 0.71em; /* renders ~1.35rem against the 1.9rem h1 */
+        font-weight: var(--weight-caps-strong);
+        font-style: normal;
+        text-transform: uppercase;
+        letter-spacing: var(--tracking-caps);
+        line-height: 1.25;
+        /* Same tone as the "Evaluation Detail" panel kicker above (which
+           uses .eyebrow → --muted) so the panel's dim heading reads as
+           the same label family. */
+        color: var(--muted);
+      }
+
+      /* h2 — section header (Rules, Assessment).  Small-caps eyebrow at
+         the *structural* weight (strong) — bigger and more solid than
+         the lightweight in-card labels, so it reads as a real divider
+         in the panel content.  Tracking + family inherited from tokens. */
+      .bi-tip-panel .tip-content h2 {
+        font-family: var(--font-sans);
+        font-size: 0.85rem;
+        font-weight: var(--weight-caps-strong);
+        text-transform: uppercase;
+        letter-spacing: var(--tracking-caps);
+        color: var(--muted);
+        margin: 1rem 0 0.45rem;
+      }
+
+      /* Body paragraph — codified content / definition prose. */
+      .bi-tip-panel .tip-content p {
+        font-family: var(--font-serif);
+        font-size: 1.05rem;
+        line-height: 1.5;
+        color: var(--fg);
+        margin: 0 0 0.55rem;
+      }
+      /* Standalone italic paragraph (the dim's question) — slightly
+         bigger, same "described in detail" voice as the title. */
+      .bi-tip-panel .tip-content p > em:only-child {
+        font-size: 1.1rem;
+      }
+      /* Bold name at the start of a paragraph (the dim names in the
+         group panel "**Name** — question.") — italic serif. */
+      .bi-tip-panel .tip-content p strong {
+        font-style: italic;
+        font-weight: 600;
+      }
+
+      /* Lists — rubric rules.  Use native disc bullets (browsers
+         vertically center these on the line correctly, unlike a
+         ::before " · " which sits high in most fonts). */
+      .bi-tip-panel .tip-content ul {
+        margin: 0 0 0.7rem;
+        padding-left: 1.2rem;
+        list-style: disc outside;
+      }
+      .bi-tip-panel .tip-content ul li {
+        margin: 0 0 0.35rem;
+        font-family: var(--font-serif);
+        font-size: 1.05rem;
+        color: var(--fg);
+        line-height: 1.5;
+      }
+      .bi-tip-panel .tip-content ul li::marker {
+        color: var(--muted);
+      }
+
+      /* Horizontal rule from `---` — separator between context and
+         grading details in the score panel. */
+      .bi-tip-panel .tip-content hr {
+        border: none;
+        border-top: 1px solid var(--border);
+        margin: 0.85rem 0 0.7rem;
+      }
+
+      /* Assessment block — the computed per-doc evaluation (rule
+         findings bulleted, or the NA/ERR reason).  Computed outputs
+         read sans (design-system content-vs-chrome rule), overriding
+         the serif default for body prose + list items. */
+      .bi-tip-panel .tip-content .tip-assessment p,
+      .bi-tip-panel .tip-content .tip-assessment ul li {
+        font-family: var(--font-sans);
+        font-style: normal;
+        font-size: 1rem;
+        line-height: 1.5;
+      }
+      /* Finding bullet prefix — "Rule N · verdict".  Bold sans label
+         that introduces the finding's atomic point. */
+      .bi-tip-panel .tip-content .tip-assessment ul li strong {
+        font-family: var(--font-sans);
+        font-style: normal;
+        font-weight: 700;
+        color: var(--fg);
+      }
+      .bi-tip-panel .tip-score-row {
+        display: flex;
+        align-items: baseline;
+        gap: 0.5rem;
+        margin: 0 0 0.55rem;
+      }
+      /* Tip-panel score readout — quantitative, so sans + canonical
+         --weight-num (matches .bi-num-circle in the main graphic). */
+      .bi-tip-panel .tip-score {
+        font-family: var(--font-sans);
+        font-weight: var(--weight-num);
+        font-size: 2.2rem;
+        line-height: 1;
+        font-variant-numeric: tabular-nums;
+      }
+      /* Score-meta sits inline with the big .tip-score number — treat it
+         as numeric chrome (sans + --weight-num + tabular nums), not as
+         an eyebrow.  Drops the small-caps tracking/uppercase that made
+         it read thin against the heavier numeral. */
+      .bi-tip-panel .tip-score-meta {
+        font-family: var(--font-sans);
+        font-weight: var(--weight-num);
+        font-size: 1rem;
+        font-variant-numeric: tabular-nums;
+        color: var(--muted);
+      }
+      /* ─── Hover affordance on tip triggers ────────────────────────────
+         At-rest appearance is unchanged.  On hover the element gets a
+         thin border with a small offset so it reads as a framed pill —
+         no motion, no fill change, no layout shift (outline doesn't
+         participate in layout, so the offset gives the "padding around
+         it" visual without inflating the box and without fighting any
+         existing padding like 9B's hanging indent). */
+      .bi-group-header[data-tip-kind],
+      .bi-dim[data-tip-kind] {
+        transition: var(--hover-transition);
+        border-radius: 4px;
+        outline: 1px solid transparent;
+        outline-offset: 3px;
+      }
+      .bi-group-header[data-tip-kind]:hover,
+      .bi-dim[data-tip-kind]:hover {
+        outline-color: var(--border);
       }
       .bi-card {
         border: 1px solid var(--border);
@@ -1001,13 +1415,13 @@
         width: 100%;
         max-width: 32rem; /* ~500px; keeps bars from getting too wide */
       }
-      /* Matches .bi-dim-name: sans, 0.9rem, weight 800, uppercase, 0.09em. */
+      /* Doc kicker — bigger eyebrow variant, matches .bi-dim-name weight/tracking. */
       .bi-card .doc-kicker {
         font-family: var(--font-sans);
         font-size: 0.9rem;
-        font-weight: 800;
+        font-weight: var(--weight-caps-strong);
         text-transform: uppercase;
-        letter-spacing: 0.09em;
+        letter-spacing: var(--tracking-caps);
         text-align: center;
         color: var(--muted);
         margin: 0 0 0.25rem;
@@ -1015,7 +1429,7 @@
       .bi-card .doc-name {
         font-family: var(--font-serif);
         font-style: italic;
-        font-size: 2.1rem;
+        font-size: 1.9rem;
         font-weight: 600;
         text-align: center;
         margin: 0 0 0.9rem;
@@ -1035,27 +1449,132 @@
      inner edge (near the center spine). */
       .bi-group-header {
         display: flex;
-        align-items: center;           /* icon + label share the same center line */
+        align-items: center; /* icon + label share the same center line */
         justify-content: space-between;
-        gap: 0.4rem;
+        gap: 0.55rem;
         font-family: var(--font-serif);
         font-size: 1.5rem;
         font-weight: 600;
         margin: 0.7rem 0 0.3rem;
       }
       /* Padded so the category label lands at the same x as the dim
-     labels below it (right edge sits over the bar's inner edge).  No
-     more bi-group-line — justify-content: space-between pushes the
-     icon to the outer edge and the label to the inner edge. */
+         labels below it (right edge sits over the bar's inner edge).
+         Pad matches the score-circle reserve in .bi-dim-name above. */
       .bi-col.left .bi-group-header {
-        padding-right: calc(1.92rem + 0.45rem);
+        padding-right: calc(2.4rem + 0.5rem);
       }
       .bi-col.right .bi-group-header {
-        padding-left: calc(1.92rem + 0.45rem);
+        padding-left: calc(2.4rem + 0.5rem);
       }
-      .bi-group-line { display: none; }
+      /* ─── Visual 9B variant (.bi-ltr) ──────────────────────────────────
+         Same DOM as 9A — biCard() is shared.  The .bi-ltr marker class on
+         the bi-stack flips the layout so both columns read left-to-right:
+         icons at the left of every group header, dim labels left-aligned,
+         bars grow rightward, score circle on the right of every row.
+         Scoped under .bi-ltr so 9A is unchanged. */
+      .bi-ltr .bi-col.left .bi-group-header,
+      .bi-ltr .bi-col.right .bi-group-header {
+        justify-content: flex-start;
+        padding-left: 0;
+        padding-right: 0;
+      }
+      /* Right column emits [label, icon]; use flex order to put the icon
+         visually first without changing JS emission order. */
+      .bi-ltr .bi-col.right .bi-group-header .grp-icon {
+        order: -1;
+      }
+      /* Dim names align with the bar's left edge — no padding to reserve
+         circle space, because the circle sits on the right of the row. */
+      .bi-ltr .bi-col.left .bi-dim-name,
+      .bi-ltr .bi-col.right .bi-dim-name {
+        text-align: left;
+        padding-left: 0;
+        padding-right: 0;
+      }
+      /* Left column's bar segments are positioned via inline `right: X%`
+         in JS; CSS can't override inline style without !important.
+         Mirror the whole track instead — segments, fill, and ticks flip
+         in one rule.  Ticks are symmetric (20/40/60/80%) so the mirror
+         is invisible there.  Result: bars grow rightward, brightest
+         segment at the right end, matching the right column. */
+      .bi-ltr .bi-dim.left .bi-bar-track {
+        transform: scaleX(-1);
+      }
+      /* Head row: name on the left, score circle on the right above the
+         bar's right edge.  Name expands to fill via flex:1; min-width:0
+         keeps the white-space:nowrap name truncating cleanly when the
+         column gets narrow. */
+      .bi-ltr .bi-dim-head {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+      .bi-ltr .bi-dim-head .bi-dim-name {
+        flex: 1;
+        min-width: 0;
+      }
+      /* Hanging-indent layout: the group icon stays at the column's left
+         edge; everything else (group label and every dim row below it)
+         is indented past the icon to share one left edge.  `--bi-icon-size`
+         drives the icon width and the matching dim-row padding so they
+         can't drift apart. */
+      .bi-ltr {
+        --bi-icon-size: 2rem;
+      }
+      .bi-ltr .bi-group-header .grp-icon {
+        font-size: var(--bi-icon-size);
+      }
+      .bi-ltr .bi-dim {
+        padding-left: calc(var(--bi-icon-size) + 0.55rem);
+      }
+      /* Wider gap between the two columns in 9B — the columns are
+         independent here (no shared central spine like 9A) so the extra
+         breathing room reads as "two parallel reports" rather than one
+         joined chart. */
+      .bi-ltr .bi-grid {
+        column-gap: 2rem;
+      }
+      /* Group average: mean of the group's numeric scores, right-aligned
+         in the header.  Sans + tabular nums (numeric content uses sans
+         per design system).  Color matches the group label (a single
+         "group header voice"); sized ~1.3× the dim score number below
+         so the rollup reads as the heavier value. */
+      .bi-ltr .bi-group-avg {
+        margin-left: auto;
+        font-family: var(--font-sans);
+        font-size: 1.43rem;
+        font-weight: var(--weight-num);
+        font-variant-numeric: tabular-nums;
+        color: color-mix(in oklch, var(--fg) 70%, var(--muted));
+      }
+      /* Dim score in 9B: drop the colored circle chip, render as a clean
+         sans number in the same color as the dim label so name + score
+         read as one pair.  NA/ERR rows pick up --na-label-color via the
+         .is-na cascade.  `background: none !important` overrides the
+         inline `style.background` set by _biDimPrep. */
+      .bi-ltr .bi-num-circle {
+        width: auto;
+        height: auto;
+        background: none !important;
+        border-radius: 0;
+        font-size: 1.1rem;
+        color: var(--dim-label-color, var(--muted));
+      }
+      .bi-ltr .bi-dim.is-na .bi-num-circle {
+        color: var(--na-label-color, var(--muted));
+        font-size: 0.85rem;
+      }
+      .bi-ltr .bi-num-circle.err {
+        font-size: 0.85rem;
+      }
+      /* Thinner bars in 9B — the layout has more vertical room per row
+         now that name + score share one line, so a tighter track reads
+         as a sparkline rather than a hefty progress bar. */
+      .bi-ltr .bi-bar-track {
+        height: 1rem;
+      }
       .bi-group-header .grp-icon {
-        font-size: 2.6rem;             /* ~2× the previous size; anchors the outer corner */
+        font-size: 2.6rem; /* ~2× the previous size; anchors the outer corner */
         line-height: 1;
       }
       /* Group label text sits between --muted and --fg — more prominent
@@ -1065,78 +1584,63 @@
         color: color-mix(in oklch, var(--fg) 70%, var(--muted));
       }
 
-      /* Two-row dim entry: head (full dim name on the outer side + brief id
-     above the score circle on the inner / center-spine side) and body
-     (bar on the outer side + colored number circle on the inner side).
-     The inner column is the "summary" — a vertical stack of id + circle
-     for every dim — and the outer column adds detail.  The two would
-     stand alone if the bars were removed. */
+      /* Dim entry — name stacked above a row containing bar + circle.
+         Bar and circle share a flex row with align-items: center, so
+         the circle sits on the bar's vertical center (not pulled up
+         toward the dim name). */
       .bi-dim {
-        margin: 2px 0;
-      }
-      .bi-dim-head {
         display: flex;
-        align-items: baseline; /* shares the text baseline */
-        gap: 0.45rem;
-        margin-bottom: 0;
+        flex-direction: column;
+        gap: 2px;
+        margin: 4px 0;
       }
-      /* Toggled via the "Show dim labels" checkbox in the controls
-         panel.  Default-off: the head row (dim name + id) is hidden
-         and the spine circles carry the dim identity by color alone. */
-      body.no-dim-labels .bi-dim-head { display: none; }
+      .bi-dim-row {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
       .bi-dim-name {
-        flex: 1;
         font-family: var(--font-sans);
         font-size: 0.9rem;
-        font-weight: 800;
+        font-weight: var(--weight-caps-strong);
         text-transform: uppercase;
-        letter-spacing: 0.09em;
-        color: var(--muted);
+        letter-spacing: var(--tracking-caps);
+        /* Dim-label color — fallback to --muted, override via the
+           "Dim-label color" slider (writes --dim-label-color).  When
+           the score is NA, .bi-dim.is-na switches the color to the
+           lighter --na-label-color. */
+        color: var(--dim-label-color, var(--muted));
         line-height: 1.2;
         white-space: nowrap;
         overflow: hidden;
         min-width: 0;
       }
-      .bi-col.left .bi-dim-name {
+      /* Label aligns with the inner edge of the bar (not the row width,
+         which extends past the bar into the circle).  Pad by the
+         circle's reserved column (2.4rem) + the bar/circle gap (0.5rem). */
+      /* NA rows get a lighter dim-label color so the row reads as
+         "not applicable" at a glance, before the user sees the bar /
+         NA chip.  Drives --na-label-color from the design system tones. */
+      .bi-dim.is-na .bi-dim-name {
+        color: var(--na-label-color, var(--muted));
+      }
+      .bi-dim.left .bi-dim-name {
         text-align: right;
+        padding-right: calc(2.4rem + 0.5rem);
       }
-      .bi-col.right .bi-dim-name {
+      .bi-dim.right .bi-dim-name {
         text-align: left;
-      }
-
-      .bi-dim-id {
-        width: 1.92rem; /* matches .bi-num-circle below */
-        flex-shrink: 0;
-        font-family: var(--font-sans);
-        font-size: 0.9rem;             /* matches .bi-dim-name */
-        font-weight: 800;
-        text-transform: uppercase;
-        letter-spacing: 0.09em;        /* matches .bi-dim-name */
-        color: var(--muted);
-        line-height: 1.2;
-        font-variant-numeric: tabular-nums;
-        text-align: center;
-      }
-
-      .bi-row {
-        display: flex;
-        align-items: center;
-        gap: 0.45rem;
-      }
-      .bi-row.left {
-        flex-direction: row;
-      }
-      .bi-row.right {
-        flex-direction: row;
+        padding-left: calc(2.4rem + 0.5rem);
       }
 
       .bi-bar-track {
-        flex: 1;
         height: 1.5rem;
         background: hsl(0 0% 50% / 0.1);
         border-radius: 4px;
         position: relative;
         min-width: 0;
+        width: 100%;
+        overflow: hidden;
       }
       .bi-bar-fill {
         position: absolute;
@@ -1144,42 +1648,53 @@
         height: 100%;
         border-radius: 4px;
       }
-      .bi-row.left .bi-bar-fill {
+      .bi-dim.left .bi-bar-fill {
         right: 0;
       } /* anchored at right, grows left */
-      .bi-row.right .bi-bar-fill {
+      .bi-dim.right .bi-bar-fill {
         left: 0;
       } /* anchored at left, grows right */
 
-      /* Score circle on the inner side — the "summary" element.
-     Fill carries the dim's color (matches the bar); the score is in
-     white inside.  NA and ERR get their own bg + label. */
+      /* Bar segments — each 20% wide, alpha-graduated from inner (full
+         vividness) to outer (faded by --score-alpha-step per step).
+         The track has overflow:hidden, so segments clip cleanly to the
+         track's rounded corners at the bar ends. */
+      .bi-bar-seg {
+        position: absolute;
+        top: 0;
+        height: 100%;
+        width: 20%;
+      }
+
+      /* Score circle — bigger than the bar, vertically centered across
+         the body so the number sits on a line between the dim label
+         and the bar.  Score number is canonical numeric (sans,
+         --weight-num, tabular nums). */
       .bi-num-circle {
-        width: 1.92rem; /* 20% bigger than the 1.5rem bar so the
-                                   circle reads at equal visual weight */
-        height: 1.92rem;
+        width: 2.4rem;
+        height: 2.4rem;
         border-radius: 50%;
         display: flex;
         align-items: center;
         justify-content: center;
         color: #fff;
         font-family: var(--font-sans);
-        font-size: 0.95rem;
-        font-weight: 600;
+        font-size: 1.1rem;
+        font-weight: var(--weight-num);
         font-variant-numeric: tabular-nums;
         line-height: 1;
         flex-shrink: 0;
       }
-      /* NA/ERR circles match numeric prominence — white text (same as numeric
-         circles) at weight 800 (matches the heavier labels). */
       .bi-num-circle.na {
-        background: var(--score-na);
-        font-size: 0.62rem;
+        /* NA background — fallback to --score-na, override via the
+           "NA color" slider (writes --na-color). */
+        background: var(--na-color, var(--score-na));
+        font-size: 0.72rem;
         font-weight: 800;
       }
       .bi-num-circle.err {
         background: var(--score-err);
-        font-size: 0.62rem;
+        font-size: 0.72rem;
         font-weight: 800;
       }
 
@@ -1199,6 +1714,252 @@
         pointer-events: none;
       }
 
+      /* ──────────────── Visual 10: Quantitative Metrics ────────────────
+         Per-doc summary of the eval YAML's `quant` + `derived` sections.
+         Card identity matches Visual 9A (same width, kicker + italic title,
+         same muted-gray section labels).  Each metric category uses the
+         visual variable best suited to its semantics — see the panel
+         note in renderMetrics() for the design rationale. */
+      .qm-stack {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 1.25rem;
+      }
+      .qm-card {
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        background: var(--bg);
+        padding: 0.95rem 1.1rem 1.2rem;
+        font-family: var(--font-sans);
+        width: 100%;
+        max-width: 32rem;
+      }
+
+      /* Section block — small uppercase label with a rule that extends
+         to the right edge, like a journal callout. */
+      .qm-section {
+        margin-top: 1.1rem;
+      }
+      .qm-section:first-of-type {
+        margin-top: 0.7rem;
+      }
+      .qm-section-h {
+        display: flex;
+        align-items: center;
+        gap: 0.4rem;
+        font-family: var(--font-sans);
+        font-size: 0.72rem;
+        font-weight: var(--weight-caps);
+        text-transform: uppercase;
+        letter-spacing: var(--tracking-caps);
+        color: var(--muted);
+        margin: 0 0 0.55rem;
+      }
+      .qm-section-h::after {
+        content: "";
+        flex: 1;
+        height: 1px;
+        background: var(--border);
+      }
+
+      /* Size at a glance — four large tabular numbers. */
+      .qm-stats {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 0.5rem;
+      }
+      .qm-stat {
+        text-align: center;
+      }
+      /* Stat readout — quantitative, so sans + canonical --weight-num. */
+      .qm-stat-value {
+        font-family: var(--font-sans);
+        font-size: 1.6rem;
+        font-weight: var(--weight-num);
+        font-variant-numeric: tabular-nums;
+        line-height: 1.05;
+        color: var(--fg);
+      }
+      .qm-stat-label {
+        font-size: 0.66rem;
+        text-transform: uppercase;
+        letter-spacing: 0.09em;
+        color: var(--muted);
+        margin-top: 0.2rem;
+      }
+
+      /* Headings breakdown — single stacked horizontal bar, segments
+         flex-sized in proportion to count.  Per-level hue mirrors the
+         group palette so colors don't introduce a new system. */
+      .qm-headings-bar {
+        display: flex;
+        height: 1.5rem;
+        border-radius: 4px;
+        overflow: hidden;
+        background: hsl(0 0% 50% / 0.08);
+        margin-bottom: 0.5rem;
+      }
+      .qm-headings-seg {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.7rem;
+        font-weight: 600;
+        font-variant-numeric: tabular-nums;
+        color: hsl(40 8% 8%);
+        min-width: 0;
+        overflow: hidden;
+        white-space: nowrap;
+      }
+      .qm-headings-seg.h1 {
+        background: hsl(72 62% 68%);
+      }
+      .qm-headings-seg.h2 {
+        background: hsl(206 59% 68%);
+      }
+      .qm-headings-seg.h3 {
+        background: hsl(30 60% 65%);
+      }
+      .qm-headings-seg.h4 {
+        background: hsl(162 55% 60%);
+      }
+      .qm-headings-seg.h5 {
+        background: hsl(329 60% 68%);
+      }
+      .qm-headings-seg.h6 {
+        background: hsl(278 30% 72%);
+      }
+
+      /* Density / pacing — three-column row: label / track / value.
+         Track can carry a green "comfort zone" stripe (where the literature
+         has a typical range for the metric) plus the value's fill bar. */
+      .qm-bar-row {
+        display: grid;
+        grid-template-columns: 9rem 1fr 3rem;
+        align-items: center;
+        gap: 0.5rem;
+        margin: 0.3rem 0;
+      }
+      .qm-bar-row .qm-bar-label {
+        font-size: 0.78rem;
+        color: var(--muted);
+      }
+      .qm-bar-row .qm-bar-track {
+        position: relative;
+        height: 0.6rem;
+        background: hsl(0 0% 50% / 0.08);
+        border-radius: 3px;
+        overflow: hidden;
+      }
+      .qm-bar-row .qm-bar-zone {
+        position: absolute;
+        top: 0;
+        height: 100%;
+        background: hsl(140 50% 50% / 0.18);
+        border-left: 1px dashed hsl(140 50% 40% / 0.45);
+        border-right: 1px dashed hsl(140 50% 40% / 0.45);
+      }
+      .qm-bar-row .qm-bar-fill {
+        position: absolute;
+        left: 0;
+        top: 0;
+        height: 100%;
+        background: var(--muted);
+        border-radius: 3px;
+      }
+      .qm-bar-row .qm-bar-value {
+        font-size: 0.82rem;
+        font-weight: 600;
+        font-variant-numeric: tabular-nums;
+        text-align: right;
+        color: var(--fg);
+      }
+
+      /* Chip — used for structural counts + hygiene signals.  Variant
+         classes encode threshold semantics, not category identity. */
+      .qm-chips {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.4rem;
+      }
+      .qm-chip {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.3rem;
+        padding: 0.18rem 0.55rem;
+        border-radius: 999px;
+        border: 1px solid var(--border);
+        background: hsl(0 0% 50% / 0.04);
+        font-size: 0.78rem;
+        color: var(--fg);
+        font-variant-numeric: tabular-nums;
+      }
+      .qm-chip.good {
+        background: hsl(140 50% 50% / 0.1);
+        border-color: hsl(140 50% 50% / 0.35);
+      }
+      .qm-chip.warn {
+        background: hsl(40 80% 50% / 0.12);
+        border-color: hsl(40 80% 50% / 0.4);
+      }
+      .qm-chip.bad {
+        background: hsl(0 70% 50% / 0.12);
+        border-color: hsl(0 70% 50% / 0.4);
+      }
+
+      /* Rubric rollup — six small group-colored bars + overall in --fg. */
+      .qm-rollup {
+        display: grid;
+        gap: 0.3rem;
+      }
+      .qm-rollup-row {
+        display: grid;
+        grid-template-columns: 6.5rem 1fr 2.5rem;
+        align-items: center;
+        gap: 0.5rem;
+      }
+      .qm-rollup-row .label {
+        font-family: var(--font-sans);
+        font-size: 0.74rem;
+        text-transform: uppercase;
+        letter-spacing: 0.09em;
+        color: var(--muted);
+      }
+      .qm-rollup-row .qm-bar-track {
+        position: relative;
+        height: 0.6rem;
+        background: hsl(0 0% 50% / 0.08);
+        border-radius: 3px;
+        overflow: hidden;
+      }
+      .qm-rollup-row .qm-bar-fill {
+        position: absolute;
+        left: 0;
+        top: 0;
+        height: 100%;
+        border-radius: 3px;
+      }
+      .qm-rollup-row .value {
+        font-weight: 600;
+        font-size: 0.82rem;
+        text-align: right;
+        font-variant-numeric: tabular-nums;
+        color: var(--fg);
+      }
+      .qm-rollup-row.overall {
+        margin-top: 0.2rem;
+        padding-top: 0.35rem;
+        border-top: 1px solid var(--border);
+      }
+      .qm-rollup-row.overall .label {
+        color: var(--fg);
+        font-weight: 700;
+      }
+      .qm-rollup-row.overall .qm-bar-fill {
+        background: var(--fg);
+      }
+
       /* ─────────── Visual notes / sources ─────────── */
       .notes {
         padding: 1rem clamp(1rem, 4vw, 3rem) 1.5rem;
@@ -1207,9 +1968,9 @@
       .notes h2.section-h {
         font-family: var(--font-sans);
         font-size: 0.78rem;
-        font-weight: 600;
+        font-weight: var(--weight-caps);
         text-transform: uppercase;
-        letter-spacing: 0.09em;
+        letter-spacing: var(--tracking-caps);
         color: var(--muted);
         margin: 0 0 1rem;
       }
@@ -1224,7 +1985,8 @@
         border-radius: 8px;
         padding: 1rem 1.15rem 1.1rem;
       }
-      .note-card h3 {
+      .note-card h3,
+      .panel-about-body h3 {
         font-family: var(--font-serif);
         font-size: 1.02rem;
         font-weight: 600;
@@ -1239,7 +2001,8 @@
         vertical-align: middle;
         transform: translateY(-2px);
       }
-      .note-card .meta {
+      .note-card .meta,
+      .panel-about-body .meta {
         font-family: var(--font-sans);
         font-size: 0.72rem;
         color: var(--muted);
@@ -1247,12 +2010,14 @@
         letter-spacing: 0.06em;
         margin: 0 0 0.55rem;
       }
-      .note-card p {
+      .note-card p,
+      .panel-about-body p {
         margin: 0.45rem 0;
         font-size: 0.92rem;
         line-height: 1.5;
       }
-      .note-card .label {
+      .note-card .label,
+      .panel-about-body .label {
         font-family: var(--font-sans);
         font-size: 0.7rem;
         text-transform: uppercase;
@@ -1319,11 +2084,15 @@
       }
       .bi-card-credit a {
         color: var(--muted);
+        opacity: 0.5;
         text-decoration: none;
-        transition: color 220ms ease;
+        transition:
+          color 220ms ease,
+          opacity 220ms ease;
       }
       .bi-card-credit a:hover {
         color: var(--fg);
+        opacity: 1;
         text-decoration: none;
       }
     </style>
@@ -1333,13 +2102,47 @@
          Inlined here because browsers block cross-file <use href> references
          when the page is loaded via file://.  Same content as the canonical
          sprite file; update both together. -->
-    <svg xmlns="http://www.w3.org/2000/svg" style="display:none" aria-hidden="true">
-      <symbol id="icon-purpose" viewBox="0 0 24 24"><path fill="currentColor" d="m15 9l-3-9l-3 9l-9 3l9 3l3 9l3-9l9-3zM4 12l6-2l1 2zm8 8l-2-6l2-1zm0-16l2 6l-2 1zm2 10l-1-2h7zm-5.3 3.3L5 19l1.7-3.7l1.6.5zm8.6-2L19 19l-3.7-1.7l.5-1.6zM6.7 8.7L5 5l3.7 1.7l-.5 1.5zm8.6-2L19 5l-1.7 3.7l-1.6-.5z"/></symbol>
-      <symbol id="icon-expression" viewBox="0 0 24 24"><path fill="currentColor" d="M22 2s-7.64-.37-13.66 7.88C3.72 16.21 2 22 2 22l1.94-1c1.44-2.5 2.19-3.53 3.6-5c2.53.74 5.17.65 7.46-2c-2-.56-3.6-.43-5.96-.19C11.69 12 13.5 11.6 16 12l1-2c-1.8-.34-3-.37-4.78.04C14.19 8.65 15.56 7.87 18 8l1.21-1.93c-1.56-.11-2.5.06-4.29.5c1.61-1.46 3.08-2.12 5.22-2.25c0 0 1.05-1.89 1.86-2.32"/></symbol>
-      <symbol id="icon-form" viewBox="0 0 24 24"><path fill="currentColor" d="M17.8 20c-.4 1.2-1.5 2-2.8 2H5c-1.7 0-3-1.3-3-3v-1h12.2c.4 1.2 1.5 2 2.8 2zM19 2H8C6.3 2 5 3.3 5 5v11h11v1c0 .6.4 1 1 1h1V5c0-.6.4-1 1-1s1 .4 1 1v1h2V5c0-1.7-1.3-3-3-3"/></symbol>
-      <symbol id="icon-grounding" viewBox="0 0 24 24"><path fill="currentColor" d="M12 2a3 3 0 0 0-3 3a3 3 0 0 0 2 2.83V9H8v2h3v8.92c-.74-.13-1.5-.34-2.21-.65c-.74-.32-1.39-.71-1.97-1.18s-1.04-.98-1.38-1.54L7 15l-4-3v3c0 .97.27 1.88.82 2.72A8.2 8.2 0 0 0 6 19.95c.87.64 1.84 1.14 2.88 1.5c1.05.36 2.09.55 3.12.55s2.07-.2 3.12-.56c1.04-.36 2.01-.86 2.88-1.49c.92-.64 1.63-1.38 2.18-2.23c.55-.84.82-1.75.82-2.72v-3l-4 3l1.56 1.55c-.34.56-.8 1.07-1.38 1.54s-1.23.86-1.97 1.18c-.71.31-1.47.52-2.21.65V11h3V9h-3V7.82A3 3 0 0 0 15 5a3 3 0 0 0-3-3m0 2a1 1 0 0 1 1 1a1 1 0 0 1-1 1a1 1 0 0 1-1-1a1 1 0 0 1 1-1"/></symbol>
-      <symbol id="icon-reasoning" viewBox="0 0 24 24"><path fill="currentColor" d="m1.39 18.36l1.77-1.76L4.58 18l1.06-1.05l-1.42-1.41l1.42-1.42l2.47 2.48l1.06-1.06l-2.47-2.48l1.41-1.41l1.42 1.41L10.59 12l-1.42-1.41l1.42-1.42l2.47 2.48l1.06-1.06l-2.47-2.48l1.41-1.41l1.41 1.41l1.07-1.06l-1.42-1.41l1.42-1.42L18 6.7l1.07-1.06l-2.47-2.48l1.76-1.77l4.25 4.25L5.64 22.61z"/></symbol>
-      <symbol id="icon-judgment" viewBox="0 0 24 24"><path fill="currentColor" d="M12 3c-1.27 0-2.4.8-2.82 2H3v2h1.95L2 14c-.47 2 1 3 3.5 3s4.06-1 3.5-3L6.05 7h3.12c.33.85.98 1.5 1.83 1.83V20H2v2h20v-2h-9V8.82c.85-.32 1.5-.97 1.82-1.82h3.13L15 14c-.47 2 1 3 3.5 3s4.06-1 3.5-3l-2.95-7H21V5h-6.17C14.4 3.8 13.27 3 12 3m0 2a1 1 0 0 1 1 1a1 1 0 0 1-1 1a1 1 0 0 1-1-1a1 1 0 0 1 1-1m-6.5 5.25L7 14H4zm13 0L20 14h-3z"/></symbol>
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      style="display: none"
+      aria-hidden="true"
+    >
+      <symbol id="icon-purpose" viewBox="0 0 24 24">
+        <path
+          fill="currentColor"
+          d="m15 9l-3-9l-3 9l-9 3l9 3l3 9l3-9l9-3zM4 12l6-2l1 2zm8 8l-2-6l2-1zm0-16l2 6l-2 1zm2 10l-1-2h7zm-5.3 3.3L5 19l1.7-3.7l1.6.5zm8.6-2L19 19l-3.7-1.7l.5-1.6zM6.7 8.7L5 5l3.7 1.7l-.5 1.5zm8.6-2L19 5l-1.7 3.7l-1.6-.5z"
+        />
+      </symbol>
+      <symbol id="icon-expression" viewBox="0 0 24 24">
+        <path
+          fill="currentColor"
+          d="M22 2s-7.64-.37-13.66 7.88C3.72 16.21 2 22 2 22l1.94-1c1.44-2.5 2.19-3.53 3.6-5c2.53.74 5.17.65 7.46-2c-2-.56-3.6-.43-5.96-.19C11.69 12 13.5 11.6 16 12l1-2c-1.8-.34-3-.37-4.78.04C14.19 8.65 15.56 7.87 18 8l1.21-1.93c-1.56-.11-2.5.06-4.29.5c1.61-1.46 3.08-2.12 5.22-2.25c0 0 1.05-1.89 1.86-2.32"
+        />
+      </symbol>
+      <symbol id="icon-form" viewBox="0 0 24 24">
+        <path
+          fill="currentColor"
+          d="M17.8 20c-.4 1.2-1.5 2-2.8 2H5c-1.7 0-3-1.3-3-3v-1h12.2c.4 1.2 1.5 2 2.8 2zM19 2H8C6.3 2 5 3.3 5 5v11h11v1c0 .6.4 1 1 1h1V5c0-.6.4-1 1-1s1 .4 1 1v1h2V5c0-1.7-1.3-3-3-3"
+        />
+      </symbol>
+      <symbol id="icon-grounding" viewBox="0 0 24 24">
+        <path
+          fill="currentColor"
+          d="M12 2a3 3 0 0 0-3 3a3 3 0 0 0 2 2.83V9H8v2h3v8.92c-.74-.13-1.5-.34-2.21-.65c-.74-.32-1.39-.71-1.97-1.18s-1.04-.98-1.38-1.54L7 15l-4-3v3c0 .97.27 1.88.82 2.72A8.2 8.2 0 0 0 6 19.95c.87.64 1.84 1.14 2.88 1.5c1.05.36 2.09.55 3.12.55s2.07-.2 3.12-.56c1.04-.36 2.01-.86 2.88-1.49c.92-.64 1.63-1.38 2.18-2.23c.55-.84.82-1.75.82-2.72v-3l-4 3l1.56 1.55c-.34.56-.8 1.07-1.38 1.54s-1.23.86-1.97 1.18c-.71.31-1.47.52-2.21.65V11h3V9h-3V7.82A3 3 0 0 0 15 5a3 3 0 0 0-3-3m0 2a1 1 0 0 1 1 1a1 1 0 0 1-1 1a1 1 0 0 1-1-1a1 1 0 0 1 1-1"
+        />
+      </symbol>
+      <symbol id="icon-reasoning" viewBox="0 0 24 24">
+        <path
+          fill="currentColor"
+          d="m1.39 18.36l1.77-1.76L4.58 18l1.06-1.05l-1.42-1.41l1.42-1.42l2.47 2.48l1.06-1.06l-2.47-2.48l1.41-1.41l1.42 1.41L10.59 12l-1.42-1.41l1.42-1.42l2.47 2.48l1.06-1.06l-2.47-2.48l1.41-1.41l1.41 1.41l1.07-1.06l-1.42-1.41l1.42-1.42L18 6.7l1.07-1.06l-2.47-2.48l1.76-1.77l4.25 4.25L5.64 22.61z"
+        />
+      </symbol>
+      <symbol id="icon-judgment" viewBox="0 0 24 24">
+        <path
+          fill="currentColor"
+          d="M12 3c-1.27 0-2.4.8-2.82 2H3v2h1.95L2 14c-.47 2 1 3 3.5 3s4.06-1 3.5-3L6.05 7h3.12c.33.85.98 1.5 1.83 1.83V20H2v2h20v-2h-9V8.82c.85-.32 1.5-.97 1.82-1.82h3.13L15 14c-.47 2 1 3 3.5 3s4.06-1 3.5-3l-2.95-7H21V5h-6.17C14.4 3.8 13.27 3 12 3m0 2a1 1 0 0 1 1 1a1 1 0 0 1-1 1a1 1 0 0 1-1-1a1 1 0 0 1 1-1m-6.5 5.25L7 14H4zm13 0L20 14h-3z"
+        />
+      </symbol>
     </svg>
 
     <header>
@@ -1433,16 +2236,28 @@
         <div class="palette-grid" id="palette-grid"></div>
       </div>
       <div class="controls-section">
-        <span class="controls-label">Layout</span>
+        <span class="controls-label">Scoring</span>
         <label class="controls-field">
-          <input type="checkbox" id="show-dim-labels">
-          Show dim labels (Visual 9)
+          Alpha spread
+          <input
+            type="range"
+            id="score-alpha-step"
+            min="0"
+            max="0.30"
+            step="0.01"
+            value="0.14"
+          />
+          <span class="controls-value" id="score-alpha-step-readout">14%</span>
         </label>
         <span class="controls-hint"
-          >Show the dim name + id above each bar in the bidirectional bars
-          visual.  Default off — the colored circle + score number on the
-          spine is usually enough.</span
+          >Per-segment alpha decrement on the bar — segment 1 (next to the
+          spine) is always vivid; each segment outward fades by this ratio.
+          Drives <code>--score-alpha-step</code> in the design system.</span
         >
+      </div>
+      <div class="controls-section controls-tone-section">
+        <span class="controls-label">Tone overrides</span>
+        <div id="tone-overrides"></div>
       </div>
       <div class="controls-section">
         <span class="controls-label">Export</span>
@@ -1475,249 +2290,8 @@
       </p>
 
       <div class="notes-grid">
-        <!-- Visual 1 -->
-        <div class="note-card">
-          <h3>1 · Grouped Heatmap</h3>
-          <p class="meta">Tabular · color saturation encoding</p>
-          <p>
-            <span class="label">Lineage:</span> Edward Tufte’s table-graphics
-            (<em>The Visual Display of Quantitative Information</em>, 1983) and
-            the conditional-formatting heatmaps that became standard in business
-            intelligence in the 2000s (Excel, Tableau). The GitHub contribution
-            graph (2013) cemented the small-square-saturation idiom in everyday
-            UI.
-          </p>
-          <p>
-            <span class="label">Strengths:</span> scales gracefully to many
-            documents, exact values are still readable in each cell, group bands
-            at the top tie columns to color, the layout is print-friendly and
-            accessible to screen readers.
-          </p>
-          <p>
-            <span class="label">Tradeoffs:</span> reads as a spreadsheet first
-            and a picture second; you have to learn the encoding before patterns
-            pop; with many docs the doc-name column dominates the page width.
-          </p>
-        </div>
-
-        <!-- Visual 2 -->
-        <div class="note-card">
-          <h3>2 · Score Strip</h3>
-          <p class="meta">Sparkline row · one document per line</p>
-          <p>
-            <span class="label">Lineage:</span> Edward Tufte coined "sparklines"
-            in <em>Beautiful Evidence</em> (2006) for word-sized graphics that
-            sit inline with prose. The horizontal strip variant shows up in
-            financial dashboards (Bloomberg, Splunk row indicators) and in
-            github-style activity strips.
-          </p>
-          <p>
-            <span class="label">Strengths:</span> very compact, drops cleanly
-            into a list of files or PRs, the row is reading-order so the eye
-            scans from left (purpose) to right (judgment) in the same order as
-            the rubric.
-          </p>
-          <p>
-            <span class="label">Tradeoffs:</span> tiny cells make any single
-            dimension hard to identify without hover; absolute score is harder
-            to read than the heatmap because the cells are smaller.
-          </p>
-        </div>
-
-        <!-- Visual 3 -->
-        <div class="note-card">
-          <h3>3 · Hex Honeycomb</h3>
-          <p class="meta">Hex grid · row-per-group</p>
-          <p>
-            <span class="label">Lineage:</span> hex-binning maps from the
-            cartography world (Mike Bostock’s D3 hexbin examples; Carto’s 2014
-            hex-tile choropleths) and the periodic-table-of-elements layout,
-            where every cell is the same shape but labels and color carry
-            meaning.
-          </p>
-          <p>
-            <span class="label">Strengths:</span> the 6 rows of (4, 3, 3, 3, 4,
-            3) hex tiles map one-to-one to the rubric groups, the shape is
-            decorative without being noisy, every dim gets a label, and the
-            whole figure fits in a few inches.
-          </p>
-          <p>
-            <span class="label">Tradeoffs:</span> hexagons are not a canonical
-            shape for ordinal data; readers may search for a meaning in the
-            hexagonal-ness that isn’t there.
-          </p>
-        </div>
-
-        <!-- Visual 4 -->
-        <div class="note-card">
-          <h3>4 · Radial Spider / Radar</h3>
-          <p class="meta">Polar line graph · score = radius</p>
-          <p>
-            <span class="label">Lineage:</span> the Kiviat diagram, introduced
-            by Kenneth Kolence and Philip Kiviat in 1973 for visualizing
-            computer performance metrics. Popularized for human-readable use by
-            PISA education reports, Strava / Garmin athletic profiles, and the
-            "competency wheels" of HR / talent tooling.
-          </p>
-          <p>
-            <span class="label">Strengths:</span> shape recognition is fast — a
-            balanced doc is a regular polygon, a weak group is a visible dent;
-            group-tinted arc backgrounds let the eye associate spoke clusters
-            with the rubric groups.
-          </p>
-          <p>
-            <span class="label">Tradeoffs:</span> the closed polygon overstates
-            area (a doc that scores 5,1,5,1 looks much worse than 3,3,3,3 even
-            though both mean 3); axis order changes the perceived shape;
-            comparing two polygons overlaid is visually noisy past two
-            documents.
-          </p>
-        </div>
-
-        <!-- Visual 5 -->
-        <div class="note-card">
-          <h3>5 · Coxcomb / Nightingale Rose</h3>
-          <p class="meta">Polar area chart · score = √(petal radius)</p>
-          <p>
-            <span class="label">Lineage:</span> Florence Nightingale’s 1858
-            "Diagram of the Causes of Mortality in the Army in the East," drawn
-            to persuade Parliament that sanitation, not battle, was killing
-            soldiers in Crimea. Modern uses: BBC and FT election graphics,
-            Stefanie Posavec’s data portraits, Giorgia Lupi’s
-            <em>Dear Data</em> (2016).
-          </p>
-          <p>
-            <span class="label">Strengths:</span> more visually punchy than
-            radar — soft spots really stick out as short petals; works well as a
-            single, "iconic" chart for a one-document report header; the
-            √-scaling keeps low scores legible without exaggerating high ones.
-          </p>
-          <p>
-            <span class="label">Tradeoffs:</span> area encoding is harder to
-            read precisely than length; the form is less familiar than bars or
-            radar so readers need a moment to learn it; like radar, hard to
-            overlay multiple docs.
-          </p>
-        </div>
-
-        <!-- Visual 6 -->
-        <div class="note-card">
-          <h3>6 · Sunburst</h3>
-          <p class="meta">Radial treemap · 2 rings, hierarchy + value</p>
-          <p>
-            <span class="label">Lineage:</span> John Stasko and Eugene Zhang
-            introduced the sunburst at IEEE InfoVis 2000 as a radial successor
-            to the treemap. Popularized by Mike Bostock’s D3 sunburst examples
-            and by disk-inventory tools (Disk Inventory X, WinDirStat, Daisy
-            Disk).
-          </p>
-          <p>
-            <span class="label">Strengths:</span> a single figure carries
-            <em>both</em> the group structure and the per-dim scores — inner
-            ring for groups, outer ring saturation for scores; the centred mean
-            gives a one-glance overall verdict.
-          </p>
-          <p>
-            <span class="label">Tradeoffs:</span> outer-ring arc lengths are
-            equal here (each dim gets the same wedge), so the chart only encodes
-            value with color — meaning we’re carrying the sunburst’s decorative
-            cost without using its strongest dimension; not as efficient as the
-            heatmap for actual reading.
-          </p>
-        </div>
-
-        <!-- Visual 7 -->
-        <div class="note-card">
-          <h3>7 · Group Small Multiples</h3>
-          <p class="meta">
-            Trellis cards · one card per group, bars across docs
-          </p>
-          <p>
-            <span class="label">Lineage:</span> trellis / lattice plots from
-            William Cleveland and Robert McGill at Bell Labs (1980s), formalized
-            in Cleveland’s <em>Visualizing Data</em> (1993); Tufte’s "small
-            multiples" principle (<em>Envisioning Information</em>, 1990); the
-            ggplot2 <code>facet_wrap</code> idiom that made the pattern standard
-            in modern data analysis.
-          </p>
-          <p>
-            <span class="label">Strengths:</span> the best layout for "I want to
-            look inside one group across several drafts" — the eye walks one
-            card at a time without losing context; the per-dim mean column on
-            the right is a built-in roll-up.
-          </p>
-          <p>
-            <span class="label">Tradeoffs:</span> no single-figure summary;
-            takes the most vertical space of any candidate; comparing across
-            groups means jumping between cards rather than scanning a line.
-          </p>
-        </div>
-
-        <!-- Visual 8 -->
-        <div class="note-card">
-          <h3>8 · Bar Cards (overlay-text)</h3>
-          <p class="meta">One card per doc · text on top of the bar</p>
-          <p>
-            <span class="label">Lineage:</span> the in-cell data-bar idiom from
-            Excel 2007 and Stephen Few’s bullet charts (<em
-              >Information Dashboard Design</em
-            >, 2006), fused with the progress-bar / Likert row used in modern
-            product UI (Linear, GitHub Insights, Notion). The two-copy text-clip
-            trick for legibility against a moving fill is the same technique
-            that powers e.g. Apple Music’s scrubber-time readout.
-          </p>
-          <p>
-            <span class="label">Strengths:</span> the most space-efficient
-            per-doc view — bar and label share the same row, no separate name
-            column. Dim labels read at sentence-length speed (lowercase
-            sans-serif), group sections carry the design-system MDI icons
-            (<code>compass-rose</code>, <code>quill</code>, <code>anchor</code>,
-            <code>ruler</code>, <code>scale-balance</code>) so groups identify
-            themselves visually as well as by color. NA / ERR get full-width
-            muted bars so they can never be misread as low scores.
-          </p>
-          <p>
-            <span class="label">Tradeoffs:</span> only sensibly comparable
-            side-by-side (one card per doc); for many docs the page gets
-            horizontally crowded. Two-copy text labels mean the dim name is
-            drawn twice per row — cheap, but worth noting if you ever wanted to
-            animate the fill.
-          </p>
-        </div>
-
-        <!-- Visual 9 -->
-        <div class="note-card">
-          <h3>9 · Bidirectional Bars</h3>
-          <p class="meta">
-            10 left + 10 right · per-dim hue · central numeric spine
-          </p>
-          <p>
-            <span class="label">Lineage:</span> the back-to-back / opposed bar
-            chart used in demographic population pyramids (US Census, Statistics
-            Canada) and in Hans Rosling–style gender / age comparisons, combined
-            with the rubric’s grouped structure. The per-dim hue variation
-            (slight hue rotation within each group family) is the design pattern
-            Datawrapper and the FT use for grouped categorical palettes — colors
-            that read as "the same family" without being monochromatic.
-          </p>
-          <p>
-            <span class="label">Strengths:</span> reads as a single "shape" per
-            document — the silhouette formed by the bar lengths across all 20
-            dims is glanceable; the prominent central numbers give the precise
-            scores while the bars give the visual; group identity is doubly
-            encoded (hue family + section header with MDI icon);
-            Reasoning-on-top pairs its 4 dims row-for-row with Purpose’s 4,
-            giving a strong top-section anchor.
-          </p>
-          <p>
-            <span class="label">Tradeoffs:</span> the right side has one more
-            group transition (Reasoning → Grounding → Judgment) than the left
-            (Purpose → Expression), so the bottom rows can drift slightly out of
-            alignment; the dim text is on the colored fill only, so very low
-            scores can truncate the name on a narrow bar (the leading dim id
-            "P1." mitigates).
-          </p>
-        </div>
+        <!-- Per-visual cards (1-10) are inserted here by renderVisualNotes()
+             from the single VISUALS_INFO data table.  Edit content there. -->
 
         <!-- Design system / palette -->
         <div class="note-card palette-card">
@@ -1882,7 +2456,9 @@
      lib/design-color-controls.js   — theme toggle + surface-tone toggle
      lib/design-font-controls.js    — sans / serif font choosers
    Script tags loading them are in <head> at the top of this file. */
-      PracticalProseDesignColorControls.mountThemeToggle(".theme-toggle");
+      PracticalProseDesignColorControls.mountThemeToggle(".theme-toggle", {
+        default: "light",
+      });
       PracticalProseDesignColorControls.mountSurfaceToggle(".surface-toggle");
       PracticalProseDesignFontControls.mountFontChooser({
         sans: "#font-sans-select",
@@ -1897,6 +2473,7 @@
       const groups = _ds.groups.map((g) => ({
         id: g.id,
         label: g.label,
+        sense: g.sense,
         color: `var(--accent-${g.id.toLowerCase()})`,
       }));
       const groupColor = (id) => `var(--accent-${id.toLowerCase()})`;
@@ -2022,6 +2599,119 @@
         },
       ];
 
+      /* ──────────────── Real eval data (rubric + fixtures) ─────────────────
+         Loaded asynchronously at startup so the bidirectional bar chart can
+         drive its bars from real Pydantic-shaped eval fixtures and its hover
+         tooltips can show authentic rubric definitions, qualitative reasons,
+         and rule findings.  Other visuals on this page continue to use the
+         hardcoded `docs` array above; once we like how this looks we can
+         migrate them too. */
+      const rubric = {}; // id (P1..J3) -> { id, label, group, question, rules: [] }
+      let biRealDocs = []; // [{id, name, meta, scores, reasons, findings}]
+
+      /* Map dim label -> design-system id (P1, E1, …) so we can join rubric
+         YAML (keyed by snake_case) and design-system tokens (keyed by id). */
+      const _dimLabelToId = new Map(_ds.dimensions.map((d) => [d.label, d.id]));
+      /* Map group label -> design-system group id (P, E, F, R, G, J). */
+      const _groupLabelToId = new Map(_ds.groups.map((g) => [g.label, g.id]));
+
+      async function loadRealEvalData() {
+        /* Rubric definitions (questions + rules per dim). */
+        const rubricRaw = await fetch(
+          "../../pprose/src/pprose/rubric_schema.yaml",
+        ).then((r) => r.text());
+        const rubricDoc = jsyaml.load(rubricRaw);
+        for (const g of rubricDoc.groups || []) {
+          for (const dim of g.dimensions || []) {
+            const id = _dimLabelToId.get(dim.label);
+            if (!id) continue;
+            rubric[id] = {
+              id,
+              label: dim.label,
+              group: g.label,
+              groupId: _groupLabelToId.get(g.label),
+              section: dim.section,
+              question: dim.question,
+              rules: Array.isArray(dim.rules) ? dim.rules : [],
+            };
+          }
+        }
+
+        /* Canonical baseline evals — these carry the actual document titles
+           in `artifact.label` (e.g. "IRS 1040: Filing Requirements") and have
+           full per-dim reasons.  rev2-net is the lowest-scoring doc in the
+           fixture set (mean 3.10, lows down to 2) — included so the bar
+           alpha-gradient is visible at the bottom of the range. */
+        const fixtures = [
+          {
+            id: "irs",
+            path: "evals/baselines/third-party/irs-1040-filing-requirements.eval.md",
+          },
+          {
+            id: "sqlite",
+            path: "evals/baselines/third-party/sqlite-appropriate-uses.eval.md",
+          },
+          {
+            id: "guidelines",
+            path: "evals/baselines/self/practical-prose-guidelines.eval.md",
+          },
+          {
+            id: "rev2-net",
+            path: "tools/pprose/tests/fixtures/rev2-net.eval.md",
+          },
+        ];
+
+        biRealDocs = await Promise.all(
+          fixtures.map(async (fx) => {
+            const raw = await fetch(`../../../${fx.path}`).then((r) =>
+              r.text(),
+            );
+            const m = raw.match(/^---\n([\s\S]*?)\n---/);
+            if (!m) throw new Error(`No frontmatter in ${fx.path}`);
+            const fm = jsyaml.load(m[1]);
+
+            const scores = {},
+              reasons = {},
+              findings = {};
+            const _flatten = (obj, sink) => {
+              for (const grp of Object.values(obj || {})) {
+                for (const [dimKey, val] of Object.entries(grp || {})) {
+                  const label =
+                    dimKey.charAt(0).toUpperCase() + dimKey.slice(1);
+                  const id = _dimLabelToId.get(label);
+                  if (id) sink[id] = val;
+                }
+              }
+            };
+            _flatten(fm.qual, scores);
+            _flatten(fm.qual_reasons, reasons);
+            for (const f of fm.rule_findings || []) {
+              const id = _dimLabelToId.get(f.dimension);
+              if (!id) continue;
+              if (!findings[id]) findings[id] = [];
+              findings[id].push(f);
+            }
+
+            const w = fm.quant?.size?.words;
+            const ver = fm.artifact?.rubric_version || fm.rubric?.version;
+            const metaParts = [];
+            if (w) metaParts.push(`${(w / 1000).toFixed(1)}k words`);
+            if (ver) metaParts.push(ver);
+
+            return {
+              id: fx.id,
+              name: (fm.artifact && fm.artifact.label) || fx.id,
+              meta: metaParts.join(" · "),
+              scores,
+              reasons,
+              findings,
+              quant: fm.quant || {},
+              derived: fm.derived || {},
+            };
+          }),
+        );
+      }
+
       /* ─────────────────────── HSL palette widget ─────────────────────────── */
       /* Per-group H / S / L / Spread sliders rewrite --accent-X / --surface-X /
          --dim-Xn live.  Behavior + initial values live in the shared lib
@@ -2040,18 +2730,171 @@
         return div;
       }
 
-      /* Layout flag — Show dim labels in Visual 9.  Default-off: the
-         head row (dim name + id) is hidden so the spine carries the
-         dim identity by colored circle alone.  Toggle to bring the
-         text labels back. */
-      (function setupShowDimLabels() {
-        const cb = document.getElementById("show-dim-labels");
-        if (!cb) return;
-        const apply = () => {
-          document.body.classList.toggle("no-dim-labels", !cb.checked);
+      /* Tone-override sliders — three single-color HSL settings for
+         tokens that override per-group derivatives (icon color), the
+         dim-label muted gray, and the NA chip background.  Each row
+         writes one CSS variable on <html>; the × button removes it,
+         restoring the design-system default. */
+      /* Reusable single-color HSL slider row.  Same chrome as the
+         per-group palette sliders above (.palette-row + .palette-channel),
+         minus the Spread channel.  Each row writes one CSS custom
+         property on <html>; the slider track gradients, thumb colors,
+         and numeric readouts update live as the user drags. */
+      function buildToneRow({ token, name, h, s, l }) {
+        const _el = (tag, attrs, ...children) => {
+          const e = document.createElement(tag);
+          Object.entries(attrs || {}).forEach(([k, v]) => {
+            if (k === "style" && typeof v === "object") Object.assign(e.style, v);
+            else if (k === "class") e.className = v;
+            else e.setAttribute(k, v);
+          });
+          children.flat().forEach((c) => {
+            if (c == null) return;
+            e.appendChild(typeof c === "string" ? document.createTextNode(c) : c);
+          });
+          return e;
         };
-        cb.addEventListener("change", apply);
-        apply(); /* honor initial checkbox state (default: unchecked → hidden) */
+        const channel = (chKey, label, min, max, val) => {
+          const wrap = _el("div", { class: "palette-channel" });
+          wrap.appendChild(_el("span", { class: "ch-name" }, label));
+          const input = _el("input", {
+            type: "range",
+            min: String(min),
+            max: String(max),
+            step: "1",
+            value: String(val),
+            class: `ch-${chKey}`,
+          });
+          const value = _el("span", { class: "ch-value" });
+          wrap.appendChild(input);
+          wrap.appendChild(value);
+          return { wrap, input, value };
+        };
+        const row = _el("div", { class: "palette-row", "data-token": token });
+        const swatch = _el("span", { class: "palette-swatch" });
+        row.appendChild(swatch);
+        row.appendChild(_el("span", { class: "palette-name" }, name));
+        const hC = channel("h", "Hue", 0, 359, h);
+        const sC = channel("s", "Sat", 0, 100, s);
+        const lC = channel("l", "L", 0, 100, l);
+        row.appendChild(hC.wrap);
+        row.appendChild(sC.wrap);
+        row.appendChild(lC.wrap);
+
+        function paint() {
+          const hh = +hC.input.value;
+          const ss = +sC.input.value;
+          const ll = +lC.input.value;
+          const color = `hsl(${hh} ${ss}% ${ll}%)`;
+          hC.value.textContent = hh;
+          sC.value.textContent = ss;
+          lC.value.textContent = ll;
+          /* H slider already has a static rainbow track in CSS; thumb
+             picks up the live hue. */
+          hC.input.style.setProperty("--thumb-color", `hsl(${hh} 100% 50%)`);
+          sC.input.style.setProperty(
+            "--track-gradient",
+            `linear-gradient(to right, hsl(${hh} 0% ${ll}%), hsl(${hh} 100% ${ll}%))`,
+          );
+          sC.input.style.setProperty("--thumb-color", color);
+          lC.input.style.setProperty(
+            "--track-gradient",
+            `linear-gradient(to right, hsl(${hh} ${ss}% 0%), hsl(${hh} ${ss}% 50%), hsl(${hh} ${ss}% 100%))`,
+          );
+          lC.input.style.setProperty("--thumb-color", color);
+          swatch.style.background = color;
+          document.documentElement.style.setProperty(token, color);
+        }
+        [hC.input, sC.input, lC.input].forEach((i) => {
+          i.addEventListener("input", paint);
+        });
+        paint();
+        return row;
+      }
+
+      (function setupToneOverrides() {
+        const host = document.getElementById("tone-overrides");
+        if (!host) return;
+        /* Initial slider values come from the design system YAML (via
+           window.PracticalProseDesignSystem.designSystem.tones).  When
+           the user hits "Copy YAML" the snapshot includes the current
+           tone values; pasting it back + regenerating makes the change
+           the new default. */
+        const tones = window.PracticalProseDesignSystem.designSystem.tones || {};
+        const parseHsl = (s) => {
+          const m = /hsl\(\s*([\d.]+)\s+([\d.]+)%\s+([\d.]+)%/.exec(s || "");
+          return m
+            ? { h: +m[1], s: +m[2], l: +m[3] }
+            : { h: 0, s: 0, l: 50 };
+        };
+        const rows = [
+          { token: "--icon-color", name: "Icons", ...parseHsl(tones.icon) },
+          {
+            token: "--dim-label-color",
+            name: "Dim labels",
+            ...parseHsl(tones.dim_label),
+          },
+          { token: "--na-color", name: "NA bg", ...parseHsl(tones.na) },
+          {
+            token: "--na-label-color",
+            name: "NA label",
+            ...parseHsl(tones.na_label),
+          },
+        ];
+        rows.forEach((cfg) => {
+          host.appendChild(buildToneRow(cfg));
+        });
+      })();
+
+      /* Live tweaker for --score-alpha-step (the per-segment alpha
+         decrement on bar segments + the score chip).  Surfaces a
+         design-system token at the top of the page so reviewers can
+         tune the gradient by feel; re-applies all bi-card scores on
+         change so the effect is visible immediately. */
+      (function setupAlphaStepSlider() {
+        const range = document.getElementById("score-alpha-step");
+        const readout = document.getElementById("score-alpha-step-readout");
+        if (!range || !readout) return;
+        /* Sync the slider's initial position with the design-system
+           default (so the slider, the CSS var, and the YAML always
+           agree on page load). */
+        const initialStep = _readScoreAlphaStep();
+        range.value = initialStep.toString();
+        readout.textContent = `${Math.round(initialStep * 100)}%`;
+        const apply = () => {
+          const v = parseFloat(range.value);
+          document.documentElement.style.setProperty(
+            "--score-alpha-step",
+            v.toFixed(2),
+          );
+          readout.textContent = `${Math.round(v * 100)}%`;
+          /* Refresh every numeric-scored row: each .bi-bar-seg is
+             alpha-mixed at segmentAlpha(i); the .bi-num-circle uses
+             score-based alpha. */
+          document.querySelectorAll(".bi-dim[data-tip-key]").forEach((row) => {
+            const key = row.dataset.tipKey;
+            const docId = row.dataset.tipDoc;
+            const doc = biRealDocs.find((d) => d.id === docId);
+            if (!doc) return;
+            const s = doc.scores[key];
+            if (typeof s !== "number") return;
+            row.querySelectorAll(".bi-bar-seg").forEach((seg) => {
+              const i = parseInt(seg.dataset.seg, 10);
+              seg.style.background = dimColorMix(key, segmentAlpha(i));
+            });
+            const circle = row.querySelector(".bi-num-circle");
+            if (
+              circle &&
+              !circle.classList.contains("na") &&
+              !circle.classList.contains("err")
+            ) {
+              circle.style.background = scoreColor(key, s);
+            }
+          });
+        };
+        range.addEventListener("input", apply);
+        /* No initial apply — the CSS token's default already drives
+           the first render. */
       })();
 
       /* Copy-design button — serializes current slider state to YAML. */
@@ -2151,15 +2994,230 @@
         return span;
       }
 
-      function panel(kicker, title, note, body) {
+      /* ─────────────────── Visual notes / single source ───────────────────
+         One data table drives BOTH the "About this visual" toggle that
+         sits next to each viz AND the rolled-up note-cards in the bottom
+         "Visual notes & sources" section.  Edit a paragraph here and it
+         updates in both places. */
+      const VISUALS_INFO = {
+        1: {
+          name: "Grouped Heatmap",
+          meta: "Tabular · color saturation encoding",
+          rendering:
+            "Reads like a spreadsheet, scans like a heatmap. Group bands across the top tie columns to their group hue; cell color uses the design system’s red→green score ramp (1 = red, 5 = green) so the value reads at a glance, orthogonal to group identity. Best for side-by-side comparison across many documents.",
+          lineage:
+            "Edward Tufte’s table-graphics (<em>The Visual Display of Quantitative Information</em>, 1983) and the conditional-formatting heatmaps that became standard in business intelligence in the 2000s (Excel, Tableau). The GitHub contribution graph (2013) cemented the small-square-saturation idiom in everyday UI.",
+          strengths:
+            "scales gracefully to many documents, exact values are still readable in each cell, group bands at the top tie columns to color, the layout is print-friendly and accessible to screen readers.",
+          tradeoffs:
+            "reads as a spreadsheet first and a picture second; you have to learn the encoding before patterns pop; with many docs the doc-name column dominates the page width.",
+        },
+        2: {
+          name: "Score Strip",
+          meta: "Sparkline row · one document per line",
+          rendering:
+            "A sparkline scorecard: each document is a single horizontal strip of 20 cells. Group gaps and group-tinted colors make the five blocks legible at a glance. Compact enough to drop next to a document name in a list.",
+          lineage:
+            'Edward Tufte coined "sparklines" in <em>Beautiful Evidence</em> (2006) for word-sized graphics that sit inline with prose. The horizontal strip variant shows up in financial dashboards (Bloomberg, Splunk row indicators) and in github-style activity strips.',
+          strengths:
+            "very compact, drops cleanly into a list of files or PRs, the row is reading-order so the eye scans from left (purpose) to right (judgment) in the same order as the rubric.",
+          tradeoffs:
+            "tiny cells make any single dimension hard to identify without hover; absolute score is harder to read than the heatmap because the cells are smaller.",
+        },
+        3: {
+          name: "Hex Honeycomb",
+          meta: "Hex grid · row-per-group",
+          rendering:
+            "Each cell is a hex tile in its group color, intensity-keyed to the score. The 6 rows of (4, 3, 3, 3, 4, 3) match the group sizes directly, and short labels turn every cell into a glanceable scorecard. Works small enough to print at the head of a report.",
+          lineage:
+            "hex-binning maps from the cartography world (Mike Bostock’s D3 hexbin examples; Carto’s 2014 hex-tile choropleths) and the periodic-table-of-elements layout, where every cell is the same shape but labels and color carry meaning.",
+          strengths:
+            "the 6 rows of (4, 3, 3, 3, 4, 3) hex tiles map one-to-one to the rubric groups, the shape is decorative without being noisy, every dim gets a label, and the whole figure fits in a few inches.",
+          tradeoffs:
+            "hexagons are not a canonical shape for ordinal data; readers may search for a meaning in the hexagonal-ness that isn’t there.",
+        },
+        4: {
+          name: "Radial Spider",
+          meta: "Polar line graph · score = radius",
+          rendering:
+            'A classic radar reframed for grouped axes: each of the six groups gets a tinted arc background, the spokes inside take the group color, and the polygon traces the doc’s scores. NA sectors are washed in muted gray and ERR sectors in faint red, with the polyline broken across them so a missing dimension can never be mistaken for a zero. Good for "is this doc balanced?"',
+          lineage:
+            'the Kiviat diagram, introduced by Kenneth Kolence and Philip Kiviat in 1973 for visualizing computer performance metrics. Popularized for human-readable use by PISA education reports, Strava / Garmin athletic profiles, and the "competency wheels" of HR / talent tooling.',
+          strengths:
+            "shape recognition is fast — a balanced doc is a regular polygon, a weak group is a visible dent; group-tinted arc backgrounds let the eye associate spoke clusters with the rubric groups.",
+          tradeoffs:
+            "the closed polygon overstates area (a doc that scores 5,1,5,1 looks much worse than 3,3,3,3 even though both mean 3); axis order changes the perceived shape; comparing two polygons overlaid is visually noisy past two documents.",
+        },
+        5: {
+          name: "Coxcomb (Nightingale Rose)",
+          meta: "Polar area chart · score = √(petal radius)",
+          rendering:
+            "Each dimension is a pie wedge whose radius scales linearly with the score, so the 1–5 level rings are evenly spaced. Solid hairline rings overlay the petals, making partial values (e.g., 3.6) readable by eye between rings. NA / ERR dimensions are full-radius muted wedges with a label so an out-of-scope dimension never looks like a zero-score petal. Note: linear radius means wedge <em>area</em> grows as score², visually exaggerating high scores relative to low ones — the classic Nightingale sqrt-scaled version trades that off in the opposite direction.",
+          lineage:
+            'Florence Nightingale’s 1858 "Diagram of the Causes of Mortality in the Army in the East," drawn to persuade Parliament that sanitation, not battle, was killing soldiers in Crimea. Modern uses: BBC and FT election graphics, Stefanie Posavec’s data portraits, Giorgia Lupi’s <em>Dear Data</em> (2016).',
+          strengths:
+            'more visually punchy than radar — soft spots really stick out as short petals; works well as a single, "iconic" chart for a one-document report header; the √-scaling keeps low scores legible without exaggerating high ones.',
+          tradeoffs:
+            "area encoding is harder to read precisely than length; the form is less familiar than bars or radar so readers need a moment to learn it; like radar, hard to overlay multiple docs.",
+        },
+        6: {
+          name: "Sunburst",
+          meta: "Radial treemap · 2 rings, hierarchy + value",
+          rendering:
+            'A two-ring sunburst: the inner ring carries the 6 groups (size by member count, color from the group palette); the outer ring is the 20 dimensions, each arc colored on the red→green score ramp. Reads as "which groups carry weight, and within each group which dim is the soft spot."',
+          lineage:
+            "John Stasko and Eugene Zhang introduced the sunburst at IEEE InfoVis 2000 as a radial successor to the treemap. Popularized by Mike Bostock’s D3 sunburst examples and by disk-inventory tools (Disk Inventory X, WinDirStat, Daisy Disk).",
+          strengths:
+            "a single figure carries <em>both</em> the group structure and the per-dim scores — inner ring for groups, outer ring saturation for scores; the centred mean gives a one-glance overall verdict.",
+          tradeoffs:
+            "outer-ring arc lengths are equal here (each dim gets the same wedge), so the chart only encodes value with color — meaning we’re carrying the sunburst’s decorative cost without using its strongest dimension; not as efficient as the heatmap for actual reading.",
+        },
+        7: {
+          name: "Group Small Multiples",
+          meta: "Trellis cards · one card per group, bars across docs",
+          rendering:
+            'A library-catalog feel: six group cards lined up, each containing its dimension rows with a tiny grouped bar chart spanning the documents. Best when you want to look "into" one group and quickly compare drafts on it, not for at-a-glance overall scores.',
+          lineage:
+            'trellis / lattice plots from William Cleveland and Robert McGill at Bell Labs (1980s), formalized in Cleveland’s <em>Visualizing Data</em> (1993); Tufte’s "small multiples" principle (<em>Envisioning Information</em>, 1990); the ggplot2 <code>facet_wrap</code> idiom that made the pattern standard in modern data analysis.',
+          strengths:
+            'the best layout for "I want to look inside one group across several drafts" — the eye walks one card at a time without losing context; the per-dim mean column on the right is a built-in roll-up.',
+          tradeoffs:
+            "no single-figure summary; takes the most vertical space of any candidate; comparing across groups means jumping between cards rather than scanning a line.",
+        },
+        8: {
+          name: "Bar Cards (overlay-text)",
+          meta: "One card per doc · text on top of the bar",
+          rendering:
+            'Space-efficient text-on-bar layout: each row is a single bar whose width encodes the score in the dim’s group color. The dim id+name (e.g. “P1. Suitability”) is overlaid in the body color with a cream halo so it stays legible across the track, the colored fill, and the card background when a long name overflows the bar. Small vertical ticks at 1/2/3/4 calibrate the scale so partial values can be read off the bar. Group sections use the design system’s MDI icons (compass-rose / quill / anchor / ruler / scale-balance) with ALL CAPS labels; dim names use rubric-style capitalization ("P1. Suitability"), flush-left with the group labels above them.',
+          lineage:
+            "the in-cell data-bar idiom from Excel 2007 and Stephen Few’s bullet charts (<em>Information Dashboard Design</em>, 2006), fused with the progress-bar / Likert row used in modern product UI (Linear, GitHub Insights, Notion). The two-copy text-clip trick for legibility against a moving fill is the same technique that powers e.g. Apple Music’s scrubber-time readout.",
+          strengths:
+            "the most space-efficient per-doc view — bar and label share the same row, no separate name column. Dim labels read at sentence-length speed (lowercase sans-serif), group sections carry the design-system MDI icons (<code>compass-rose</code>, <code>quill</code>, <code>anchor</code>, <code>ruler</code>, <code>scale-balance</code>) so groups identify themselves visually as well as by color. NA / ERR get full-width muted bars so they can never be misread as low scores.",
+          tradeoffs:
+            "only sensibly comparable side-by-side (one card per doc); for many docs the page gets horizontally crowded. Two-copy text labels mean the dim name is drawn twice per row — cheap, but worth noting if you ever wanted to animate the fill.",
+        },
+        "9A": {
+          name: "Bidirectional Bars",
+          meta: "10 left + 10 right · per-dim hue · central numeric spine",
+          rendering:
+            "A compromise between a bar chart and a starburst. The left column lists Purpose (4) + Expression (3) + Form (3) = 10 dims with bars growing leftward; the right column lists Reasoning (4) + Grounding (3) + Judgment (3) = 10 dims with bars growing rightward. Reasoning sits at the top of the right column so its 4 dims pair row-for-row with Purpose. Dim ids (P1, E1, F1…) form the central spine; scores sit just outside the outer edge of each bar. Each dim uses a slightly different hue within its group family — Purpose 68–80, Expression 201–207, Form 26–34, Reasoning 323–332, Grounding 158–166, Judgment 272–284 — so the colors are not monochromatic. Unit ticks at 1/2/3/4 cut visible gaps in the bar. NA rows get a subtle bar close to the page bg; ERR rows get a subtle red-tinted bar with a saturated ERR badge as the indicator. Hover any dimension name, group header, or bar/score to see its full rubric definition and per-doc findings in the detail panel.",
+          lineage:
+            'the back-to-back / opposed bar chart used in demographic population pyramids (US Census, Statistics Canada) and in Hans Rosling–style gender / age comparisons, combined with the rubric’s grouped structure. The per-dim hue variation (slight hue rotation within each group family) is the design pattern Datawrapper and the FT use for grouped categorical palettes — colors that read as "the same family" without being monochromatic.',
+          strengths:
+            'reads as a single "shape" per document — the silhouette formed by the bar lengths across all 20 dims is glanceable; the prominent central numbers give the precise scores while the bars give the visual; group identity is doubly encoded (hue family + section header with MDI icon); Reasoning-on-top pairs its 4 dims row-for-row with Purpose’s 4, giving a strong top-section anchor.',
+          tradeoffs:
+            'the right side has one more group transition (Reasoning → Grounding → Judgment) than the left (Purpose → Expression), so the bottom rows can drift slightly out of alignment; the dim text is on the colored fill only, so very low scores can truncate the name on a narrow bar (the leading dim id "P1." mitigates).',
+        },
+        "9B": {
+          name: "Bidirectional Bars (LTR)",
+          meta: "Same data + groups as 9A · both columns read left-to-right",
+          rendering:
+            "Same card, same data, same per-dim hues as 9A — but both columns read left to right. Group icons sit at the column's left edge with the group label next to them; dim labels are left-aligned; bars grow rightward in both columns, with the brightest segment adjacent to the score circle; the score circle sits to the right of every bar. There is no central numeric spine; instead each row is a self-contained <em>name → bar → score</em> unit, repeated twice across the page. Reasoning still pairs row-for-row with Purpose at the top.",
+          lineage:
+            "the side-by-side bullet-chart layout from Stephen Few's <em>Information Dashboard Design</em> (2006) — same row template repeated across multiple columns so the eye reads each row as one unit. Common in financial dashboards (Bloomberg, Tableau small multiples) where the reader compares many narrow categories at a glance.",
+          strengths:
+            "every row reads in the same direction, so the eye doesn't have to flip orientation between columns; the score chip lands in a consistent location (always to the right of its bar) which makes score-scanning down a column faster than in 9A; works better for non-bidirectional readers and for printouts where the central-spine alignment of 9A doesn't always hold.",
+          tradeoffs:
+            "loses the population-pyramid silhouette of 9A — both columns just look like two parallel bar charts, less iconic as a one-glance document signature; the visual symmetry between left and right groups (e.g., Reasoning vs. Purpose) is weaker without the shared central axis.",
+        },
+        10: {
+          name: "Quantitative Metrics",
+          meta: "Per-doc summary card · one visual variable per metric category",
+          rendering:
+            "A companion to Visual 9A — same card width, kicker + italic title, same muted-gray section labels. The body groups the metrics by what they describe and pairs each category with the visual variable that fits its semantics. Single doc-level facts (word count, page count) become large tabular numerals — the fact IS the visualization, no encoding needed. A sum-to-whole breakdown (heading levels) becomes a single stacked horizontal bar; per-level hues mirror the group palette so no new color system is introduced. Rates that compare meaningfully across documents (links per 1k words, words per sentence) become horizontal bars on a per-metric scale; for prose-pacing metrics that have a documented typical range (~15-25 words/sentence, ~30-60 words/paragraph, ~1.5-3 sentences/paragraph) the bar carries a translucent green comfort-zone stripe so the reader can see at a glance whether a doc sits inside the typical band. Threshold-driven hygiene signals (banned register hits, bracket tags, footnote refs) become color-coded pill chips — the number itself isn't the story, only whether the threshold has been crossed; green when zero, amber when non-zero. The rubric rollup at the bottom mirrors Visual 9A in compact form (six group-colored bars + overall in the foreground color) so this card stands alone as a one-page eval summary even without the bidirectional detail.",
+          lineage:
+            'Edward Tufte’s small-multiple stat callouts and the "by the numbers" sidebar pattern in long-form journalism (<em>The New York Times</em>, <em>FiveThirtyEight</em>); Stephen Few’s bullet charts (<em>Information Dashboard Design</em>, 2006) for the comfort-zone overlay on bars; the "pill chip" hygiene indicator from modern dev-tool surfaces (GitHub Actions, Vercel) for threshold-driven counts.',
+          strengths:
+            "each metric category uses the visual variable that fits its semantics — single doc-level facts (word count, page count) get large tabular numerals because the fact <em>is</em> the chart; categorical sums (heading levels) get one stacked horizontal bar; cross-doc comparable rates (links per 1k words, words per sentence) get bars on shared per-metric scales; pacing metrics carry a translucent green comfort-zone stripe so the reader can see whether the doc sits in the typical range without doing math; threshold-driven hygiene signals (banned register hits, bracket tags) become green/amber chips because the number isn’t the story, only the threshold. The rubric rollup at the bottom mirrors Visual 9A in compact form so this single card stands alone as a one-page eval summary.",
+          tradeoffs:
+            "bar scales are fixed per-metric, so a doc that exceeds the chosen ceiling gets pinned at 100% and the value-readout is the only signal of how far past it sits — fine for an explanatory dashboard, less so for a benchmarking surface that has long-tail outliers; per-level heading hues introduce a second color system (visually borrowed from group colors, but no semantic link), worth revisiting if we ever want to color h1–h6 by something else.",
+        },
+      };
+
+      /* <p><span class="label">Label:</span> html body</p> */
+      function pHtml(label, html) {
+        const p = document.createElement("p");
+        p.innerHTML = `<span class="label">${label}:</span> ${html}`;
+        return p;
+      }
+
+      /* Returns an array of nodes — the inner content of a note-card or
+         the body of a panel-about toggle.  Both consumers use the same
+         shape; the bottom note-card adds the .note-card wrapper, the
+         toggle wraps in .panel-about-body. */
+      function makeNoteContent(n, info, opts = {}) {
+        const items = [];
+        if (!opts.skipHeading) {
+          items.push(el("h3", {}, `${n} · ${info.name}`));
+        }
+        const meta = document.createElement("p");
+        meta.className = "meta";
+        meta.innerHTML = info.meta;
+        items.push(meta);
+        if (info.rendering) items.push(pHtml("Rendering", info.rendering));
+        items.push(pHtml("Lineage", info.lineage));
+        items.push(pHtml("Strengths", info.strengths));
+        items.push(pHtml("Tradeoffs", info.tradeoffs));
+        return items;
+      }
+
+      function panel(n, body) {
+        const info = VISUALS_INFO[n];
+        if (!info) throw new Error(`No VISUALS_INFO entry for n=${n}`);
         return el(
           "section",
           { class: "panel" },
-          el("h2", {}, kicker),
-          el("div", { class: "title" }, title),
-          el("p", { class: "note" }, note),
+          el("h2", {}, `Visual ${n} · ${info.name}`),
+          el(
+            "details",
+            { class: "panel-about" },
+            el("summary", {}, "About this visual"),
+            el(
+              "div",
+              { class: "panel-about-body" },
+              ...makeNoteContent(n, info, { skipHeading: true }),
+            ),
+          ),
           body,
         );
+      }
+
+      /* Display order for the per-visual cards in the bottom notes-grid
+         and (implicitly, via the matching keys) the panel headings.
+         Update this when adding/reordering visuals; renderAll() controls
+         actual mount order in #root independently. */
+      const VISUAL_ORDER = [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6",
+        "7",
+        "8",
+        "9B",
+        "9A",
+        "10",
+      ];
+
+      /* Populate the bottom notes-grid from the same VISUALS_INFO table. */
+      function renderVisualNotes() {
+        const grid = document.querySelector(".notes-grid");
+        if (!grid) return;
+        /* Insert the per-visual cards before the design-system / palette
+           card (which is hardcoded HTML in the same grid). */
+        const paletteCard = grid.querySelector(".palette-card");
+        for (const n of VISUAL_ORDER) {
+          const info = VISUALS_INFO[n];
+          if (!info) continue;
+          const card = el(
+            "div",
+            { class: "note-card" },
+            ...makeNoteContent(n, info),
+          );
+          if (paletteCard) grid.insertBefore(card, paletteCard);
+          else grid.appendChild(card);
+        }
       }
 
       const root = document.getElementById("root");
@@ -2249,14 +3307,7 @@
           });
         });
 
-        root.appendChild(
-          panel(
-            "Visual 1 · Grouped Heatmap",
-            "Dense tabular grid",
-            "Reads like a spreadsheet, scans like a heatmap. Group bands across the top tie columns to their group hue; cell color uses the design system’s red→green score ramp (1 = red, 5 = green) so the value reads at a glance, orthogonal to group identity. Best for side-by-side comparison across many documents.",
-            grid,
-          ),
-        );
+        root.appendChild(panel(1, grid));
       }
 
       /* ─────────────────── Visual 2: Strip / sparkline rows ────────────────── */
@@ -2298,14 +3349,7 @@
           body.appendChild(row);
         });
 
-        root.appendChild(
-          panel(
-            "Visual 2 · Score Strip",
-            "One line per document",
-            "A sparkline scorecard: each document is a single horizontal strip of 20 cells. Group gaps and group-tinted colors make the five blocks legible at a glance. Compact enough to drop next to a document name in a list.",
-            body,
-          ),
-        );
+        root.appendChild(panel(2, body));
       }
 
       /* ──────────────────── Visual 3: Hex honeycomb per doc ─────────────────── */
@@ -2388,14 +3432,7 @@
           body.appendChild(row);
         });
 
-        root.appendChild(
-          panel(
-            "Visual 3 · Hex Honeycomb",
-            "Five rows, one per group",
-            "Each cell is a hex tile in its group color, intensity-keyed to the score. The 6 rows of (4, 3, 3, 3, 4, 3) match the group sizes directly, and short labels turn every cell into a glanceable scorecard. Works small enough to print at the head of a report.",
-            body,
-          ),
-        );
+        root.appendChild(panel(3, body));
       }
       function hexagonPath(cx, cy, r) {
         /* flat-topped */
@@ -2413,14 +3450,7 @@
         docs.forEach((doc) => {
           body.appendChild(radarCard(doc));
         });
-        root.appendChild(
-          panel(
-            "Visual 4 · Radial Spider",
-            "20 spokes, 5 colored arc backgrounds",
-            'A classic radar reframed for grouped axes: each of the six groups gets a tinted arc background, the spokes inside take the group color, and the polygon traces the doc’s scores. NA sectors are washed in muted gray and ERR sectors in faint red, with the polyline broken across them so a missing dimension can never be mistaken for a zero. Good for "is this doc balanced?"',
-            body,
-          ),
-        );
+        root.appendChild(panel(4, body));
       }
 
       function radarCard(doc) {
@@ -2596,7 +3626,7 @@
               .attr("text-anchor", "middle")
               .attr("class", "axis-label bold")
               .style("font-size", "8px")
-              
+
               .style("fill", s === "ERR" ? "var(--score-err)" : "var(--fg)")
               .text(s);
           } else {
@@ -2622,14 +3652,7 @@
         docs.forEach((doc) => {
           body.appendChild(coxcombCard(doc));
         });
-        root.appendChild(
-          panel(
-            "Visual 5 · Coxcomb (Nightingale Rose)",
-            "Petal length = score, color = group",
-            "Each dimension is a pie wedge whose radius scales linearly with the score, so the 1–5 level rings are evenly spaced. Solid hairline rings overlay the petals, making partial values (e.g., 3.6) readable by eye between rings. NA / ERR dimensions are full-radius muted wedges with a label so an out-of-scope dimension never looks like a zero-score petal. Note: linear radius means wedge <em>area</em> grows as score², visually exaggerating high scores relative to low ones — the classic Nightingale sqrt-scaled version trades that off in the opposite direction.",
-            body,
-          ),
-        );
+        root.appendChild(panel(5, body));
       }
 
       function coxcombCard(doc) {
@@ -2697,7 +3720,7 @@
               .attr("text-anchor", "middle")
               .attr("class", "axis-label bold")
               .style("font-size", "8px")
-              
+
               .style("fill", s === "ERR" ? "var(--score-err)" : "var(--fg)")
               .text(s);
           }
@@ -2765,14 +3788,7 @@
         docs.forEach((doc) => {
           body.appendChild(sunburstCard(doc));
         });
-        root.appendChild(
-          panel(
-            "Visual 6 · Sunburst",
-            "Inner ring = group, outer ring = dimension",
-            'A two-ring sunburst: the inner ring carries the 6 groups (size by member count, color from the group palette); the outer ring is the 20 dimensions, each arc colored on the red→green score ramp. Reads as "which groups carry weight, and within each group which dim is the soft spot."',
-            body,
-          ),
-        );
+        root.appendChild(panel(6, body));
       }
 
       function sunburstCard(doc) {
@@ -2980,14 +3996,7 @@
           body.appendChild(card);
         });
 
-        root.appendChild(
-          panel(
-            "Visual 7 · Group Small Multiples",
-            "6 group cards, one bar per doc per dim",
-            'A library-catalog feel: six group cards lined up, each containing its dimension rows with a tiny grouped bar chart spanning the documents. Best when you want to look "into" one group and quickly compare drafts on it, not for at-a-glance overall scores.',
-            body,
-          ),
-        );
+        root.appendChild(panel(7, body));
       }
 
       /* ───────────── Visual 8: Overlay-text Bar Cards ─────────────── */
@@ -2996,14 +4005,7 @@
         docs.forEach((doc) => {
           body.appendChild(bartableCard(doc));
         });
-        root.appendChild(
-          panel(
-            "Visual 8 · Bar Cards",
-            "Overlay-text bars · one card per doc · MDI group icons",
-            'Space-efficient text-on-bar layout: each row is a single bar whose width encodes the score in the dim’s group color. The dim id+name (e.g. “P1. Suitability”) is overlaid in the body color with a cream halo so it stays legible across the track, the colored fill, and the card background when a long name overflows the bar. Small vertical ticks at 1/2/3/4 calibrate the scale so partial values can be read off the bar. Group sections use the design system’s MDI icons (compass-rose / quill / anchor / ruler / scale-balance) with ALL CAPS labels; dim names use rubric-style capitalization ("P1. Suitability"), flush-left with the group labels above them.',
-            body,
-          ),
-        );
+        root.appendChild(panel(8, body));
       }
 
       function bartableCard(doc) {
@@ -3075,37 +4077,90 @@
         return card;
       }
 
-      /* ───────────── Visual 9: Bidirectional Bars ─────────────── */
-      /* Left column: Purpose (4) + Expression (6) = 10 dims, bars grow LEFT.
-   Right column: Reasoning (4) + Grounding (3) + Judgment (3) = 10 dims,
-   bars grow RIGHT.  Reasoning sits at top to pair with Purpose's 4 dims.
-   Numbers form a central spine.  Per-dim hues within each group family
-   (from the design-system per-dim palette) prevent monochromy. */
+      /* ───────────── Visual 9A + 9B: Bidirectional Bars ───────────────
+         9A — original centered design.  Left column: Purpose (4) +
+         Expression (3) + Form (3) = 10 dims, bars grow LEFT.  Right
+         column: Reasoning (4) + Grounding (3) + Judgment (3) = 10 dims,
+         bars grow RIGHT.  Reasoning sits at top to pair with Purpose's
+         4 dims.  Numbers form a central spine.
+         9B — same DOM, same data, same per-dim hues; the `.bi-ltr`
+         marker class on its bi-stack flips the layout so both columns
+         read left-to-right (CSS-only divergence).  Fork biCard() if 9B
+         ever needs structurally different DOM. */
 
       const _groupById = (id) => groups.find((g) => g.id === id);
       const biLeftGroups = ["P", "E", "F"].map(_groupById); // 4 + 3 + 3 = 10 dims
       const biRightGroups = ["R", "G", "J"].map(_groupById); // 4 + 3 + 3 = 10 dims
       const biDocIds = ["irs", "sqlite", "rubric"];
 
-      function renderBidirectional() {
-        const body = el("div", { class: "bi-stack" });
-        const biDocs = docs.filter((d) => biDocIds.includes(d.id));
-        biDocs.forEach((doc) => {
-          body.appendChild(biCard(doc));
+      /* Shared between 9A and 9B: build a stack of bi-cards + a
+         hover-driven tip panel, wrap them in a .bi-layout, and mount
+         under the given panel id.  `stackClass` lets a variant tag the
+         stack (e.g. 9B uses "bi-stack bi-ltr") so its CSS overrides
+         apply only inside that stack.  `dimFn` picks the per-row DOM
+         (biDim for 9A; biDim9B for 9B). */
+      function renderBidirectional(panelId, stackClass, dimFn, headerExtra) {
+        const stack = el("div", { class: stackClass });
+        const useDocs =
+          biRealDocs.length > 0
+            ? biRealDocs
+            : docs.filter((d) => biDocIds.includes(d.id));
+        useDocs.forEach((doc) => {
+          stack.appendChild(biCard(doc, dimFn, headerExtra));
         });
-        root.appendChild(
-          panel(
-            "Visual 9 · Bidirectional Bars",
-            "Bars grow outward from a central numeric spine · per-dim hues",
-            "A compromise between a bar chart and a starburst. The left column lists Purpose (4) + Expression (3) + Form (3) = 10 dims with bars growing leftward; the right column lists Reasoning (4) + Grounding (3) + Judgment (3) = 10 dims with bars growing rightward. Reasoning sits at the top of the right column so its 4 dims pair row-for-row with Purpose. Dim ids (P1, E1, F1…) form the central spine; scores sit just outside the outer edge of each bar. Each dim uses a slightly different hue within its group family — Purpose 68–80, Expression 201–207, Form 26–34, Reasoning 323–332, Grounding 158–166, Judgment 272–284 — so the colors are not monochromatic. Unit ticks at 1/2/3/4 cut visible gaps in the bar. NA rows get a subtle bar close to the page bg; ERR rows get a subtle red-tinted bar with a saturated ERR badge as the indicator.",
-            body,
-          ),
+
+        /* Two side panels right of the stack — populated by hover via
+           the tip-panel module set up below.  Detail = rubric core;
+           Assessment = per-doc score + reasons / findings. */
+        const detailEl = el("aside", { class: "bi-tip-panel" });
+        const assessEl = el("aside", { class: "bi-tip-panel bi-tip-panel-assess" });
+
+        const layout = el(
+          "div",
+          { class: "bi-layout" },
+          stack,
+          detailEl,
+          assessEl,
         );
+
+        /* Wire up tooltip behaviors after the panels are in the DOM. */
+        const tip = setupTipPanel(detailEl, assessEl);
+        layout.addEventListener("pointerover", tip.onOver);
+        layout.addEventListener("pointerleave", tip.showPlaceholder);
+
+        root.appendChild(panel(panelId, layout));
       }
 
-      function biCard(doc) {
+      function renderBidirectionalA() {
+        renderBidirectional("9A", "bi-stack", biDim, null);
+      }
+      function renderBidirectionalB() {
+        renderBidirectional("9B", "bi-stack bi-ltr", biDim9B, groupAvgChip);
+      }
+
+      /* Group-average chip — used by 9B's group header.  Mean of the
+         numeric scores in the group; NA/ERR rows are skipped so a group
+         with one out-of-scope dim still gets a meaningful average. */
+      function groupAvgChip(g, doc) {
+        const scores = dims
+          .filter((d) => d.g === g.id)
+          .map((d) => doc.scores[d.id])
+          .filter((s) => typeof s === "number");
+        if (scores.length === 0) return null;
+        const avg = scores.reduce((a, b) => a + b, 0) / scores.length;
+        return el("span", { class: "bi-group-avg" }, avg.toFixed(1));
+      }
+
+      /* `dimFn(doc, d, side)` decides per-row DOM — biDim for 9A, biDim9B
+         for 9B.  `headerExtra(g, doc)` (optional) returns an extra node
+         to append to each group header (9B uses it for the group average
+         on the right).  Everything else (card chrome, column structure,
+         group header order) is identical between the two variants. */
+      function biCard(doc, dimFn = biDim, headerExtra = null) {
         const card = el("div", { class: "bi-card" });
-        card.appendChild(el("div", { class: "doc-kicker" }, "Practical Prose Evaluation"));
+        card.appendChild(
+          el("div", { class: "doc-kicker" }, "Practical Prose Evaluation"),
+        );
         card.appendChild(el("div", { class: "doc-name" }, doc.name));
 
         const grid = el("div", { class: "bi-grid" });
@@ -3114,21 +4169,30 @@
      the rightmost edge (touching the center spine). */
         const left = el("div", { class: "bi-col left" });
         biLeftGroups.forEach((g) => {
-          /* Order: icon (outer) → line → label (inner-most, aligned with
-       the dim labels below thanks to the header's padding-right). */
-          left.appendChild(
-            el(
-              "div",
-              { class: "bi-group-header", style: { color: `var(--text-${g.id.toLowerCase()})` } },
-              groupIcon(g),
-              el("span", { class: "bi-group-line", "aria-hidden": "true" }),
-              el("span", { class: "label" }, g.label),
-            ),
+          /* Order: icon (outer) → label (inner, aligned with dim labels
+       below via the header's padding-right). */
+          const header = el(
+            "div",
+            {
+              class: "bi-group-header",
+              style: {
+                color: `var(--icon-color, var(--accent-${g.id.toLowerCase()}))`,
+              },
+              "data-tip-kind": "group",
+              "data-tip-key": g.id,
+            },
+            groupIcon(g),
+            el("span", { class: "label" }, g.label),
           );
+          if (headerExtra) {
+            const extra = headerExtra(g, doc);
+            if (extra) header.appendChild(extra);
+          }
+          left.appendChild(header);
           dims
             .filter((d) => d.g === g.id)
             .forEach((d) => {
-              left.appendChild(biDim(doc, d, "left"));
+              left.appendChild(dimFn(doc, d, "left"));
             });
         });
         grid.appendChild(left);
@@ -3137,21 +4201,30 @@
      (touching the center spine). */
         const right = el("div", { class: "bi-col right" });
         biRightGroups.forEach((g) => {
-          /* Order: label (inner-most, aligned with the dim labels below
-       thanks to the header's padding-left) → line → icon (outer). */
-          right.appendChild(
-            el(
-              "div",
-              { class: "bi-group-header", style: { color: `var(--text-${g.id.toLowerCase()})` } },
-              el("span", { class: "label" }, g.label),
-              el("span", { class: "bi-group-line", "aria-hidden": "true" }),
-              groupIcon(g),
-            ),
+          /* Order: label (inner, aligned with dim labels below via the
+       header's padding-left) → icon (outer). */
+          const header = el(
+            "div",
+            {
+              class: "bi-group-header",
+              style: {
+                color: `var(--icon-color, var(--accent-${g.id.toLowerCase()}))`,
+              },
+              "data-tip-kind": "group",
+              "data-tip-key": g.id,
+            },
+            el("span", { class: "label" }, g.label),
+            groupIcon(g),
           );
+          if (headerExtra) {
+            const extra = headerExtra(g, doc);
+            if (extra) header.appendChild(extra);
+          }
+          right.appendChild(header);
           dims
             .filter((d) => d.g === g.id)
             .forEach((d) => {
-              right.appendChild(biDim(doc, d, "right"));
+              right.appendChild(dimFn(doc, d, "right"));
             });
         });
         grid.appendChild(right);
@@ -3161,102 +4234,634 @@
         return card;
       }
 
-      /* Build one dim entry: a head row (full name on the outer side, brief
-   id on the inner / center-spine side) plus a body row (bar on the outer
-   side, colored score circle on the inner side).  The inner column
-   alone — id stacked over circle, per dim — is the "summary view"; the
-   outer column adds detail.  The two would stand alone if the bars
-   were stripped. */
-      function biDim(doc, d, side) {
+      /* Read --score-alpha-step fresh on every call so the slider in
+         the design controls (which writes the CSS var live) updates the
+         bar / chip color immediately. */
+      function _readScoreAlphaStep() {
+        const v = getComputedStyle(document.documentElement)
+          .getPropertyValue("--score-alpha-step")
+          .trim();
+        const n = parseFloat(v);
+        return Number.isFinite(n) ? n : 0.14;
+      }
+      /* dimColorMix(id, alpha) → an HSL color-mix expression that fades
+         the dim's base color toward the surface. */
+      function dimColorMix(dimId, alpha) {
+        const a = Math.max(0, Math.min(1, alpha));
+        return `color-mix(in srgb, var(--dim-${dimId}) ${Math.round(
+          a * 100,
+        )}%, transparent)`;
+      }
+      /* Score → score-chip color: fade the dim's base color toward the
+         surface by --score-alpha-step per step below 5. */
+      function scoreColor(dimId, score) {
+        const step = _readScoreAlphaStep();
+        return dimColorMix(dimId, 1 - (5 - score) * step);
+      }
+      /* Bar segment alpha — segment 5 (the absolute outermost position)
+         is always full alpha (1.0); each step inward fades by
+         --score-alpha-step.  This is the *point* of the visual: a
+         score-5 bar reaches full vividness at its tip, a score-3 bar
+         tops out at the alpha of position 3 (so the tip is visibly
+         less vivid than a 5).  Higher scores read brighter AND longer. */
+      function segmentAlpha(segIdx) {
+        const step = _readScoreAlphaStep();
+        return 1 - (5 - segIdx) * step;
+      }
+
+      /* Shared between biDim (9A) and biDim9B: build the row's entry,
+         name span, fully-populated track (segments or NA/ERR fill, plus
+         tick marks), and score circle.  Variants differ only in how
+         they assemble these into the final DOM. */
+      function _biDimPrep(doc, d, side) {
         const s = doc.scores[d.id];
+        /* One row, one trigger.  The whole .bi-dim is the hover zone +
+           tooltip target: dim label, bar, and score chip all refer to
+           the same dim/doc.  Per design system: adjacent UI elements
+           that fire the same action must share one trigger. */
+        const classes = ["bi-dim", side];
+        /* Treat anything that's not a numeric score and not ERR as NA
+           — covers explicit "NA" and dims missing from the fixture
+           (older eval files used legacy keys that don't map to the
+           current schema, e.g. "inference_discipline" → Discipline). */
+        if (typeof s !== "number" && s !== "ERR") classes.push("is-na");
         const entry = el("div", {
-          class: "bi-dim",
+          class: classes.join(" "),
           style: { color: `var(--dim-${d.id})` },
+          "data-tip-kind": "dim",
+          "data-tip-key": d.id,
+          "data-tip-doc": doc.id,
         });
 
-        /* Head row: dim name + id label. */
-        const head = el("div", { class: "bi-dim-head" });
         const name = el("span", { class: "bi-dim-name" }, d.label);
-        const id = el("span", { class: "bi-dim-id" }, d.id);
-        if (side === "left") {
-          head.appendChild(name);
-          head.appendChild(id);
-        } else {
-          head.appendChild(id);
-          head.appendChild(name);
-        }
-        entry.appendChild(head);
-
-        /* Body row: bar track + score circle. */
-        const body = el("div", { class: `bi-row ${side}` });
         const track = el("div", { class: "bi-bar-track" });
-        const fill = el("div", { class: "bi-bar-fill" });
         const circle = el("div", { class: "bi-num-circle" });
 
-        let pct;
         if (typeof s === "number") {
-          pct = (s / 5) * 100;
-          const c = `var(--dim-${d.id})`;
-          fill.style.background = c;
-          circle.style.background = c;
+          /* Bar is composed of `s` unit segments (each 20% wide), each
+             with its own alpha.  Segment 1 sits at the inner side
+             (nearest the spine / score circle) at full vividness; each
+             segment outward fades by --score-alpha-step. */
+          for (let i = 1; i <= s; i++) {
+            const seg = el("div", {
+              class: "bi-bar-seg",
+              "data-seg": String(i),
+            });
+            seg.style.background = dimColorMix(d.id, segmentAlpha(i));
+            if (side === "left") {
+              seg.style.right = `${(i - 1) * 20}%`;
+            } else {
+              seg.style.left = `${(i - 1) * 20}%`;
+            }
+            track.appendChild(seg);
+          }
+          /* Score chip still uses the score-based alpha so a low-score
+             chip still reads as muted (matches the bar's "less filled"
+             story without color mismatch at the inner edge). */
+          circle.style.background = scoreColor(d.id, s);
           circle.textContent = s;
-        } else if (s === "ERR") {
-          pct = 100;
-          fill.style.background = "var(--score-err-fill)"; /* subtle bar */
-          circle.style.background =
-            "var(--score-err)"; /* saturated red — the red indicator */
-          circle.textContent = "ERR";
-          circle.classList.add("err");
         } else {
-          /* NA */
-          pct = 100;
-          fill.style.background = "var(--score-na-fill)"; /* subtle bar */
-          circle.style.background =
-            "var(--score-na)"; /* saturated gray — the NA indicator */
-          circle.textContent = "NA";
-          circle.classList.add("na");
+          /* ERR / NA — full-width single fill, no segmentation.
+             Circle bg comes from the .na / .err CSS rules so the
+             --na-color / (future --err-color) overrides can apply. */
+          const fill = el("div", { class: "bi-bar-fill" });
+          fill.style.width = "100%";
+          if (s === "ERR") {
+            fill.style.background = "var(--score-err-fill)";
+            circle.textContent = "ERR";
+            circle.classList.add("err");
+          } else {
+            fill.style.background = "var(--score-na-fill)";
+            circle.textContent = "NA";
+            circle.classList.add("na");
+          }
+          track.appendChild(fill);
         }
-        fill.style.width = `${pct}%`;
-        track.appendChild(fill);
 
-        /* Unit tick marks at score positions 1/2/3/4.  For left bars
-     (anchored at right, growing left), tick at score k sits at
-     (100 - k*20)% from the track's left edge; for right bars it
-     sits at k*20%. */
+        /* Tick marks at score positions 1/2/3/4. */
         for (let k = 1; k <= 4; k++) {
           const tick = el("div", { class: "bi-tick" });
           tick.style.left = `${side === "left" ? 100 - k * 20 : k * 20}%`;
           track.appendChild(tick);
         }
 
-        if (side === "left") {
-          body.appendChild(track);
-          body.appendChild(circle);
-        } else {
-          body.appendChild(circle);
-          body.appendChild(track);
-        }
-        entry.appendChild(body);
+        return { entry, name, track, circle };
+      }
 
+      /* 9A: name stacked above; bar + circle on one row, vertically
+         centered against each other so the circle sits on the bar's
+         visual baseline (not raised to align with the name above). */
+      function biDim(doc, d, side) {
+        const { entry, name, track, circle } = _biDimPrep(doc, d, side);
+        entry.appendChild(name);
+        const row = el("div", { class: "bi-dim-row" });
+        if (side === "left") {
+          row.appendChild(track);
+          row.appendChild(circle);
+        } else {
+          row.appendChild(circle);
+          row.appendChild(track);
+        }
+        entry.appendChild(row);
         return entry;
+      }
+
+      /* 9B: name + circle share the top row (name left, circle right
+         above the bar's right edge); the bar sits on its own row below
+         at full column width. */
+      function biDim9B(doc, d, side) {
+        const { entry, name, track, circle } = _biDimPrep(doc, d, side);
+        const head = el("div", { class: "bi-dim-head" }, name, circle);
+        entry.appendChild(head);
+        entry.appendChild(track);
+        return entry;
+      }
+
+      /* ───────────────── Tip-panel renderer (reusable) ─────────────────────
+         Two side panels update on hover of any element carrying
+         `data-tip-kind` ("dim" | "score" | "group") + `data-tip-key`
+         + optional `data-tip-doc`:
+           - detailEl  ("Evaluation Detail"): rubric core — group context,
+             dim title, question, rules.  Always populated.
+           - assessEl ("Assessment"): per-doc score + reasons / findings.
+             Populated when the trigger carries a docId; otherwise shows
+             a placeholder so the column doesn't jump around. */
+      function setupTipPanel(detailEl, assessEl) {
+        function mountPanel(panel, heading) {
+          panel.appendChild(
+            el("div", { class: "tip-panel-heading eyebrow" }, heading),
+          );
+          const content = el("div", { class: "tip-content" });
+          panel.appendChild(content);
+          return content;
+        }
+        const detailContent = mountPanel(detailEl, "Evaluation Detail");
+        const assessContent = mountPanel(assessEl, "Assessment");
+
+        /* Render content from a markdown string.  Headers / bullets /
+           emphasis come from markdown; chrome decorations (score chip,
+           finding cards, separator) can be inline HTML in the same
+           string.  marked.js handles both. */
+        function setMarkdown(contentEl, md) {
+          contentEl.innerHTML = marked.parse(md, {
+            breaks: true,
+            gfm: true,
+          });
+          contentEl.classList.remove("fade-in");
+          void contentEl.offsetWidth;
+          contentEl.classList.add("fade-in");
+        }
+
+        /* `.is-empty` drops a panel's chrome + content while keeping its
+           layout slot, so toggling visibility doesn't shift the rest of
+           the page.  Initial state / pointer-leave / group hovers (which
+           have no per-doc context) drop the assess panel; the detail
+           panel also goes empty when there's nothing to show, instead
+           of a "hover a dimension" placeholder. */
+        function hideAssess() {
+          assessEl.classList.add("is-empty");
+        }
+        function showAssess() {
+          assessEl.classList.remove("is-empty");
+        }
+        function hideDetail() {
+          detailEl.classList.add("is-empty");
+        }
+        function showDetail() {
+          detailEl.classList.remove("is-empty");
+        }
+
+        function showPlaceholder() {
+          _lastSig = "";
+          hideDetail();
+          hideAssess();
+        }
+
+        /* Single render function for every dim-level hover (the dim name,
+           the dim id, the bar, the score circle).  Detail panel always
+           gets the rubric core (group → dim → question → rules).  If a
+           docId is attached, the assessment panel gets the per-doc score
+           + reason + findings; otherwise it shows the placeholder. */
+        function renderDim(key, docId) {
+          const r = rubric[key];
+          if (!r) return showPlaceholder();
+
+          const rulesMd = r.rules.length
+            ? `\n\n## Rules\n\n${r.rules.map((rule) => `- ${rule}`).join("\n")}`
+            : "";
+
+          const detailMd = `<p class="tip-context">${r.group}</p>
+
+# *${r.label}*
+
+*${r.question || ""}*${rulesMd}`;
+          showDetail();
+          setMarkdown(detailContent, detailMd);
+
+          const doc = docId ? biRealDocs.find((d) => d.id === docId) : null;
+          if (!doc) {
+            hideAssess();
+            return;
+          }
+          showAssess();
+
+          const score = doc.scores[key];
+          const reason = doc.reasons[key];
+          const findings = doc.findings[key] || [];
+
+          const scoreLabel =
+            typeof score === "number"
+              ? "/ 5"
+              : score === "NA"
+                ? "not applicable"
+                : score === "ERR"
+                  ? "unassessable"
+                  : "no score";
+
+          const scoreHtml = `<div class="tip-score-row"><span class="tip-score">${score ?? "—"}</span><span class="tip-score-meta">${scoreLabel}</span></div>`;
+
+          /* Structured rule_findings (newer fixtures) → bullets; else
+             fall back to qual_reasons prose (older baseline fixtures
+             only carry that, and NA/ERR rows always do).  .tip-assessment
+             keeps the block in sans (computed output, not codified rule). */
+          const escapeHtml = (s) => (s || "").replace(/</g, "&lt;");
+          let bodyHtml = "";
+          if (typeof score === "number" && findings.length) {
+            const items = findings
+              .map(
+                (f) =>
+                  `<li><strong>Rule ${f.rule_number ?? "?"} · ${f.verdict || "noted"}</strong> — ${escapeHtml(f.description)}</li>`,
+              )
+              .join("");
+            bodyHtml = `<div class="tip-assessment"><ul>${items}</ul></div>`;
+          } else if (reason) {
+            bodyHtml = `<div class="tip-assessment"><p>${escapeHtml(reason)}</p></div>`;
+          } else {
+            bodyHtml = `<div class="tip-assessment"><p class="tip-empty">No assessment recorded for this dimension.</p></div>`;
+          }
+
+          setMarkdown(assessContent, `${scoreHtml}\n\n${bodyHtml}`);
+        }
+
+        function renderGroup(key) {
+          const g = groups.find((g) => g.id === key);
+          if (!g) return showPlaceholder();
+          const groupDims = dims.filter((d) => d.g === g.id);
+
+          const sense = g.sense
+            ? g.sense.charAt(0).toUpperCase() + g.sense.slice(1) + "."
+            : "";
+
+          /* Each dim becomes "**Name** — question." on its own paragraph.
+             Markdown handles the bold + the dash, CSS handles the rhythm. */
+          const dimsMd = groupDims
+            .map((d) => {
+              const r = rubric[d.id];
+              const q = r?.question || "";
+              return `**${d.label}**${q ? " — " + q : ""}`;
+            })
+            .join("\n\n");
+
+          /* Zooming into a GROUP — title in serif (matches .bi-group-header),
+             the group's sense statement, then the dims as their own
+             paragraphs.  No section header above the list — the rhythm
+             of "bold name — question" makes the structure self-evident.
+             Group hover has no per-doc context, so the assessment panel
+             shows its placeholder. */
+          const md = `# ${g.label}
+
+${sense}
+
+${dimsMd}`;
+          showDetail();
+          setMarkdown(detailContent, md);
+          hideAssess();
+        }
+
+        /* Slide both panels vertically to align with the hovered bi-card.
+           Only on wide layouts where the panels sit in a flex row next
+           to the stack; below the breakpoint they flow below the stack
+           and we leave their top alone. */
+        function moveToCard(trig) {
+          if (!matchMedia("(min-width: 72rem)").matches) return;
+          const card = trig.closest(".bi-card");
+          const layout = detailEl.parentElement;
+          if (!card || !layout) return;
+          const layoutRect = layout.getBoundingClientRect();
+          const cardRect = card.getBoundingClientRect();
+          const top = cardRect.top - layoutRect.top + "px";
+          detailEl.style.top = top;
+          assessEl.style.top = top;
+        }
+
+        /* Last-rendered signature — guards against re-rendering when the
+           pointer moves within the same trigger element (e.g. from name
+           to bar inside one .bi-dim row).  pointerover bubbles, so
+           without this guard we'd refire on every child crossing and
+           the panel content would flicker (replace + fade re-trigger). */
+        let _lastSig = "";
+
+        function onOver(e) {
+          const trig = e.target.closest("[data-tip-kind]");
+          if (!trig) return;
+          const kind = trig.dataset.tipKind;
+          const key = trig.dataset.tipKey;
+          const docId = trig.dataset.tipDoc;
+          const sig = `${kind}/${key}/${docId || ""}`;
+          if (sig === _lastSig) {
+            moveToCard(trig);
+            return;
+          }
+          _lastSig = sig;
+          /* "dim" and "score" both render the same dim panel; if a docId
+             is attached, the per-doc assessment block is appended. */
+          if (kind === "dim" || kind === "score") renderDim(key, docId);
+          else if (kind === "group") renderGroup(key);
+          moveToCard(trig);
+        }
+
+        showPlaceholder();
+        return { onOver, showPlaceholder };
+      }
+
+      /* ─────────────────────── Visual 10: Quant Metrics ────────────────────
+         Per-doc summary card pairing with Visual 9A.  See the panel note below
+         for the design rationale — different metric categories use different
+         visual variables (big numbers for single facts, stacked bar for
+         categorical sums, bars on shared scales for rates, color-coded chips
+         for thresholds, group-colored bars for the rubric rollup). */
+
+      function fmtInt(n) {
+        return n == null ? "—" : n.toLocaleString();
+      }
+      function fmtFloat(n, d = 1) {
+        return n == null ? "—" : n.toFixed(d);
+      }
+
+      function qmSection(label, body) {
+        return el(
+          "div",
+          { class: "qm-section" },
+          el(
+            "div",
+            { class: "qm-section-h" },
+            el("span", { class: "label" }, label),
+          ),
+          body,
+        );
+      }
+
+      function qmStat(value, label) {
+        return el(
+          "div",
+          { class: "qm-stat" },
+          el("div", { class: "qm-stat-value" }, String(value)),
+          el("div", { class: "qm-stat-label" }, label),
+        );
+      }
+
+      function qmChip(text, variant) {
+        return el("span", { class: `qm-chip ${variant || ""}`.trim() }, text);
+      }
+
+      /* One horizontal bar row.  `scale` is the value at 100% width
+         (chosen per metric so docs sit at a comparable visual length).
+         `zone` is an optional [low, high] range drawn as a translucent
+         green stripe — used for "typical comfort range" metrics like
+         words/sentence so the reader can see at a glance whether a doc
+         is in range. */
+      function qmBarRow(label, value, scale, zone) {
+        const track = el("div", { class: "qm-bar-track" });
+        if (zone) {
+          const [lo, hi] = zone;
+          track.appendChild(
+            el("div", {
+              class: "qm-bar-zone",
+              style: {
+                left: `${(lo / scale) * 100}%`,
+                width: `${((hi - lo) / scale) * 100}%`,
+              },
+            }),
+          );
+        }
+        const pct = value == null ? 0 : Math.min(100, (value / scale) * 100);
+        track.appendChild(
+          el("div", { class: "qm-bar-fill", style: { width: `${pct}%` } }),
+        );
+        return el(
+          "div",
+          { class: "qm-bar-row" },
+          el("span", { class: "qm-bar-label" }, label),
+          track,
+          el(
+            "span",
+            { class: "qm-bar-value" },
+            value == null ? "—" : fmtFloat(value, value < 1 ? 2 : 1),
+          ),
+        );
+      }
+
+      function qmCard(doc) {
+        const card = el("div", { class: "qm-card" });
+        card.appendChild(
+          el("div", { class: "doc-kicker" }, "Practical Prose Metrics"),
+        );
+        card.appendChild(el("div", { class: "doc-name" }, doc.name));
+
+        const q = doc.quant || {};
+        const d = doc.derived || {};
+
+        /* SIZE — four big tabular numbers. */
+        const sz = q.size || {};
+        card.appendChild(
+          qmSection(
+            "Size",
+            el(
+              "div",
+              { class: "qm-stats" },
+              qmStat(fmtInt(sz.words), "words"),
+              qmStat(fmtFloat(sz.pages_275wpp, 1), "pages"),
+              qmStat(fmtInt(sz.sentences), "sentences"),
+              qmStat(fmtInt(sz.paragraphs), "paragraphs"),
+            ),
+          ),
+        );
+
+        /* COMPOSITION — stacked headings bar + structural chip row. */
+        const h = q.headings || {};
+        const headingsBar = el("div", { class: "qm-headings-bar" });
+        for (const lvl of ["h1", "h2", "h3", "h4", "h5", "h6"]) {
+          const c = h[lvl] || 0;
+          if (c <= 0) continue;
+          headingsBar.appendChild(
+            el(
+              "div",
+              {
+                class: `qm-headings-seg ${lvl}`,
+                style: { flex: String(c) },
+              },
+              `${lvl.toUpperCase()}·${c}`,
+            ),
+          );
+        }
+        const struct = q.structural || {};
+        const structChips = el(
+          "div",
+          { class: "qm-chips" },
+          qmChip(`${struct.tables ?? 0} tables`),
+          qmChip(`${struct.code_blocks ?? 0} code blocks`),
+          qmChip(`${struct.images ?? 0} images`),
+        );
+        card.appendChild(
+          qmSection("Composition", el("div", {}, headingsBar, structChips)),
+        );
+
+        /* DENSITY & PACING — comparable-scale bars; pacing metrics carry a
+           comfort-zone overlay where the literature has a typical range. */
+        const den = d.density || {};
+        const densityWrap = el(
+          "div",
+          {},
+          qmBarRow("links / 1k words", den.links_per_1k_words, 15, null),
+          qmBarRow("tables / 1k words", den.tables_per_1k_words, 2, null),
+          qmBarRow("words / sentence", den.words_per_sentence, 30, [15, 25]),
+          qmBarRow(
+            "sentences / paragraph",
+            den.sentences_per_paragraph,
+            5,
+            [1.5, 3],
+          ),
+          qmBarRow("words / paragraph", den.words_per_paragraph, 80, [30, 60]),
+        );
+        card.appendChild(qmSection("Density & pacing", densityWrap));
+
+        /* HYGIENE — threshold-driven chips.  Green if 0, amber if not. */
+        const lint = q.lint || {};
+        const prov = q.provenance || {};
+        const hygieneChip = (label, n) => {
+          const v = n ?? 0;
+          return qmChip(`${label} · ${v}`, v === 0 ? "good" : "warn");
+        };
+        card.appendChild(
+          qmSection(
+            "Hygiene",
+            el(
+              "div",
+              { class: "qm-chips" },
+              hygieneChip("banned register", lint.banned_register_hits),
+              hygieneChip("bracket tags", prov.bracket_tags),
+              hygieneChip("footnote refs", prov.footnote_refs),
+            ),
+          ),
+        );
+
+        /* RUBRIC ROLLUP — six small group-colored bars + overall. */
+        const r = d.rubric_rollup || {};
+        const rollup = el("div", { class: "qm-rollup" });
+        const groupKeys = [
+          { key: "purpose", id: "P", label: "Purpose" },
+          { key: "expression", id: "E", label: "Expression" },
+          { key: "form", id: "F", label: "Form" },
+          { key: "reasoning", id: "R", label: "Reasoning" },
+          { key: "grounding", id: "G", label: "Grounding" },
+          { key: "judgment", id: "J", label: "Judgment" },
+        ];
+        for (const g of groupKeys) {
+          const mean = r[`${g.key}_mean`];
+          const has = typeof mean === "number" && mean > 0;
+          const pct = has ? (mean / 5) * 100 : 0;
+          rollup.appendChild(
+            el(
+              "div",
+              { class: "qm-rollup-row" },
+              el("span", { class: "label" }, g.label),
+              el(
+                "div",
+                { class: "qm-bar-track" },
+                el("div", {
+                  class: "qm-bar-fill",
+                  style: {
+                    width: `${pct}%`,
+                    background: `var(--accent-${g.id.toLowerCase()})`,
+                  },
+                }),
+              ),
+              el("span", { class: "value" }, has ? mean.toFixed(2) : "—"),
+            ),
+          );
+        }
+        const overall = r.overall_mean;
+        const overallHas = typeof overall === "number" && overall > 0;
+        rollup.appendChild(
+          el(
+            "div",
+            { class: "qm-rollup-row overall" },
+            el("span", { class: "label" }, "Overall"),
+            el(
+              "div",
+              { class: "qm-bar-track" },
+              el("div", {
+                class: "qm-bar-fill",
+                style: { width: `${overallHas ? (overall / 5) * 100 : 0}%` },
+              }),
+            ),
+            el(
+              "span",
+              { class: "value" },
+              overallHas ? overall.toFixed(2) : "—",
+            ),
+          ),
+        );
+        card.appendChild(qmSection("Rubric rollup", rollup));
+
+        return card;
+      }
+
+      function renderMetrics() {
+        const stack = el("div", { class: "qm-stack" });
+        for (const doc of biRealDocs) stack.appendChild(qmCard(doc));
+        root.appendChild(panel(10, stack));
       }
 
       /* ───────────────────────────── render all ───────────────────────────── */
 
-      // Display order: 9, 4, 5 promoted to the top; rest follow in original order.
-      renderBidirectional(); // Visual 9
-      renderRadar(); // Visual 4
-      renderCoxcomb(); // Visual 5
-      renderHeatmap(); // Visual 1
-      renderStrip(); // Visual 2
-      renderHex(); // Visual 3
-      renderSunburst(); // Visual 6
-      renderGroupCards(); // Visual 7
-      renderTableBars(); // Visual 8
+      function renderAll() {
+        // Display order: 9A, 9B, 10, 4, 5 promoted to the top; rest follow in original order.
+        renderBidirectionalB(); // Visual 9B
+        renderBidirectionalA(); // Visual 9A
+        renderMetrics(); // Visual 10
+        renderRadar(); // Visual 4
+        renderCoxcomb(); // Visual 5
+        renderHeatmap(); // Visual 1
+        renderStrip(); // Visual 2
+        renderHex(); // Visual 3
+        renderSunburst(); // Visual 6
+        renderGroupCards(); // Visual 7
+        renderTableBars(); // Visual 8
 
-      /* Mount the palette tweaker sliders.  The shared lib handles slider
-   construction, applying CSS tokens, and re-applying on theme flips. */
-      PracticalProseDesignPaletteSliders.mountPaletteSliders("#palette-grid");
+        /* Mount the palette tweaker sliders.  The shared lib handles slider
+           construction, applying CSS tokens, and re-applying on theme flips. */
+        PracticalProseDesignPaletteSliders.mountPaletteSliders("#palette-grid");
+
+        /* Inject the per-visual notes (1-10) from VISUALS_INFO into the
+           bottom notes-grid, before the design-system / palette card. */
+        renderVisualNotes();
+      }
+
+      /* Load real eval data first (rubric + 3 fixtures), then render.  If the
+         fetch fails (e.g., page opened over file:// rather than served by a
+         local web server), fall back to rendering with the hardcoded `docs`
+         array — bars will still display, but tooltips will be empty. */
+      loadRealEvalData()
+        .catch((err) => {
+          console.warn(
+            "[bidirectional] Could not load real eval data — falling back to hardcoded docs. " +
+              "Serve the repo root with `python -m http.server` for full tooltips. " +
+              "Error:",
+            err,
+          );
+        })
+        .finally(renderAll);
     </script>
   </body>
 </html>

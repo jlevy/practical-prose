@@ -46,7 +46,6 @@ from schema import (  # noqa: E402 — adjusted path above
     dim_color,
     group_ink_color,
     group_surface_color,
-    group_text_color,
 )
 
 # Resolve project paths relative to this file so the script runs from anywhere.
@@ -87,16 +86,10 @@ def _resolve(ds: DesignSystem) -> dict:
         return {
             "id": g.id,
             "label": g.label,
-            "h": g.h,
-            "s": g.s,
             "spread": g.spread,
             "ink": {
                 "light": group_ink_color(g, "light"),
                 "dark": group_ink_color(g, "dark"),
-            },
-            "text": {
-                "light": group_text_color(g, "light"),
-                "dark": group_text_color(g, "dark"),
             },
             "surface": {
                 "light": group_surface_color(g, "light"),
@@ -133,9 +126,13 @@ def _resolve(ds: DesignSystem) -> dict:
     return {
         "version": ds.version,
         "surfaces": ds.surfaces.model_dump(),
+        "tones": ds.tones.model_dump(),
         "groups": [group_dict(g) for g in ds.groups],
         "dimensions": [dim_dict(d) for d in ds.dimensions],
         "scores": [score_dict(s) for s in ds.scores],
+        "interactions": ds.interactions.model_dump(),
+        "typography": ds.typography.model_dump(),
+        "scoring": ds.scoring.model_dump(),
     }
 
 
@@ -201,11 +198,6 @@ def emit_css(resolved: dict) -> str:
         for g in groups:
             lines.append(f"  --accent-{g['id'].lower()}: {g['ink'][mode]};")
         lines.append("")
-        # Group text (--text-*) — emphasized version of ink for label/icon
-        lines.append("  /* Group text (emphasized accent for group label + icon) */")
-        for g in groups:
-            lines.append(f"  --text-{g['id'].lower()}: {g['text'][mode]};")
-        lines.append("")
         # Group surface (--surface-*)
         lines.append("  /* Group surface (pale family-hue background) */")
         for g in groups:
@@ -236,6 +228,63 @@ def emit_css(resolved: dict) -> str:
             weight_lines.append(f"  --score-{level}-opacity: {s['opacity']};")
     weight_block = "\n".join(weight_lines)
 
+    # Interaction tokens — theme-independent (translucent grays + CSS time
+    # values).  Emitted once at the top of :root so they're inherited everywhere.
+    interactions = resolved["interactions"]
+    hover = interactions["hover"]
+    interaction_lines = [
+        "  /* Hover affordance (theme-independent) */",
+        f"  --hover-bg: {hover['bg']};",
+        f"  --hover-bg-strong: {hover['bg_strong']};",
+        f"  --hover-duration: {hover['duration']};",
+        f"  --hover-easing: {hover['easing']};",
+        f"  --hover-transition: background-color {hover['duration']} {hover['easing']}, "
+        f"color {hover['duration']} {hover['easing']}, "
+        f"border-color {hover['duration']} {hover['easing']}, "
+        f"transform {hover['duration']} {hover['easing']};",
+    ]
+    interaction_block = "\n".join(interaction_lines)
+
+    # Typography tokens — small-caps eyebrow tracking + weights and
+    # the numeric weight for quantitative readouts.  Theme-independent.
+    # These travel together because the letter-spacing rule in
+    # design-system.md fires only on uppercase text.
+    caps = resolved["typography"]["caps"]
+    numeric = resolved["typography"]["numeric"]
+    typography_lines = [
+        "  /* Typography — small-caps eyebrow tokens */",
+        f"  --tracking-caps: {caps['tracking']};",
+        f"  --weight-caps: {caps['weight']};",
+        f"  --weight-caps-strong: {caps['weight_strong']};",
+        "",
+        "  /* Typography — quantitative numbers (scores, counts, stats) */",
+        f"  --weight-num: {numeric['weight']};",
+    ]
+    typography_block = "\n".join(typography_lines)
+
+    # Tone tokens — single mode-independent colors used in chrome
+    # decoration (icons, dim labels, NA bg).  Edited live via the
+    # Tone-overrides panel in the slider exploration HTML.
+    tones = resolved["tones"]
+    tone_lines = [
+        "  /* Tones — mode-independent chrome tokens */",
+        f"  --icon-color: {tones['icon']};",
+        f"  --dim-label-color: {tones['dim_label']};",
+        f"  --na-color: {tones['na']};",
+        f"  --na-label-color: {tones['na_label']};",
+    ]
+    tone_block = "\n".join(tone_lines)
+
+    # Scoring presentation — alpha step modulates how vivid a scored
+    # mark reads.  Used by JS consumers to compute the bar / chip color
+    # via `color-mix(in srgb, var(--dim-XN) <pct>%, transparent)`.
+    scoring = resolved["scoring"]
+    scoring_lines = [
+        "  /* Scoring presentation — alpha modulation per score level */",
+        f"  --score-alpha-step: {scoring['alpha_step']};",
+    ]
+    scoring_block = "\n".join(scoring_lines)
+
     return (
         f"/* {HEADER_NOTICE} */\n"
         "\n"
@@ -243,6 +292,14 @@ def emit_css(resolved: dict) -> str:
         f"{light_vars}\n"
         "\n"
         f"{weight_block}\n"
+        "\n"
+        f"{interaction_block}\n"
+        "\n"
+        f"{typography_block}\n"
+        "\n"
+        f"{tone_block}\n"
+        "\n"
+        f"{scoring_block}\n"
         "}\n"
         "\n"
         "@media (prefers-color-scheme: dark) {\n"

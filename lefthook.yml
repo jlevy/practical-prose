@@ -32,10 +32,48 @@ pre-commit:
         git add tools/design-system/_generated/ \
                 tools/pprose/src/pprose/_generated/design_system.py
 
+    # If any source doc that the pprose package vendors was touched,
+    # resync the mirrors under tools/pprose/src/pprose/resources/ and
+    # stage them alongside the edit. The mirrors are deliberately
+    # excluded from flowmark (.flowmarkignore) — they pick up formatting
+    # via this sync, not directly.
+    pprose-resources-sync:
+      glob:
+        - "docs/*.md"
+        - "runbooks/*.md"
+        - "shortcuts/*.md"
+        - "skills/*/SKILL.md"
+      run: |
+        cd tools/pprose && uv run python devtools/sync_resources.py
+        git add tools/pprose/src/pprose/resources/
+
+    # Markdown formatting with flowmark-rs (pinned in the Makefile).
+    #
+    # Single source of truth: delegates to `make format`, which is the same
+    # command developers run locally. Both paths invoke the pinned
+    # `uvx flowmark-rs@<version> --auto .` at the repo root so flowmark
+    # traverses the whole tree and honors .flowmarkignore.
+    #
+    # Why whole-repo (not `{staged_files}`)? flowmark-rs only reads
+    # .flowmarkignore relative to its target arg — passing subdirs or
+    # globs bypasses the exclusion list and damages example-texts/ corpora
+    # and other vendored content. Do not split this into per-dir hooks.
+    #
+    # The `glob: '*.md'` filter ensures the hook only fires when at least
+    # one staged file is Markdown. Flowmark is fast (well under a second
+    # across the whole repo with the incremental cache) so the whole-tree
+    # scan is cheap.
+    format-markdown:
+      glob: "*.md"
+      run: make format
+      stage_fixed: true
+
 pre-push:
   parallel: true
   commands:
     generate-check:
       run: uv run --script tools/design-system/generate.py --check
+    resources-sync-check:
+      run: cd tools/pprose && uv run python devtools/sync_resources.py --check
     tests:
       run: cd tools/pprose && uv run pytest -q
