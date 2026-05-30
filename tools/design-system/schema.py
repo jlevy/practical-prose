@@ -300,9 +300,7 @@ def fmt_hsl(h: float, s: float, lightness: float) -> str:
     return f"hsl({n(h)} {n(s)}% {n(lightness)}%)"
 
 
-_HSL_PARSE = re.compile(
-    r"^hsl\(\s*([\d.]+)\s+([\d.]+)%\s+([\d.]+)%(?:\s*/\s*[\d.]+)?\s*\)$"
-)
+_HSL_PARSE = re.compile(r"^hsl\(\s*([\d.]+)\s+([\d.]+)%\s+([\d.]+)%(?:\s*/\s*[\d.]+)?\s*\)$")
 
 
 def _parse_hsl(s: str) -> tuple[float, float, float]:

@@ -2606,7 +2606,7 @@
          and rule findings.  Other visuals on this page continue to use the
          hardcoded `docs` array above; once we like how this looks we can
          migrate them too. */
-      let rubric = {}; // id (P1..J3) -> { id, label, group, question, rules: [] }
+      const rubric = {}; // id (P1..J3) -> { id, label, group, question, rules: [] }
       let biRealDocs = []; // [{id, name, meta, scores, reasons, findings}]
 
       /* Map dim label -> design-system id (P1, E1, …) so we can join rubric
@@ -2688,7 +2688,8 @@
             for (const f of fm.rule_findings || []) {
               const id = _dimLabelToId.get(f.dimension);
               if (!id) continue;
-              (findings[id] = findings[id] || []).push(f);
+              if (!findings[id]) findings[id] = [];
+              findings[id].push(f);
             }
 
             const w = fm.quant?.size?.words;
@@ -2804,9 +2805,9 @@
           swatch.style.background = color;
           document.documentElement.style.setProperty(token, color);
         }
-        [hC.input, sC.input, lC.input].forEach((i) =>
-          i.addEventListener("input", paint),
-        );
+        [hC.input, sC.input, lC.input].forEach((i) => {
+          i.addEventListener("input", paint);
+        });
         paint();
         return row;
       }
@@ -2840,7 +2841,9 @@
             ...parseHsl(tones.na_label),
           },
         ];
-        rows.forEach((cfg) => host.appendChild(buildToneRow(cfg)));
+        rows.forEach((cfg) => {
+          host.appendChild(buildToneRow(cfg));
+        });
       })();
 
       /* Live tweaker for --score-alpha-step (the per-segment alpha
@@ -4481,18 +4484,18 @@
              fall back to qual_reasons prose (older baseline fixtures
              only carry that, and NA/ERR rows always do).  .tip-assessment
              keeps the block in sans (computed output, not codified rule). */
-          const escape = (s) => (s || "").replace(/</g, "&lt;");
+          const escapeHtml = (s) => (s || "").replace(/</g, "&lt;");
           let bodyHtml = "";
           if (typeof score === "number" && findings.length) {
             const items = findings
               .map(
                 (f) =>
-                  `<li><strong>Rule ${f.rule_number ?? "?"} · ${f.verdict || "noted"}</strong> — ${escape(f.description)}</li>`,
+                  `<li><strong>Rule ${f.rule_number ?? "?"} · ${f.verdict || "noted"}</strong> — ${escapeHtml(f.description)}</li>`,
               )
               .join("");
             bodyHtml = `<div class="tip-assessment"><ul>${items}</ul></div>`;
           } else if (reason) {
-            bodyHtml = `<div class="tip-assessment"><p>${escape(reason)}</p></div>`;
+            bodyHtml = `<div class="tip-assessment"><p>${escapeHtml(reason)}</p></div>`;
           } else {
             bodyHtml = `<div class="tip-assessment"><p class="tip-empty">No assessment recorded for this dimension.</p></div>`;
           }

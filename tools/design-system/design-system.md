@@ -295,44 +295,44 @@ The tokens unify the parts that should never drift.
 
 | Role | Examples | Token |
 | --- | --- | --- |
-| **Structural heading** — identifies a section, divider, or major eyebrow | "Evaluation Detail" panel header, `## Rules` / `## Assessment` panel sections, the bi-card `.doc-kicker`, large dim labels on bars | `var(--weight-caps-strong)` (800) |
-| **Quiet label** — chrome metadata, tiny sublabels | "Rule N · violated" finding meta, stat-tile labels | `var(--weight-caps)` (600) |
+| **Structural heading** — identifies a section, divider, or major eyebrow | “Evaluation Detail” panel header, `## Rules` / `## Assessment` panel sections, the bi-card `.doc-kicker`, large dim labels on bars | `var(--weight-caps-strong)` (800) |
+| **Quiet label** — chrome metadata, tiny sublabels | “Rule N · violated” finding meta, stat-tile labels | `var(--weight-caps)` (600) |
 
-Tracking is always `var(--tracking-caps)` and family is always sans. The only knobs
-that change between contexts are **size**, **color**, and the **weight** above.
-No small-caps element invents its own tracking, weight, or family — that's how
-the page drifts.
+Tracking is always `var(--tracking-caps)` and family is always sans.
+The only knobs that change between contexts are **size**, **color**, and the **weight**
+above.
+No small-caps element invents its own tracking, weight, or family — that’s how the
+page drifts.
 
 ### Content vs chrome — when to use serif vs sans
 
 The two faces of the type system split along a single line:
 
-- **Serif** is for *content* — the codified, fixed, reliable language of the
-  rubric.  Group names ("Purpose", "Reasoning"), dimension names ("Suitability",
-  "Clarity"), the question and rules attached to a dimension, the title of a
-  document being evaluated.  These are the durable concepts a reader is meant
-  to learn and trust.
-- **Sans** is for *chrome* — UI affordances, interactive hints, hover prompts,
-  short labels and tags (`P1`, `R3`), and every quantitative readout (scores,
-  counts, percentages, bar values).  These are the apparatus around the
-  content, not the content itself.
+- **Serif** is for *content* — the codified, fixed, reliable language of the rubric.
+  Group names ("Purpose", “Reasoning”), dimension names ("Suitability", “Clarity”), the
+  question and rules attached to a dimension, the title of a document being evaluated.
+  These are the durable concepts a reader is meant to learn and trust.
+- **Sans** is for *chrome* — UI affordances, interactive hints, hover prompts, short
+  labels and tags (`P1`, `R3`), and every quantitative readout (scores, counts,
+  percentages, bar values).
+  These are the apparatus around the content, not the content itself.
 
-The italic-serif variant carries an additional meaning: **"we are looking at
-this concept in detail."**  It's used for the question that describes a
-dimension and the dimension's name when the tip panel zooms in on it — same
-voice as a document's *italic-serif title*.  A *group* name doesn't get the
-italic, even when zoomed in, because groups are containers, not detail
-subjects.
+The italic-serif variant carries an additional meaning: **“we are looking at this
+concept in detail.”** It’s used for the question that describes a dimension and the
+dimension’s name when the tip panel zooms in on it — same voice as a document’s
+*italic-serif title*. A *group* name doesn’t get the italic, even when zoomed in,
+because groups are containers, not detail subjects.
 
-A useful test when adding a new element: would the same word appear unchanged
-in a printed rubric document?  If yes, it's content → serif.  If it only
-exists to help the reader navigate the surface → sans.
+A useful test when adding a new element: would the same word appear unchanged in a
+printed rubric document?
+If yes, it’s content → serif.
+If it only exists to help the reader navigate the surface → sans.
 
 ### Quantitative numbers
 
-Every quantitative readout — scores, counts, percentages, stat callouts, bar
-value labels — uses one numeric voice: **sans, tabular nums, `--weight-num`**.
-Scores never appear in serif; serif is reserved for prose.
+Every quantitative readout — scores, counts, percentages, stat callouts, bar value
+labels — uses one numeric voice: **sans, tabular nums, `--weight-num`**. Scores never
+appear in serif; serif is reserved for prose.
 
 | Token | Value | Use |
 | --- | --- | --- |
@@ -348,22 +348,23 @@ Canonical example (matches the score circles on the bidirectional bars):
 }
 ```
 
-Size and color vary per widget; family + weight + tabular-nums never do. This
-applies even when a number sits next to a serif title or body paragraph — the
+Size and color vary per widget; family + weight + tabular-nums never do.
+This applies even when a number sits next to a serif title or body paragraph — the
 number is chrome data, not content text.
 
 ### Score alpha gradient
 
 Scored marks (bar fills, score chips) encode their value through alpha on the
-dimension's base color: a 5 reads vivid, a 1 reads faint. The step is set by
-a single token so every surface that shows scored marks moves together.
+dimension’s base color: a 5 reads vivid, a 1 reads faint.
+The step is set by a single token so every surface that shows scored marks moves
+together.
 
 | Token | Value | Use |
 | --- | --- | --- |
 | `--score-alpha-step` | `0.14` | Alpha decrement per score step. Inner segments (low index) mix at lower alpha (toward the surface); the outermost segment of a score-`s` bar lands at `(1 - (5 - s) * step) * 100%` of the dim color. |
 
-Canonical usage (JS — `color-mix` keeps it symmetric in light + dark mode
-because the surface shows through the alpha):
+Canonical usage (JS — `color-mix` keeps it symmetric in light + dark mode because the
+surface shows through the alpha):
 
 ```js
 const step = parseFloat(
@@ -373,15 +374,15 @@ const alpha = Math.max(0, 1 - (5 - score) * step);
 fill.style.background = `color-mix(in srgb, var(--dim-${id}) ${alpha * 100}%, transparent)`;
 ```
 
-Tune `alpha_step` in `design-system.yaml` to make the gradient steeper (more
-visible value encoding) or shallower (subtler).
+Tune `alpha_step` in `design-system.yaml` to make the gradient steeper (more visible
+value encoding) or shallower (subtler).
 
 ### Adjacent triggers must be one trigger
 
-A single semantic action (one hover panel, one click) must not be split across
-multiple adjacent UI elements. If the dimension name, the bar, and the score
-chip all bring up the same detail panel, they form one hover zone — typically
-the parent row — and one tooltip target, not three.
+A single semantic action (one hover panel, one click) must not be split across multiple
+adjacent UI elements.
+If the dimension name, the bar, and the score chip all bring up the same detail panel,
+they form one hover zone — typically the parent row — and one tooltip target, not three.
 
 This is forbidden by the design system:
 
@@ -397,8 +398,8 @@ Required:
 [name  bar  chip]   ← whole row is one hover zone, one panel X
 ```
 
-Items that are *not adjacent* are free to fire the same action — the rule is
-only about confusion-by-proximity.
+Items that are *not adjacent* are free to fire the same action — the rule is only about
+confusion-by-proximity.
 
 ## Icons
 
