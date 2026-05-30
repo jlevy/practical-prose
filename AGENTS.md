@@ -55,11 +55,13 @@ uvx pprose <command> ...
 the wheel, so these work in any repo without this source tree.
 
 **Setup**: `pprose install` writes the five Practical Prose skills into a repo’s
-`.claude/skills/`. Use `pprose install --agents-md` when the target repo should also get
-an `AGENTS.md` routing block.
-The generated skills reference `pprose` with a pinned, local-first invocation: `pprose`
-if on PATH, else `uvx pprose@<version>` (the version that ran install — a trusted pin,
-never an unpinned runner), else they tell the user to install uv or pprose.
+`.agents/skills/` (read by Codex, Gemini CLI, pi) and `.claude/skills/` (Claude Code
+mirror), and maintains a marker-bounded `pprose` block in `AGENTS.md`. Every generated
+artifact carries a `format=fNN surface=…` stamp, so re-running install is idempotent
+and a newer-format artifact is never clobbered by an older pprose.
+Each generated skill bakes in a pinned, local-first invocation: `pprose` if on PATH,
+else `uvx pprose@<version>` (the version that ran install — a trusted pin, never an
+unpinned runner), else they tell the user to install uv or pprose.
 
 For local development before publication, run from the package workspace:
 

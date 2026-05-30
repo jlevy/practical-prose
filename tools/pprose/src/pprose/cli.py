@@ -65,7 +65,8 @@ COMMANDS: dict[str, CommandSpec] = {
         "Reference",
     ),
     "install": CommandSpec(
-        "Install the Practical Prose skills into a repo's .claude/skills/.",
+        "Install the Practical Prose skills into a repo "
+        "(.agents/skills + .claude/skills + AGENTS.md block).",
         install.install_main,
         "Setup",
     ),
@@ -92,7 +93,9 @@ def _print_help() -> None:
             f"Run `{PROGRAM} <command> --help` for command-specific options.",
             "",
             "Getting started:",
-            f"  uvx {PROGRAM} install --agents-md   # zero-install; installs skills",
+            f"  uvx {PROGRAM} install        # install skills into the current repo",
+            f"  {PROGRAM} skill --list       # list installed Practical Prose skills",
+            f"  {PROGRAM} guidelines --list  # bundled style guides and writing rules",
             "  `score` needs --model and a provider API key in the environment",
             "  (ANTHROPIC_API_KEY, OPENAI_API_KEY, or GOOGLE_API_KEY; .env / .env.local",
             "  are auto-loaded). Run `pprose score --list-models` for suggestions.",

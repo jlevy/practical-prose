@@ -33,11 +33,19 @@ pprose compare a.eval.md b.eval.md                 # compare N eval reports
 
 pprose guidelines --list                           # bundled guidelines / shortcuts / runbooks
 pprose shortcut shortcut-full-edit                 # print a workflow playbook the agent follows
-pprose install --agents-md                        # install skills and add AGENTS.md routing
+pprose install                                     # install skills into the current repo
 ```
 
-`pprose install` writes skills that invoke pprose with a pinned, local-first runner
-(`pprose` if on PATH, else `uvx pprose@<version>`), so they work in any repo.
+`pprose install` writes one `SKILL.md` per workflow into both `.agents/skills/` (Codex,
+Gemini CLI, pi read this natively) and `.claude/skills/` (Claude Code mirror), and
+maintains a marker-bounded block in `AGENTS.md`. Every generated artifact carries a
+`format=fNN` stamp; re-running install is idempotent, and a newer-format artifact is
+never clobbered by an older pprose.
+
+Each generated skill bakes in a pinned, local-first invocation (`pprose` if on PATH,
+else `uvx pprose@<version>`) so the same workflow commands run in any repo. Pass
+`--claude` / `--codex` / `--skip-claude` / `--skip-codex` to target specific surfaces,
+or `--pin <version>` to override the version baked into the bootstrap line.
 Run `pprose --help` or `pprose <command> --help` for full options.
 
 `score` requires `ANTHROPIC_API_KEY`; the package auto-loads `.env` and `.env.local`
