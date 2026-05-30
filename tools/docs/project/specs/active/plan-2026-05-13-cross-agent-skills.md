@@ -478,5 +478,5 @@ Rollback is `git revert` of the PR; no migrations, no external state.
 - [Claude Code memory docs](https://code.claude.com/docs/en/memory) (AGENTS.md import).
 
 <!-- This document follows common-doc-guidelines.md.
-Review guidelines before editing.
+See github.com/jlevy/practical-prose and review guidelines before editing.
 -->

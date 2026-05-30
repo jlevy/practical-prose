@@ -172,5 +172,5 @@ Aim for falsifiable claims grounded in specific table cells, not generic.
 - [eval_report.py](../tools/pprose/src/pprose/eval_report.py): schema and validator.
 
 <!-- This document follows common-doc-guidelines.md.
-Review guidelines before editing.
+See github.com/jlevy/practical-prose and review guidelines before editing.
 -->

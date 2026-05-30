@@ -116,5 +116,5 @@ to the source: produce the editorial review (and findings) only, and say so in t
 report.
 
 <!-- This document follows common-doc-guidelines.md.
-Review guidelines before editing.
+See github.com/jlevy/practical-prose and review guidelines before editing.
 -->

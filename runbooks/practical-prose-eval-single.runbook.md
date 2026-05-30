@@ -262,5 +262,5 @@ change.
 - [metrics.py](../tools/pprose/src/pprose/metrics.py): quantitative metrics tool.
 
 <!-- This document follows common-doc-guidelines.md.
-Review guidelines before editing.
+See github.com/jlevy/practical-prose and review guidelines before editing.
 -->

@@ -214,14 +214,15 @@ Stylistically, emphasize **clarity**, **depth**, **rigor**, and **warmth**.
 
 Documents governed by these guidelines should include a footer that says “This document
 follows common-doc-guidelines.md.
-Review guidelines before editing.”
+See github.com/jlevy/practical-prose and review guidelines before editing.”
 Rules:
 
 - Include this footer in every document, unless it is impractical (for example, in
   auto-generated files).
 - Use the exact text above.
-  Do not paraphrase, shorten, or add a path.
-  The filename alone is stable across moves and discoverable by search.
+  Do not paraphrase, shorten, or change the filename or repository link.
+  The filename alone is stable across moves and discoverable by search, and the
+  repository link points readers to the source.
 - In Markdown or HTML, wrap the footer in HTML comment markers (`<!-- ` and `-->`).
 - Place it at the **bottom** of the document, after all content.
   Bottom placement keeps the marker out of the reader’s way and is compatible with any
@@ -232,5 +233,5 @@ Rules:
   no file has more than one.
 
 <!-- This document follows common-doc-guidelines.md.
-Review guidelines before editing.
+See github.com/jlevy/practical-prose and review guidelines before editing.
 -->

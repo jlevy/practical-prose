@@ -1198,5 +1198,5 @@ The version string is `pp20v1` (20 dimensions across 6 groups).
   operational steps for comparing N evals.
 
 <!-- This document follows common-doc-guidelines.md.
-Review guidelines before editing.
+See github.com/jlevy/practical-prose and review guidelines before editing.
 -->

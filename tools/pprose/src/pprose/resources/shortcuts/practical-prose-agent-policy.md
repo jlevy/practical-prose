@@ -92,5 +92,5 @@ Local rule compliance is in service of reader outcome, not the other way around.
   \+ applicability profiles by `risk_level`.
 
 <!-- This document follows common-doc-guidelines.md.
-Review guidelines before editing.
+See github.com/jlevy/practical-prose and review guidelines before editing.
 -->
