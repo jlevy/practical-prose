@@ -31,8 +31,11 @@ pprose report from-metrics doc.md --out doc.eval.md  # build an eval report stub
 pprose score doc.eval.md                           # qualitative rubric scoring (Anthropic SDK)
 pprose compare a.eval.md b.eval.md                 # compare N eval reports
 
-pprose guidelines --list                           # bundled guidelines / shortcuts / runbooks
-pprose shortcut shortcut-full-edit                 # print a workflow playbook the agent follows
+pprose about                                       # the project narrative (bundled README)
+pprose skill                                       # workflow skills overview + routing pointers
+pprose guidelines --list                           # bundled style guides and writing rules
+pprose shortcut --list                             # workflow playbooks the skills invoke
+pprose runbook --list                              # operational procedures (eval, compare)
 pprose install                                     # install skills into the current project
 pprose install --global                            # install skills user-wide for every project
 ```

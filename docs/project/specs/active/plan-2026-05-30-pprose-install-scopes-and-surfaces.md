@@ -361,6 +361,187 @@ today.
 - [ ] Final commit of implementation + spec on the
   `pprose-skill-install-improvements` branch.
 
+### Phase 2: CLI doc coverage and dogfooded `AGENTS.md` install
+
+After landing Phase 1, the user identified two related gaps:
+
+1. **Doc coverage**: bundled CLI docs are limited to `/docs/*.md`,
+   `/shortcuts/*.md`, `/runbooks/*.runbook.md`, and the skills. Public-facing
+   content useful from *any* repo — the `README.md` project narrative, the
+   `tools/design-system/design-system.md` reference, and the authoring
+   principles currently buried in `/AGENTS.md` — isn't accessible via pprose.
+2. **AGENTS.md handling**: pprose's own repo had no `<!-- BEGIN PPROSE INTEGRATION -->`
+   block — its `/AGENTS.md` had been hand-authored without dogfooding
+   `pprose install`.
+
+The corrected framing: pprose's job is to **install a marker-bounded block into
+whatever AGENTS.md a project already has**, alongside whatever other tools or
+hand-authored content live there. Our own `/AGENTS.md` is not special — it gets
+the same block any other project would. There is no "drift-tested generated
+AGENTS.md" mode and no need for one.
+
+The CLI bundles **public, cross-repo content only**. Repo-internal content (how
+to develop pprose, this repo's specific agent guide, internal specs) stays
+local and is not exposed via the CLI — an agent in another repo has no use for
+"how to release pprose to PyPI." Two clear lines:
+
+| CLI-bundled (public, useful in any repo) | Repo-internal (local to practical-prose) |
+| --- | --- |
+| Principles, guidelines, rubric, bibliography, metrics, common-doc-guidelines, ai-prose-corrections | `/docs/development.md` (how to dev the pprose tool) |
+| Shortcuts, runbooks, skills | `/docs/project/` (specs, research, plans) |
+| `README.md` (project narrative) | `/AGENTS.md` (this repo's agent guide) |
+| `tools/design-system/design-system.md` | New internal doc for the rich workflows table currently in `/AGENTS.md` |
+| New: `practical-prose-authoring-principles.md` | |
+
+#### Design
+
+1. **`pprose about`** new top-level command. Prints the bundled `README.md`
+   (project narrative — what Practical Prose is and why it matters). One-shot
+   command; no `--list` / subcommand. The natural name for the project intro.
+
+2. **`pprose guidelines design-system`** — add `tools/design-system/design-system.md`
+   to the bundled guidelines so agents working on palettes / eval-report CSS can
+   pull it on demand from any repo.
+
+3. **`pprose guidelines practical-prose-authoring-principles`** — extract the eight
+   numbered authoring principles currently in `/AGENTS.md` into a new bundled doc
+   at `/docs/practical-prose-authoring-principles.md` (which `sync_resources.py`
+   already covers by category). Available from any repo via the CLI.
+
+4. **`pprose skill` (no args) → richer overview.** Today `pprose skill` and
+   `pprose skill --list` print the same terse `name\tdescription` table. Change:
+   - `pprose skill` (no args) — short overview paragraph + the skill table + a
+     "for more detail" footer routing to `pprose guidelines --list`,
+     `pprose shortcut --list`, `pprose runbook --list`. Makes `pprose skill` the
+     natural entry-point answer to "what does pprose do?"
+   - `pprose skill --list` — keep terse listing for scripting / quick reference.
+   - `pprose skill <name>` — unchanged (full composed `SKILL.md` content).
+
+5. **Keep the `agents_md_block` minimal.** The currently-installed block already
+   carries trigger keywords + routing pointers + a per-skill bullet list. Trim
+   the bullet list — `pprose skill --list` covers that, and the block needs to
+   sit comfortably alongside other tools' blocks (tbd, flowmark, …) in someone
+   else's AGENTS.md. End state of the block:
+
+   ```
+   <!-- BEGIN PPROSE INTEGRATION format=f01 -->
+   ## Practical Prose (pprose)
+
+   Practical Prose: an evaluation toolkit and editorial workflows for practical
+   documents. Use when the user asks to improve, audit, score, or compare
+   practical documents.
+
+   Run `pprose --help` for commands; `pprose skill --list`,
+   `pprose shortcut --list`, `pprose guidelines --list`, and
+   `pprose runbook --list` for on-demand workflows, playbooks, style guides,
+   and procedures. Run pprose as `pprose <command>` if on PATH, else
+   `uvx pprose@<pin> <command>`.
+
+   <!-- END PPROSE INTEGRATION -->
+   ```
+
+   ~10 lines. No workflows table, no per-skill bullet list, no project intro
+   (the host project owns those lines). Just trigger keywords + routing.
+
+6. **Unbundle `/docs/development.md`.** It's about how to develop the pprose
+   tool itself — useless to an agent working in another repo. Move it to
+   `/docs/project/development.md` so `sync_resources.py`'s non-recursive
+   `/docs/*.md` glob stops picking it up. (Alternative: keep at
+   `/docs/development.md` and exclude by name; less clean.)
+
+7. **Slim `/AGENTS.md` and point it at an internal doc.** Our own `/AGENTS.md`
+   currently carries content that doesn't belong in the bundled CLI (this-repo
+   workflows table, pprose tooling overview, visual design pointer) *and*
+   isn't strictly part of pprose's marker block. Reshape it:
+
+   - Top of file: title + brief project description + one-line pointer at the
+     internal doc (`See \`docs/project/agents-internal-guide.md\` for the
+     practical-prose-specific workflows table and tooling notes.`).
+   - One-line pointer at `pprose guidelines practical-prose-authoring-principles`
+     for the project-wide authoring principles.
+   - The `<!-- BEGIN PPROSE INTEGRATION -->` block (added by dogfooding
+     `pprose install --project`).
+   - The existing `<!-- BEGIN TBD INTEGRATION -->` block (managed by tbd).
+
+   The rich hand-authored content (workflows table for this repo's specific
+   skill layout, tooling overview, visual design pointer) moves to
+   `/docs/project/agents-internal-guide.md` (new file, NOT bundled — lives in
+   the same internal-only directory as the specs).
+
+8. **Dogfood the install on our own repo.** Run `pprose install --project` to
+   write the pprose marker block into `/AGENTS.md`. Once Phase 2's slimmer
+   block shape and the internal-doc reshuffle have landed, `/AGENTS.md` is
+   ~15 lines: project header + internal pointer + principles pointer +
+   pprose block + tbd block.
+
+9. **Not in scope:**
+   - No "generated AGENTS.md" mode. Pprose owns its block; the host project
+     owns everything else.
+   - No auto-generated workflows table in the block. The host project may
+     have its own workflows table outside the markers (the internal-doc
+     version, for this repo) — that's project-specific content, not pprose's
+     to manage.
+   - No bundling of `/docs/development.md` or `/AGENTS.md` (both repo-internal).
+   - No `--global-agents-md` flag (still deferred; global skills are enough).
+
+#### Implementation checklist
+
+- [ ] **Bundling — additions.** Add `tools/design-system/design-system.md` to
+  the `sync_resources.py` plan under the `guidelines` category. Add
+  `README.md` under a new `about` category (or as a small special case in the
+  loader — only one document).
+- [ ] **Bundling — removal.** Move `/docs/development.md` to
+  `/docs/project/development.md` (`sync_resources.py` is non-recursive over
+  `/docs/`, so the move alone unbundles it). Update any internal links that
+  pointed at the old path.
+- [ ] **Authoring principles bundled doc.** Create
+  `/docs/practical-prose-authoring-principles.md` with the eight numbered
+  principles currently in `/AGENTS.md`, plus the closing "When a local rule
+  conflicts…" paragraph.
+- [ ] **Internal doc for repo-specific agent guide.** Create
+  `/docs/project/agents-internal-guide.md` with the workflows table and the
+  hand-authored "Tooling" / "Visual Design" sections currently in `/AGENTS.md`.
+  Adjust any cross-references.
+- [ ] **`pprose about` command.** Add to `cli.py` and a small command body
+  that prints the bundled `README.md`. No `--list`; one-shot.
+- [ ] **`pprose skill` overview mode.** Expand `skill_main` so the no-args
+  call prints an overview view (short intro paragraph + the skill table + a
+  routing footer); `--list` keeps the terse table; `<name>` is unchanged.
+- [ ] **Slim `agents_md_block`.** Drop the per-skill bullet list. End state:
+  trigger description + routing pointers (`pprose --help`, the four `--list`
+  commands, the `pprose <command>` / `uvx pprose@<pin>` line). ~10 lines
+  total.
+- [ ] **Dogfood install.** Run `pprose install --project` against this repo to
+  write the pprose marker block into `/AGENTS.md`. Slim the surrounding
+  hand-authored content: replace the Authoring Principles / Workflows /
+  Tooling / Visual Design sections with one-line pointers at the bundled doc
+  (`pprose guidelines practical-prose-authoring-principles`) and the internal
+  doc (`docs/project/agents-internal-guide.md`).
+- [ ] **Regenerate discovery copies.** `devtools/sync_resources.py` re-renders
+  the `/skills/pprose-*/SKILL.md` discovery copies against the slimmer block
+  (the discovery copies themselves don't carry the block — they're standalone
+  SKILL.md files — but the bundled resources sync may pick up new docs).
+- [ ] **Tests.**
+  - New test: `pprose about` prints bundled README content; covers a small
+    sentinel string ("Practical Prose project aims to improve" or similar).
+  - New test: `pprose skill` (no args) prints the overview view (a sentinel
+    string from the new intro paragraph, plus all skill names).
+  - New test: `pprose skill --list` is the terse table (existing behavior;
+    keep test).
+  - Update: existing `test_project_agents_md_block_carries_format_stamp` for
+    the slimmer block content; drop assertions on bullet-list lines.
+  - New test: `pprose guidelines design-system` resolves; bundled.
+  - New test: `pprose guidelines practical-prose-authoring-principles`
+    resolves; bundled.
+  - New test: `pprose guidelines development` no longer resolves (development
+    doc moved to `/docs/project/`, intentionally unbundled).
+- [ ] **Docs updates.** `tools/pprose/README.md` mentions `pprose about` and
+  the new bundled guidelines. `pprose --help` epilog mentions `pprose about`
+  and the four `--list` commands.
+- [ ] **Lint + tests clean.**
+- [ ] **Commit** on the same `pprose-skill-install-improvements` branch with
+  the bead IDs referenced.
+
 ## Testing Strategy
 
 Existing 191-test suite is the regression baseline (currently green on this branch).

@@ -97,11 +97,30 @@ def test_skill_compose_has_format_stamp_and_bootstrap(capsys: pytest.CaptureFixt
     assert "surface=" not in out
 
 
-def test_skill_list_outputs_descriptions(capsys: pytest.CaptureFixture[str]):
+def test_skill_list_outputs_terse_table(capsys: pytest.CaptureFixture[str]):
+    """`pprose skill --list` stays terse: `name\\tdescription` per row, no intro."""
     assert cli.main(["skill", "--list"]) == 0
     out = capsys.readouterr().out
     for name in resources.list_names("skills"):
         assert name in out
+    # Terse table — no intro paragraph or routing footer.
+    assert "Practical Prose skills are" not in out
+    assert "pprose guidelines --list" not in out
+
+
+def test_skill_no_args_prints_overview(capsys: pytest.CaptureFixture[str]):
+    """`pprose skill` (no args) prints an intro + skill table + routing footer."""
+    assert cli.main(["skill"]) == 0
+    out = capsys.readouterr().out
+    # Intro paragraph.
+    assert "Practical Prose skills" in out
+    # All skill names listed.
+    for name in resources.list_names("skills"):
+        assert name in out
+    # Routing footer mentions the other resource list commands.
+    assert "pprose guidelines --list" in out
+    assert "pprose shortcut --list" in out
+    assert "pprose runbook --list" in out
 
 
 def test_compose_skill_is_deterministic():
@@ -447,6 +466,22 @@ def test_pre_write_message_in_global_mode(
 # ─────────────────────────────────────────────────────────────────────────────
 # Committed discovery-copy drift
 # ─────────────────────────────────────────────────────────────────────────────
+
+
+def test_about_prints_bundled_readme(capsys: pytest.CaptureFixture[str]):
+    """`pprose about` prints the bundled README (project narrative)."""
+    assert cli.main(["about"]) == 0
+    out = capsys.readouterr().out
+    # Sentinel: the README's H1.
+    assert "# Practical Prose" in out
+    # Sentinel: a recognizable line from the project description.
+    assert "Practical Prose" in out
+
+
+def test_about_rejects_extra_args(capsys: pytest.CaptureFixture[str]):
+    """`pprose about <anything>` errors; it's a one-shot command."""
+    rc = cli.main(["about", "bogus"])
+    assert rc != 0
 
 
 def test_discovery_skills_match_committed_repo_root():

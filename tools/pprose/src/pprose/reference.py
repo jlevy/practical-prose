@@ -39,3 +39,13 @@ def shortcut_main(argv: list[str] | None = None) -> int:
 
 def runbook_main(argv: list[str] | None = None) -> int:
     return _doc_command("runbooks", "runbook", argv)
+
+
+def about_main(argv: list[str] | None = None) -> int:
+    """Print the bundled `README.md` — the Practical Prose project narrative."""
+    parser = argparse.ArgumentParser(
+        description="Print the Practical Prose project narrative (the bundled README).",
+    )
+    parser.parse_args(argv)  # rejects unknown args / positional
+    print(resources.read_doc("about", "readme"))
+    return 0

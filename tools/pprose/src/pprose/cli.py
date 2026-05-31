@@ -64,6 +64,11 @@ COMMANDS: dict[str, CommandSpec] = {
         install.skill_main,
         "Reference",
     ),
+    "about": CommandSpec(
+        "Print the Practical Prose project narrative (bundled README).",
+        reference.about_main,
+        "Reference",
+    ),
     "install": CommandSpec(
         "Install Practical Prose skills (--project to a repo, --global for the user).",
         install.install_main,
@@ -92,8 +97,9 @@ def _print_help() -> None:
             f"Run `{PROGRAM} <command> --help` for command-specific options.",
             "",
             "Getting started:",
-            f"  uvx {PROGRAM} install        # install skills into the current repo",
-            f"  {PROGRAM} skill --list       # list installed Practical Prose skills",
+            f"  uvx {PROGRAM} install        # install skills into the current project",
+            f"  {PROGRAM} about              # the Practical Prose project narrative",
+            f"  {PROGRAM} skill              # workflow skills overview + routing pointers",
             f"  {PROGRAM} guidelines --list  # bundled style guides and writing rules",
             "  `score` needs --model and a provider API key in the environment",
             "  (ANTHROPIC_API_KEY, OPENAI_API_KEY, or GOOGLE_API_KEY; .env / .env.local",

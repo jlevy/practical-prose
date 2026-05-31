@@ -11,7 +11,7 @@ from pathlib import Path
 
 PACKAGE_ROOT = Path(__file__).resolve().parent
 RESOURCES_DIR = PACKAGE_ROOT / "resources"
-CATEGORIES = ("guidelines", "shortcuts", "runbooks", "skills")
+CATEGORIES = ("guidelines", "shortcuts", "runbooks", "skills", "about")
 
 
 def _category_dir(category: str) -> Path:

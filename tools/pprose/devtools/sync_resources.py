@@ -36,20 +36,47 @@ RESOURCES = PKG_DIR / "src" / "pprose" / "resources"
 # Categories synced from the repo root into the wheel. Skills are *not* in this list:
 # their authored source now lives in the wheel at `resources/skills/`, and the repo-root
 # `skills/` directory is a generated discovery surface rendered from those bodies.
-SYNCED_CATEGORIES = ("guidelines", "shortcuts", "runbooks")
+SYNCED_CATEGORIES = ("guidelines", "shortcuts", "runbooks", "about")
 
 
 def _synced_plan() -> dict[Path, str]:
-    """Map every wheel resource path to its expected content (from the repo root)."""
+    """Map every wheel resource path to its expected content (from the repo root).
+
+    Bundles **public, cross-repo content only**. Repo-internal docs live under
+    `/docs/project/` (excluded by the non-recursive `/docs/*.md` glob), and the
+    repo's own `/AGENTS.md` is never bundled — pprose's job is to install a
+    marker-bounded block into whatever AGENTS.md a project has, not to dictate
+    its content.
+    """
     plan: dict[Path, str] = {}
+
+    # /docs/*.md → guidelines (non-recursive; /docs/project/ stays internal).
     for p in sorted((REPO_ROOT / "docs").glob("*.md")):
         plan[RESOURCES / "guidelines" / p.name] = p.read_text(encoding="utf-8")
+
+    # /shortcuts/*.md → shortcuts.
     for p in sorted((REPO_ROOT / "shortcuts").glob("*.md")):
         plan[RESOURCES / "shortcuts" / p.name] = p.read_text(encoding="utf-8")
+
+    # /runbooks/*.runbook.md → runbooks (drop the `.runbook` infix so the command
+    # reads `pprose runbook <name>`).
     for p in sorted((REPO_ROOT / "runbooks").glob("*.md")):
-        # Drop the ".runbook" infix so the command reads `pprose runbook <name>`.
         dest_name = p.name.replace(".runbook.md", ".md")
         plan[RESOURCES / "runbooks" / dest_name] = p.read_text(encoding="utf-8")
+
+    # tools/design-system/design-system.md → guidelines (referenced from any
+    # repo working on palettes / eval-report CSS).
+    design_system = REPO_ROOT / "tools" / "design-system" / "design-system.md"
+    if design_system.is_file():
+        plan[RESOURCES / "guidelines" / "design-system.md"] = design_system.read_text(
+            encoding="utf-8"
+        )
+
+    # README.md → about (the project narrative; surfaced as `pprose about`).
+    readme = REPO_ROOT / "README.md"
+    if readme.is_file():
+        plan[RESOURCES / "about" / "readme.md"] = readme.read_text(encoding="utf-8")
+
     return plan
 
 

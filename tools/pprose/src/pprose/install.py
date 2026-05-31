@@ -253,56 +253,92 @@ def _skill_description(name: str) -> str:
     return ""
 
 
+def _print_skill_table() -> None:
+    for name in resources.list_names("skills"):
+        print(f"{name}\t{_skill_description(name)}")
+
+
+def _print_skill_overview() -> None:
+    """Intro paragraph + skill table + routing footer.
+
+    The natural entry-point answer to "what does pprose do?" — `pprose skill` (no
+    args) is short enough to skim and points the agent at the deeper resource
+    lists (`pprose guidelines --list`, `pprose shortcut --list`,
+    `pprose runbook --list`) for everything else.
+    """
+    print(
+        "Practical Prose skills are workflow entry points for improving, auditing,\n"
+        "scoring, or comparing practical documents. Each names a clear capability;\n"
+        "run `pprose skill <name>` for the full composed SKILL.md.\n"
+    )
+    _print_skill_table()
+    print(
+        "\nFor deeper detail, the skills route to:\n"
+        "  pprose guidelines --list   — bundled style guides and writing rules\n"
+        "  pprose shortcut --list     — workflow playbooks the skills invoke\n"
+        "  pprose runbook --list      — operational procedures (eval, compare)\n"
+        "  pprose about               — the Practical Prose project narrative\n"
+    )
+
+
 def skill_main(argv: list[str] | None = None) -> int:
-    parser = argparse.ArgumentParser(description="Print a composed Practical Prose skill.")
-    parser.add_argument("name", nargs="?", help="skill name (omit with --list)")
-    parser.add_argument("--list", action="store_true", help="list installable skills")
+    parser = argparse.ArgumentParser(
+        description=(
+            "Print a Practical Prose skill: `pprose skill` for an overview, "
+            "`pprose skill --list` for the terse table, "
+            "`pprose skill <name>` for the full composed SKILL.md."
+        )
+    )
+    parser.add_argument("name", nargs="?", help="skill name (full SKILL.md)")
+    parser.add_argument("--list", action="store_true", help="terse table only")
     args = parser.parse_args(argv)
 
-    if args.list or not args.name:
-        for name in resources.list_names("skills"):
-            print(f"{name}\t{_skill_description(name)}")
+    if args.name:
+        try:
+            print(compose_skill(args.name))
+        except FileNotFoundError as exc:
+            parser.error(str(exc))
         return 0
-    try:
-        print(compose_skill(args.name))
-    except FileNotFoundError as exc:
-        parser.error(str(exc))
+    if args.list:
+        _print_skill_table()
+        return 0
+    _print_skill_overview()
     return 0
 
 
-def agents_md_block(pin: str | None = None, skills: list[str] | None = None) -> str:
+def agents_md_block(pin: str | None = None) -> str:
     """The marker-bounded pprose block for a project's `AGENTS.md`.
 
-    Compact (so it doesn't dominate the always-on AGENTS.md context). Routes the agent
-    to `pprose --help` and the resource list commands rather than duplicating their
-    output; the `format=fNN` field on the BEGIN marker lets a future pprose detect
-    and upgrade older blocks (and refuse to clobber a newer one).
+    Minimal by design (it sits in the always-on AGENTS.md context alongside other
+    tools' blocks and any hand-authored project content). Carries only the trigger
+    description plus pointers at `pprose --help` and the CLI list commands; the
+    per-skill bullet list is gone (run `pprose skill --list` for that). The
+    `format=fNN` field on the BEGIN marker lets a future pprose detect and upgrade
+    older blocks (and refuse to clobber a newer one).
     """
     pin = pin if pin is not None else pinned_version()
-    skills = skills if skills is not None else resources.list_names("skills")
-    lines = [
-        f"{AGENTS_BEGIN_PREFIX} format={PPROSE_FORMAT} -->",
-        "## Practical Prose (pprose)",
-        "",
-        "Practical Prose tooling: deterministic metrics, rubric scoring, evaluation",
-        "reports, and editorial workflows for practical documents.",
-        "Use when the user asks to improve, audit, score, or compare practical documents.",
-        "",
-        f"Run pprose as `pprose <command>` if on PATH, else `uvx pprose@{pin} <command>`.",
-        "Discover commands and workflows from the CLI itself:",
-        "",
-        "- `pprose --help` — every command and its summary.",
-        "- `pprose skill --list` — installed workflow skills (also at",
-        "  `.agents/skills/pprose-*/SKILL.md` and `.claude/skills/pprose-*/SKILL.md`).",
-        "- `pprose shortcut --list`, `pprose guidelines --list`, `pprose runbook --list`",
-        "  — on-demand playbooks, style guides, and procedures.",
-        "",
-        "Installed workflow skills:",
-        "",
-    ]
-    lines += [f"- `{name}`" for name in skills]
-    lines += ["", AGENTS_END_MARKER]
-    return "\n".join(lines)
+    return "\n".join(
+        [
+            f"{AGENTS_BEGIN_PREFIX} format={PPROSE_FORMAT} -->",
+            "## Practical Prose (pprose)",
+            "",
+            "Practical Prose: an evaluation toolkit and editorial workflows for",
+            "practical documents.",
+            "Use when the user asks to improve, audit, score, or compare practical",
+            "documents.",
+            "",
+            "Discover the tool from the CLI itself: `pprose --help` for commands,",
+            "`pprose about` for the project narrative, and `pprose skill --list` /",
+            "`pprose shortcut --list` / `pprose guidelines --list` /",
+            "`pprose runbook --list` for on-demand workflows, playbooks, style",
+            "guides, and procedures.",
+            "",
+            f"Run pprose as `pprose <command>` if on PATH, else `uvx pprose@{pin}",
+            "<command>` (zero-install via uv).",
+            "",
+            AGENTS_END_MARKER,
+        ]
+    )
 
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -429,7 +465,7 @@ def install(
                 )
             )
     if SURFACE_AGENTS_MD in surfaces:
-        block = agents_md_block(pin, skills)
+        block = agents_md_block(pin)
         results.append(_update_agents_md(target_root / "AGENTS.md", block))
 
     return results

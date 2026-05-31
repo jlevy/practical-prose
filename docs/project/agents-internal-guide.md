@@ -1,0 +1,82 @@
+---
+title: Practical Prose — Agent Guide (Internal)
+description: Repo-internal agent reference: this-repo workflows table, tooling layout, and visual-design notes. Not bundled into the pprose CLI (see /docs/ for public docs).
+author: Joshua Levy (github.com/jlevy) with LLM assistance
+---
+# Practical Prose — Agent Guide (Internal)
+
+This document is **internal to the practical-prose repo**. It holds material an
+agent working on *this* repo needs but that doesn't belong in the public pprose
+CLI surface (which bundles docs useful from any repo).
+
+For the always-on root entrypoint, see [/AGENTS.md](../../AGENTS.md). For
+development workflows (build, test, format, lint), see
+[development.md](development.md).
+
+## Workflows
+
+| User intent | Use | Source |
+| --- | --- | --- |
+| Apply the common Markdown documentation standards (basic, universal) | [pprose-common-edit](../../skills/pprose-common-edit/SKILL.md) | [common-doc-guidelines.md](../common-doc-guidelines.md) |
+| Copy edit for language and formatting (the Expression and Form dimensions) | [pprose-copy-edit](../../skills/pprose-copy-edit/SKILL.md) | [shortcut-copy-edit.md](../../shortcuts/shortcut-copy-edit.md) |
+| Full editorial pass across all 20 dimensions + editorial review (also covers audit-only review) | [pprose-full-edit](../../skills/pprose-full-edit/SKILL.md) | [shortcut-full-edit.md](../../shortcuts/shortcut-full-edit.md) |
+| Score one document with metrics and rubric grading | [pprose-eval](../../skills/pprose-eval/SKILL.md) | [practical-prose-eval-single.runbook.md](../../runbooks/practical-prose-eval-single.runbook.md) |
+| Compare multiple evaluated drafts or variants | [pprose-compare](../../skills/pprose-compare/SKILL.md) | [practical-prose-eval-compare.runbook.md](../../runbooks/practical-prose-eval-compare.runbook.md) |
+
+## Tooling
+
+The Python package lives in `tools/pprose/`. The distribution and command are both
+`pprose`, so after publication agents can run it in any repo with `uvx` and no prior
+install:
+
+```bash
+uvx pprose <command> ...
+```
+
+**Evaluate** (action): `pprose metrics`, `pprose report`, `pprose score`,
+`pprose compare`.
+
+**Reference** (print bundled docs the agent follows; `--list` to enumerate):
+`pprose guidelines <name>`, `pprose shortcut <name>`, `pprose runbook <name>`,
+`pprose skill <name>`, `pprose about`. The guidelines, shortcuts, runbooks, and
+rubric are bundled in the wheel, so these work in any repo without this source tree.
+
+**Setup**: `pprose install` runs in one of two scopes:
+
+- `--project` (default when cwd is inside a git repo) writes the five Practical Prose
+  skills into `<repo>/.agents/skills/` (Codex, Gemini CLI, pi) and
+  `<repo>/.claude/skills/` (Claude Code), plus a marker-bounded `pprose` block in
+  `<repo>/AGENTS.md`.
+- `--global` writes the skills into `~/.agents/skills/pprose-*/` and
+  `~/.claude/skills/pprose-*/`, available across every project. The global
+  AGENTS.md is left user-authored.
+
+Outside an unambiguous project context (`$HOME`, a non-git directory), `--project`
+or `--global` must be passed explicitly. Every generated artifact carries a
+`format=fNN` stamp; re-running install is idempotent and a newer-format artifact is
+never clobbered by an older pprose. Each generated skill bakes in a pinned,
+local-first invocation: `pprose` if on PATH, else `uvx pprose@<version>` (the
+version that ran install — a trusted pin, never an unpinned runner), else they tell
+the user to install uv or pprose. Pass `--surfaces=portable,claude,agents-md` to
+select install destinations within the chosen scope.
+
+For local development before publication, run from the package workspace:
+
+```bash
+cd tools/pprose
+uv run pprose <command> ...
+```
+
+`score` requires `ANTHROPIC_API_KEY`; the package auto-loads `.env` and `.env.local`
+from the current directory hierarchy and `$HOME`.
+
+## Visual Design
+
+Any work that touches palettes, eval-report rendering, or CSS should follow
+[design-system.md](../../tools/design-system/design-system.md).
+All color values are written in `hsl()`, not hex, so the system’s structure is visible
+in the source.
+
+<!-- This document follows common-doc-guidelines.md.
+See github.com/jlevy/practical-prose and review guidelines before editing.
+-->
