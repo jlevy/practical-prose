@@ -1,7 +1,5 @@
 # Practical Prose
 
-Joshua Levy (github.com/jlevy) with agent assistance
-
 ## What is This Project?
 
 Clear writing and clear thinking are inseparable.
@@ -27,15 +25,47 @@ The documents and tools here are organized for both human and agent use:
 
 ## What is Here?
 
-1. Guiding **principles** and **guidelines** for quality in practical writing
-2. Metrics of writing quality that include **6 areas** (purpose, expression, form,
+1. Guiding [**principles**](#principles-of-quality-in-practical-writing) and
+   [**guidelines**](docs/practical-prose-guidelines.md) for quality in practical writing
+2. Metrics of writing quality that include
+   [**6 areas**](#qualitative-measures-of-writing) (purpose, expression, form,
    reasoning, grounding, and judgment) divided into **20 dimensions** that reflect
    different metrics
-3. An **evaluation rubric** on how to evaluate text according to these dimensions
-4. An automated **visualization tool** that uses an LLM to assess quality and visualize
-   it
-5. **Skills** that use **a CLI** to package these features
-6. A **bibliography** of notable works on practical writing
+3. An [**evaluation rubric**](docs/practical-prose-rubric.md) on how to evaluate text
+   according to these dimensions
+4. An automated [**visualization tool**](tools/pprose/) that uses an LLM to assess
+   quality and visualize it
+5. [**Skills**](#agent-skills) that use [**a CLI**](#tooling) to package these features
+6. A [**bibliography**](docs/practical-prose-bibliography.md) of notable works on
+   practical writing
+
+## A Personal Note
+
+> I care a lot about clear writing as a reader, a writer, an editor, and an engineer.
+> I always admired good writing, both fiction and nonfiction.
+> I have also written a fair amount of technical and business writing, but as I was
+> building [Holloway](https://www.holloway.com) I spent much more time learning and
+> thinking about editorial processes, the production of print and digital books, and
+> publishing tools. Now every month I am using agents to write millions of lines of code
+> and documents, including software documentation, technical specifications, and
+> business or financial analysis.
+> 
+> I’m constantly in amazement at how the latest models can be both incredibly capable
+> yet write and think in such sloppy ways.
+> LLMs tend toward mediocrity because they tend to write “in distribution” of the
+> training data. But just as with human writers, many shortcomings are correctable errors
+> or bad habits.
+> 
+> I realize that trying to describe or measure the essence of what makes good writing is
+> incredibly difficult or perhaps impossible.
+> But even an unrealistic ambition can yield practical benefits.
+> 
+> Agents now let us combine insights from many sources.
+> Human insights that diverged or were scattered by historical accident can be
+> consolidated and forged into useful form.
+> It is still in progress, but I try to draw from the best thinkers and sources, such as
+> writing classics, the plain-language writing tradition, science and engineering
+> writing, and journalistic practices.
 
 ## Practical Writing in the Age of AI
 
@@ -95,50 +125,6 @@ Three key points:
   Usefulness is not in opposition to style, beauty, or human expression.
   The best practical writing often joins the classic virtues of structure, precision,
   and evidence with the romantic virtues of voice, rhythm, and feeling.
-
-## A Personal Note
-
-I care a lot about clear writing as a reader, a writer, an editor, and an engineer.
-I always admired good writing, both fiction and nonfiction.
-I have also written a fair amount of technical and business writing, but as I was
-building [Holloway](https://www.holloway.com) I spent much more time learning and
-thinking about editorial processes, the production of print and digital books, and
-publishing tools. Now every month I am using agents to write millions of lines of code
-and documents, including software documentation, technical specifications, and business
-or financial analysis.
-
-I’m constantly in amazement at how the latest models can be both incredibly capable yet
-write and think in such sloppy ways.
-LLMs tend toward mediocrity because they tend to write “in distribution” of the training
-data. But just as with human writers, many shortcomings are correctable errors or bad
-habits.
-
-I realize that trying to describe or measure the essence of what makes good writing is
-incredibly difficult or perhaps impossible.
-But even an unrealistic ambition can yield practical benefits.
-
-Agents now let us combine insights from many sources.
-Human insights that diverged or were scattered by historical accident can be
-consolidated and forged into useful form.
-It is still in progress, but I try to draw from the best thinkers and sources, such as
-writing classics, the plain-language writing tradition, science and engineering writing,
-and journalistic practices.
-
-## Quick Start
-
-Use the Practical Prose CLI in any repo with [uv](https://docs.astral.sh/uv/):
-
-```bash
-uvx pprose --help
-uvx pprose install
-```
-
-The package name and command are both `pprose`. `pprose install` writes one `SKILL.md`
-per workflow into both `.agents/skills/` (Codex, Gemini CLI, pi read this natively) and
-`.claude/skills/` (Claude Code mirror), and maintains a marker-bounded `pprose` block in
-`AGENTS.md` (preserving any other content).
-Re-running it is idempotent, and `--claude` / `--codex` / `--skip-claude` /
-`--skip-codex` target specific surfaces.
 
 ## Principles of Quality in Practical Writing
 
@@ -233,6 +219,24 @@ system gets used in practice.
 - **Looking at the tooling:** [tools/pprose/](tools/pprose/) is the installable Python
   package with the metrics, scoring, and report generators.
 
+## Quick Start
+
+Use the Practical Prose CLI in any repo with [uv](https://docs.astral.sh/uv/):
+
+```bash
+uvx pprose --help
+uvx pprose install
+```
+
+The package name and command are both `pprose`. `pprose install` writes one `SKILL.md`
+per workflow into both `.agents/skills/` (Codex, Gemini CLI, pi read this natively) and
+`.claude/skills/` (Claude Code mirror), and maintains a marker-bounded `pprose` block in
+`AGENTS.md` (preserving any other content).
+Re-running it is idempotent, and `--claude` / `--codex` / `--skip-claude` /
+`--skip-codex` target specific surfaces.
+See [Agent Skills](#agent-skills) for the skill catalog and [Tooling](#tooling) for the
+CLI reference.
+
 ## Agent Skills
 
 This repo can be used directly by modern coding agents through `AGENTS.md` and portable
@@ -298,10 +302,6 @@ uvx pprose report from-metrics path/to/doc.md --label my-doc --scope-class brief
 uvx pprose score my-doc.eval.md
 uvx pprose report validate my-doc.eval.md
 ```
-
-See the runbooks for end-to-end operation and
-[tools/pprose/docs/development.md](tools/pprose/docs/development.md) for local
-development.
 
 <!-- This document follows common-doc-guidelines.md.
 See github.com/jlevy/practical-prose and review guidelines before editing.
