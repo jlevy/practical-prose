@@ -2,61 +2,73 @@
  * Practical Prose — Tip-panels component (Detail + Assessment).
  *
  * Two side-panels update on hover of any `[data-tip-kind]` element
- * (which the bi-card component emits). The functions inside are lifted
- * verbatim from tools/explorations/visual-design/dimension-visualizations.html
- * so any change in the workbench flows straight through the sync script.
+ * (which the bi-card component emits). The functions are lifted from
+ * tools/explorations/visual-design/dimension-visualizations.html so any
+ * change in the workbench flows straight through the sync script.
  *
  * Public API:
- *     PracticalProseTipPanels.mount(detailSelector, assessSelector, data, biCardApi?)
+ *
+ *   PracticalProseTipPanels.mount(detail, assess, data, biCardApi?, opts?)
  *
  * Arguments:
- *   detailSelector  CSS selector for the "Evaluation Detail" panel.
- *   assessSelector  CSS selector for the "Assessment" panel.
- *   data            same shape as the bi-card data contract:
- *                     { groups, dimensions, rubric, doc }
- *                   (the doc-array form is currently single-doc; future
- *                   compare variants will accept data.docs[]).
- *   biCardApi       optional return value of PracticalProseBiCard.mount().
- *                   When provided, the Assessment panel uses biCardApi.biDim9B
- *                   to mirror the same dim widget that lives in the card.
- *                   Pass it when both components are mounted on the same
- *                   page so the mirror stays in sync.
+ *   detail        CSS selector OR Element for the "Evaluation Detail" panel.
+ *   assess        CSS selector OR Element for the "Assessment" panel.
+ *   data          { groups, dimensions, rubric, doc | docs }
+ *                 - `doc`  — single doc (the pprose-render case)
+ *                 - `docs` — array of docs (the explorations workbench case
+ *                            with multiple bi-cards in one .bi-stack)
+ *   biCardApi     Optional return value from PracticalProseBiCard.makeApi().
+ *                 When provided, the Assessment panel uses biCardApi.biDim9B
+ *                 to mirror the same dim widget that lives in the card.
+ *   opts.scope    Optional Element to attach pointerover/pointerleave
+ *                 listeners to. Default: `document`. Pass the per-viz
+ *                 layout element when more than one tip-panel pair share
+ *                 the same page (the workbench does this).
+ *
+ * Returns `{ onOver, showPlaceholder }` so a caller that wants to manage
+ * its own listener attachment can do so; the default behavior wires the
+ * listeners onto `opts.scope` automatically.
  *
  * Depends on `window.marked` (the markdown library; vendored as
  * marked.min.js alongside this file).
  */
 
 (() => {
-  function mount(detailSelector, assessSelector, data, biCardApi) {
-    const detailEl =
-      typeof detailSelector === "string"
-        ? document.querySelector(detailSelector)
-        : detailSelector;
-    const assessEl =
-      typeof assessSelector === "string"
-        ? document.querySelector(assessSelector)
-        : assessSelector;
+  function _resolve(target) {
+    if (!target) return null;
+    if (typeof target === "string") return document.querySelector(target);
+    return target;
+  }
+
+  function mount(detail, assess, data, biCardApi, opts) {
+    const detailEl = _resolve(detail);
+    const assessEl = _resolve(assess);
     if (!detailEl || !assessEl) {
       console.error(
         "PracticalProseTipPanels.mount: panel(s) not found",
-        detailSelector,
-        assessSelector,
+        detail,
+        assess,
       );
-      return;
+      return null;
     }
-    if (!data || !data.rubric || !data.doc) {
-      console.error("PracticalProseTipPanels.mount: malformed data", data);
-      return;
+    if (!data || !data.rubric) {
+      console.error("PracticalProseTipPanels.mount: data.rubric missing", data);
+      return null;
     }
 
     const rubric = data.rubric;
     const groups = data.groups || [];
     const dims = data.dimensions || [];
-    // The hover panel was authored for a multi-doc workbench (biRealDocs);
-    // here we keep the same array shape but with one entry.
-    const biRealDocs = [data.doc];
+    // Accept `docs` (array, workbench multi-doc case) or `doc` (single,
+    // pprose-render case).
+    const biRealDocs = Array.isArray(data.docs)
+      ? data.docs
+      : data.doc
+        ? [data.doc]
+        : [];
 
-    // ─── el helper (kept local; same as bi-card's) ──────────────────────
+    // ─── Local el helper (same shape as bi-card's; kept here so the
+    // tip-panels component can be loaded independently of bi-card). ──
     function el(tag, attrs = {}, ...children) {
       const e = document.createElement(tag);
       Object.entries(attrs).forEach(([k, v]) => {
@@ -73,7 +85,6 @@
       return e;
     }
 
-    // ─── Panel chrome ───────────────────────────────────────────────────
     function mountPanel(panel, heading) {
       panel.appendChild(
         el("div", { class: "tip-panel-heading eyebrow" }, heading),
@@ -118,9 +129,10 @@
       const r = rubric[key];
       if (!r) return showPlaceholder();
 
-      const rulesMd = r.rules && r.rules.length
-        ? `\n\n## Rules\n\n${r.rules.map((rule) => `- ${rule}`).join("\n")}`
-        : "";
+      const rulesMd =
+        r.rules && r.rules.length
+          ? `\n\n## Rules\n\n${r.rules.map((rule) => `- ${rule}`).join("\n")}`
+          : "";
 
       const detailMd = `# *${r.label}*
 
@@ -202,8 +214,6 @@ ${dimsMd}`;
     }
 
     // Slide both panels vertically to align with the hovered bi-card.
-    // Only on wide layouts where the panels sit in a flex row next to the
-    // stack.
     function moveToCard(trig) {
       if (!matchMedia("(min-width: 72rem)").matches) return;
       const card = trig.closest(".bi-card");
@@ -235,13 +245,20 @@ ${dimsMd}`;
       moveToCard(trig);
     }
 
-    // Wire hover handlers onto the document so any [data-tip-kind] trigger
-    // (today: card; future: comparison page rows) updates the panels.
-    document.addEventListener("pointerover", onOver);
-    document.addEventListener("pointerleave", showPlaceholder);
+    // Wire hover handlers. Default scope is `document` (single-instance
+    // case — pprose render). Workbench passes opts.scope = layoutEl so
+    // each per-viz tip-panel pair only listens within its own layout.
+    const scope = (opts && opts.scope) ? _resolve(opts.scope) : document;
+    scope.addEventListener("pointerover", onOver);
+    scope.addEventListener("pointerleave", showPlaceholder);
 
     showPlaceholder();
+    return { onOver, showPlaceholder };
   }
 
-  globalThis.PracticalProseTipPanels = Object.freeze({ mount });
+  // Extend rather than replace so other components can co-exist in the
+  // same namespace if they ever choose to.
+  const ns = (globalThis.PracticalProseTipPanels =
+    globalThis.PracticalProseTipPanels || {});
+  ns.mount = mount;
 })();
