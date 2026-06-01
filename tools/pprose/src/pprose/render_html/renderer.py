@@ -10,6 +10,13 @@ same.
 `render_eval_report(report, opts)` is the public entrypoint when the
 caller already has an EvalReport in memory (used by
 `pprose score --render-html` to skip the disk-read round trip).
+
+The card DOM is a verbatim port of `biCard()` + `biDim9B()` from
+tools/explorations/visual-design/dimension-visualizations.html, driven
+by EvalReport data. Only differences from the source mockup:
+  - Hover-driven tip panels removed (their content moves to the
+    per-dim detail page).
+  - The `repoCredit()` footer below the card is omitted.
 """
 
 from __future__ import annotations
@@ -24,18 +31,6 @@ from pprose.render_html import inliner
 
 _TEMPLATES_DIR = Path(__file__).resolve().parent / "templates"
 
-# Group ids -> Unicode glyphs used as the at-a-glance group icon in the
-# card header. Light, theme-neutral; replace with proper SVG symbols when
-# the design system ships them.
-_GROUP_ICONS: dict[str, str] = {
-    "purpose": "◎",
-    "expression": "✦",
-    "form": "▤",
-    "reasoning": "⊕",
-    "grounding": "⏚",
-    "judgment": "⚖",
-}
-
 # Layout per Visual 9B: Purpose/Expression/Form on the left,
 # Reasoning/Grounding/Judgment on the right. Reasoning at the top so its
 # 4 dims pair row-for-row with Purpose's 4.
@@ -43,6 +38,12 @@ _LEFT_GROUPS = ("purpose", "expression", "form")
 _RIGHT_GROUPS = ("reasoning", "grounding", "judgment")
 
 _DEFAULT_SECTIONS = ("card", "detail", "metrics", "footer")
+
+# Per the explorations file, the alpha-step default is 0.0 (segments and
+# the score chip all render at full vividness). The design system can dial
+# this via a CSS slider in the playground, but the static surface uses the
+# documented default.
+_SCORE_ALPHA_STEP = 0.0
 
 
 @dataclass(frozen=True)
@@ -54,18 +55,30 @@ class RenderOpts:
 
 
 @dataclass
+class _Segment:
+    idx: int
+    background: str
+    offset_pct: int
+
+
+@dataclass
 class _DimRow:
-    key: str
+    id: str  # P1..J3 — design-system dim id used in CSS var lookups
+    key: str  # snake_case key in the EvalReport schema (e.g., "suitability")
     label: str
     section: int
     group_key: str
     group_label: str
     score: int | str
     score_display: str
-    fill_pct: int
     is_na: bool
     is_err: bool
+    segments: list[_Segment]
+    fill_bg: str | None
+    circle_bg: str | None
+    tick_positions: tuple[int, ...]
     question: str
+    rules: tuple[str, ...]
     reason: str | None
     findings: list[dict[str, Any]] = field(default_factory=list)
 
@@ -106,8 +119,6 @@ def _render_eval_report_from_path(path: Path, opts: RenderOpts) -> str:
 
 def render_eval_report(report: EvalReport, opts: RenderOpts) -> str:
     """Render an EvalReport to a complete HTML string."""
-    # Imported here so importing the module doesn't require Jinja2 unless
-    # the renderer is actually invoked.
     from jinja2 import Environment, FileSystemLoader, select_autoescape
 
     env = Environment(
@@ -134,13 +145,12 @@ def render_eval_report(report: EvalReport, opts: RenderOpts) -> str:
     context: dict[str, Any] = {
         "title": f"Eval — {report.artifact.label}",
         "css": inliner.bundled_css(opts.page_size),
+        "icons_svg": inliner.bundled_icons_svg(),
         "pprose_version": opts.pprose_version,
         "sections": list(opts.sections),
         "report": report,
         "doc_name": report.artifact.label,
-        "doc_meta": _doc_meta_string(report),
         "columns": columns,
-        "overall_mean": _safe_overall_mean(report),
         "dimensions": dim_rows,
         "stats": _build_stats(report),
         "ratios": _build_ratios(report),
@@ -149,45 +159,96 @@ def render_eval_report(report: EvalReport, opts: RenderOpts) -> str:
     return env.get_template("base.html.jinja").render(**context)
 
 
-# Build helpers ------------------------------------------------------------
+# ─── Card data shaping ─────────────────────────────────────────────────────
+
+
+def _segment_alpha(seg_idx: int) -> float:
+    """Mirror segmentAlpha(i) in the explorations file."""
+    return 1.0 - (5 - seg_idx) * _SCORE_ALPHA_STEP
+
+
+def _dim_color_mix(dim_id: str, alpha: float) -> str:
+    """Mirror dimColorMix(dimId, alpha) in the explorations file."""
+    a = max(0.0, min(1.0, alpha))
+    pct = round(a * 100)
+    return f"color-mix(in srgb, var(--dim-{dim_id}) {pct}%, transparent)"
+
+
+def _score_color(dim_id: str, score: int) -> str:
+    """Mirror scoreColor(dimId, score)."""
+    return _dim_color_mix(dim_id, 1.0 - (5 - score) * _SCORE_ALPHA_STEP)
+
+
+def _dim_design_id(dim: rs.Dimension, index_in_group: int) -> str:
+    """Map a rubric Dimension to the design-system id (P1..J3).
+
+    The design system uses single-letter group code + 1-indexed position
+    within the group, exactly as the per-dim CSS tokens are named
+    (--dim-P1, --dim-P2, …).
+    """
+    return f"{dim.group_key[0].upper()}{index_in_group}"
 
 
 def _build_dim_rows(report: EvalReport) -> list[_DimRow]:
     rows: list[_DimRow] = []
-    for d in rs.DIMENSIONS:
-        score = _get_score(report, d.group_key, d.key)
-        is_na = score == "NA"
-        is_err = score == "ERR"
-        fill = 0
-        score_display: str
-        if isinstance(score, int):
-            fill = int(round(score / 5.0 * 100))
-            score_display = str(score)
-        elif is_err:
-            score_display = "ERR"
-        else:
-            score_display = "—"
+    # Walk groups in canonical order so the within-group index is stable
+    # (matches the design-system's P1..P4, E1..E3, … numbering).
+    for group in rs.GROUPS:
+        for idx, dim in enumerate(group.dimensions, start=1):
+            dim_id = _dim_design_id(dim, idx)
+            score = _get_score(report, dim.group_key, dim.key)
+            is_na = (not isinstance(score, int)) and score != "ERR"
+            is_err = score == "ERR"
 
-        reason = _get_reason(report, d.group_key, d.key)
-        findings = _findings_for(report, d.label)
+            segments: list[_Segment] = []
+            fill_bg: str | None = None
+            circle_bg: str | None = None
+            score_display: str
 
-        rows.append(
-            _DimRow(
-                key=d.key,
-                label=d.label,
-                section=d.section,
-                group_key=d.group_key,
-                group_label=d.group_label,
-                score=score,
-                score_display=score_display,
-                fill_pct=fill,
-                is_na=is_na,
-                is_err=is_err,
-                question=d.question,
-                reason=reason,
-                findings=findings,
+            if isinstance(score, int):
+                score_display = str(score)
+                circle_bg = _score_color(dim_id, score)
+                for i in range(1, score + 1):
+                    segments.append(
+                        _Segment(
+                            idx=i,
+                            background=_dim_color_mix(dim_id, _segment_alpha(i)),
+                            offset_pct=(i - 1) * 20,
+                        )
+                    )
+            elif is_err:
+                score_display = "ERR"
+                fill_bg = "var(--score-err-fill)"
+            else:
+                score_display = "NA"
+                fill_bg = "var(--score-na-fill)"
+
+            rows.append(
+                _DimRow(
+                    id=dim_id,
+                    key=dim.key,
+                    label=dim.label,
+                    section=dim.section,
+                    group_key=dim.group_key,
+                    group_label=dim.group_label,
+                    score=score,
+                    score_display=score_display,
+                    is_na=is_na,
+                    is_err=is_err,
+                    segments=segments,
+                    fill_bg=fill_bg,
+                    circle_bg=circle_bg,
+                    # Tick marks at score positions 1/2/3/4. The .bi-ltr
+                    # left-column track is mirrored via CSS transform, so
+                    # symmetric tick positions render correctly in both
+                    # columns.
+                    tick_positions=(20, 40, 60, 80),
+                    question=dim.question,
+                    rules=dim.rules,
+                    reason=_get_reason(report, dim.group_key, dim.key),
+                    findings=_findings_for(report, dim.label),
+                )
             )
-        )
     return rows
 
 
@@ -204,9 +265,10 @@ def _group_payload(group_key: str, rows_by_group: dict[str, list[_DimRow]]) -> d
     avg = sum(numeric) / len(numeric) if numeric else None
     label = dims[0].group_label if dims else group_key.title()
     return {
-        "key": group_key[0],  # P/E/F/R/G/J for CSS var lookup (--accent-p, ...)
+        "key": group_key,
+        "key_lower": group_key[0].lower(),  # p/e/f/r/g/j for --accent-* CSS vars
         "label": label,
-        "icon": _GROUP_ICONS.get(group_key, "·"),
+        "label_lower": label.lower(),  # for #icon-<label> sprite reference
         "avg": avg,
         "dims": dims,
     }
@@ -225,51 +287,28 @@ def _get_reason(report: EvalReport, group_key: str, dim_key: str) -> str | None:
 
 
 def _findings_for(report: EvalReport, dim_label: str) -> list[dict[str, Any]]:
+    """Per-dim rule findings, shaped to match the tip-panel `renderDim` output.
+
+    Mirrors the markdown the explorations file emits per finding:
+      `**Rule N · verdict** — description`
+    so the template can render the same `<li><strong>…</strong> — …</li>` shape
+    without extra formatting logic.
+    """
     out: list[dict[str, Any]] = []
     for f in report.rule_findings or []:
         if f.dimension != dim_label:
             continue
-        loc_note = _summarize_locations(f.locations)
-        note = f.description if not loc_note else f"{f.description} — {loc_note}"
         out.append(
             {
-                "verdict": f.verdict,
-                "rule_id": f"rule {f.rule_number}",
-                "note": note,
+                "rule_number": f.rule_number,
+                "verdict": f.verdict or "noted",
+                "description": f.description,
             }
         )
     return out
 
 
-def _summarize_locations(locations: list[Any]) -> str:
-    parts: list[str] = []
-    for loc in locations:
-        if getattr(loc, "quote", None):
-            parts.append(f'"{loc.quote.strip()}"')
-        elif getattr(loc, "section", None):
-            parts.append(str(loc.section))
-        elif getattr(loc, "note", None):
-            parts.append(str(loc.note))
-    return "; ".join(parts)
-
-
-def _safe_overall_mean(report: EvalReport) -> float | None:
-    rollup = getattr(report.derived, "rubric_rollup", None)
-    if rollup is None:
-        return None
-    return getattr(rollup, "overall_mean", None)
-
-
-def _doc_meta_string(report: EvalReport) -> str:
-    parts: list[str] = []
-    try:
-        parts.append(f"{report.quant.size.words / 1000:.1f}k words")
-    except Exception:
-        pass
-    rubric_version = getattr(report.metadata, "rubric_version", None)
-    if rubric_version:
-        parts.append(str(rubric_version))
-    return " · ".join(parts)
+# ─── Supplemental section data ─────────────────────────────────────────────
 
 
 def _build_stats(report: EvalReport) -> list[dict[str, str]]:
@@ -298,10 +337,7 @@ def _build_ratios(report: EvalReport) -> list[dict[str, str]]:
 
     push("Words per sentence", getattr(density, "words_per_sentence", None))
     push("Words per paragraph", getattr(density, "words_per_paragraph", None))
-    push(
-        "Sentences per paragraph",
-        getattr(density, "sentences_per_paragraph", None),
-    )
+    push("Sentences per paragraph", getattr(density, "sentences_per_paragraph", None))
     push("Links per 1k words", getattr(density, "links_per_1k_words", None))
     push("Tables per 1k words", getattr(density, "tables_per_1k_words", None))
     push("Tags per 1k words", getattr(density, "tags_per_1k_words", None))

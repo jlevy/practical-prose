@@ -63,13 +63,30 @@ def test_render_fixture_produces_html_with_card_and_doc_name() -> None:
         assert d.label in html, f"missing dimension label: {d.label}"
 
 
-def test_render_includes_overall_mean_when_derived_present() -> None:
+def test_render_card_matches_visual_9b_structure() -> None:
+    """The card DOM mirrors biCard + biDim9B from the explorations file.
+
+    Specifically: a `.bi-stack.bi-ltr` wrapper, a `.bi-card` with kicker +
+    italic doc name, two `.bi-col` columns, and per-group inline SVG icons
+    referencing the bundled sprite — and *no* additions (overall-mean
+    rollup, doc-meta, colored accent bars) that weren't in the source.
+    """
     report = _fixture_report()
-    html = render_eval_report(report, RenderOpts())
-    assert "Overall mean" in html
-    # The fixture has overall_mean ~3.10 — format to one of the rendered shapes.
-    rollup = report.derived.rubric_rollup
-    assert f"{rollup.overall_mean:.2f}" in html
+    html = render_eval_report(report, RenderOpts(sections=("card",)))
+    assert 'class="bi-stack bi-ltr"' in html
+    assert 'class="bi-card"' in html
+    assert 'class="doc-kicker"' in html
+    assert 'class="doc-name"' in html
+    assert 'class="bi-col left"' in html
+    assert 'class="bi-col right"' in html
+    # Group icons resolve to the design-system sprite via <use href="#icon-…"/>.
+    for icon in ("purpose", "expression", "form", "reasoning", "grounding", "judgment"):
+        assert f'href="#icon-{icon}"' in html, f"missing icon ref: {icon}"
+    # The card carries no overall-mean rollup or doc-meta line — those were
+    # not in the Visual 9B source.
+    assert "Overall mean" not in html
+    assert 'class="doc-meta"' not in html
+    assert 'class="doc-rollup"' not in html
 
 
 def test_render_sections_subset_omits_other_pages() -> None:
@@ -91,18 +108,28 @@ def test_render_a4_rewrites_page_size_in_print_block() -> None:
 
 
 def test_dim_rows_handle_numeric_and_sentinel_scores() -> None:
-    """Build a row set from a fixture and verify NA/ERR/1-5 each render."""
+    """Build a row set from a fixture and verify NA/ERR/1-5 each render.
+
+    Matches biCard + _biDimPrep behavior: NA rows get `is-na` on the
+    `.bi-dim`, ERR rows do not (the original code path only adds `is-na`
+    when the score is neither numeric nor "ERR"). Both sentinels surface
+    via the `.bi-num-circle` chip's `.na` / `.err` class instead.
+    """
     report = _fixture_report()
     rows = _build_dim_rows(report)
     assert len(rows) == rs.dimension_count()
     seen_numeric = any(isinstance(r.score, int) for r in rows)
     assert seen_numeric, "fixture should contain at least one numeric score"
-    # Render with a doctored report where one row is NA and one is ERR.
     qual_dict = report.qual.model_dump()
     qual_dict["purpose"]["suitability"] = "NA"
     qual_dict["judgment"]["robustness"] = "ERR"
     report.qual = type(report.qual).model_validate(qual_dict)
-    html = render_eval_report(report, RenderOpts())
+    html = render_eval_report(report, RenderOpts(sections=("card",)))
     assert "is-na" in html
-    assert "is-err" in html
-    assert "ERR" in html
+    # ERR appears in the circle text and as a `.bi-num-circle.err` class.
+    assert ">ERR<" in html
+    assert "bi-num-circle err" in html
+    # Score 1-5 rows render unit segments via the `.bi-bar-seg` element.
+    assert 'class="bi-bar-seg"' in html
+    # And every row gets unit tick marks at 20/40/60/80% of the bar width.
+    assert 'class="bi-tick"' in html

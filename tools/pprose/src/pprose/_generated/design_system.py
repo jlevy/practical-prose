@@ -435,16 +435,31 @@ DESIGN_SYSTEM: dict[str, Any] = {
     },
     "typography": {
         "caps": {
-            "tracking": "0.09em",
-            "weight": 600,
-            "weight_strong": 800
+            "tracking": "0.09em"
         },
-        "numeric": {
-            "weight": 600
+        "fonts": {
+            "sans": {
+                "family": "Source Sans 3",
+                "stack": "-apple-system, BlinkMacSystemFont, \"Inter\", \"Helvetica Neue\", Arial, sans-serif",
+                "source": "fontsource:source-sans-3:vf",
+                "size_px": 16.5,
+                "weight": 425,
+                "weight_medium": 700,
+                "weight_bold": 725
+            },
+            "serif": {
+                "family": "Noto Serif",
+                "stack": "\"Iowan Old Style\", \"Charter\", Georgia, serif",
+                "source": "fontsource:noto-serif:vf",
+                "size_px": 14.0,
+                "weight": 425,
+                "weight_medium": 500,
+                "weight_bold": 650
+            }
         }
     },
     "scoring": {
-        "alpha_step": 0.0
+        "alpha_step": 0.14
     }
 }
 

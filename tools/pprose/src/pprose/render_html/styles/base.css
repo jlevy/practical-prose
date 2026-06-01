@@ -14,6 +14,10 @@ html, body {
   padding: 0;
 }
 
+svg {
+  display: block;
+}
+
 body {
   background: var(--bg);
   color: var(--fg);

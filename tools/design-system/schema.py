@@ -196,34 +196,65 @@ class Interactions(_Frozen):
 
 
 class CapsTokens(_Frozen):
-    """Tokens shared by every small-caps eyebrow on every surface.
+    """Small-caps eyebrow tracking — the one piece of the eyebrow pattern that
+    isn't derivable from the font weight tokens.  Per ``design-system.md`` the
+    letter-spacing rule fires only on uppercase text, so every consumer that
+    opts into small caps reaches for ``--tracking-caps``.
 
-    These travel together: per ``design-system.md`` letter-spacing is only
-    applied to uppercase text, so any consumer that opts into small caps
-    needs all three (tracking, weight, weight_strong) to be consistent
-    with the rest of the system.
+    Weight came from here historically; it now collapses to ``fonts.sans.weight_bold``
+    (see ``--weight-caps`` derivation in ``generate.py``).
     """
 
     tracking: str = Field(min_length=1)
-    weight: int = Field(ge=100, le=900)
-    weight_strong: int = Field(ge=100, le=900)
 
 
-class NumericTokens(_Frozen):
-    """Tokens for quantitative numbers (scores, counts, statistics).
+# Font source — drives generated ``@font-face`` emission.
+FontSource = str  # validated by regex below
 
-    Every place that shows a number — score chips, stat callouts, bar
-    value readouts, score numerals in the bidirectional bars — uses
-    these so the numeric voice of the document is consistent: sans,
-    tabular nums, single weight.
+
+_SOURCE_PATTERN = re.compile(r"^(system|fontsource:[a-z0-9-]+(?::vf)?)$")
+
+
+def _validate_font_source(v: str) -> str:
+    if not isinstance(v, str) or not _SOURCE_PATTERN.match(v):
+        raise ValueError(
+            f"font source must be `system` or `fontsource:<font-id>[:vf]`; got {v!r}"
+        )
+    return v
+
+
+class FontRole(_Frozen):
+    """One role's worth of font configuration (sans or serif).
+
+    ``family`` is the primary font (what ``@font-face`` declares and what the
+    generated CSS stack leads with).  ``stack`` is the fallback list appended
+    after the primary family.  ``source`` tells the generator how to load the
+    primary: ``system`` skips ``@font-face`` (rely on locally-installed fonts);
+    ``fontsource:<id>[:vf]`` emits the standard fontsource CDN cuts.
     """
 
+    family: str = Field(min_length=1)
+    stack: str = Field(min_length=1)
+    source: FontSource = Field(min_length=1)
+    size_px: float = Field(ge=8, le=32)
     weight: int = Field(ge=100, le=900)
+    weight_medium: int = Field(ge=100, le=900)
+    weight_bold: int = Field(ge=100, le=900)
+
+    @field_validator("source")
+    @classmethod
+    def _src(cls, v: str) -> str:
+        return _validate_font_source(v)
+
+
+class FontsTokens(_Frozen):
+    sans: FontRole
+    serif: FontRole
 
 
 class Typography(_Frozen):
     caps: CapsTokens
-    numeric: NumericTokens
+    fonts: FontsTokens
 
 
 # ──────────────── Scoring presentation ────────────────

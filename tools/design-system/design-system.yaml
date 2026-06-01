@@ -334,18 +334,48 @@ interactions:
     duration: "480ms"
     easing: "cubic-bezier(0.32, 0.72, 0, 1)"
 
-# Typography tokens — small-caps eyebrow pattern that's used everywhere the
-# design system has a small overline-style heading (panel kickers, section
-# headers, stat labels, navigation eyebrows).  Per design-system.md the
-# letter-spacing rule fires only on uppercase text, so these tokens travel
-# together; widgets that opt into small caps reach for all three.
+# Typography tokens.  Two halves:
+#   - caps:  the small-caps eyebrow pattern (panel kickers, section
+#            headers, stat labels, navigation eyebrows).  Per design-
+#            system.md the letter-spacing rule only fires on uppercase
+#            text, so the tracking value lives here as a design constant.
+#   - fonts: per-role family + stack + size + weights, captured live by
+#            the explorations chooser.  Pasted from "Copy YAML" so a
+#            tuned design becomes the new default.  `source` drives the
+#            generated `@font-face` declaration: `fontsource:<font>:<vf>`
+#            emits the standard fontsource CDN cuts (woff2 normal +
+#            italic, variable or static), `system` emits no `@font-face`
+#            (the stack relies on locally-installed fonts).
 typography:
   caps:
     tracking: "0.09em" # canonical small-caps tracking (range 0.06-0.10em)
-    weight: 600 # normal eyebrow weight (.eyebrow utility)
-    weight_strong: 800 # bolder variant for prominent labels (e.g. data labels on bars)
-  numeric:
-    weight: 600 # quantitative numbers everywhere (scores, counts, stats)
+  fonts:
+    # Three weight tiers per role:
+    #   weight        — body / regular reading copy
+    #   weight_medium — large headings that read better with a softer weight
+    #                   than full bold (eg. big card titles); also used as
+    #                   the eyebrow / numeric tier in some places
+    #   weight_bold   — smaller headings + emphasized inline text where you
+    #                   want a truly heavy stroke
+    sans:
+      family: "Source Sans 3"
+      stack: '-apple-system, BlinkMacSystemFont, "Inter", "Helvetica Neue", Arial, sans-serif'
+      source: "fontsource:source-sans-3:vf"
+      # Source Sans 3 has a low x-height + narrow letterforms — it reads
+      # noticeably smaller than serif fonts at the same nominal size.
+      # 16.5px here optically matches Noto Serif at 14px.
+      size_px: 16.5
+      weight: 425
+      weight_medium: 700
+      weight_bold: 725
+    serif:
+      family: "Noto Serif"
+      stack: '"Iowan Old Style", "Charter", Georgia, serif'
+      source: "fontsource:noto-serif:vf"
+      size_px: 14
+      weight: 425
+      weight_medium: 500
+      weight_bold: 650
 
 # Scoring presentation — encodes a score's *value* through alpha on the
 # dimension's base color.  Each step below the maximum (5) reduces alpha
@@ -353,4 +383,4 @@ typography:
 # a faint one.  The effect is symmetric in light + dark mode because we
 # mix toward `transparent`, letting the surface show through.
 scoring:
-  alpha_step: 0 # alpha decrement per score step below 5 (0 = no gradient)
+  alpha_step: 0.14 # alpha decrement per score step below 5 (0 = no gradient)

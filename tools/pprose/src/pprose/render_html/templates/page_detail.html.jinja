@@ -1,27 +1,47 @@
-<h2>Per-dimension Detail</h2>
+{# Per-dimension detail. Each panel mirrors the tip-panel DOM that
+   `renderDim` builds in the explorations file: tip-context (group),
+   h1>em (dim label), italic question paragraph, optional Rules h2 +
+   ul, hr, tip-score-row, tip-assessment with bullets or reason. #}
+<h2>Per-Dimension Detail</h2>
 {% for dim in dimensions %}
-<div class="dim-block" style="--row-color: var(--dim-{{ dim.key }});">
-  <div class="dim-block-head">
-    <span class="dim-id">{{ dim.section }} · {{ dim.group_label }}</span>
-    <span class="dim-label">{{ dim.label }}</span>
-    <span class="dim-score">{{ dim.score_display }}</span>
+<aside class="bi-tip-panel">
+  <div class="tip-content">
+    <p class="tip-context">{{ dim.group_label }}</p>
+    <h1><em>{{ dim.label }}</em></h1>
+    {% if dim.question %}
+    <p><em>{{ dim.question }}</em></p>
+    {% endif %}
+    {% if dim.rules %}
+    <h2>Rules</h2>
+    <ul>
+      {% for rule in dim.rules %}
+      <li>{{ rule }}</li>
+      {% endfor %}
+    </ul>
+    {% endif %}
+    <hr>
+    <div class="tip-score-row">
+      <span class="tip-score">{{ dim.score_display }}</span>
+      <span class="tip-score-meta">
+        {%- if dim.is_na -%}not applicable
+        {%- elif dim.is_err -%}unassessable
+        {%- else -%}/ 5
+        {%- endif -%}
+      </span>
+    </div>
+    {% if dim.findings %}
+    <div class="tip-assessment">
+      <ul>
+        {% for f in dim.findings %}
+        <li><strong>Rule {{ f.rule_number }} · {{ f.verdict }}</strong> — {{ f.description }}</li>
+        {% endfor %}
+      </ul>
+    </div>
+    {% elif dim.reason %}
+    <div class="tip-assessment">
+      <p>{{ dim.reason }}</p>
+    </div>
+    {% endif %}
   </div>
-  {% if dim.question %}
-  <p class="dim-question"><em>{{ dim.question }}</em></p>
-  {% endif %}
-  {% if dim.reason %}
-  <p class="dim-reason">{{ dim.reason }}</p>
-  {% endif %}
-  {% if dim.findings %}
-  <ul class="dim-findings">
-    {% for f in dim.findings %}
-    <li>
-      <span class="verdict-{{ f.verdict }}">{{ f.verdict }}</span>
-      <span class="rule-id">{{ f.rule_id }}:</span>
-      {{ f.note }}
-    </li>
-    {% endfor %}
-  </ul>
-  {% endif %}
-</div>
+</aside>
 {% endfor %}

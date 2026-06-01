@@ -5,6 +5,33 @@
     <title>Practical Prose — 20-Dimension Visualization Survey</title>
     <meta name="viewport" content="width=device-width,initial-scale=1" />
 
+    <!-- Webfonts: Source Sans 3 (sans) + PT Serif (serif) via fontsource CDN.
+         These match the defaults set in :root below and are exposed as
+         choices in the font chooser (lib/design-font-controls.js).
+         Preconnects warm the CDN; preloads pull the most-used cuts so
+         first paint doesn't fall back through the stack. -->
+    <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin />
+    <link rel="preload" as="font" type="font/woff2" crossorigin
+      href="https://cdn.jsdelivr.net/fontsource/fonts/pt-serif@latest/latin-400-normal.woff2" />
+    <link rel="preload" as="font" type="font/woff2" crossorigin
+      href="https://cdn.jsdelivr.net/fontsource/fonts/pt-serif@latest/latin-700-normal.woff2" />
+    <link rel="preload" as="font" type="font/woff2" crossorigin
+      href="https://cdn.jsdelivr.net/fontsource/fonts/pt-serif@latest/latin-400-italic.woff2" />
+    <link rel="preload" as="font" type="font/woff2" crossorigin
+      href="https://cdn.jsdelivr.net/fontsource/fonts/pt-serif@latest/latin-700-italic.woff2" />
+    <link rel="preload" as="font" type="font/woff2" crossorigin
+      href="https://cdn.jsdelivr.net/fontsource/fonts/source-sans-3:vf@latest/latin-wght-normal.woff2" />
+    <link rel="preload" as="font" type="font/woff2" crossorigin
+      href="https://cdn.jsdelivr.net/fontsource/fonts/source-sans-3:vf@latest/latin-wght-italic.woff2" />
+    <link rel="preload" as="font" type="font/woff2" crossorigin
+      href="https://cdn.jsdelivr.net/fontsource/fonts/noto-serif:vf@latest/latin-wght-normal.woff2" />
+    <link rel="preload" as="font" type="font/woff2" crossorigin
+      href="https://cdn.jsdelivr.net/fontsource/fonts/noto-serif:vf@latest/latin-wght-italic.woff2" />
+    <link rel="preload" as="font" type="font/woff2" crossorigin
+      href="https://cdn.jsdelivr.net/fontsource/fonts/source-serif-4:vf@latest/latin-wght-normal.woff2" />
+    <link rel="preload" as="font" type="font/woff2" crossorigin
+      href="https://cdn.jsdelivr.net/fontsource/fonts/source-serif-4:vf@latest/latin-wght-italic.woff2" />
+
     <script src="https://cdn.jsdelivr.net/npm/d3@7.9.0/dist/d3.min.js"></script>
     <!-- js-yaml is used to parse the in-repo rubric YAML + the YAML frontmatter
          in each *.eval.md fixture so the bidirectional viz (and its tooltips)
@@ -21,20 +48,27 @@
      (NA/ERR washes, rungs, overlay text, font stacks) live in the <style>
      block below.  Edit tools/design-system/design-system.yaml + run
      generate.py to update palette values. -->
+    <!-- ?v=ds2 cache-bust: the design system grew typography.fonts (font
+         family, stack, size, weights per role); a stale cached copy
+         would crash the chooser init and blank the visualizations. -->
     <link
       rel="stylesheet"
-      href="../../design-system/_generated/design_system.css"
+      href="../../design-system/_generated/design_system.css?v=ds2"
     />
 
     <!-- Production design-system runtime: the YAML data, attached to
      window.PracticalProseDesignSystem.  Plain script for file:// compat. -->
-    <script src="../../design-system/_generated/design_system.global.js"></script>
+    <script src="../../design-system/_generated/design_system.global.js?v=ds2"></script>
 
     <!-- Design-only tools — color / font / palette UI controls. Used only by
      these exploration pages; not part of the production design system. -->
-    <script src="lib/design-color-controls.js"></script>
-    <script src="lib/design-font-controls.js"></script>
-    <script src="lib/design-palette-sliders.js"></script>
+    <!-- ?v=lib2 cache-bust: design-palette-sliders.js gained the
+         typography export and design-font-controls.js gained the
+         weight-input mounting; old cached copies emit incomplete
+         YAML and won't see the new controls. -->
+    <script src="lib/design-color-controls.js?v=lib2"></script>
+    <script src="lib/design-font-controls.js?v=lib2"></script>
+    <script src="lib/design-palette-sliders.js?v=lib2"></script>
 
     <style>
       /* Colors expressed as hsl() per tools/design-system/design-system.md.
@@ -66,15 +100,366 @@
             inlining their own values.
          ─────────────────────────────────────────────────────────────── */
 
-      /* Font stacks — overridden live by the font chooser in the controls
-     panel below the header.  Defaults match the original cream-paper
-     book typography (serif body, system sans for UI). */
+      /* Webfont @font-face declarations — mirror the kash base webpage
+         template (src/kash/web_gen/templates/base_webpage.html.jinja) so
+         the same Source Sans 3 + PT Serif cuts are available here.  The
+         "LocalPunct" front-of-stack on the serif default works around
+         PT Serif's known quote-mark alignment bug by sourcing ASCII +
+         curly quotes from local Georgia. */
+      /* https://fontsource.org/fonts/pt-serif/cdn */
+      @font-face {
+        font-family: "PT Serif";
+        font-style: normal;
+        font-display: block;
+        font-weight: 400;
+        src: url(https://cdn.jsdelivr.net/fontsource/fonts/pt-serif@latest/latin-400-normal.woff2) format("woff2");
+        unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6,
+          U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122,
+          U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+      }
+      @font-face {
+        font-family: "PT Serif";
+        font-style: normal;
+        font-display: block;
+        font-weight: 700;
+        src: url(https://cdn.jsdelivr.net/fontsource/fonts/pt-serif@latest/latin-700-normal.woff2) format("woff2");
+        unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6,
+          U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122,
+          U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+      }
+      @font-face {
+        font-family: "PT Serif";
+        font-style: italic;
+        font-display: block;
+        font-weight: 400;
+        src: url(https://cdn.jsdelivr.net/fontsource/fonts/pt-serif@latest/latin-400-italic.woff2) format("woff2");
+        unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6,
+          U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122,
+          U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+      }
+      @font-face {
+        font-family: "PT Serif";
+        font-style: italic;
+        font-display: block;
+        font-weight: 700;
+        src: url(https://cdn.jsdelivr.net/fontsource/fonts/pt-serif@latest/latin-700-italic.woff2) format("woff2");
+        unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6,
+          U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122,
+          U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+      }
+      /* PT Serif has a known quote-alignment bug
+         (https://nedbatchelder.com/blog/201809/fixing_pt_serif.html).
+         Serve ASCII + curly quote glyphs from local Georgia via a
+         narrow unicode-range font, fronted on the serif stack. */
+      @font-face {
+        font-family: "LocalPunct";
+        src: local("Georgia");
+        unicode-range:
+          U+0022, U+0027,
+          U+2018, U+2019, U+201C, U+201D;
+      }
+      /* https://fontsource.org/fonts/source-sans-3/cdn */
+      @font-face {
+        font-family: "Source Sans 3 Variable";
+        font-style: normal;
+        font-display: block;
+        font-weight: 200 900;
+        src: url(https://cdn.jsdelivr.net/fontsource/fonts/source-sans-3:vf@latest/latin-wght-normal.woff2) format("woff2-variations");
+        unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6,
+          U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122,
+          U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+      }
+      @font-face {
+        font-family: "Source Sans 3 Variable";
+        font-style: italic;
+        font-display: block;
+        font-weight: 200 900;
+        src: url(https://cdn.jsdelivr.net/fontsource/fonts/source-sans-3:vf@latest/latin-wght-italic.woff2) format("woff2-variations");
+        unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6,
+          U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122,
+          U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+      }
+      /* https://fontsource.org/fonts/source-serif-4/cdn — variable serif,
+         weight axis 200–900.  Loaded so the chooser can switch in for
+         side-by-side comparison with PT Serif. */
+      @font-face {
+        font-family: "Source Serif 4 Variable";
+        font-style: normal;
+        font-display: block;
+        font-weight: 200 900;
+        src: url(https://cdn.jsdelivr.net/fontsource/fonts/source-serif-4:vf@latest/latin-wght-normal.woff2) format("woff2-variations");
+        unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6,
+          U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122,
+          U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+      }
+      @font-face {
+        font-family: "Source Serif 4 Variable";
+        font-style: italic;
+        font-display: block;
+        font-weight: 200 900;
+        src: url(https://cdn.jsdelivr.net/fontsource/fonts/source-serif-4:vf@latest/latin-wght-italic.woff2) format("woff2-variations");
+        unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6,
+          U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122,
+          U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+      }
+
+      /* ─── Alternate serif options for chooser comparison ────────────────
+         Charter-family / book-text candidates the user can flip between
+         live.  No preload links in <head> — these load on first use when
+         the chooser switches in.  Static fonts list all 4 cuts (400 +
+         700, normal + italic); Literata is variable so 2 cuts cover it. */
+
+      /* https://fontsource.org/fonts/charis-sil/cdn — SIL's Charter-derived
+         text face: quiet, sturdy, designed for long-form reading. */
+      @font-face {
+        font-family: "Charis SIL";
+        font-style: normal;
+        font-display: swap;
+        font-weight: 400;
+        src: url(https://cdn.jsdelivr.net/fontsource/fonts/charis-sil@latest/latin-400-normal.woff2) format("woff2");
+      }
+      @font-face {
+        font-family: "Charis SIL";
+        font-style: normal;
+        font-display: swap;
+        font-weight: 700;
+        src: url(https://cdn.jsdelivr.net/fontsource/fonts/charis-sil@latest/latin-700-normal.woff2) format("woff2");
+      }
+      @font-face {
+        font-family: "Charis SIL";
+        font-style: italic;
+        font-display: swap;
+        font-weight: 400;
+        src: url(https://cdn.jsdelivr.net/fontsource/fonts/charis-sil@latest/latin-400-italic.woff2) format("woff2");
+      }
+      @font-face {
+        font-family: "Charis SIL";
+        font-style: italic;
+        font-display: swap;
+        font-weight: 700;
+        src: url(https://cdn.jsdelivr.net/fontsource/fonts/charis-sil@latest/latin-700-italic.woff2) format("woff2");
+      }
+
+      /* https://fontsource.org/fonts/gelasio/cdn — metric-compatible
+         Georgia/Iowan substitute; nearly indistinguishable from Iowan
+         in body copy. */
+      @font-face {
+        font-family: "Gelasio";
+        font-style: normal;
+        font-display: swap;
+        font-weight: 400;
+        src: url(https://cdn.jsdelivr.net/fontsource/fonts/gelasio@latest/latin-400-normal.woff2) format("woff2");
+      }
+      @font-face {
+        font-family: "Gelasio";
+        font-style: normal;
+        font-display: swap;
+        font-weight: 700;
+        src: url(https://cdn.jsdelivr.net/fontsource/fonts/gelasio@latest/latin-700-normal.woff2) format("woff2");
+      }
+      @font-face {
+        font-family: "Gelasio";
+        font-style: italic;
+        font-display: swap;
+        font-weight: 400;
+        src: url(https://cdn.jsdelivr.net/fontsource/fonts/gelasio@latest/latin-400-italic.woff2) format("woff2");
+      }
+      @font-face {
+        font-family: "Gelasio";
+        font-style: italic;
+        font-display: swap;
+        font-weight: 700;
+        src: url(https://cdn.jsdelivr.net/fontsource/fonts/gelasio@latest/latin-700-italic.woff2) format("woff2");
+      }
+
+      /* https://fontsource.org/fonts/spectral/cdn — Production Type,
+         designed for screens.  Mature and sober.  Static cuts only on
+         Fontsource (no variable file); slider will snap. */
+      @font-face {
+        font-family: "Spectral";
+        font-style: normal;
+        font-display: swap;
+        font-weight: 400;
+        src: url(https://cdn.jsdelivr.net/fontsource/fonts/spectral@latest/latin-400-normal.woff2) format("woff2");
+      }
+      @font-face {
+        font-family: "Spectral";
+        font-style: normal;
+        font-display: swap;
+        font-weight: 700;
+        src: url(https://cdn.jsdelivr.net/fontsource/fonts/spectral@latest/latin-700-normal.woff2) format("woff2");
+      }
+      @font-face {
+        font-family: "Spectral";
+        font-style: italic;
+        font-display: swap;
+        font-weight: 400;
+        src: url(https://cdn.jsdelivr.net/fontsource/fonts/spectral@latest/latin-400-italic.woff2) format("woff2");
+      }
+      @font-face {
+        font-family: "Spectral";
+        font-style: italic;
+        font-display: swap;
+        font-weight: 700;
+        src: url(https://cdn.jsdelivr.net/fontsource/fonts/spectral@latest/latin-700-italic.woff2) format("woff2");
+      }
+
+      /* https://fontsource.org/fonts/newsreader/cdn — Production Type's
+         elegant book proportions, very transparent.  Variable wght. */
+      @font-face {
+        font-family: "Newsreader Variable";
+        font-style: normal;
+        font-display: swap;
+        font-weight: 200 800;
+        src: url(https://cdn.jsdelivr.net/fontsource/fonts/newsreader:vf@latest/latin-wght-normal.woff2) format("woff2-variations");
+      }
+      @font-face {
+        font-family: "Newsreader Variable";
+        font-style: italic;
+        font-display: swap;
+        font-weight: 200 800;
+        src: url(https://cdn.jsdelivr.net/fontsource/fonts/newsreader:vf@latest/latin-wght-italic.woff2) format("woff2-variations");
+      }
+
+      /* https://fontsource.org/fonts/crimson-pro/cdn — Garamond/Caslon
+         lineage, refined and bookish.  Variable wght. */
+      @font-face {
+        font-family: "Crimson Pro Variable";
+        font-style: normal;
+        font-display: swap;
+        font-weight: 200 900;
+        src: url(https://cdn.jsdelivr.net/fontsource/fonts/crimson-pro:vf@latest/latin-wght-normal.woff2) format("woff2-variations");
+      }
+      @font-face {
+        font-family: "Crimson Pro Variable";
+        font-style: italic;
+        font-display: swap;
+        font-weight: 200 900;
+        src: url(https://cdn.jsdelivr.net/fontsource/fonts/crimson-pro:vf@latest/latin-wght-italic.woff2) format("woff2-variations");
+      }
+
+      /* https://fontsource.org/fonts/stix-two-text/cdn — academic
+         transitional descended from Times Roman; modernized for digital
+         reading.  Variable wght. */
+      @font-face {
+        font-family: "STIX Two Text Variable";
+        font-style: normal;
+        font-display: swap;
+        font-weight: 400 700;
+        src: url(https://cdn.jsdelivr.net/fontsource/fonts/stix-two-text:vf@latest/latin-wght-normal.woff2) format("woff2-variations");
+      }
+      @font-face {
+        font-family: "STIX Two Text Variable";
+        font-style: italic;
+        font-display: swap;
+        font-weight: 400 700;
+        src: url(https://cdn.jsdelivr.net/fontsource/fonts/stix-two-text:vf@latest/latin-wght-italic.woff2) format("woff2-variations");
+      }
+
+      /* https://fontsource.org/fonts/vollkorn/cdn — German workhorse,
+         variable wght; dials noticeably lighter than Charis at the same
+         nominal weight. */
+      @font-face {
+        font-family: "Vollkorn Variable";
+        font-style: normal;
+        font-display: swap;
+        font-weight: 400 900;
+        src: url(https://cdn.jsdelivr.net/fontsource/fonts/vollkorn:vf@latest/latin-wght-normal.woff2) format("woff2-variations");
+      }
+      @font-face {
+        font-family: "Vollkorn Variable";
+        font-style: italic;
+        font-display: swap;
+        font-weight: 400 900;
+        src: url(https://cdn.jsdelivr.net/fontsource/fonts/vollkorn:vf@latest/latin-wght-italic.woff2) format("woff2-variations");
+      }
+
+      /* https://fontsource.org/fonts/noto-serif/cdn — Google's universal
+         serif, variable wght.  Neutral, broad language coverage. */
+      @font-face {
+        font-family: "Noto Serif Variable";
+        font-style: normal;
+        font-display: swap;
+        font-weight: 100 900;
+        src: url(https://cdn.jsdelivr.net/fontsource/fonts/noto-serif:vf@latest/latin-wght-normal.woff2) format("woff2-variations");
+      }
+      @font-face {
+        font-family: "Noto Serif Variable";
+        font-style: italic;
+        font-display: swap;
+        font-weight: 100 900;
+        src: url(https://cdn.jsdelivr.net/fontsource/fonts/noto-serif:vf@latest/latin-wght-italic.woff2) format("woff2-variations");
+      }
+
+      /* ─── Alternate sans options for chooser comparison ─────────────── */
+
+      /* https://fontsource.org/fonts/ibm-plex-sans/cdn — IBM's open-source
+         workhorse, variable wght. */
+      @font-face {
+        font-family: "IBM Plex Sans Variable";
+        font-style: normal;
+        font-display: swap;
+        font-weight: 100 700;
+        src: url(https://cdn.jsdelivr.net/fontsource/fonts/ibm-plex-sans:vf@latest/latin-wght-normal.woff2) format("woff2-variations");
+      }
+      @font-face {
+        font-family: "IBM Plex Sans Variable";
+        font-style: italic;
+        font-display: swap;
+        font-weight: 100 700;
+        src: url(https://cdn.jsdelivr.net/fontsource/fonts/ibm-plex-sans:vf@latest/latin-wght-italic.woff2) format("woff2-variations");
+      }
+
+      /* https://fontsource.org/fonts/hanken-grotesk/cdn — neutral
+         grotesque, variable wght.  Reads as a quieter Source Sans. */
+      @font-face {
+        font-family: "Hanken Grotesk Variable";
+        font-style: normal;
+        font-display: swap;
+        font-weight: 100 900;
+        src: url(https://cdn.jsdelivr.net/fontsource/fonts/hanken-grotesk:vf@latest/latin-wght-normal.woff2) format("woff2-variations");
+      }
+      @font-face {
+        font-family: "Hanken Grotesk Variable";
+        font-style: italic;
+        font-display: swap;
+        font-weight: 100 900;
+        src: url(https://cdn.jsdelivr.net/fontsource/fonts/hanken-grotesk:vf@latest/latin-wght-italic.woff2) format("woff2-variations");
+      }
+
+      /* https://fontsource.org/fonts/inter/cdn — Rasmus Andersson's UI
+         workhorse.  Already in the Source Sans fallback stack, but
+         loading the webfont here gives true rendering instead of the
+         system fallback when Inter isn't installed locally. */
+      @font-face {
+        font-family: "Inter Variable";
+        font-style: normal;
+        font-display: swap;
+        font-weight: 100 900;
+        src: url(https://cdn.jsdelivr.net/fontsource/fonts/inter:vf@latest/latin-wght-normal.woff2) format("woff2-variations");
+      }
+      @font-face {
+        font-family: "Inter Variable";
+        font-style: italic;
+        font-display: swap;
+        font-weight: 100 900;
+        src: url(https://cdn.jsdelivr.net/fontsource/fonts/inter:vf@latest/latin-wght-italic.woff2) format("woff2-variations");
+      }
+
+      /* Font stacks + sizes + weights are now declared in the generated
+         design-system CSS (loaded above).  The chooser below overrides
+         them live on <html>; "Copy YAML" round-trips the chosen state
+         into design-system.yaml. */
+
       :root {
-        --font-sans:
-          -apple-system, BlinkMacSystemFont, "Inter", "Helvetica Neue", Arial,
-          sans-serif;
-        --font-serif:
-          "Iowan Old Style", "Charter", "Hoefler Text", Georgia, serif;
+        /* Single line-height anchor for body / paragraph rhythm.
+           Anchored on `--font-sans-size` (the larger of the two
+           defaults) and emitted as a length, so every consumer that
+           opts into it gets identical line spacing regardless of its
+           own font-size.  Mixed sans/serif columns then share one
+           vertical rhythm — sans renders at a normal 1.5× ratio while
+           serif gets a more generous (~1.82× at defaults) ratio. */
+        --line-height: calc(1.5 * var(--font-sans-size));
       }
 
       /* ─── LAYER 2 — Shared utilities ────────────────────────────────────
@@ -293,19 +678,75 @@
         background: var(--bg);
         color: var(--fg);
       }
+      /* html font-size is the sans rem base — every rem-sized sans UI
+         element (eyebrows, labels, axis text, score numbers, etc.)
+         scales relative to this. */
+      html {
+        font-size: var(--font-sans-size);
+      }
       body {
         font-family: var(--font-serif);
+        /* Picked up by the serif weight slider in the controls panel —
+           variable serifs render exactly, fixed serifs snap.  Sans
+           descendants without explicit weights would otherwise inherit
+           this value; the :where(...) rule below pins them to the sans
+           slider instead. */
+        font-weight: var(--font-serif-weight);
         margin: 0;
-        line-height: 1.5;
-        font-size: 16px;
+        /* Inherit the shared --line-height (a px length anchored on
+           the larger of sans/serif sizes) — every paragraph-style
+           descendant uses the same physical line-height so the
+           vertical rhythm holds across mixed sans + serif blocks. */
+        line-height: var(--line-height);
+        /* body font-size is the serif em base — every serif body
+           element below uses `em` (parent-relative), so they all scale
+           with this size independently from the sans rem base. */
+        font-size: var(--font-serif-size);
+      }
+
+      /* Stop body's serif weight from leaking into sans UI chrome via
+         inheritance.  Every selector below uses `font-family: var(--font-sans)`
+         but no explicit `font-weight`, so without this rule the serif
+         slider would also dial them.  :where() carries zero specificity,
+         so any widget-local rule that does set a numeric font-weight
+         (eg. `.num { font-weight: var(--weight-num) }`) still wins. */
+      :where(
+          .theme-toggle,
+          .surface-toggle,
+          .legend,
+          .controls-panel,
+          .controls-field select,
+          .heatmap .hm-axis,
+          .strip-row .doc-meta,
+          .group-card .gc-row .gc-dim,
+          .group-card .gc-score,
+          .chart-card .doc-meta,
+          .axis-label,
+          .bartable-card,
+          .bt-num,
+          .bi-tip-panel .tip-content .tip-empty,
+          .bi-tip-panel .tip-content .tip-assessment p,
+          .bi-tip-panel .tip-content .tip-assessment ul li,
+          .qm-card,
+          .qm-rollup-row .label,
+          .note-card .meta,
+          .panel-about-body .meta,
+          .palette-card .swatch-row,
+          footer
+        ) {
+        /* Excludes .bi-tip-panel and .bi-card wrappers — they have serif
+           descendants (tip-content p/ul/h1/tip-context, doc-name) that
+           must inherit the serif weight from body.  All sans children
+           inside them carry their own explicit font-weight already. */
+        font-weight: var(--font-sans-weight);
       }
       header {
         padding: 2.25rem clamp(1rem, 4vw, 3rem) 1rem;
         max-width: 1400px;
       }
       h1 {
-        font-size: 1.8rem;
-        font-weight: 600;
+        font-size: 1.8em;
+        font-weight: var(--font-serif-weight-medium);
         margin: 0;
       }
       .lede {
@@ -462,6 +903,17 @@
       .controls-field input[type="range"] {
         width: 8rem;
       }
+      .controls-field input[type="number"] {
+        width: 3rem;
+        padding: 2px 4px;
+        background: var(--bg);
+        color: var(--fg);
+        border: 1px solid var(--border);
+        border-radius: 4px;
+        font-family: var(--font-sans);
+        font-size: 0.78rem;
+        font-variant-numeric: tabular-nums;
+      }
       .controls-field .controls-value {
         font-family: var(--font-sans);
         font-size: 0.72rem;
@@ -478,6 +930,15 @@
         color: var(--fg);
         border: 1px solid var(--border);
         border-radius: 4px;
+      }
+
+      /* Font controls — each role on its own row, since the row carries
+         many sub-controls (select + Reg slider + Bold slider + Size
+         input) and would wrap awkwardly side-by-side. */
+      .controls-fonts-section {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.45rem;
       }
 
       /* Palette controls — one row per group with H / S / Spread sliders. */
@@ -669,13 +1130,13 @@
       }
       .panel .title {
         font-family: var(--font-serif);
-        font-size: 1.15rem;
-        font-weight: 600;
+        font-size: 1.15em;
+        font-weight: var(--font-serif-weight-bold);
         margin: 0 0 0.2rem;
       }
       .panel .note {
         color: var(--muted);
-        font-size: 0.9rem;
+        font-size: 0.9em;
         margin: 0 0 1rem;
         max-width: 75ch;
       }
@@ -774,7 +1235,7 @@
         align-items: center;
         padding-right: 0.6rem;
         justify-content: flex-end;
-        font-size: 0.85rem;
+        font-size: 0.85em;
         white-space: nowrap;
       }
       .heatmap .hm-group-band {
@@ -805,7 +1266,7 @@
         border-bottom: none;
       }
       .strip-row .doc-name {
-        font-size: 0.95rem;
+        font-size: 0.95em;
       }
       .strip-row .doc-meta {
         color: var(--muted);
@@ -914,7 +1375,7 @@
         padding: 0.5rem 0;
       }
       .hex-doc-row .doc-name {
-        font-size: 0.95rem;
+        font-size: 0.95em;
       }
 
       /* ─────────── Radar / coxcomb / sunburst layout ─────────── */
@@ -933,7 +1394,7 @@
         align-items: center;
       }
       .chart-card .doc-name {
-        font-size: 0.95rem;
+        font-size: 0.95em;
         margin-bottom: 0.4rem;
         text-align: center;
       }
@@ -1160,8 +1621,14 @@
         border-radius: 8px;
         padding: 1.1rem 1.25rem 1.25rem;
         font-family: var(--font-sans);
-        font-size: 1.05rem;
-        line-height: 1.5;
+        /* em (not rem) so the panel's base size tracks body's
+           font-size = var(--font-serif-size).  The em-based serif
+           descendants (.tip-content h1/p/ul/.tip-context) then scale
+           with the serif slider; the rem-based sans descendants
+           (.tip-panel-heading, h2, .tip-empty, .tip-assessment p) keep
+           scaling with the sans slider via html-rem. */
+        font-size: 1.05em;
+        line-height: var(--line-height);
         color: var(--fg);
         min-height: 12rem;
         width: 100%;
@@ -1231,7 +1698,7 @@
         font-family: var(--font-sans);
         font-style: normal;
         font-size: 0.95rem;
-        line-height: 1.5;
+        line-height: var(--line-height);
         color: var(--muted);
       }
       /* ─── Tip panel content — markdown-rendered ──────────────────────
@@ -1244,8 +1711,8 @@
          panels.  Codified-concept name in serif, not italic. */
       .bi-tip-panel .tip-content .tip-context {
         font-family: var(--font-serif);
-        font-weight: 600;
-        font-size: 1.15rem;
+        font-weight: var(--font-serif-weight-bold);
+        font-size: 1.15em;
         color: var(--fg);
         margin: 0 0 0.2rem;
         line-height: 1.2;
@@ -1261,8 +1728,8 @@
          in the panel). */
       .bi-tip-panel .tip-content h1 {
         font-family: var(--font-serif);
-        font-weight: 600;
-        font-size: 1.9rem;
+        font-weight: var(--font-serif-weight-medium);
+        font-size: 1.9em;
         letter-spacing: -0.005em;
         margin: 0 0 0.45rem;
         color: var(--fg);
@@ -1270,16 +1737,20 @@
       }
       .bi-tip-panel .tip-content h1 em {
         font-family: var(--font-sans);
-        font-size: 0.71em; /* renders ~1.35rem against the 1.9rem h1 */
-        font-weight: var(--weight-caps-strong);
+        font-size: 0.71em; /* renders ~1.35em against the 1.9em h1 */
+        /* Larger sans heading → medium reads cleaner than bold at this
+           size; the smaller eyebrows (h2 "Rules"/"Assessment", the
+           kicker above) stay bold. */
+        font-weight: var(--font-sans-weight-medium);
         font-style: normal;
         text-transform: uppercase;
         letter-spacing: var(--tracking-caps);
         line-height: 1.25;
-        /* Same tone as the "Evaluation Detail" panel kicker above (which
-           uses .eyebrow → --muted) so the panel's dim heading reads as
-           the same label family. */
-        color: var(--muted);
+        /* Coloured by the hovered dim's accent so the panel header
+           visually ties back to the bar/circle that opened it.
+           renderDim() sets --current-dim-color on the panel; for NA
+           dims it falls back to --na-label-color, otherwise --muted. */
+        color: var(--current-dim-color, var(--muted));
       }
 
       /* h2 — section header (Rules, Assessment).  Small-caps eyebrow at
@@ -1299,21 +1770,23 @@
       /* Body paragraph — codified content / definition prose. */
       .bi-tip-panel .tip-content p {
         font-family: var(--font-serif);
-        font-size: 1.05rem;
-        line-height: 1.5;
+        font-size: 1.05em;
+        line-height: var(--line-height);
         color: var(--fg);
         margin: 0 0 0.55rem;
       }
       /* Standalone italic paragraph (the dim's question) — slightly
-         bigger, same "described in detail" voice as the title. */
+         bigger, same "described in detail" voice as the title.
+         Nested inside a 1.05em p, so 1.05em here = ~1.10 × body
+         (matches the original 1.1rem default). */
       .bi-tip-panel .tip-content p > em:only-child {
-        font-size: 1.1rem;
+        font-size: 1.05em;
       }
       /* Bold name at the start of a paragraph (the dim names in the
          group panel "**Name** — question.") — italic serif. */
       .bi-tip-panel .tip-content p strong {
         font-style: italic;
-        font-weight: 600;
+        font-weight: var(--font-serif-weight-bold);
       }
 
       /* Lists — rubric rules.  Use native disc bullets (browsers
@@ -1327,9 +1800,9 @@
       .bi-tip-panel .tip-content ul li {
         margin: 0 0 0.35rem;
         font-family: var(--font-serif);
-        font-size: 1.05rem;
+        font-size: 1.05em;
         color: var(--fg);
-        line-height: 1.5;
+        line-height: var(--line-height);
       }
       .bi-tip-panel .tip-content ul li::marker {
         color: var(--muted);
@@ -1352,7 +1825,7 @@
         font-family: var(--font-sans);
         font-style: normal;
         font-size: 1rem;
-        line-height: 1.5;
+        line-height: var(--line-height);
       }
       /* Finding bullet prefix — "Rule N · verdict".  Bold sans label
          that introduces the finding's atomic point. */
@@ -1429,8 +1902,8 @@
       .bi-card .doc-name {
         font-family: var(--font-serif);
         font-style: italic;
-        font-size: 1.9rem;
-        font-weight: 600;
+        font-size: 1.9em;
+        font-weight: var(--font-serif-weight-medium);
         text-align: center;
         margin: 0 0 0.9rem;
         color: var(--fg);
@@ -1453,8 +1926,8 @@
         justify-content: space-between;
         gap: 0.55rem;
         font-family: var(--font-serif);
-        font-size: 1.5rem;
-        font-weight: 600;
+        font-size: 1.5em;
+        font-weight: var(--font-serif-weight-medium);
         margin: 0.7rem 0 0.3rem;
       }
       /* Padded so the category label lands at the same x as the dim
@@ -1543,7 +2016,10 @@
         margin-left: auto;
         font-family: var(--font-sans);
         font-size: 1.43rem;
-        font-weight: var(--weight-num);
+        /* Large number — medium reads cleaner than bold at this size
+           (per design system: larger type takes a lighter weight to
+           keep optical ink density balanced). */
+        font-weight: var(--font-sans-weight-medium);
         font-variant-numeric: tabular-nums;
         color: color-mix(in oklch, var(--fg) 70%, var(--muted));
       }
@@ -1602,7 +2078,7 @@
       .bi-dim-name {
         font-family: var(--font-sans);
         font-size: 0.9rem;
-        font-weight: var(--weight-caps-strong);
+        font-weight: var(--font-sans-weight-bold);
         text-transform: uppercase;
         letter-spacing: var(--tracking-caps);
         /* Dim-label color — fallback to --muted, override via the
@@ -1988,8 +2464,8 @@
       .note-card h3,
       .panel-about-body h3 {
         font-family: var(--font-serif);
-        font-size: 1.02rem;
-        font-weight: 600;
+        font-size: 1.02em;
+        font-weight: var(--font-serif-weight-bold);
         margin: 0 0 0.15rem;
       }
       .note-card .accent-bar {
@@ -2013,8 +2489,8 @@
       .note-card p,
       .panel-about-body p {
         margin: 0.45rem 0;
-        font-size: 0.92rem;
-        line-height: 1.5;
+        font-size: 0.92em;
+        line-height: var(--line-height);
       }
       .note-card .label,
       .panel-about-body .label {
@@ -2029,7 +2505,7 @@
       .note-card ul {
         margin: 0.3rem 0 0;
         padding-left: 1.1rem;
-        font-size: 0.88rem;
+        font-size: 0.88em;
       }
       .note-card ul li {
         margin: 0.15rem 0;
@@ -2220,16 +2696,98 @@
           <button data-surface-set="gray" type="button">Gray</button>
         </div>
       </div>
-      <div class="controls-section">
+      <div class="controls-section controls-fonts-section">
         <span class="controls-label">Fonts</span>
         <div class="controls-field">
           <label for="font-sans-select">Sans</label>
           <select id="font-sans-select"></select>
+          <label for="font-sans-weight">Reg</label>
+          <input
+            type="number"
+            id="font-sans-weight"
+            min="100"
+            max="900"
+            step="25"
+            aria-label="Sans regular weight"
+          />
+          <label for="font-sans-weight-medium">Med</label>
+          <input
+            type="number"
+            id="font-sans-weight-medium"
+            min="100"
+            max="900"
+            step="25"
+            aria-label="Sans medium weight"
+          />
+          <label for="font-sans-weight-bold">Bold</label>
+          <input
+            type="number"
+            id="font-sans-weight-bold"
+            min="100"
+            max="900"
+            step="25"
+            aria-label="Sans bold weight"
+          />
+          <label for="font-sans-size">Size</label>
+          <input
+            type="number"
+            id="font-sans-size"
+            min="10"
+            max="28"
+            step="1"
+            aria-label="Sans base size (px)"
+          />
         </div>
         <div class="controls-field">
           <label for="font-serif-select">Serif</label>
           <select id="font-serif-select"></select>
+          <label for="font-serif-weight">Reg</label>
+          <input
+            type="number"
+            id="font-serif-weight"
+            min="100"
+            max="900"
+            step="25"
+            aria-label="Serif regular weight"
+          />
+          <label for="font-serif-weight-medium">Med</label>
+          <input
+            type="number"
+            id="font-serif-weight-medium"
+            min="100"
+            max="900"
+            step="25"
+            aria-label="Serif medium weight"
+          />
+          <label for="font-serif-weight-bold">Bold</label>
+          <input
+            type="number"
+            id="font-serif-weight-bold"
+            min="100"
+            max="900"
+            step="25"
+            aria-label="Serif bold weight"
+          />
+          <label for="font-serif-size">Size</label>
+          <input
+            type="number"
+            id="font-serif-size"
+            min="10"
+            max="28"
+            step="1"
+            aria-label="Serif base size (px)"
+          />
         </div>
+        <span class="controls-hint"
+          >Reg drives body copy.  Medium suits large headings that read
+          better with a softer stroke than full bold; Bold suits smaller
+          headings + emphasized inline text.  Size (px) sets the role's
+          base — sans-size scales every rem-based UI element via the
+          html root; serif-size scales body and the em-based serif
+          headings.  Variable fonts render the exact weight; fixed fonts
+          (PT Serif = 400, 700; Spectral, Charis SIL, Gelasio likewise)
+          snap to the nearest cut.</span
+        >
       </div>
       <div class="controls-section controls-palette-section">
         <span class="controls-label">Palette</span>
@@ -2464,6 +3022,46 @@
         sans: "#font-sans-select",
         serif: "#font-serif-select",
       });
+      /* Seed the eight font number inputs with values from the
+         generated design system (typography.fonts.{sans,serif}).
+         mountWeightSliders writes the input's `.value` straight onto a
+         CSS var on <html>, so the initial values flow into :root and
+         everything reads the YAML-canonical defaults on load.  When
+         the user types a new value, the var updates live; "Copy YAML"
+         snapshots the current vars back into the YAML shape. */
+      (() => {
+        /* Defensive — if the page is loaded against a stale cached
+           design_system.global.js (pre-typography.fonts), fall back to
+           hard-coded defaults rather than throwing and killing every
+           visualization init below. */
+        const ds = window.PracticalProseDesignSystem?.designSystem;
+        const fonts = ds?.typography?.fonts || {
+          sans: { weight: 400, weight_medium: 500, weight_bold: 600, size_px: 14 },
+          serif: { weight: 400, weight_medium: 500, weight_bold: 650, size_px: 14 },
+        };
+        const seed = (id, val) => {
+          const el = document.getElementById(id);
+          if (el && val != null) el.value = String(val);
+        };
+        seed("font-sans-weight", fonts.sans.weight);
+        seed("font-sans-weight-medium", fonts.sans.weight_medium);
+        seed("font-sans-weight-bold", fonts.sans.weight_bold);
+        seed("font-sans-size", fonts.sans.size_px);
+        seed("font-serif-weight", fonts.serif.weight);
+        seed("font-serif-weight-medium", fonts.serif.weight_medium);
+        seed("font-serif-weight-bold", fonts.serif.weight_bold);
+        seed("font-serif-size", fonts.serif.size_px);
+      })();
+      PracticalProseDesignFontControls.mountWeightSliders([
+        { varName: "font-sans-weight",         slider: "#font-sans-weight" },
+        { varName: "font-sans-weight-medium",  slider: "#font-sans-weight-medium" },
+        { varName: "font-sans-weight-bold",    slider: "#font-sans-weight-bold" },
+        { varName: "font-serif-weight",        slider: "#font-serif-weight" },
+        { varName: "font-serif-weight-medium", slider: "#font-serif-weight-medium" },
+        { varName: "font-serif-weight-bold",   slider: "#font-serif-weight-bold" },
+        { varName: "font-sans-size",  slider: "#font-sans-size",  unit: "px" },
+        { varName: "font-serif-size", slider: "#font-serif-size", unit: "px" },
+      ]);
 
       /* ───────────────────────────── data ─────────────────────────────────── */
       /* Groups and dimensions are derived from the design-system YAML, loaded by
@@ -4450,22 +5048,34 @@
             ? `\n\n## Rules\n\n${r.rules.map((rule) => `- ${rule}`).join("\n")}`
             : "";
 
-          const detailMd = `<p class="tip-context">${r.group}</p>
-
-# *${r.label}*
+          const detailMd = `# *${r.label}*
 
 *${r.question || ""}*${rulesMd}`;
           showDetail();
           setMarkdown(detailContent, detailMd);
 
+          /* Tint the panel header to match the hovered dim's accent —
+             ties the panel back to the bar/circle that opened it.
+             For dims with no doc context, use the dim color directly.
+             When a doc is selected and its score for this dim is NA /
+             missing, fall back to the muted NA label color so the
+             header reads as "disabled" rather than "highlighted". */
           const doc = docId ? biRealDocs.find((d) => d.id === docId) : null;
+          const score = doc ? doc.scores[key] : null;
+          const isNaScore =
+            doc && typeof score !== "number" && score !== "ERR";
+          detailEl.style.setProperty(
+            "--current-dim-color",
+            isNaScore
+              ? "var(--na-label-color, var(--muted))"
+              : `var(--dim-${key})`,
+          );
           if (!doc) {
             hideAssess();
             return;
           }
           showAssess();
 
-          const score = doc.scores[key];
           const reason = doc.reasons[key];
           const findings = doc.findings[key] || [];
 

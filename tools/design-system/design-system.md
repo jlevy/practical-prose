@@ -261,6 +261,41 @@ letter-spacing: 0.09em;   /* or any value in 0.06–0.10em */
 
 …or neither. No half-state.
 
+### Weight balances with size
+
+**Larger type takes a lighter weight; smaller type takes a heavier one.**
+At display sizes, a "bold" stroke renders as a dense slab of ink that
+overwhelms the layout; at body or eyebrow sizes the same stroke barely
+registers and needs the extra weight to read as emphasized.
+The goal is roughly even *optical ink density* across the hierarchy —
+a big medium header and a small bold label should feel like they
+contribute the same amount of presence to the page, not the same
+numeric weight.
+
+Practical rule of thumb for the three tiers exposed per role
+(`--font-{role}-weight`, `--font-{role}-weight-medium`, `--font-{role}-weight-bold`):
+
+| Size band | Weight tier |
+| --- | --- |
+| Display / hero headings (≥ 1.5em) | `weight-medium` |
+| Small headings, eyebrows, dim labels, numeric chrome (≤ ~1.1em) | `weight-bold` |
+| Body copy | `weight` |
+
+Concrete examples from this codebase:
+
+- The page `h1`, the bi-card italic doc-name (1.9em), the
+  bi-group-header (1.5em), the tip-panel `h1` (the big serif heading
+  *and* its inset small-caps dim name) all use `weight-medium`.
+- Smaller serif headers (`.panel .title` at 1.15em, `.tip-context`,
+  `.note-card h3`) stay on `weight-bold`.
+- Dim labels next to the bidirectional bars (0.9rem small caps) and
+  the numeric score circles use `weight-bold` — these *need* the heavy
+  stroke to anchor the data.
+
+When in doubt: print the design and squint at it.
+If a heading reads as a black bar, drop it a tier; if a small label
+fades into the surface, bump it up.
+
 ### Small-caps eyebrow tokens
 
 The “eyebrow” pattern — a small uppercase, letter-spaced sans label that sits above a

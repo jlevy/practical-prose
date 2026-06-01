@@ -25,41 +25,67 @@
  */
 
 (() => {
+  // Source Sans 3 + PT Serif are webfonts; the host page must load the
+  // matching @font-face declarations (see dimension-visualizations.html).
+  // PT Serif's quote-mark glyphs sit too high — the "LocalPunct" front
+  // of the stack overrides ASCII + curly quotes with local Georgia.
   const fontStacks = {
     sans: {
+      sourcesans: '"Source Sans 3 Variable", -apple-system, BlinkMacSystemFont, "Inter", "Helvetica Neue", Arial, sans-serif',
+      ibmplex: '"IBM Plex Sans Variable", -apple-system, BlinkMacSystemFont, "Helvetica Neue", Arial, sans-serif',
+      hanken: '"Hanken Grotesk Variable", -apple-system, BlinkMacSystemFont, "Helvetica Neue", Arial, sans-serif',
+      inter: '"Inter Variable", "Inter", -apple-system, BlinkMacSystemFont, sans-serif',
       system: '-apple-system, BlinkMacSystemFont, "Inter", "Helvetica Neue", Arial, sans-serif',
-      inter: '"Inter", -apple-system, BlinkMacSystemFont, sans-serif',
       helvetica: '"Helvetica Neue", Helvetica, Arial, sans-serif',
-      arial: "Arial, Helvetica, sans-serif",
-      verdana: "Verdana, Geneva, sans-serif",
-      tahoma: "Tahoma, Geneva, sans-serif",
     },
     serif: {
+      notoserif: '"Noto Serif Variable", "Iowan Old Style", "Charter", Georgia, serif',
+      sourceserif: '"Source Serif 4 Variable", "Iowan Old Style", "Charter", Georgia, serif',
+      ptserif: '"LocalPunct", "PT Serif", "Iowan Old Style", "Charter", Georgia, serif',
+      charissil: '"Charis SIL", "Iowan Old Style", "Charter", Georgia, serif',
+      gelasio: '"Gelasio", "Iowan Old Style", "Charter", Georgia, serif',
+      spectral: '"Spectral", "Iowan Old Style", "Charter", Georgia, serif',
+      newsreader: '"Newsreader Variable", "Iowan Old Style", "Charter", Georgia, serif',
+      crimsonpro: '"Crimson Pro Variable", "Iowan Old Style", "Charter", Georgia, serif',
+      stixtwo: '"STIX Two Text Variable", "Iowan Old Style", "Charter", Georgia, serif',
+      vollkorn: '"Vollkorn Variable", "Iowan Old Style", "Charter", Georgia, serif',
       iowan: '"Iowan Old Style", "Charter", "Hoefler Text", Georgia, serif',
       georgia: 'Georgia, "Times New Roman", serif',
       times: '"Times New Roman", Times, serif',
-      garamond: 'Garamond, "Times New Roman", serif',
-      palatino: 'Palatino, "Palatino Linotype", "Book Antiqua", serif',
       ui: "ui-serif, Georgia, serif",
     },
   };
 
+  // Source suffix in the label tells the user where each font comes from.
+  // "Fontsource" → loaded via @font-face from cdn.jsdelivr.net/fontsource.
+  // "system"     → relies on the OS / browser default stack (no webfont
+  //                fetched).  Inter and Helvetica Neue may or may not be
+  //                installed locally; if not, the rest of the stack handles
+  //                the fallback.
   const fontLabels = {
     sans: {
-      system: "System (default)",
-      inter: "Inter",
-      helvetica: "Helvetica Neue",
-      arial: "Arial",
-      verdana: "Verdana",
-      tahoma: "Tahoma",
+      sourcesans: "Source Sans 3 (default, Fontsource)",
+      ibmplex: "IBM Plex Sans (Fontsource)",
+      hanken: "Hanken Grotesk (Fontsource)",
+      inter: "Inter (Fontsource)",
+      system: "System (system)",
+      helvetica: "Helvetica Neue (system)",
     },
     serif: {
-      iowan: "Iowan / Charter (default)",
-      georgia: "Georgia",
-      times: "Times",
-      garamond: "Garamond",
-      palatino: "Palatino",
-      ui: "System Serif",
+      notoserif: "Noto Serif (default, Fontsource)",
+      sourceserif: "Source Serif 4 (Fontsource)",
+      ptserif: "PT Serif (Fontsource)",
+      charissil: "Charis SIL (Fontsource)",
+      gelasio: "Gelasio (Fontsource)",
+      spectral: "Spectral (Fontsource)",
+      newsreader: "Newsreader (Fontsource)",
+      crimsonpro: "Crimson Pro (Fontsource)",
+      stixtwo: "STIX Two Text (Fontsource)",
+      vollkorn: "Vollkorn (Fontsource)",
+      iowan: "Iowan / Charter (system)",
+      georgia: "Georgia (system)",
+      times: "Times (system)",
+      ui: "System Serif (system)",
     },
   };
 
@@ -88,6 +114,35 @@
     });
   }
 
+  /**
+   * Wire numeric inputs (sliders or `<input type=number>`) to CSS
+   * variables on <html>.  Each entry specifies its target var name and
+   * an optional unit suffix appended to the value (eg. "px" for size
+   * inputs); weight sliders pass no unit so the value is unitless and
+   * usable in `font-weight`.
+   *
+   * @param {Array<{
+   *   varName: string,
+   *   slider: HTMLInputElement|string,
+   *   readout?: HTMLElement|string,
+   *   unit?: string,
+   * }>} entries
+   */
+  function mountWeightSliders(entries) {
+    const html = document.documentElement;
+    entries.forEach(({ varName, slider, readout, unit = "" }) => {
+      const sliderEl = _resolve(slider);
+      if (!sliderEl) return;
+      const readoutEl = readout ? _resolve(readout) : null;
+      const apply = () => {
+        html.style.setProperty(`--${varName}`, sliderEl.value + unit);
+        if (readoutEl) readoutEl.textContent = sliderEl.value;
+      };
+      sliderEl.addEventListener("input", apply);
+      apply();
+    });
+  }
+
   function _resolve(elOrSelector) {
     if (!elOrSelector) return null;
     if (typeof elOrSelector === "string") return document.querySelector(elOrSelector);
@@ -96,6 +151,7 @@
 
   globalThis.PracticalProseDesignFontControls = Object.freeze({
     mountFontChooser,
+    mountWeightSliders,
     fontStacks,
     fontLabels,
   });

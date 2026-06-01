@@ -10,6 +10,8 @@
   </style>
 </head>
 <body>
+  {# Inline icon sprite — referenced by <use href="#icon-..."/> in the card. #}
+  {{ icons_svg | safe }}
   <main>
     {% if 'card' in sections %}
     <section class="page card-page">

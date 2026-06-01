@@ -1,0 +1,34 @@
+/* Local extras — tokens the renderer needs that aren't yet in the
+ * design-system YAML. Loaded right after the generated design-system
+ * tokens. If any of these grow useful elsewhere, promote them into
+ * design-system.yaml + schema.py + generate.py and remove the entry
+ * here.
+ */
+
+:root {
+  --score-na-fill: hsl(0 0% 90%);
+  --score-err-fill: hsl(0 35% 93%);
+
+  /* Mono stack — design-system YAML only carries sans + serif today;
+     mono is used by code/pre rendering and reset/diff blocks. */
+  --font-mono:
+    ui-monospace, "SF Mono", "Cascadia Mono", "JetBrains Mono", Consolas,
+    "Liberation Mono", monospace;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --score-na-fill: hsl(40 6% 18%);
+    --score-err-fill: hsl(0 15% 20%);
+  }
+}
+
+:root[data-theme="dark"] {
+  --score-na-fill: hsl(40 6% 18%);
+  --score-err-fill: hsl(0 15% 20%);
+}
+
+:root[data-theme="light"] {
+  --score-na-fill: hsl(0 0% 90%);
+  --score-err-fill: hsl(0 35% 93%);
+}
