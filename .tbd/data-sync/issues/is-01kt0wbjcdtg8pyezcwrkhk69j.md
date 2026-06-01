@@ -5,7 +5,7 @@ title: "Spec: Shared render components — single source of truth"
 kind: epic
 status: open
 priority: 2
-version: 15
+version: 16
 spec_path: docs/project/specs/active/plan-2026-05-31-shared-render-components.md
 labels: []
 dependencies: []
@@ -24,7 +24,8 @@ child_order_hints:
   - is-01kt0wdfzjjqe6sdawfc77e4v1
   - is-01kt0wdn9eh9m81ct8n1gr8k7y
   - is-01kt0wdsdxen1z505jfgq70k2e
+  - is-01kt0y0s9skpjt8fytng566npn
 created_at: 2026-06-01T06:01:23.596Z
-updated_at: 2026-06-01T06:02:36.348Z
+updated_at: 2026-06-01T06:30:27.384Z
 ---
 Extract the CSS + JS + Jinja partials that draw the Practical Prose visual surfaces into shared components at tools/render-components/, ingested by both the explorations workbench and the pprose render output via an auto-generated mirror. Renderer becomes thin outer page + data shaping; the card and tip panels are JS-built client-side. Phase 1 ships one variant — 'interactive' — and the architecture leaves room for future static-cards / annotated-doc variants. See spec for the full design.
