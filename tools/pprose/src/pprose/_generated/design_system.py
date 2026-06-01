@@ -12,128 +12,74 @@ from typing import Any
 DESIGN_SYSTEM: dict[str, Any] = {
     "version": 1,
     "surfaces": {
-        "bg": {
-            "light": "hsl(40 38% 93%)",
-            "dark": "hsl(40 8% 8%)"
-        },
-        "fg": {
-            "light": "hsl(30 12% 10%)",
-            "dark": "hsl(40 25% 88%)"
-        },
-        "muted": {
-            "light": "hsl(40 9% 39%)",
-            "dark": "hsl(40 11% 53%)"
-        },
-        "card": {
-            "light": "hsl(40 50% 96%)",
-            "dark": "hsl(34 12% 10%)"
-        },
-        "border": {
-            "light": "hsl(40 26% 79%)",
-            "dark": "hsl(40 13% 17%)"
-        },
-        "rule": {
-            "light": "hsl(30 12% 10%)",
-            "dark": "hsl(40 25% 88%)"
-        }
+        "bg": {"light": "hsl(40 38% 93%)", "dark": "hsl(40 8% 8%)"},
+        "fg": {"light": "hsl(30 12% 10%)", "dark": "hsl(40 25% 88%)"},
+        "muted": {"light": "hsl(40 0% 28%)", "dark": "hsl(40 11% 53%)"},
+        "card": {"light": "hsl(40 50% 96%)", "dark": "hsl(34 12% 10%)"},
+        "border": {"light": "hsl(40 26% 79%)", "dark": "hsl(40 13% 17%)"},
+        "rule": {"light": "hsl(30 12% 10%)", "dark": "hsl(40 25% 88%)"},
     },
     "tones": {
         "icon": "hsl(40 0% 28%)",
         "dim_label": "hsl(40 0% 28%)",
         "na": "hsl(220 10% 78%)",
-        "na_label": "hsl(40 0% 60%)"
+        "na_label": "hsl(40 0% 60%)",
     },
     "groups": [
         {
             "id": "P",
             "label": "Purpose",
-            "spread": 45.0,
-            "ink": {
-                "light": "hsl(72 19% 73%)",
-                "dark": "hsl(72 19% 27%)"
-            },
-            "surface": {
-                "light": "hsl(72 19% 92%)",
-                "dark": "hsl(72 19% 18%)"
-            },
+            "spread": 22.0,
+            "ink": {"light": "hsl(214 19% 73%)", "dark": "hsl(214 19% 27%)"},
+            "surface": {"light": "hsl(214 19% 92%)", "dark": "hsl(214 19% 18%)"},
             "icon": "mdi:compass-rose",
-            "sense": "orientation toward the reader's task"
+            "sense": "orientation toward the reader's task",
         },
         {
             "id": "E",
             "label": "Expression",
             "spread": 30.0,
-            "ink": {
-                "light": "hsl(206 19% 73%)",
-                "dark": "hsl(206 19% 27%)"
-            },
-            "surface": {
-                "light": "hsl(206 19% 92%)",
-                "dark": "hsl(206 19% 18%)"
-            },
+            "ink": {"light": "hsl(134 19% 73%)", "dark": "hsl(134 19% 27%)"},
+            "surface": {"light": "hsl(134 19% 92%)", "dark": "hsl(134 19% 18%)"},
             "icon": "mdi:quill",
-            "sense": "language, surface form"
+            "sense": "language, surface form",
         },
         {
             "id": "F",
             "label": "Form",
-            "spread": 20.0,
-            "ink": {
-                "light": "hsl(35 19% 73%)",
-                "dark": "hsl(35 19% 27%)"
-            },
-            "surface": {
-                "light": "hsl(35 19% 92%)",
-                "dark": "hsl(35 19% 18%)"
-            },
+            "spread": 30.0,
+            "ink": {"light": "hsl(58 19% 73%)", "dark": "hsl(58 19% 27%)"},
+            "surface": {"light": "hsl(58 19% 92%)", "dark": "hsl(58 19% 18%)"},
             "icon": "mdi:scroll",
-            "sense": "the document as a structured artifact"
+            "sense": "the document as a structured artifact",
         },
         {
             "id": "R",
             "label": "Reasoning",
-            "spread": 40.0,
-            "ink": {
-                "light": "hsl(0 19% 73%)",
-                "dark": "hsl(0 19% 27%)"
-            },
-            "surface": {
-                "light": "hsl(0 19% 92%)",
-                "dark": "hsl(0 19% 18%)"
-            },
+            "spread": 35.0,
+            "ink": {"light": "hsl(0 19% 73%)", "dark": "hsl(0 19% 27%)"},
+            "surface": {"light": "hsl(0 19% 92%)", "dark": "hsl(0 19% 18%)"},
             "icon": "mdi:ruler",
-            "sense": "inference, measurement, rigor"
+            "sense": "inference, measurement, rigor",
         },
         {
             "id": "G",
             "label": "Grounding",
-            "spread": 40.0,
-            "ink": {
-                "light": "hsl(162 19% 73%)",
-                "dark": "hsl(162 19% 27%)"
-            },
-            "surface": {
-                "light": "hsl(162 19% 92%)",
-                "dark": "hsl(162 19% 16%)"
-            },
+            "spread": 30.0,
+            "ink": {"light": "hsl(195 17% 73%)", "dark": "hsl(195 17% 27%)"},
+            "surface": {"light": "hsl(195 17% 92%)", "dark": "hsl(195 17% 16%)"},
             "icon": "mdi:anchor",
-            "sense": "tied to sources and facts"
+            "sense": "tied to sources and facts",
         },
         {
             "id": "J",
             "label": "Judgment",
-            "spread": 45.0,
-            "ink": {
-                "light": "hsl(265 19% 73%)",
-                "dark": "hsl(265 19% 27%)"
-            },
-            "surface": {
-                "light": "hsl(265 19% 92%)",
-                "dark": "hsl(265 19% 18%)"
-            },
+            "spread": 22.0,
+            "ink": {"light": "hsl(294 19% 73%)", "dark": "hsl(294 19% 27%)"},
+            "surface": {"light": "hsl(294 19% 92%)", "dark": "hsl(294 19% 18%)"},
             "icon": "mdi:scale-balance",
-            "sense": "weighing claims, calibration"
-        }
+            "sense": "weighing claims, calibration",
+        },
     ],
     "dimensions": [
         {
@@ -142,10 +88,7 @@ DESIGN_SYSTEM: dict[str, Any] = {
             "short": "Suit",
             "group": "P",
             "h_offset": -4.0,
-            "color": {
-                "light": "hsl(68 19% 40%)",
-                "dark": "hsl(68 19% 65%)"
-            }
+            "color": {"light": "hsl(210 19% 40%)", "dark": "hsl(210 19% 65%)"},
         },
         {
             "id": "P2",
@@ -153,10 +96,7 @@ DESIGN_SYSTEM: dict[str, Any] = {
             "short": "Scope",
             "group": "P",
             "h_offset": 0.0,
-            "color": {
-                "light": "hsl(72 19% 37%)",
-                "dark": "hsl(72 19% 62%)"
-            }
+            "color": {"light": "hsl(214 19% 37%)", "dark": "hsl(214 19% 62%)"},
         },
         {
             "id": "P3",
@@ -164,10 +104,7 @@ DESIGN_SYSTEM: dict[str, Any] = {
             "short": "Brd",
             "group": "P",
             "h_offset": 4.0,
-            "color": {
-                "light": "hsl(76 19% 34%)",
-                "dark": "hsl(76 19% 59%)"
-            }
+            "color": {"light": "hsl(218 19% 34%)", "dark": "hsl(218 19% 59%)"},
         },
         {
             "id": "P4",
@@ -175,10 +112,7 @@ DESIGN_SYSTEM: dict[str, Any] = {
             "short": "Dep",
             "group": "P",
             "h_offset": 8.0,
-            "color": {
-                "light": "hsl(80 19% 31%)",
-                "dark": "hsl(80 19% 56%)"
-            }
+            "color": {"light": "hsl(222 19% 31%)", "dark": "hsl(222 19% 56%)"},
         },
         {
             "id": "E1",
@@ -186,10 +120,7 @@ DESIGN_SYSTEM: dict[str, Any] = {
             "short": "Clar",
             "group": "E",
             "h_offset": -5.0,
-            "color": {
-                "light": "hsl(201 19% 35%)",
-                "dark": "hsl(201 19% 68%)"
-            }
+            "color": {"light": "hsl(129 19% 35%)", "dark": "hsl(129 19% 68%)"},
         },
         {
             "id": "E2",
@@ -197,10 +128,7 @@ DESIGN_SYSTEM: dict[str, Any] = {
             "short": "Coh",
             "group": "E",
             "h_offset": -2.0,
-            "color": {
-                "light": "hsl(204 19% 32%)",
-                "dark": "hsl(204 19% 66%)"
-            }
+            "color": {"light": "hsl(132 19% 32%)", "dark": "hsl(132 19% 66%)"},
         },
         {
             "id": "E3",
@@ -208,10 +136,7 @@ DESIGN_SYSTEM: dict[str, Any] = {
             "short": "Conc",
             "group": "E",
             "h_offset": 1.0,
-            "color": {
-                "light": "hsl(207 19% 30%)",
-                "dark": "hsl(207 19% 64%)"
-            }
+            "color": {"light": "hsl(135 19% 30%)", "dark": "hsl(135 19% 64%)"},
         },
         {
             "id": "F1",
@@ -219,10 +144,7 @@ DESIGN_SYSTEM: dict[str, Any] = {
             "short": "Org",
             "group": "F",
             "h_offset": -4.0,
-            "color": {
-                "light": "hsl(31 19% 38%)",
-                "dark": "hsl(31 19% 64%)"
-            }
+            "color": {"light": "hsl(54 19% 38%)", "dark": "hsl(54 19% 64%)"},
         },
         {
             "id": "F2",
@@ -230,10 +152,7 @@ DESIGN_SYSTEM: dict[str, Any] = {
             "short": "Cons",
             "group": "F",
             "h_offset": 0.0,
-            "color": {
-                "light": "hsl(35 19% 35%)",
-                "dark": "hsl(35 19% 61%)"
-            }
+            "color": {"light": "hsl(58 19% 35%)", "dark": "hsl(58 19% 61%)"},
         },
         {
             "id": "F3",
@@ -241,10 +160,7 @@ DESIGN_SYSTEM: dict[str, Any] = {
             "short": "Fmt",
             "group": "F",
             "h_offset": 4.0,
-            "color": {
-                "light": "hsl(39 19% 32%)",
-                "dark": "hsl(39 19% 58%)"
-            }
+            "color": {"light": "hsl(62 19% 32%)", "dark": "hsl(62 19% 58%)"},
         },
         {
             "id": "R1",
@@ -252,10 +168,7 @@ DESIGN_SYSTEM: dict[str, Any] = {
             "short": "Disc",
             "group": "R",
             "h_offset": -6.0,
-            "color": {
-                "light": "hsl(354 19% 40%)",
-                "dark": "hsl(354 19% 68%)"
-            }
+            "color": {"light": "hsl(354 19% 40%)", "dark": "hsl(354 19% 68%)"},
         },
         {
             "id": "R2",
@@ -263,10 +176,7 @@ DESIGN_SYSTEM: dict[str, Any] = {
             "short": "Snd",
             "group": "R",
             "h_offset": -3.0,
-            "color": {
-                "light": "hsl(357 19% 37%)",
-                "dark": "hsl(357 19% 65%)"
-            }
+            "color": {"light": "hsl(357 19% 37%)", "dark": "hsl(357 19% 65%)"},
         },
         {
             "id": "R3",
@@ -274,10 +184,7 @@ DESIGN_SYSTEM: dict[str, Any] = {
             "short": "Prec",
             "group": "R",
             "h_offset": 0.0,
-            "color": {
-                "light": "hsl(0 19% 34%)",
-                "dark": "hsl(0 19% 62%)"
-            }
+            "color": {"light": "hsl(0 19% 34%)", "dark": "hsl(0 19% 62%)"},
         },
         {
             "id": "R4",
@@ -285,10 +192,7 @@ DESIGN_SYSTEM: dict[str, Any] = {
             "short": "Pars",
             "group": "R",
             "h_offset": 3.0,
-            "color": {
-                "light": "hsl(3 19% 31%)",
-                "dark": "hsl(3 19% 59%)"
-            }
+            "color": {"light": "hsl(3 19% 31%)", "dark": "hsl(3 19% 59%)"},
         },
         {
             "id": "G1",
@@ -296,10 +200,7 @@ DESIGN_SYSTEM: dict[str, Any] = {
             "short": "Ver",
             "group": "G",
             "h_offset": -4.0,
-            "color": {
-                "light": "hsl(158 19% 32%)",
-                "dark": "hsl(158 19% 62%)"
-            }
+            "color": {"light": "hsl(191 17% 32%)", "dark": "hsl(191 17% 62%)"},
         },
         {
             "id": "G2",
@@ -307,10 +208,7 @@ DESIGN_SYSTEM: dict[str, Any] = {
             "short": "Fact",
             "group": "G",
             "h_offset": 0.0,
-            "color": {
-                "light": "hsl(162 19% 29%)",
-                "dark": "hsl(162 19% 58%)"
-            }
+            "color": {"light": "hsl(195 17% 29%)", "dark": "hsl(195 17% 58%)"},
         },
         {
             "id": "G3",
@@ -318,10 +216,7 @@ DESIGN_SYSTEM: dict[str, Any] = {
             "short": "Rel",
             "group": "G",
             "h_offset": 4.0,
-            "color": {
-                "light": "hsl(166 19% 26%)",
-                "dark": "hsl(166 19% 54%)"
-            }
+            "color": {"light": "hsl(199 17% 26%)", "dark": "hsl(199 17% 54%)"},
         },
         {
             "id": "J1",
@@ -329,10 +224,7 @@ DESIGN_SYSTEM: dict[str, Any] = {
             "short": "Cal",
             "group": "J",
             "h_offset": -6.0,
-            "color": {
-                "light": "hsl(259 19% 42%)",
-                "dark": "hsl(259 19% 70%)"
-            }
+            "color": {"light": "hsl(288 19% 42%)", "dark": "hsl(288 19% 70%)"},
         },
         {
             "id": "J2",
@@ -340,10 +232,7 @@ DESIGN_SYSTEM: dict[str, Any] = {
             "short": "Fair",
             "group": "J",
             "h_offset": 0.0,
-            "color": {
-                "light": "hsl(265 19% 39%)",
-                "dark": "hsl(265 19% 67%)"
-            }
+            "color": {"light": "hsl(294 19% 39%)", "dark": "hsl(294 19% 67%)"},
         },
         {
             "id": "J3",
@@ -351,116 +240,85 @@ DESIGN_SYSTEM: dict[str, Any] = {
             "short": "Rob",
             "group": "J",
             "h_offset": 6.0,
-            "color": {
-                "light": "hsl(271 19% 36%)",
-                "dark": "hsl(271 19% 64%)"
-            }
-        }
+            "color": {"light": "hsl(300 19% 36%)", "dark": "hsl(300 19% 64%)"},
+        },
     ],
     "scores": [
         {
             "level": "0",
-            "color": {
-                "light": "hsl(220 10% 50%)",
-                "dark": "hsl(220 10% 60%)"
-            },
+            "color": {"light": "hsl(220 10% 50%)", "dark": "hsl(220 10% 60%)"},
             "weight": 400,
-            "opacity": 0.75
+            "opacity": 0.75,
         },
         {
             "level": "1",
-            "color": {
-                "light": "hsl(0 70% 35%)",
-                "dark": "hsl(0 70% 60%)"
-            },
-            "weight": 800
+            "color": {"light": "hsl(0 70% 35%)", "dark": "hsl(0 70% 60%)"},
+            "weight": 800,
         },
         {
             "level": "2",
-            "color": {
-                "light": "hsl(28 80% 30%)",
-                "dark": "hsl(28 70% 60%)"
-            },
-            "weight": 650
+            "color": {"light": "hsl(28 80% 30%)", "dark": "hsl(28 70% 60%)"},
+            "weight": 650,
         },
         {
             "level": "3",
-            "color": {
-                "light": "hsl(40 80% 32%)",
-                "dark": "hsl(40 70% 60%)"
-            },
-            "weight": 700
+            "color": {"light": "hsl(40 80% 32%)", "dark": "hsl(40 70% 60%)"},
+            "weight": 700,
         },
         {
             "level": "4",
-            "color": {
-                "light": "hsl(140 60% 28%)",
-                "dark": "hsl(140 50% 55%)"
-            },
-            "weight": 750
+            "color": {"light": "hsl(140 60% 28%)", "dark": "hsl(140 50% 55%)"},
+            "weight": 750,
         },
         {
             "level": "5",
-            "color": {
-                "light": "hsl(140 60% 20%)",
-                "dark": "hsl(140 50% 45%)"
-            },
-            "weight": 850
+            "color": {"light": "hsl(140 60% 20%)", "dark": "hsl(140 50% 45%)"},
+            "weight": 850,
         },
         {
             "level": "NA",
-            "color": {
-                "light": "hsl(220 10% 50%)",
-                "dark": "hsl(220 10% 60%)"
-            },
+            "color": {"light": "hsl(220 10% 50%)", "dark": "hsl(220 10% 60%)"},
             "weight": 400,
-            "opacity": 0.65
+            "opacity": 0.65,
         },
         {
             "level": "ERR",
-            "color": {
-                "light": "hsl(0 85% 40%)",
-                "dark": "hsl(0 75% 65%)"
-            },
-            "weight": 700
-        }
+            "color": {"light": "hsl(0 85% 40%)", "dark": "hsl(0 75% 65%)"},
+            "weight": 700,
+        },
     ],
     "interactions": {
         "hover": {
             "bg": "hsl(0 0% 50% / 0.15)",
             "bg_strong": "hsl(0 0% 50% / 0.28)",
             "duration": "480ms",
-            "easing": "cubic-bezier(0.32, 0.72, 0, 1)"
+            "easing": "cubic-bezier(0.32, 0.72, 0, 1)",
         }
     },
     "typography": {
-        "caps": {
-            "tracking": "0.09em"
-        },
+        "caps": {"tracking": "0.09em"},
         "fonts": {
             "sans": {
                 "family": "Source Sans 3",
-                "stack": "-apple-system, BlinkMacSystemFont, \"Inter\", \"Helvetica Neue\", Arial, sans-serif",
+                "stack": '-apple-system, BlinkMacSystemFont, "Inter", "Helvetica Neue", Arial, sans-serif',
                 "source": "fontsource:source-sans-3:vf",
                 "size_px": 16.5,
                 "weight": 425,
-                "weight_medium": 700,
-                "weight_bold": 725
+                "weight_medium": 650,
+                "weight_bold": 675,
             },
             "serif": {
                 "family": "Noto Serif",
-                "stack": "\"Iowan Old Style\", \"Charter\", Georgia, serif",
+                "stack": '"Iowan Old Style", "Charter", Georgia, serif',
                 "source": "fontsource:noto-serif:vf",
                 "size_px": 14.0,
                 "weight": 425,
-                "weight_medium": 500,
-                "weight_bold": 650
-            }
-        }
+                "weight_medium": 425,
+                "weight_bold": 550,
+            },
+        },
     },
-    "scoring": {
-        "alpha_step": 0.14
-    }
+    "scoring": {"alpha_step": 0.16},
 }
 
 # Convenience accessors keyed by id.

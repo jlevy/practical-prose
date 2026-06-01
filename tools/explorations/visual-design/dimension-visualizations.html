@@ -1590,6 +1590,16 @@
         gap: 1.5rem;
         position: relative;
       }
+      /* Flex children of .bi-layout (the stack-wrapped bi-card + the two
+         tip panels) need border-box so their padding + 1px border live
+         INSIDE the declared flex-basis / max-width.  Without this the
+         bi-card overflows its 32rem .bi-stack slot by ~2rem of padding,
+         which silently eats the visible gap between the stack and the
+         assess panel and breaks the inter-panel rhythm. */
+      .bi-layout .bi-card,
+      .bi-layout .bi-tip-panel {
+        box-sizing: border-box;
+      }
       @media (min-width: 72rem) {
         .bi-layout {
           flex-direction: row;
@@ -1643,6 +1653,38 @@
           top var(--hover-duration) var(--hover-easing),
           background-color var(--hover-duration) var(--hover-easing),
           border-color var(--hover-duration) var(--hover-easing);
+      }
+      /* Assessment panel — shares the bi-card's white background +
+         border treatment so the "evaluated values" side of the layout
+         (card + assessment) reads as one vocabulary, distinct from
+         the rubric-info Detail panel on the far right which keeps
+         the slightly-grey card chrome. */
+      .bi-tip-panel.bi-tip-panel-assess {
+        background: var(--bg);
+      }
+      /* Mirror of the main-diagram dim row inside the Assessment panel.
+         The row sits flush at the panel's left edge (no icon column to
+         align past, unlike the bi-card context), then a generous gap
+         below to match the rhythm between the Detail panel's h1 and
+         its first paragraph.  Chained `.bi-ltr.bi-tip-dim-mirror`
+         outranks the plain `.bi-ltr .bi-dim` rule defined later in
+         the file so the indent reset always wins regardless of source
+         order. */
+      .bi-ltr.bi-tip-dim-mirror .bi-dim {
+        margin-left: 0;
+      }
+      .bi-tip-dim-mirror {
+        margin-bottom: 0.9rem;
+      }
+      /* In the panel context the dim row is the focused detail view
+         (rather than one row among many), so its label + score number
+         scale up to read at the same size + weight as the dim name in
+         the Detail panel's h1 — paired styling so the two panels
+         reference the same "focused dim" voice. */
+      .bi-ltr.bi-tip-dim-mirror .bi-dim-name,
+      .bi-ltr.bi-tip-dim-mirror .bi-num-circle {
+        font-size: 1.35em;
+        font-weight: var(--font-sans-weight-medium);
       }
       /* `.is-empty` keeps the panel in flow (so the row doesn't shift
          when one panel goes quiet) but drops the chrome and content.
@@ -1746,11 +1788,10 @@
         text-transform: uppercase;
         letter-spacing: var(--tracking-caps);
         line-height: 1.25;
-        /* Coloured by the hovered dim's accent so the panel header
-           visually ties back to the bar/circle that opened it.
-           renderDim() sets --current-dim-color on the panel; for NA
-           dims it falls back to --na-label-color, otherwise --muted. */
-        color: var(--current-dim-color, var(--muted));
+        /* Same dark label tone as the dim labels in the main diagram —
+           the dim row mirror below carries the colored bar already, so
+           the heading itself can stay neutral. */
+        color: var(--dim-label-color, var(--fg));
       }
 
       /* h2 — section header (Rules, Assessment).  Small-caps eyebrow at
@@ -1927,7 +1968,11 @@
         gap: 0.55rem;
         font-family: var(--font-serif);
         font-size: 1.5em;
-        font-weight: var(--font-serif-weight-medium);
+        /* Bold — the group label is the most prominent serif anchor in
+           the main diagram; other display serif headings (h1, doc-name,
+           tip-panel h1) stay medium per the "larger type takes a lighter
+           weight" rule, but this one wants the heavier voice. */
+        font-weight: var(--font-serif-weight-bold);
         margin: 0.7rem 0 0.3rem;
       }
       /* Padded so the category label lands at the same x as the dim
@@ -1992,13 +2037,16 @@
          drives the icon width and the matching dim-row padding so they
          can't drift apart. */
       .bi-ltr {
-        --bi-icon-size: 2rem;
+        --bi-icon-size: 1.75rem;
       }
       .bi-ltr .bi-group-header .grp-icon {
         font-size: var(--bi-icon-size);
       }
+      /* margin-left (not padding-left) — the visible indent stays, but
+         the hover zone tightens to the row content so it doesn't span
+         the empty icon-column area at the left. */
       .bi-ltr .bi-dim {
-        padding-left: calc(var(--bi-icon-size) + 0.55rem);
+        margin-left: calc(var(--bi-icon-size) + 0.55rem);
       }
       /* Wider gap between the two columns in 9B — the columns are
          independent here (no shared central spine like 9A) so the extra
@@ -2067,8 +2115,13 @@
       .bi-dim {
         display: flex;
         flex-direction: column;
-        gap: 2px;
-        margin: 4px 0;
+        /* Label + score chip stay tight to the bar (small gap) so each
+           label/bar pair reads as one unit; the row-to-row margin is a
+           bit bigger so adjacent dims breathe.  Both bumped a hair
+           from the original 2px / 4px values for slightly more rhythm
+           without breaking the close label-to-bar coupling. */
+        gap: 0.25rem;
+        margin: 0.4rem 0;
       }
       .bi-dim-row {
         display: flex;
@@ -2553,7 +2606,10 @@
       .bi-card-credit {
         font-family: var(--font-sans);
         font-size: 0.9rem;
-        font-weight: 800;
+        /* Medium reads cleaner than the old 800 — at this small lowercase
+           size the heavier weight made the credit feel shouty rather
+           than understated. */
+        font-weight: var(--font-sans-weight-medium);
         text-align: center;
         text-transform: lowercase;
         margin-top: 1rem;
@@ -4713,12 +4769,17 @@
         const detailEl = el("aside", { class: "bi-tip-panel" });
         const assessEl = el("aside", { class: "bi-tip-panel bi-tip-panel-assess" });
 
+        /* Assess sits in the middle (next to the card), then detail on
+           the far right.  The "evaluated values" — the bi-card and its
+           Assessment mirror — share the same sans + white-bg vocabulary;
+           the rubric Detail panel keeps the serif + gray-card chrome to
+           read as "background information". */
         const layout = el(
           "div",
           { class: "bi-layout" },
           stack,
-          detailEl,
           assessEl,
+          detailEl,
         );
 
         /* Wire up tooltip behaviors after the panels are in the DOM. */
@@ -5054,41 +5115,16 @@
           showDetail();
           setMarkdown(detailContent, detailMd);
 
-          /* Tint the panel header to match the hovered dim's accent —
-             ties the panel back to the bar/circle that opened it.
-             For dims with no doc context, use the dim color directly.
-             When a doc is selected and its score for this dim is NA /
-             missing, fall back to the muted NA label color so the
-             header reads as "disabled" rather than "highlighted". */
           const doc = docId ? biRealDocs.find((d) => d.id === docId) : null;
-          const score = doc ? doc.scores[key] : null;
-          const isNaScore =
-            doc && typeof score !== "number" && score !== "ERR";
-          detailEl.style.setProperty(
-            "--current-dim-color",
-            isNaScore
-              ? "var(--na-label-color, var(--muted))"
-              : `var(--dim-${key})`,
-          );
           if (!doc) {
             hideAssess();
             return;
           }
           showAssess();
 
+          const score = doc.scores[key];
           const reason = doc.reasons[key];
           const findings = doc.findings[key] || [];
-
-          const scoreLabel =
-            typeof score === "number"
-              ? "/ 5"
-              : score === "NA"
-                ? "not applicable"
-                : score === "ERR"
-                  ? "unassessable"
-                  : "no score";
-
-          const scoreHtml = `<div class="tip-score-row"><span class="tip-score">${score ?? "—"}</span><span class="tip-score-meta">${scoreLabel}</span></div>`;
 
           /* Structured rule_findings (newer fixtures) → bullets; else
              fall back to qual_reasons prose (older baseline fixtures
@@ -5110,7 +5146,29 @@
             bodyHtml = `<div class="tip-assessment"><p class="tip-empty">No assessment recorded for this dimension.</p></div>`;
           }
 
-          setMarkdown(assessContent, `${scoreHtml}\n\n${bodyHtml}`);
+          /* Mirror the main-diagram dim row (name + colored bar + score
+             chip) instead of a big standalone score number — the
+             reader sees exactly the same widget they hovered, just
+             extracted into the panel.  The "Assessment" eyebrow at the
+             top of the panel already labels the block. */
+          assessContent.innerHTML = "";
+          const dimMeta = dims.find((dd) => dd.id === key);
+          if (dimMeta) {
+            const dimRow = biDim9B(doc, dimMeta, "right");
+            const mirror = el(
+              "div",
+              { class: "bi-ltr bi-tip-dim-mirror" },
+              el("div", { class: "bi-col right" }, dimRow),
+            );
+            assessContent.appendChild(mirror);
+          }
+          const bodyEl = el("div");
+          bodyEl.innerHTML = bodyHtml;
+          assessContent.appendChild(bodyEl);
+          /* Match the fade-in animation that setMarkdown applies. */
+          assessContent.classList.remove("fade-in");
+          void assessContent.offsetWidth;
+          assessContent.classList.add("fade-in");
         }
 
         function renderGroup(key) {

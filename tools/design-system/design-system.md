@@ -261,19 +261,39 @@ letter-spacing: 0.09em;   /* or any value in 0.06–0.10em */
 
 …or neither. No half-state.
 
+### Fewer levels, more meaning
+
+A general principle the system tries to honor: **use as few font sizes, weights, and
+grayscale levels as you can while still conveying every distinction you need.** Each
+extra tier — a new gray, a new size, a new weight — costs the reader a tiny bit of
+cognitive load (is this level *different* from that level, or just visually similar?).
+Reuse trumps novelty.
+
+Concrete examples currently in the system:
+
+- `--icon-color`, `--dim-label-color`, and `--muted` (light mode) all resolve to the
+  same dark warm gray (`hsl(40 0% 28%)`) — eyebrows, icon strokes, and dim labels share
+  one gray instead of three almost-identical ones.
+- The `--weight-caps`, `--weight-caps-strong`, and `--weight-num` convenience tokens all
+  collapse to `--font-sans-weight-bold` (no per-tier offset) — one heavy weight, used
+  everywhere a label or number needs to feel emphasized.
+- Per-role only two surface schemes (the cream paper of the design system + the white
+  override for the renderer); no third “neutral gray” surface variant is shipped.
+
+When you reach for a new value, first try to reuse an existing one.
+
 ### Weight balances with size
 
-**Larger type takes a lighter weight; smaller type takes a heavier one.**
-At display sizes, a "bold" stroke renders as a dense slab of ink that
-overwhelms the layout; at body or eyebrow sizes the same stroke barely
-registers and needs the extra weight to read as emphasized.
+**Larger type takes a lighter weight; smaller type takes a heavier one.** At display
+sizes, a “bold” stroke renders as a dense slab of ink that overwhelms the layout; at
+body or eyebrow sizes the same stroke barely registers and needs the extra weight to
+read as emphasized.
 The goal is roughly even *optical ink density* across the hierarchy —
-a big medium header and a small bold label should feel like they
-contribute the same amount of presence to the page, not the same
-numeric weight.
+a big medium header and a small bold label should feel like they contribute the same
+amount of presence to the page, not the same numeric weight.
 
-Practical rule of thumb for the three tiers exposed per role
-(`--font-{role}-weight`, `--font-{role}-weight-medium`, `--font-{role}-weight-bold`):
+Practical rule of thumb for the three tiers exposed per role (`--font-{role}-weight`,
+`--font-{role}-weight-medium`, `--font-{role}-weight-bold`):
 
 | Size band | Weight tier |
 | --- | --- |
@@ -283,18 +303,17 @@ Practical rule of thumb for the three tiers exposed per role
 
 Concrete examples from this codebase:
 
-- The page `h1`, the bi-card italic doc-name (1.9em), the
-  bi-group-header (1.5em), the tip-panel `h1` (the big serif heading
-  *and* its inset small-caps dim name) all use `weight-medium`.
-- Smaller serif headers (`.panel .title` at 1.15em, `.tip-context`,
-  `.note-card h3`) stay on `weight-bold`.
-- Dim labels next to the bidirectional bars (0.9rem small caps) and
-  the numeric score circles use `weight-bold` — these *need* the heavy
-  stroke to anchor the data.
+- The page `h1`, the bi-card italic doc-name (1.9em), the bi-group-header (1.5em), the
+  tip-panel `h1` (the big serif heading *and* its inset small-caps dim name) all use
+  `weight-medium`.
+- Smaller serif headers (`.panel .title` at 1.15em, `.tip-context`, `.note-card h3`)
+  stay on `weight-bold`.
+- Dim labels next to the bidirectional bars (0.9rem small caps) and the numeric score
+  circles use `weight-bold` — these *need* the heavy stroke to anchor the data.
 
 When in doubt: print the design and squint at it.
-If a heading reads as a black bar, drop it a tier; if a small label
-fades into the surface, bump it up.
+If a heading reads as a black bar, drop it a tier; if a small label fades into the
+surface, bump it up.
 
 ### Small-caps eyebrow tokens
 
