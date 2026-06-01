@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" data-surface="white" data-theme-mode="auto" data-theme="light">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -8,31 +8,27 @@
   <style>
 {{ css | safe }}
   </style>
+  <script>
+{{ js | safe }}
+  </script>
 </head>
 <body>
-  {# Inline icon sprite — referenced by <use href="#icon-..."/> in the card. #}
+  {# Inline icon sprite — group icons reference #icon-purpose etc. #}
   {{ icons_svg | safe }}
+
+  <header class="pp-page-header">
+    {% include 'theme-toggle.html.jinja' %}
+  </header>
+
   <main>
-    {% if 'card' in sections %}
-    <section class="page card-page">
-      {% include 'page_card.html.jinja' %}
-    </section>
-    {% endif %}
-    {% if 'detail' in sections and report.qual_reasons %}
-    <section class="page detail-page">
-      {% include 'page_detail.html.jinja' %}
-    </section>
-    {% endif %}
-    {% if 'metrics' in sections and report.quant %}
-    <section class="page metrics-page">
-      {% include 'page_metrics.html.jinja' %}
-    </section>
-    {% endif %}
-    {% if 'footer' in sections %}
-    <section class="page footer-page">
-      {% include 'page_footer.html.jinja' %}
-    </section>
-    {% endif %}
+    {% block layout %}{% endblock %}
   </main>
+
+  {# The eval data payload — parsed by the bootstrap below. #}
+  <script type="application/json" id="pp-eval-data">{{ data_json | safe }}</script>
+
+  <script>
+    {% block bootstrap %}{% endblock %}
+  </script>
 </body>
 </html>

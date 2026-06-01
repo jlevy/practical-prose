@@ -1,0 +1,497 @@
+/* ─────────── Group icons (single SVG sprite) ───────────
+     Renders an <svg><use href="…icons.svg#icon-X"/></svg>; the symbols
+     use fill="currentColor" so the icon takes its color from the
+     parent's CSS color property. Sprite source:
+     tools/design-system/assets/icons.svg. */
+.grp-icon {
+  display: inline-flex;
+  width: 1em;
+  height: 1em;
+  vertical-align: -0.15em;
+  flex-shrink: 0;
+  color: inherit;
+}
+
+.grp-icon svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+  fill: currentColor;
+}
+
+/* ─────────── Visual 9A + 9B: Bidirectional Bars ─────────── */
+/* Centered flex layout: bi-stack and tip panel sit adjacent (with a
+   1.5rem gap) and the whole pair centers in the available space.
+   On wide layouts the panel uses `position: relative` + JS-driven
+   `top` to slide vertically to align with whichever bi-card the
+   cursor is on (no gap between card and panel — the panel always
+   sits directly to the right of the card it's describing).
+   Below 72rem the panel drops below the stack and JS leaves its
+   top alone. */
+.bi-layout {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.5rem;
+  position: relative;
+}
+
+@media (min-width: 72rem) {
+  .bi-layout {
+    flex-direction: row;
+    align-items: flex-start;
+    justify-content: center;
+  }
+}
+
+.bi-stack {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.25rem;
+  width: 100%;
+}
+
+@media (min-width: 72rem) {
+  .bi-stack {
+    flex: 0 0 32rem;
+    width: 32rem;
+  }
+}
+
+/* Mirror of the main-diagram dim row inside the Assessment panel.
+   The row sits flush at the panel's left edge (no icon column to
+   align past, unlike the bi-card context), then a generous gap
+   below to match the rhythm between the Detail panel's h1 and
+   its first paragraph.  Chained `.bi-ltr.bi-tip-dim-mirror`
+   outranks the plain `.bi-ltr .bi-dim` rule defined later in
+   the file so the indent reset always wins regardless of source
+   order. */
+.bi-ltr.bi-tip-dim-mirror .bi-dim {
+  margin-left: 0;
+}
+
+.bi-tip-dim-mirror {
+  margin-bottom: 0.9rem;
+}
+
+/* In the panel context the dim row is the focused detail view
+   (rather than one row among many), so its label + score number
+   scale up to read at the same size + weight as the dim name in
+   the Detail panel's h1 — paired styling so the two panels
+   reference the same "focused dim" voice. */
+.bi-ltr.bi-tip-dim-mirror .bi-dim-name,
+.bi-ltr.bi-tip-dim-mirror .bi-num-circle {
+  font-size: 1.35em;
+  font-weight: var(--font-sans-weight-medium);
+}
+
+/* ─── Hover affordance on tip triggers ────────────────────────────
+   At-rest appearance is unchanged.  On hover the element gets a
+   thin border with a small offset so it reads as a framed pill —
+   no motion, no fill change, no layout shift (outline doesn't
+   participate in layout, so the offset gives the "padding around
+   it" visual without inflating the box and without fighting any
+   existing padding like 9B's hanging indent). */
+.bi-group-header[data-tip-kind],
+.bi-dim[data-tip-kind] {
+  transition: var(--hover-transition);
+  border-radius: 4px;
+  outline: 1px solid transparent;
+  outline-offset: 3px;
+}
+
+.bi-group-header[data-tip-kind]:hover,
+.bi-dim[data-tip-kind]:hover {
+  outline-color: var(--border);
+}
+
+.bi-card {
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--bg);
+  padding: 0.95rem 1.1rem 1.2rem;
+  font-family: var(--font-sans);
+  width: 100%;
+  max-width: 32rem; /* ~500px; keeps bars from getting too wide */
+}
+
+/* Doc kicker — bigger eyebrow variant, matches .bi-dim-name weight/tracking. */
+.bi-card .doc-kicker {
+  font-family: var(--font-sans);
+  font-size: 0.9rem;
+  font-weight: var(--weight-caps-strong);
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-caps);
+  text-align: center;
+  color: var(--muted);
+  margin: 0 0 0.25rem;
+}
+
+.bi-card .doc-name {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-size: 1.9em;
+  font-weight: var(--font-serif-weight-medium);
+  text-align: center;
+  margin: 0 0 0.9rem;
+  color: var(--fg);
+}
+
+.bi-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  column-gap: 0.5rem;
+}
+
+.bi-col {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+/* Group header: outward-stretching rule + label + group icon at the
+     inner edge (near the center spine). */
+.bi-group-header {
+  display: flex;
+  align-items: center; /* icon + label share the same center line */
+  justify-content: space-between;
+  gap: 0.55rem;
+  font-family: var(--font-serif);
+  font-size: 1.5em;
+  /* Bold — the group label is the most prominent serif anchor in
+     the main diagram; other display serif headings (h1, doc-name,
+     tip-panel h1) stay medium per the "larger type takes a lighter
+     weight" rule, but this one wants the heavier voice. */
+  font-weight: var(--font-serif-weight-bold);
+  margin: 0.7rem 0 0.3rem;
+}
+
+/* Padded so the category label lands at the same x as the dim
+   labels below it (right edge sits over the bar's inner edge).
+   Pad matches the score-circle reserve in .bi-dim-name above. */
+.bi-col.left .bi-group-header {
+  padding-right: calc(2.4rem + 0.5rem);
+}
+
+.bi-col.right .bi-group-header {
+  padding-left: calc(2.4rem + 0.5rem);
+}
+
+/* ─── Visual 9B variant (.bi-ltr) ──────────────────────────────────
+   Same DOM as 9A — biCard() is shared.  The .bi-ltr marker class on
+   the bi-stack flips the layout so both columns read left-to-right:
+   icons at the left of every group header, dim labels left-aligned,
+   bars grow rightward, score circle on the right of every row.
+   Scoped under .bi-ltr so 9A is unchanged. */
+.bi-ltr .bi-col.left .bi-group-header,
+.bi-ltr .bi-col.right .bi-group-header {
+  justify-content: flex-start;
+  padding-left: 0;
+  padding-right: 0;
+}
+
+/* Right column emits [label, icon]; use flex order to put the icon
+   visually first without changing JS emission order. */
+.bi-ltr .bi-col.right .bi-group-header .grp-icon {
+  order: -1;
+}
+
+/* Dim names align with the bar's left edge — no padding to reserve
+   circle space, because the circle sits on the right of the row. */
+.bi-ltr .bi-col.left .bi-dim-name,
+.bi-ltr .bi-col.right .bi-dim-name {
+  text-align: left;
+  padding-left: 0;
+  padding-right: 0;
+}
+
+/* Left column's bar segments are positioned via inline `right: X%`
+   in JS; CSS can't override inline style without !important.
+   Mirror the whole track instead — segments, fill, and ticks flip
+   in one rule.  Ticks are symmetric (20/40/60/80%) so the mirror
+   is invisible there.  Result: bars grow rightward, brightest
+   segment at the right end, matching the right column. */
+.bi-ltr .bi-dim.left .bi-bar-track {
+  transform: scaleX(-1);
+}
+
+/* Head row: name on the left, score circle on the right above the
+   bar's right edge.  Name expands to fill via flex:1; min-width:0
+   keeps the white-space:nowrap name truncating cleanly when the
+   column gets narrow. */
+.bi-ltr .bi-dim-head {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.bi-ltr .bi-dim-head .bi-dim-name {
+  flex: 1;
+  min-width: 0;
+}
+
+/* Hanging-indent layout: the group icon stays at the column's left
+   edge; everything else (group label and every dim row below it)
+   is indented past the icon to share one left edge.  `--bi-icon-size`
+   drives the icon width and the matching dim-row padding so they
+   can't drift apart. */
+.bi-ltr {
+  --bi-icon-size: 1.75rem;
+}
+
+.bi-ltr .bi-group-header .grp-icon {
+  font-size: var(--bi-icon-size);
+}
+
+/* margin-left (not padding-left) — the visible indent stays, but
+   the hover zone tightens to the row content so it doesn't span
+   the empty icon-column area at the left. */
+.bi-ltr .bi-dim {
+  margin-left: calc(var(--bi-icon-size) + 0.55rem);
+}
+
+/* Wider gap between the two columns in 9B — the columns are
+   independent here (no shared central spine like 9A) so the extra
+   breathing room reads as "two parallel reports" rather than one
+   joined chart. */
+.bi-ltr .bi-grid {
+  column-gap: 2rem;
+}
+
+/* Group average: mean of the group's numeric scores, right-aligned
+   in the header.  Sans + tabular nums (numeric content uses sans
+   per design system).  Color matches the group label (a single
+   "group header voice"); sized ~1.3× the dim score number below
+   so the rollup reads as the heavier value. */
+.bi-ltr .bi-group-avg {
+  margin-left: auto;
+  font-family: var(--font-sans);
+  font-size: 1.43rem;
+  /* Large number — medium reads cleaner than bold at this size
+     (per design system: larger type takes a lighter weight to
+     keep optical ink density balanced). */
+  font-weight: var(--font-sans-weight-medium);
+  font-variant-numeric: tabular-nums;
+  color: color-mix(in oklch, var(--fg) 70%, var(--muted));
+}
+
+/* Dim score in 9B: drop the colored circle chip, render as a clean
+   sans number in the same color as the dim label so name + score
+   read as one pair.  NA/ERR rows pick up --na-label-color via the
+   .is-na cascade.  `background: none !important` overrides the
+   inline `style.background` set by _biDimPrep. */
+.bi-ltr .bi-num-circle {
+  width: auto;
+  height: auto;
+  background: none !important;
+  border-radius: 0;
+  font-size: 1.1rem;
+  color: var(--dim-label-color, var(--muted));
+}
+
+.bi-ltr .bi-dim.is-na .bi-num-circle {
+  color: var(--na-label-color, var(--muted));
+  font-size: 0.85rem;
+}
+
+.bi-ltr .bi-num-circle.err {
+  font-size: 0.85rem;
+}
+
+/* Thinner bars in 9B — the layout has more vertical room per row
+   now that name + score share one line, so a tighter track reads
+   as a sparkline rather than a hefty progress bar. */
+.bi-ltr .bi-bar-track {
+  height: 1rem;
+}
+
+.bi-group-header .grp-icon {
+  font-size: 2.6rem; /* ~2× the previous size; anchors the outer corner */
+  line-height: 1;
+}
+
+/* Group label text sits between --muted and --fg — more prominent
+   than the dim names (which use --muted) but a step under the title
+   (which uses --fg).  color-mix keeps it theme-aware. */
+.bi-group-header .label {
+  color: color-mix(in oklch, var(--fg) 70%, var(--muted));
+}
+
+/* Dim entry — name stacked above a row containing bar + circle.
+   Bar and circle share a flex row with align-items: center, so
+   the circle sits on the bar's vertical center (not pulled up
+   toward the dim name). */
+.bi-dim {
+  display: flex;
+  flex-direction: column;
+  /* Label + score chip stay tight to the bar (small gap) so each
+     label/bar pair reads as one unit; the row-to-row margin is a
+     bit bigger so adjacent dims breathe.  Both bumped a hair
+     from the original 2px / 4px values for slightly more rhythm
+     without breaking the close label-to-bar coupling. */
+  gap: 0.25rem;
+  margin: 0.4rem 0;
+}
+
+.bi-dim-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.bi-dim-name {
+  font-family: var(--font-sans);
+  font-size: 0.9rem;
+  font-weight: var(--font-sans-weight-bold);
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-caps);
+  /* Dim-label color — fallback to --muted, override via the
+     "Dim-label color" slider (writes --dim-label-color).  When
+     the score is NA, .bi-dim.is-na switches the color to the
+     lighter --na-label-color. */
+  color: var(--dim-label-color, var(--muted));
+  line-height: 1.2;
+  white-space: nowrap;
+  overflow: hidden;
+  min-width: 0;
+}
+
+/* Label aligns with the inner edge of the bar (not the row width,
+   which extends past the bar into the circle).  Pad by the
+   circle's reserved column (2.4rem) + the bar/circle gap (0.5rem). */
+/* NA rows get a lighter dim-label color so the row reads as
+   "not applicable" at a glance, before the user sees the bar /
+   NA chip.  Drives --na-label-color from the design system tones. */
+.bi-dim.is-na .bi-dim-name {
+  color: var(--na-label-color, var(--muted));
+}
+
+.bi-dim.left .bi-dim-name {
+  text-align: right;
+  padding-right: calc(2.4rem + 0.5rem);
+}
+
+.bi-dim.right .bi-dim-name {
+  text-align: left;
+  padding-left: calc(2.4rem + 0.5rem);
+}
+
+.bi-bar-track {
+  height: 1.5rem;
+  background: hsl(0 0% 50% / 0.1);
+  border-radius: 4px;
+  position: relative;
+  min-width: 0;
+  width: 100%;
+  overflow: hidden;
+}
+
+.bi-bar-fill {
+  position: absolute;
+  top: 0;
+  height: 100%;
+  border-radius: 4px;
+}
+
+.bi-dim.left .bi-bar-fill {
+  right: 0;
+}
+
+/* anchored at right, grows left */
+.bi-dim.right .bi-bar-fill {
+  left: 0;
+}
+
+/* anchored at left, grows right */
+
+/* Bar segments — each 20% wide, alpha-graduated from inner (full
+   vividness) to outer (faded by --score-alpha-step per step).
+   The track has overflow:hidden, so segments clip cleanly to the
+   track's rounded corners at the bar ends. */
+.bi-bar-seg {
+  position: absolute;
+  top: 0;
+  height: 100%;
+  width: 20%;
+}
+
+/* Score circle — bigger than the bar, vertically centered across
+   the body so the number sits on a line between the dim label
+   and the bar.  Score number is canonical numeric (sans,
+   --weight-num, tabular nums). */
+.bi-num-circle {
+  width: 2.4rem;
+  height: 2.4rem;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-family: var(--font-sans);
+  font-size: 1.1rem;
+  font-weight: var(--weight-num);
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+.bi-num-circle.na {
+  /* NA background — fallback to --score-na, override via the
+     "NA color" slider (writes --na-color). */
+  background: var(--na-color, var(--score-na));
+  font-size: 0.72rem;
+  font-weight: 800;
+}
+
+.bi-num-circle.err {
+  background: var(--score-err);
+  font-size: 0.72rem;
+  font-weight: 800;
+}
+
+/* Group-header padding aligns the category label with the id label
+     in the head row below (which sits 1.6rem from the spine + the row
+     gap of 0.45rem). */
+
+/* Unit tick marks at score positions 1/2/3/4 — thin lines in the
+     page background color so they appear as small gaps cut into the
+     colored bar fill (like a battery indicator). */
+.bi-tick {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 1.5px;
+  background: var(--bg);
+  pointer-events: none;
+}
+
+/* Per-card credit — sits at the bottom of each bi-card so each
+   doc card is a self-contained, shareable widget.  Same
+   typographic treatment as the dim labels, but lowercase. */
+.bi-card-credit {
+  font-family: var(--font-sans);
+  font-size: 0.9rem;
+  /* Medium reads cleaner than the old 800 — at this small lowercase
+     size the heavier weight made the credit feel shouty rather
+     than understated. */
+  font-weight: var(--font-sans-weight-medium);
+  text-align: center;
+  text-transform: lowercase;
+  margin-top: 1rem;
+}
+
+.bi-card-credit a {
+  color: var(--muted);
+  opacity: 0.5;
+  text-decoration: none;
+  transition:
+    color 220ms ease,
+    opacity 220ms ease;
+}
+
+.bi-card-credit a:hover {
+  color: var(--fg);
+  opacity: 1;
+  text-decoration: none;
+}

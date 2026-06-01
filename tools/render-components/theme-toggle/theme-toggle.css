@@ -1,0 +1,39 @@
+/* Practical Prose — theme toggle pill (Auto / Light / Dark).
+ *
+ * Lifted from the explorations playground's <style> block. The
+ * `.surface-toggle` half stays in the workbench's local CSS since
+ * `pprose render` only uses the white surface.
+ */
+
+.theme-toggle {
+  display: inline-flex;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  padding: 2px;
+  background: var(--card);
+  font-family: var(--font-sans);
+  font-size: 0.74rem;
+  flex-shrink: 0;
+}
+
+.theme-toggle button {
+  border: 0;
+  background: transparent;
+  color: var(--muted);
+  padding: 4px 12px;
+  border-radius: 999px;
+  cursor: pointer;
+  font: inherit;
+  transition:
+    background-color 220ms ease,
+    color 220ms ease;
+}
+
+.theme-toggle button.active {
+  background: var(--fg);
+  color: var(--bg);
+}
+
+.theme-toggle button:hover:not(.active) {
+  color: var(--fg);
+}

@@ -9,14 +9,15 @@ sidecar `assets/` directory (`--format folder`).
 from __future__ import annotations
 
 import argparse
+import sys
 import webbrowser
 from importlib.metadata import PackageNotFoundError, version
 from pathlib import Path
 
 from pprose.render_html.inliner import write_folder_assets
 from pprose.render_html.renderer import (
-    _DEFAULT_SECTIONS,
     RenderOpts,
+    available_variants,
     render,
 )
 
@@ -36,7 +37,12 @@ def _build_parser() -> argparse.ArgumentParser:
             "print-friendly static HTML page."
         ),
     )
-    p.add_argument("input", type=Path, help="Path to an .eval.md report.")
+    p.add_argument(
+        "input",
+        type=Path,
+        nargs="?",
+        help="Path to an .eval.md report. Omit when using --list-variants.",
+    )
     p.add_argument(
         "-o",
         "--output",
@@ -60,9 +66,18 @@ def _build_parser() -> argparse.ArgumentParser:
         help="Print page size. Default: letter.",
     )
     p.add_argument(
-        "--sections",
-        default=",".join(_DEFAULT_SECTIONS),
-        help=("Comma-separated subset of: card, detail, metrics, footer. Default: all four."),
+        "--variant",
+        default="interactive",
+        help=(
+            "Page-layout variant. Default: interactive (one card + two "
+            "hover-driven tip panels + theme toggle). Run `pprose render "
+            "--list-variants` to see what's available."
+        ),
+    )
+    p.add_argument(
+        "--list-variants",
+        action="store_true",
+        help="Print the available variant names and exit.",
     )
     p.add_argument(
         "--open",
@@ -84,20 +99,32 @@ def main(argv: list[str] | None = None) -> int:
     parser = _build_parser()
     args = parser.parse_args(argv)
 
-    input_path: Path = args.input
-    if not input_path.is_file():
-        print(f"error: input not found: {input_path}", file=__import__("sys").stderr)
+    if args.list_variants:
+        for name in available_variants():
+            print(name)
+        return 0
+
+    if args.input is None:
+        print("error: input path is required (or pass --list-variants)", file=sys.stderr)
         return 2
 
-    sections = tuple(s.strip() for s in args.sections.split(",") if s.strip())
+    input_path: Path = args.input
+    if not input_path.is_file():
+        print(f"error: input not found: {input_path}", file=sys.stderr)
+        return 2
+
     opts = RenderOpts(
         page_size=args.page_size,
-        sections=sections,
+        variant=args.variant,
         pprose_version=_pprose_version(),
         folder_mode=(args.format == "folder"),
     )
 
-    html = render(input_path, opts)
+    try:
+        html = render(input_path, opts)
+    except ValueError as e:
+        print(f"error: {e}", file=sys.stderr)
+        return 2
 
     out_path: Path = args.output if args.output else _default_output_path(input_path)
     out_path.parent.mkdir(parents=True, exist_ok=True)

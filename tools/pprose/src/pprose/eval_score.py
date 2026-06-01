@@ -889,12 +889,9 @@ def main(argv: list[str] | None = None) -> int:
         help="Page size for --render-html (default: letter).",
     )
     parser.add_argument(
-        "--render-sections",
-        default="card,detail,metrics,footer",
-        help=(
-            "Comma-separated sections for --render-html "
-            "(subset of card,detail,metrics,footer; default: all)."
-        ),
+        "--render-variant",
+        default="interactive",
+        help="Page-layout variant for --render-html (default: interactive).",
     )
     parser.add_argument(
         "--render-format",
@@ -1012,10 +1009,9 @@ def _render_after_score(eval_md_path: Path, args) -> None:
     from pprose.render_html.renderer import RenderOpts, render_eval_report
 
     report = EvalReport.from_eval_md(eval_md_path)
-    sections = tuple(s.strip() for s in args.render_sections.split(",") if s.strip())
     opts = RenderOpts(
         page_size=args.render_page_size,
-        sections=sections,
+        variant=args.render_variant,
         pprose_version=_pprose_version(),
         folder_mode=(args.render_format == "folder"),
     )
