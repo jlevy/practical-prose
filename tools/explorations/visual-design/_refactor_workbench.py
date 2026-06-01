@@ -317,13 +317,16 @@ def strip_top_level_function(script: str, name: str) -> tuple[str, int]:
 
 
 def insert_rewire_after_rubric_population(script: str) -> str:
-    """Insert the makeApi destructure right after the rubric is loaded.
+    """Insert the makeApi destructure right after `dims` is populated.
 
-    Looks for the marker line that the workbench uses to signal
-    'rubric has finished populating' — the closing of the
-    `for (const g of rubricDoc.groups || []) { ... }` block that walks
-    the rubric YAML. We insert after that block so `groups`, `dims`,
-    `rubric`, and `biRealDocs` are all populated.
+    The insertion sits immediately after the `const dims = _ds.dimensions.map(...)`
+    declaration. It MUST sit before any later code that consumes the
+    destructured bindings — `setupAlphaStepSlider` (a top-level IIFE
+    declared further down in the script) reads `_readScoreAlphaStep` at
+    define-time, which would trip the TDZ if the destructure ran later.
+    `rubric` and `biRealDocs` are referenced lazily inside the
+    `setupTipPanel` adapter and don't need to exist when this block
+    executes.
 
     Inserts (idempotent: skip if already present):
 
@@ -357,30 +360,33 @@ def insert_rewire_after_rubric_population(script: str) -> str:
     sentinel = "// Phase 1b rewire — source shared bi-card helpers"
     if sentinel in script:
         return script  # idempotent
-    # Insertion point: right before the comment "/* Canonical baseline evals"
-    # is the safe spot — but simpler: insert right before the
-    # first `const _groupById = (id) =>` (which begins the bi-card layout
-    # section that consumes biLeftGroups/biRightGroups + dims).
-    marker = "const _groupById = (id) => groups.find((g) => g.id === id);"
-    idx = script.find(marker)
-    if idx == -1:
+
+    # Marker: the closing `}));` of the `const dims = _ds.dimensions.map(...)`
+    # declaration. This is the earliest point where `groups` AND `dims` are
+    # both populated — required for PracticalProseBiCard.makeApi(...) — and
+    # it precedes every later top-level statement that consumes the
+    # destructured helpers (notably setupAlphaStepSlider).
+    pat = re.compile(
+        r"(^      const dims = _ds\.dimensions\.map\(\(d\) => \(\{\n.*?\n      \}\)\);\n)",
+        re.MULTILINE | re.DOTALL,
+    )
+    m = pat.search(script)
+    if not m:
         print(
-            f"WARN: could not find rewire marker {marker!r}; "
+            "WARN: could not find `const dims = _ds.dimensions.map(...)` marker; "
             "skipping inline rewire insertion.",
             file=sys.stderr,
         )
         return script
 
-    # The line above `_groupById` should be at the same indent (6 spaces).
-    line_start = script.rfind("\n", 0, idx) + 1
-    indent = script[line_start:idx]
-    # Drop the indent line (likely all whitespace from `\n      `) for
-    # the insertion's leading newline.
-
+    indent = "      "
     insertion = (
-        f"{indent}{sentinel}\n"
-        f"{indent}// (Phase 1b of epic pp-ict2 — see\n"
-        f"{indent}// docs/project/specs/active/plan-2026-05-31-shared-render-components.md.)\n"
+        f"\n"
+        f"{indent}{sentinel} from\n"
+        f"{indent}// tools/render-components/. Must sit right after `groups` + `dims`\n"
+        f"{indent}// are populated and before any later code consumes the destructured\n"
+        f"{indent}// bindings (notably setupAlphaStepSlider uses _readScoreAlphaStep).\n"
+        f"{indent}// See docs/project/specs/active/plan-2026-05-31-shared-render-components.md.\n"
         f"{indent}const biCardApi = PracticalProseBiCard.makeApi({{\n"
         f"{indent}  groups,\n"
         f"{indent}  dimensions: dims,\n"
@@ -395,9 +401,12 @@ def insert_rewire_after_rubric_population(script: str) -> str:
         f"{indent}  _readScoreAlphaStep,\n"
         f"{indent}  segmentAlpha,\n"
         f"{indent}}} = biCardApi;\n"
-        f"{indent}// Tip-panel adapter: workbench `setupTipPanel(detailEl, assessEl)` is now a\n"
-        f"{indent}// thin wrapper over the shared PracticalProseTipPanels.mount() that scopes\n"
-        f"{indent}// hover to each visualization's layout via opts.scope (per-viz, not document).\n"
+        f"{indent}// Tip-panel adapter: the workbench's setupTipPanel(detailEl, assessEl, opts?)\n"
+        f"{indent}// is a thin wrapper over PracticalProseTipPanels.mount() that scopes\n"
+        f"{indent}// hover to each visualization's layout via opts.scope (per-viz, not\n"
+        f"{indent}// document-wide). `rubric` and `biRealDocs` are referenced lazily —\n"
+        f"{indent}// they're populated later but only read when the adapter is called\n"
+        f"{indent}// during render, at which point both exist.\n"
         f"{indent}function setupTipPanel(detailEl, assessEl, opts = {{}}) {{\n"
         f"{indent}  return PracticalProseTipPanels.mount(\n"
         f"{indent}    detailEl,\n"
@@ -407,9 +416,8 @@ def insert_rewire_after_rubric_population(script: str) -> str:
         f"{indent}    opts,\n"
         f"{indent}  );\n"
         f"{indent}}}\n"
-        f"\n"
     )
-    return script[:line_start] + insertion + script[line_start:]
+    return script[: m.end()] + insertion + script[m.end() :]
 
 
 # ─── Main ──────────────────────────────────────────────────────────────────

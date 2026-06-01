@@ -2431,6 +2431,41 @@
         label: d.label,
       }));
 
+      // Phase 1b rewire — source shared bi-card helpers from
+      // tools/render-components/. Must sit right after `groups` + `dims`
+      // are populated and before any later code consumes the destructured
+      // bindings (notably setupAlphaStepSlider uses _readScoreAlphaStep).
+      // See docs/project/specs/active/plan-2026-05-31-shared-render-components.md.
+      const biCardApi = PracticalProseBiCard.makeApi({
+        groups,
+        dimensions: dims,
+      });
+      const {
+        biCard,
+        biDim9B,
+        _biDimPrep,
+        groupAvgChip,
+        dimColorMix,
+        scoreColor,
+        _readScoreAlphaStep,
+        segmentAlpha,
+      } = biCardApi;
+      // Tip-panel adapter: the workbench's setupTipPanel(detailEl, assessEl, opts?)
+      // is a thin wrapper over PracticalProseTipPanels.mount() that scopes
+      // hover to each visualization's layout via opts.scope (per-viz, not
+      // document-wide). `rubric` and `biRealDocs` are referenced lazily —
+      // they're populated later but only read when the adapter is called
+      // during render, at which point both exist.
+      function setupTipPanel(detailEl, assessEl, opts = {}) {
+        return PracticalProseTipPanels.mount(
+          detailEl,
+          assessEl,
+          { groups, dimensions: dims, rubric, docs: biRealDocs },
+          biCardApi,
+          opts,
+        );
+      }
+
       /* Score values: 1-5, 'NA', or 'ERR'.
    18-dim values are real from comparison-all.md.
    G3 Relevance and R4 Parsimony are illustrative. */
@@ -4033,36 +4068,6 @@
          marker class on its bi-stack flips the layout so both columns
          read left-to-right (CSS-only divergence).  Fork biCard() if 9B
          ever needs structurally different DOM. */
-
-      // Phase 1b rewire — source shared bi-card helpers
-      // (Phase 1b of epic pp-ict2 — see
-      // docs/project/specs/active/plan-2026-05-31-shared-render-components.md.)
-      const biCardApi = PracticalProseBiCard.makeApi({
-        groups,
-        dimensions: dims,
-      });
-      const {
-        biCard,
-        biDim9B,
-        _biDimPrep,
-        groupAvgChip,
-        dimColorMix,
-        scoreColor,
-        _readScoreAlphaStep,
-        segmentAlpha,
-      } = biCardApi;
-      // Tip-panel adapter: workbench `setupTipPanel(detailEl, assessEl)` is now a
-      // thin wrapper over the shared PracticalProseTipPanels.mount() that scopes
-      // hover to each visualization's layout via opts.scope (per-viz, not document).
-      function setupTipPanel(detailEl, assessEl, opts = {}) {
-        return PracticalProseTipPanels.mount(
-          detailEl,
-          assessEl,
-          { groups, dimensions: dims, rubric, docs: biRealDocs },
-          biCardApi,
-          opts,
-        );
-      }
 
       const _groupById = (id) => groups.find((g) => g.id === id);
       const biLeftGroups = ["P", "E", "F"].map(_groupById); // 4 + 3 + 3 = 10 dims
