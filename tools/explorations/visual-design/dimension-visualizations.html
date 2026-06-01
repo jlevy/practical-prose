@@ -70,6 +70,20 @@
     <script src="lib/design-font-controls.js?v=lib2"></script>
     <script src="lib/design-palette-sliders.js?v=lib2"></script>
 
+    <!-- Shared render components — single source of truth for the Visual 9B
+         card, the Detail+Assessment tip-panels, and the Auto/Light/Dark
+         theme toggle. The pprose render pipeline mirrors these into its
+         wheel via tools/pprose/devtools/sync_render_html_styles.py.
+         Loading them here keeps the workbench in sync with the rendered
+         output by construction. See
+         docs/project/specs/active/plan-2026-05-31-shared-render-components.md. -->
+    <link rel="stylesheet" href="../../render-components/bi-card/card.css" />
+    <link rel="stylesheet" href="../../render-components/tip-panels/tip-panels.css" />
+    <link rel="stylesheet" href="../../render-components/theme-toggle/theme-toggle.css" />
+    <script src="../../render-components/bi-card/card.js"></script>
+    <script src="../../render-components/tip-panels/tip-panels.js"></script>
+    <script src="../../render-components/theme-toggle/theme-toggle.js"></script>
+
     <style>
       /* Colors expressed as hsl() per tools/design-system/design-system.md.
      Group hues come from the design system (Purpose=72, Expression=206,

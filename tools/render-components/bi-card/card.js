@@ -1,53 +1,51 @@
 /*
  * Practical Prose — Visual 9B "bi-card" component.
  *
- * Renders the bidirectional-bars eval card (one per document). The JS
- * functions inside the IIFE are lifted verbatim from
- * tools/explorations/visual-design/dimension-visualizations.html so any
- * future change in the workbench flows straight through the sync script.
+ * Renders the bidirectional-bars eval card. The functions are lifted
+ * verbatim from tools/explorations/visual-design/dimension-visualizations.html
+ * so any future change in the workbench flows straight through the sync
+ * script.
  *
- * Public API:
- *     PracticalProseBiCard.mount(containerSelector, data)
+ * Two public entries:
  *
- * Data contract (object passed to mount):
- *   data.groups       Array of { id, label } — 6 entries (P, E, F, R, G, J)
- *   data.dimensions   Array of { id, label, g } — 20 entries (P1..J3)
- *   data.rubric       Object keyed by dim id: { question, rules: string[], group }
+ *   PracticalProseBiCard.mount(containerSelector, data)
+ *       Clear `containerSelector` and append a `.bi-stack.bi-ltr` with
+ *       one `.bi-card` for `data.doc`. Returns the same API the
+ *       workbench consumes (so the tip-panels component can mirror a
+ *       dim row in the Assessment panel).
+ *
+ *   PracticalProseBiCard.makeApi(data)
+ *       Returns the bound helpers (`biCard`, `biDim9B`, `_biDimPrep`,
+ *       `groupIcon`, `groupAvgChip`, `dimColorMix`, `scoreColor`,
+ *       `segmentAlpha`, `el`, `biLeftGroups`, `biRightGroups`) so
+ *       another caller (e.g. the explorations workbench, which renders
+ *       Visual 9A as well) can use the same code paths without
+ *       duplication.
+ *
+ * Data contract (passed to mount/makeApi):
+ *   data.groups       Array of { id, label } — 6 entries
+ *   data.dimensions   Array of { id, label, g } — 20 entries
+ *   data.rubric       Object keyed by dim id (used by tip-panels)
  *   data.doc          { id, name, scores, reasons, findings }
- *     scores:   { [dimId]: number | "NA" | "ERR" }
- *     reasons:  { [dimId]: string }
- *     findings: { [dimId]: [{ rule_number, verdict, description }, ...] }
  *
- * Markup contract: the container becomes a `.bi-stack.bi-ltr` host; the
- * mount appends one `.bi-card` per doc. Group-icon SVGs reference an
- * inline `<svg>` sprite at the top of <body> (#icon-purpose, etc.).
+ * Group-icon SVGs reference an inline `<svg>` sprite at the top of
+ * `<body>` (#icon-purpose, etc.).
  */
 
 (() => {
-  function mount(containerSelector, data) {
-    const container =
-      typeof containerSelector === "string"
-        ? document.querySelector(containerSelector)
-        : containerSelector;
-    if (!container) {
-      console.error("PracticalProseBiCard.mount: container not found", containerSelector);
-      return;
+  function makeApi(data) {
+    if (!data || !data.groups || !data.dimensions) {
+      throw new Error("PracticalProseBiCard: data must include groups + dimensions");
     }
-    if (!data || !data.groups || !data.dimensions || !data.doc) {
-      console.error("PracticalProseBiCard.mount: malformed data payload", data);
-      return;
-    }
-
     const groups = data.groups;
     const dims = data.dimensions;
 
-    // Layout per Visual 9B: P/E/F left, R/G/J right (Reasoning pairs
-    // row-for-row with Purpose at the top).
+    // Layout per Visual 9B: P/E/F left, R/G/J right.
     const _byId = (id) => groups.find((g) => g.id === id);
     const biLeftGroups = ["P", "E", "F"].map(_byId).filter(Boolean);
     const biRightGroups = ["R", "G", "J"].map(_byId).filter(Boolean);
 
-    // ─── DOM helper ──────────────────────────────────────────────────────
+    // ─── DOM helper ─────────────────────────────────────────────────
     function el(tag, attrs = {}, ...children) {
       const e = document.createElement(tag);
       Object.entries(attrs).forEach(([k, v]) => {
@@ -64,10 +62,7 @@
       return e;
     }
 
-    // ─── Group icon ──────────────────────────────────────────────────────
-    // Empty string → <use href="#icon-X"/> references the inlined sprite
-    // at the top of <body>. Browsers block cross-file <use> references
-    // when loaded via file://, so the sprite must be inlined.
+    // ─── Group icon ─────────────────────────────────────────────────
     const ICON_SPRITE = "";
     function groupIcon(g) {
       const span = document.createElement("span");
@@ -81,7 +76,6 @@
       return span;
     }
 
-    // ─── Group-average chip (9B's headerExtra) ───────────────────────────
     function groupAvgChip(g, doc) {
       const scores = dims
         .filter((d) => d.g === g.id)
@@ -92,7 +86,7 @@
       return el("span", { class: "bi-group-avg" }, avg.toFixed(1));
     }
 
-    // ─── Color helpers ──────────────────────────────────────────────────
+    // ─── Color helpers ──────────────────────────────────────────────
     function _readScoreAlphaStep() {
       const v = getComputedStyle(document.documentElement)
         .getPropertyValue("--score-alpha-step")
@@ -115,7 +109,7 @@
       return 1 - (5 - segIdx) * step;
     }
 
-    // ─── Per-row prep (shared between 9A and 9B variants) ───────────────
+    // ─── Per-row prep (shared between 9A and 9B variants) ───────────
     function _biDimPrep(doc, d, side) {
       const s = doc.scores[d.id];
       const classes = ["bi-dim", side];
@@ -172,7 +166,6 @@
       return { entry, name, track, circle };
     }
 
-    // ─── 9B per-row DOM ─────────────────────────────────────────────────
     function biDim9B(doc, d, side) {
       const { entry, name, track, circle } = _biDimPrep(doc, d, side);
       const head = el("div", { class: "bi-dim-head" }, name, circle);
@@ -181,8 +174,7 @@
       return entry;
     }
 
-    // ─── Card composition ───────────────────────────────────────────────
-    function biCard(doc, dimFn, headerExtra) {
+    function biCard(doc, dimFn = biDim9B, headerExtra = null) {
       const card = el("div", { class: "bi-card" });
       card.appendChild(
         el("div", { class: "doc-kicker" }, "Practical Prose Evaluation"),
@@ -251,25 +243,49 @@
       return card;
     }
 
-    // ─── Mount ──────────────────────────────────────────────────────────
-    // Clear the container, wrap in the .bi-stack.bi-ltr scaffold the 9B
-    // CSS keys off, and append one card per doc (today: one).
-    container.innerHTML = "";
-    const stack = el("div", { class: "bi-stack bi-ltr" });
-    stack.appendChild(biCard(data.doc, biDim9B, groupAvgChip));
-    container.appendChild(stack);
-
-    // Expose biDim9B + helpers so the tip-panels component can mirror the
-    // "focused dim" widget inside the Assessment panel using the same code
-    // path that built the row in the card.
     return {
-      biDim9B,
-      _biDimPrep,
+      // Helpers — for callers that want to compose their own DOM (e.g.
+      // the workbench mounts Visual 9A using `biCard(doc, biDim, null)`
+      // with a locally-defined `biDim` for the 9A row shape).
       el,
+      groupIcon,
+      groupAvgChip,
+      _readScoreAlphaStep,
+      dimColorMix,
+      scoreColor,
+      segmentAlpha,
+      _biDimPrep,
+      biDim9B,
+      biCard,
+      // Layout pre-computed from data.groups, for callers that need
+      // the column assignments.
+      biLeftGroups,
+      biRightGroups,
       groups,
       dims,
     };
   }
 
-  globalThis.PracticalProseBiCard = Object.freeze({ mount });
+  function mount(containerSelector, data) {
+    const container =
+      typeof containerSelector === "string"
+        ? document.querySelector(containerSelector)
+        : containerSelector;
+    if (!container) {
+      console.error("PracticalProseBiCard.mount: container not found", containerSelector);
+      return null;
+    }
+    if (!data || !data.doc) {
+      console.error("PracticalProseBiCard.mount: data.doc missing", data);
+      return null;
+    }
+    const api = makeApi(data);
+    container.innerHTML = "";
+    const stack = api.el("div", { class: "bi-stack bi-ltr" });
+    stack.appendChild(api.biCard(data.doc, api.biDim9B, api.groupAvgChip));
+    container.appendChild(stack);
+    return api;
+  }
+
+  globalThis.PracticalProseBiCard = Object.freeze({ mount, makeApi });
 })();

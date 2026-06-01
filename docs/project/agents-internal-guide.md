@@ -41,8 +41,20 @@ eval report — single self-contained file by default. It is the canonical share
 artifact for a single-doc eval. Pair it with `pprose score <doc.md> --render-html` to
 score and render in one shot; the two are composable primitives. Open the resulting
 HTML in any modern browser and use the print dialog to save as PDF (Letter by default;
-`--page-size a4` for A4). See
+`--page-size a4` for A4). The page is built from a small set of named **variants** —
+`pprose render --list-variants` shows what's available; today only `interactive` ships
+(one card + two hover-driven tip panels + theme toggle). See
 [plan-2026-05-29-static-html-eval-report.md](specs/active/plan-2026-05-29-static-html-eval-report.md).
+
+The card, tip panels, and theme toggle are **shared render components** at
+[tools/render-components/](../../tools/render-components/) — one canonical set of CSS +
+JavaScript + Jinja partials consumed by both the explorations playground and the
+`pprose render` pipeline. The CSS and JS lifted into the wheel are mirrored verbatim
+by `tools/pprose/devtools/sync_render_html_styles.py`; CI fails on drift via
+`tests/test_render_html.py::test_sync_render_html_styles_in_sync`. To edit how the card
+or panels look, edit the component file under `tools/render-components/` and re-run
+the sync script. See
+[plan-2026-05-31-shared-render-components.md](specs/active/plan-2026-05-31-shared-render-components.md).
 
 **Reference** (print bundled docs the agent follows; `--list` to enumerate):
 `pprose guidelines <name>`, `pprose shortcut <name>`, `pprose runbook <name>`,

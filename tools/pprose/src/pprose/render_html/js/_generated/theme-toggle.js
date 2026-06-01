@@ -63,8 +63,11 @@
     return elOrSelector;
   }
 
-  globalThis.PracticalProseDesignColorControls = Object.freeze({
-    mountThemeToggle,
-    isDarkMode,
-  });
+  // Extend rather than replace, so a same-page workbench can add its own
+  // companion entries (e.g. `mountSurfaceToggle`) without load-order
+  // sensitivity.
+  const ns = (globalThis.PracticalProseDesignColorControls =
+    globalThis.PracticalProseDesignColorControls || {});
+  ns.mountThemeToggle = mountThemeToggle;
+  ns.isDarkMode = isDarkMode;
 })();
