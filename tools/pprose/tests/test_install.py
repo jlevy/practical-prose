@@ -214,9 +214,7 @@ def test_project_and_global_mutually_exclusive(
     assert "not allowed with argument --project" in err or "mutually exclusive" in err
 
 
-def test_global_and_dir_mutually_exclusive(
-    home_tmp: Path, capsys: pytest.CaptureFixture[str]
-):
+def test_global_and_dir_mutually_exclusive(home_tmp: Path, capsys: pytest.CaptureFixture[str]):
     rc = install.install_main(["--global", "--dir", str(home_tmp)])
     assert rc == 2
     err = capsys.readouterr().err
@@ -232,8 +230,12 @@ def test_project_explicit_in_repo_installs(git_repo_tmp: Path):
     rc = install.install_main(["--project", "--dir", str(git_repo_tmp)])
     assert rc == 0
     skills = set(resources.list_names("skills"))
-    assert {p.parent.name for p in (git_repo_tmp / install.PORTABLE_SKILLS_DIR).glob("*/SKILL.md")} == skills
-    assert {p.parent.name for p in (git_repo_tmp / install.CLAUDE_SKILLS_DIR).glob("*/SKILL.md")} == skills
+    assert {
+        p.parent.name for p in (git_repo_tmp / install.PORTABLE_SKILLS_DIR).glob("*/SKILL.md")
+    } == skills
+    assert {
+        p.parent.name for p in (git_repo_tmp / install.CLAUDE_SKILLS_DIR).glob("*/SKILL.md")
+    } == skills
     assert (git_repo_tmp / "AGENTS.md").exists()
 
 
@@ -254,13 +256,9 @@ def test_project_with_no_repo_check_in_non_repo_installs(tmp_path: Path):
     assert (tmp_path / install.PORTABLE_SKILLS_DIR).exists()
 
 
-def test_project_dir_home_is_refused(
-    home_tmp: Path, capsys: pytest.CaptureFixture[str]
-):
+def test_project_dir_home_is_refused(home_tmp: Path, capsys: pytest.CaptureFixture[str]):
     """`$HOME` is refused in --project even with --no-repo-check; use --global instead."""
-    rc = install.install_main(
-        ["--project", "--no-repo-check", "--dir", str(home_tmp)]
-    )
+    rc = install.install_main(["--project", "--no-repo-check", "--dir", str(home_tmp)])
     assert rc == 2
     err = capsys.readouterr().err
     assert "refusing to install into" in err
@@ -294,9 +292,7 @@ def test_project_portable_and_claude_are_byte_identical(git_repo_tmp: Path):
 
 
 def test_project_agents_md_block_carries_format_stamp(git_repo_tmp: Path):
-    (git_repo_tmp / "AGENTS.md").write_text(
-        "# Project\n\nUser content.\n", encoding="utf-8"
-    )
+    (git_repo_tmp / "AGENTS.md").write_text("# Project\n\nUser content.\n", encoding="utf-8")
     install.install_main(["--project", "--dir", str(git_repo_tmp)])
     agents = (git_repo_tmp / "AGENTS.md").read_text(encoding="utf-8")
     assert "User content." in agents  # preserved
@@ -326,24 +322,16 @@ def test_project_forward_compat_guard_blocks_newer_format(git_repo_tmp: Path):
         "newer-format content\n"
     )
     target.write_text(sentinel, encoding="utf-8")
-    rc = install.install_main(
-        ["--project", "--dir", str(git_repo_tmp), "--surfaces=claude"]
-    )
+    rc = install.install_main(["--project", "--dir", str(git_repo_tmp), "--surfaces=claude"])
     assert rc == 1  # blocked-newer is reported as a non-zero exit
     assert target.read_text(encoding="utf-8") == sentinel  # untouched
 
 
 def test_project_collapses_duplicate_agents_md_blocks(git_repo_tmp: Path):
     agents = git_repo_tmp / "AGENTS.md"
-    stale_a = (
-        f"{install.AGENTS_BEGIN_PREFIX} format=f01 -->\nstale a\n{install.AGENTS_END_MARKER}"
-    )
-    stale_b = (
-        f"{install.AGENTS_BEGIN_PREFIX} format=f01 -->\nstale b\n{install.AGENTS_END_MARKER}"
-    )
-    agents.write_text(
-        f"# Project\n\n{stale_a}\n\nmiddle\n\n{stale_b}\n\ntail\n", encoding="utf-8"
-    )
+    stale_a = f"{install.AGENTS_BEGIN_PREFIX} format=f01 -->\nstale a\n{install.AGENTS_END_MARKER}"
+    stale_b = f"{install.AGENTS_BEGIN_PREFIX} format=f01 -->\nstale b\n{install.AGENTS_END_MARKER}"
+    agents.write_text(f"# Project\n\n{stale_a}\n\nmiddle\n\n{stale_b}\n\ntail\n", encoding="utf-8")
     assert install.install_main(["--project", "--dir", str(git_repo_tmp)]) == 0
     text = agents.read_text(encoding="utf-8")
     assert text.count(install.AGENTS_END_MARKER) == 1
@@ -353,13 +341,11 @@ def test_project_collapses_duplicate_agents_md_blocks(git_repo_tmp: Path):
 
 def test_pin_override_is_baked_into_generated_skills(git_repo_tmp: Path):
     """`--pin` lets sync_resources.py render discovery copies deterministically."""
-    rc = install.install_main(
-        ["--project", "--dir", str(git_repo_tmp), "--pin", "9.9.9"]
-    )
+    rc = install.install_main(["--project", "--dir", str(git_repo_tmp), "--pin", "9.9.9"])
     assert rc == 0
-    text = (
-        git_repo_tmp / install.CLAUDE_SKILLS_DIR / "pprose-eval" / "SKILL.md"
-    ).read_text(encoding="utf-8")
+    text = (git_repo_tmp / install.CLAUDE_SKILLS_DIR / "pprose-eval" / "SKILL.md").read_text(
+        encoding="utf-8"
+    )
     assert "uvx pprose@9.9.9" in text
 
 
@@ -384,9 +370,7 @@ def test_global_drops_agents_md_silently_with_default_surfaces(home_tmp: Path):
     # No error printed; only the skill surfaces written.
 
 
-def test_global_with_explicit_agents_md_errors(
-    home_tmp: Path, capsys: pytest.CaptureFixture[str]
-):
+def test_global_with_explicit_agents_md_errors(home_tmp: Path, capsys: pytest.CaptureFixture[str]):
     """--global with --surfaces=agents-md is unambiguous user intent we can't satisfy."""
     rc = install.install_main(["--global", "--surfaces=agents-md"])
     assert rc == 2
@@ -409,9 +393,7 @@ def test_global_with_explicit_portable_only(home_tmp: Path):
 
 
 def test_project_surfaces_portable_only(git_repo_tmp: Path):
-    rc = install.install_main(
-        ["--project", "--dir", str(git_repo_tmp), "--surfaces=portable"]
-    )
+    rc = install.install_main(["--project", "--dir", str(git_repo_tmp), "--surfaces=portable"])
     assert rc == 0
     assert (git_repo_tmp / install.PORTABLE_SKILLS_DIR).exists()
     assert not (git_repo_tmp / install.CLAUDE_SKILLS_DIR).exists()
@@ -428,12 +410,8 @@ def test_project_surfaces_no_agents_md(git_repo_tmp: Path):
     assert not (git_repo_tmp / "AGENTS.md").exists()
 
 
-def test_project_surfaces_bogus_errors(
-    git_repo_tmp: Path, capsys: pytest.CaptureFixture[str]
-):
-    rc = install.install_main(
-        ["--project", "--dir", str(git_repo_tmp), "--surfaces=bogus"]
-    )
+def test_project_surfaces_bogus_errors(git_repo_tmp: Path, capsys: pytest.CaptureFixture[str]):
+    rc = install.install_main(["--project", "--dir", str(git_repo_tmp), "--surfaces=bogus"])
     assert rc == 2
     err = capsys.readouterr().err
     assert "unknown surface 'bogus'" in err
@@ -444,9 +422,7 @@ def test_project_surfaces_bogus_errors(
 # ─────────────────────────────────────────────────────────────────────────────
 
 
-def test_pre_write_message_in_project_mode(
-    git_repo_tmp: Path, capsys: pytest.CaptureFixture[str]
-):
+def test_pre_write_message_in_project_mode(git_repo_tmp: Path, capsys: pytest.CaptureFixture[str]):
     install.install_main(["--project", "--dir", str(git_repo_tmp)])
     out = capsys.readouterr().out
     assert "(project mode) into:" in out
@@ -454,9 +430,7 @@ def test_pre_write_message_in_project_mode(
     assert "surfaces:" in out
 
 
-def test_pre_write_message_in_global_mode(
-    home_tmp: Path, capsys: pytest.CaptureFixture[str]
-):
+def test_pre_write_message_in_global_mode(home_tmp: Path, capsys: pytest.CaptureFixture[str]):
     install.install_main(["--global"])
     out = capsys.readouterr().out
     assert "(user-global mode) into:" in out

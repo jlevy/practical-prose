@@ -1,0 +1,27 @@
+<h2>Per-dimension Detail</h2>
+{% for dim in dimensions %}
+<div class="dim-block" style="--row-color: var(--dim-{{ dim.key }});">
+  <div class="dim-block-head">
+    <span class="dim-id">{{ dim.section }} · {{ dim.group_label }}</span>
+    <span class="dim-label">{{ dim.label }}</span>
+    <span class="dim-score">{{ dim.score_display }}</span>
+  </div>
+  {% if dim.question %}
+  <p class="dim-question"><em>{{ dim.question }}</em></p>
+  {% endif %}
+  {% if dim.reason %}
+  <p class="dim-reason">{{ dim.reason }}</p>
+  {% endif %}
+  {% if dim.findings %}
+  <ul class="dim-findings">
+    {% for f in dim.findings %}
+    <li>
+      <span class="verdict-{{ f.verdict }}">{{ f.verdict }}</span>
+      <span class="rule-id">{{ f.rule_id }}:</span>
+      {{ f.note }}
+    </li>
+    {% endfor %}
+  </ul>
+  {% endif %}
+</div>
+{% endfor %}

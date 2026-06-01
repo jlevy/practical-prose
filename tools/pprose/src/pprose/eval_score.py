@@ -871,6 +871,37 @@ def main(argv: list[str] | None = None) -> int:
         default=4.0,
         help="In --batch mode: maximum SDK request starts per second (default 4).",
     )
+    # --render-html: compose with `pprose render` after the eval.md is written.
+    # The render flags below mirror `pprose render --help` and are forwarded
+    # verbatim. Without --render-html, score behaves exactly as before.
+    parser.add_argument(
+        "--render-html",
+        action="store_true",
+        help=(
+            "After scoring, also render each report as a static HTML page next "
+            "to its .eval.md (the same as running `pprose render <eval.md>`)."
+        ),
+    )
+    parser.add_argument(
+        "--render-page-size",
+        choices=("letter", "a4"),
+        default="letter",
+        help="Page size for --render-html (default: letter).",
+    )
+    parser.add_argument(
+        "--render-sections",
+        default="card,detail,metrics,footer",
+        help=(
+            "Comma-separated sections for --render-html "
+            "(subset of card,detail,metrics,footer; default: all)."
+        ),
+    )
+    parser.add_argument(
+        "--render-format",
+        choices=("single", "folder"),
+        default="single",
+        help="Output format for --render-html (default: single).",
+    )
     args = parser.parse_args(argv)
 
     if args.list_models:
@@ -933,7 +964,7 @@ def main(argv: list[str] | None = None) -> int:
     if args.batch:
         import asyncio
 
-        return asyncio.run(
+        rc = asyncio.run(
             score_batch(
                 yaml_paths,
                 model=args.model,
@@ -944,12 +975,23 @@ def main(argv: list[str] | None = None) -> int:
                 max_rps=args.max_rps,
             )
         )
+        if args.render_html:
+            # Render every successfully written report. We treat the on-disk
+            # file as the source of truth — if scoring left it valid, render it.
+            for p in yaml_paths:
+                if p.is_file():
+                    try:
+                        _render_after_score(p, args)
+                    except Exception as e:
+                        print(f"warning: failed to render {p}: {e}", file=sys.stderr)
+        return rc
 
     failures = 0
     for yaml_path in yaml_paths:
+        out_path = Path(args.out) if args.out else None
         rc = _score_one(
             yaml_path,
-            out=Path(args.out) if args.out else None,
+            out=out_path,
             model=args.model,
             evaluator=args.evaluator,
             allow_misaligned=args.allow_misaligned,
@@ -957,7 +999,49 @@ def main(argv: list[str] | None = None) -> int:
         )
         if rc != 0:
             failures += 1
+            continue
+        if args.render_html:
+            _render_after_score(out_path if out_path else yaml_path, args)
     return 0 if failures == 0 else 1
+
+
+def _render_after_score(eval_md_path: Path, args) -> None:
+    """Compose `pprose score` + `pprose render` — render the just-written report."""
+    # Imported lazily so importing eval_score doesn't import Jinja2.
+    from pprose.render_html.inliner import write_folder_assets
+    from pprose.render_html.renderer import RenderOpts, render_eval_report
+
+    report = EvalReport.from_eval_md(eval_md_path)
+    sections = tuple(s.strip() for s in args.render_sections.split(",") if s.strip())
+    opts = RenderOpts(
+        page_size=args.render_page_size,
+        sections=sections,
+        pprose_version=_pprose_version(),
+        folder_mode=(args.render_format == "folder"),
+    )
+    html = render_eval_report(report, opts)
+    out_html = _render_output_path(eval_md_path)
+    out_html.parent.mkdir(parents=True, exist_ok=True)
+    out_html.write_text(html, encoding="utf-8")
+    if opts.folder_mode:
+        write_folder_assets(out_html.parent)
+    print(f"OK: wrote {out_html}", file=sys.stderr)
+
+
+def _render_output_path(eval_md_path: Path) -> Path:
+    name = eval_md_path.name
+    if name.endswith(".eval.md"):
+        return eval_md_path.with_name(name[: -len(".md")] + ".html")
+    return eval_md_path.with_suffix(".html")
+
+
+def _pprose_version() -> str:
+    from importlib.metadata import PackageNotFoundError, version
+
+    try:
+        return version("pprose")
+    except PackageNotFoundError:
+        return "dev"
 
 
 if __name__ == "__main__":

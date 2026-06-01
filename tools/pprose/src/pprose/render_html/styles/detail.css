@@ -1,0 +1,110 @@
+/* Per-dimension detail blocks — rubric question, score reasoning,
+ * rule findings. Each block is sized to be quietly readable on paper
+ * and is marked break-inside: avoid in print.css so a block doesn't
+ * split awkwardly across pages.
+ */
+
+.detail-page > h2 {
+  font-family: var(--font-serif);
+  font-size: 1.6rem;
+  font-weight: 600;
+  margin: 0 0 1.2rem;
+  color: var(--fg);
+}
+
+.dim-block {
+  margin: 0 0 1.4rem;
+  padding: 0.9rem 1.1rem;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-left: 4px solid var(--row-color, var(--muted));
+  border-radius: 6px;
+}
+
+.dim-block .dim-block-head {
+  display: flex;
+  align-items: baseline;
+  gap: 0.6rem;
+  margin: 0 0 0.4rem;
+}
+
+.dim-block .dim-id {
+  font-family: var(--font-sans);
+  font-size: 0.78rem;
+  font-weight: var(--weight-caps-strong);
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-caps);
+  color: var(--muted);
+}
+
+.dim-block .dim-label {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--fg);
+}
+
+.dim-block .dim-score {
+  margin-left: auto;
+  font-family: var(--font-sans);
+  font-size: 1rem;
+  font-weight: var(--weight-num);
+  font-variant-numeric: tabular-nums;
+  color: var(--row-color, var(--fg));
+}
+
+.dim-block .dim-question {
+  font-family: var(--font-serif);
+  font-size: 1rem;
+  color: var(--fg);
+  margin: 0 0 0.6rem;
+}
+
+.dim-block .dim-reason {
+  font-family: var(--font-serif);
+  font-size: 0.95rem;
+  color: var(--fg);
+  margin: 0 0 0.5rem;
+}
+
+.dim-block .dim-findings {
+  margin: 0.4rem 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.dim-block .dim-findings li {
+  font-family: var(--font-sans);
+  font-size: 0.85rem;
+  color: var(--muted);
+  margin: 0.2rem 0;
+  padding-left: 0.9rem;
+  position: relative;
+}
+
+.dim-block .dim-findings li::before {
+  content: "·";
+  position: absolute;
+  left: 0;
+  color: var(--row-color, var(--muted));
+  font-weight: var(--weight-caps-strong);
+}
+
+.dim-block .dim-findings .verdict-miss {
+  color: var(--score-2);
+  font-weight: var(--weight-caps-strong);
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-caps);
+  font-size: 0.7rem;
+  margin-right: 0.35rem;
+}
+
+.dim-block .dim-findings .verdict-hit {
+  color: var(--score-4);
+  font-weight: var(--weight-caps-strong);
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-caps);
+  font-size: 0.7rem;
+  margin-right: 0.35rem;
+}

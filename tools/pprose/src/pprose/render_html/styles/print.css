@@ -1,0 +1,49 @@
+/* Print rules — let the browser produce a clean PDF via Save as PDF.
+ *
+ * The default page size is Letter; the renderer rewrites `size: letter`
+ * to `size: A4` when --page-size a4 is passed. Margins are fixed at
+ * 0.6in (matches typical Word/Pages output).
+ *
+ * Each .page section starts on a fresh sheet (`break-before: page`),
+ * and the Visual 9B card + per-dim detail blocks carry
+ * `break-inside: avoid` so they don't split across pages.
+ */
+
+@media print {
+  @page {
+    size: letter;
+    margin: 0.6in;
+  }
+
+  html, body {
+    background: #fff;
+    color: #000;
+  }
+
+  body {
+    font-size: 11pt;
+    line-height: 1.4;
+  }
+
+  main {
+    max-width: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  section.page {
+    break-before: page;
+    margin: 0;
+  }
+
+  section.page:first-of-type {
+    break-before: avoid;
+  }
+
+  .bi-card,
+  .dim-block,
+  .stat,
+  .ratios li {
+    break-inside: avoid;
+  }
+}

@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{{ title }}</title>
+  <meta name="generator" content="pprose render {{ pprose_version }}">
+  <style>
+{{ css | safe }}
+  </style>
+</head>
+<body>
+  <main>
+    {% if 'card' in sections %}
+    <section class="page card-page">
+      {% include 'page_card.html.jinja' %}
+    </section>
+    {% endif %}
+    {% if 'detail' in sections and report.qual_reasons %}
+    <section class="page detail-page">
+      {% include 'page_detail.html.jinja' %}
+    </section>
+    {% endif %}
+    {% if 'metrics' in sections and report.quant %}
+    <section class="page metrics-page">
+      {% include 'page_metrics.html.jinja' %}
+    </section>
+    {% endif %}
+    {% if 'footer' in sections %}
+    <section class="page footer-page">
+      {% include 'page_footer.html.jinja' %}
+    </section>
+    {% endif %}
+  </main>
+</body>
+</html>

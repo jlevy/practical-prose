@@ -1,0 +1,78 @@
+/* Quantitative metrics — compact stat callouts + density ratios.
+ *
+ * Visual 10 in spirit: large tabular numerals for single facts (words,
+ * pages, headings), small-caps labels for what they mean.
+ */
+
+.metrics-page > h2 {
+  font-family: var(--font-serif);
+  font-size: 1.6rem;
+  font-weight: 600;
+  margin: 0 0 1.2rem;
+  color: var(--fg);
+}
+
+.metrics-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(8rem, 1fr));
+  gap: 1rem;
+  margin: 0 0 1.2rem;
+}
+
+.stat {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 0.8rem 0.9rem;
+}
+
+.stat .stat-value {
+  display: block;
+  font-family: var(--font-sans);
+  font-size: 1.8rem;
+  font-weight: var(--weight-num);
+  font-variant-numeric: tabular-nums;
+  color: var(--fg);
+  line-height: 1.1;
+}
+
+.stat .stat-label {
+  display: block;
+  font-family: var(--font-sans);
+  font-size: 0.7rem;
+  font-weight: var(--weight-caps-strong);
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-caps);
+  color: var(--muted);
+  margin-top: 0.25rem;
+}
+
+.ratios {
+  margin: 1.2rem 0 0;
+  padding: 0;
+  list-style: none;
+  border-top: 1px solid var(--border);
+}
+
+.ratios li {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.45rem 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.ratios .ratio-label {
+  font-family: var(--font-sans);
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+
+.ratios .ratio-value {
+  font-family: var(--font-sans);
+  font-size: 1rem;
+  font-weight: var(--weight-num);
+  font-variant-numeric: tabular-nums;
+  color: var(--fg);
+}

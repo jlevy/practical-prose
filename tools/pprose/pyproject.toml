@@ -41,6 +41,7 @@ classifiers = [
 dependencies = [
     "aiolimiter>=1.2",
     "chopdiff>=0.2.1",
+    "jinja2>=3.1",
     "pydantic>=2.0",
     # Provider-agnostic LLM client. Pinned (not >=) to honor the 14-day cool-off
     # supply-chain policy: 1.93.0 was released 2026-05-09. Re-pin when bumping.
@@ -100,6 +101,9 @@ include = [
     "src/pprose/rubric_schema.yaml",
     "src/pprose/prompts/*.md",
     "src/pprose/resources/**/*.md",
+    "src/pprose/render_html/templates/*.jinja",
+    "src/pprose/render_html/styles/*.css",
+    "src/pprose/render_html/assets/*",
 ]
 
 

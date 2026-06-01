@@ -1,0 +1,91 @@
+/* Design-system tokens — palette + scoring tokens used by the eval-report card.
+ *
+ * Mirrors tools/design-system/_generated/design_system.css. We carry a local
+ * copy here so the wheel is self-contained — the renderer never reads from
+ * the repo at run time. When the canonical tokens change, regenerate.
+ *
+ * Font stacks intentionally avoid Arial, Tahoma, and Verdana. We rely on
+ * system serifs (PT Serif, Iowan, Charter, Georgia) and a system-ui sans
+ * stack so the report renders with native typography on macOS, Windows,
+ * and Linux without any @font-face downloads.
+ */
+
+:root {
+  --bg: hsl(40 38% 93%);
+  --fg: hsl(30 12% 10%);
+  --muted: hsl(40 9% 39%);
+  --card: hsl(40 50% 96%);
+  --border: hsl(40 26% 79%);
+  --rule: hsl(30 12% 10%);
+
+  /* Group ink (primary accent per group) */
+  --accent-p: hsl(72 19% 40%);
+  --accent-e: hsl(206 19% 40%);
+  --accent-f: hsl(35 19% 40%);
+  --accent-r: hsl(0 19% 40%);
+  --accent-g: hsl(162 19% 35%);
+  --accent-j: hsl(265 19% 42%);
+
+  /* Group surface (pale family-hue background) */
+  --surface-p: hsl(72 19% 92%);
+  --surface-e: hsl(206 19% 92%);
+  --surface-f: hsl(35 19% 92%);
+  --surface-r: hsl(0 19% 92%);
+  --surface-g: hsl(162 19% 92%);
+  --surface-j: hsl(265 19% 92%);
+
+  /* Per-dimension colors (slight hue rotation within each group family) */
+  --dim-suitability: hsl(68 19% 40%);
+  --dim-scope: hsl(72 19% 37%);
+  --dim-breadth: hsl(76 19% 34%);
+  --dim-depth: hsl(80 19% 31%);
+  --dim-clarity: hsl(201 19% 35%);
+  --dim-coherence: hsl(204 19% 32%);
+  --dim-concision: hsl(207 19% 30%);
+  --dim-organization: hsl(31 19% 38%);
+  --dim-consistency: hsl(35 19% 35%);
+  --dim-formatting: hsl(39 19% 32%);
+  --dim-discipline: hsl(354 19% 40%);
+  --dim-soundness: hsl(357 19% 37%);
+  --dim-precision: hsl(0 19% 34%);
+  --dim-parsimony: hsl(3 19% 31%);
+  --dim-verifiability: hsl(158 19% 32%);
+  --dim-factuality: hsl(162 19% 29%);
+  --dim-relevance: hsl(166 19% 26%);
+  --dim-calibration: hsl(259 19% 42%);
+  --dim-fairness: hsl(265 19% 39%);
+  --dim-robustness: hsl(271 19% 36%);
+
+  /* Score ramp (orthogonal to family) */
+  --score-1: hsl(0 70% 35%);
+  --score-2: hsl(28 80% 30%);
+  --score-3: hsl(40 80% 32%);
+  --score-4: hsl(140 60% 28%);
+  --score-5: hsl(140 60% 20%);
+  --score-na: hsl(220 10% 50%);
+  --score-err: hsl(0 85% 40%);
+
+  /* Typography — caps eyebrow */
+  --tracking-caps: 0.09em;
+  --weight-caps: 600;
+  --weight-caps-strong: 800;
+
+  /* Typography — quantitative numbers */
+  --weight-num: 600;
+
+  /* Chrome tokens */
+  --icon-color: hsl(40 0% 28%);
+  --dim-label-color: hsl(40 0% 28%);
+  --na-color: hsl(220 10% 78%);
+  --na-label-color: hsl(40 0% 60%);
+
+  /* Font stacks — system fonts only, deliberately no Arial / Tahoma / Verdana */
+  --font-sans:
+    -apple-system, BlinkMacSystemFont, "Segoe UI Variable", "Segoe UI",
+    "Inter", "Helvetica Neue", system-ui, sans-serif;
+  --font-serif:
+    "PT Serif", "Iowan Old Style", "Charter", Georgia, "Times New Roman", serif;
+  --font-mono:
+    ui-monospace, "SF Mono", "Cascadia Mono", "JetBrains Mono", Consolas,
+    "Liberation Mono", monospace;
+}

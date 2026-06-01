@@ -1,0 +1,205 @@
+/* Visual 9B — Bidirectional Bars (LTR variant).
+ *
+ * Ported from tools/explorations/visual-design/dimension-visualizations.html
+ * (the .bi-* and .bi-ltr rules) into a static, self-contained stylesheet.
+ * No JavaScript at view time; the hover-driven tip panels from the
+ * explorations file are replaced by the per-dim detail section that
+ * follows the card.
+ *
+ * Per-dim hue is supplied by --dim-<key> custom properties on each row
+ * (set inline by the template). The bar fill width is score/5 * 100%.
+ */
+
+.bi-card {
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--card);
+  padding: 1rem 1.25rem 1.25rem;
+  font-family: var(--font-sans);
+  max-width: 36rem;
+  margin: 0 auto;
+}
+
+.bi-card .doc-kicker {
+  font-family: var(--font-sans);
+  font-size: 0.85rem;
+  font-weight: var(--weight-caps-strong);
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-caps);
+  text-align: center;
+  color: var(--muted);
+  margin: 0 0 0.3rem;
+}
+
+.bi-card .doc-name {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-size: 1.8rem;
+  font-weight: 600;
+  text-align: center;
+  margin: 0 0 0.4rem;
+  color: var(--fg);
+  line-height: 1.15;
+}
+
+.bi-card .doc-meta {
+  font-family: var(--font-sans);
+  font-size: 0.78rem;
+  color: var(--muted);
+  text-align: center;
+  margin: 0 0 1.1rem;
+}
+
+.bi-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  column-gap: 1.5rem;
+}
+
+.bi-col {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+/* Group header — icon at left edge, group label next to it,
+ * group-average tucked at the right edge.
+ */
+.bi-group-header {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  font-family: var(--font-serif);
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin: 0.7rem 0 0.35rem;
+  color: var(--accent-g);
+}
+
+.bi-group-header .grp-icon {
+  font-size: 1.6rem;
+  line-height: 1;
+  width: 1.8rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.bi-group-header .label {
+  color: color-mix(in oklch, var(--fg) 70%, var(--muted));
+}
+
+.bi-group-header .bi-group-avg {
+  margin-left: auto;
+  font-family: var(--font-sans);
+  font-size: 1.25rem;
+  font-weight: var(--weight-num);
+  font-variant-numeric: tabular-nums;
+  color: color-mix(in oklch, var(--fg) 70%, var(--muted));
+}
+
+/* Hanging indent so dim rows align with the group label
+ * (icon stays in the left gutter). */
+.bi-col .bi-dim {
+  padding-left: 2.35rem;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin: 3px 0;
+}
+
+.bi-dim-head {
+  display: flex;
+  align-items: baseline;
+  gap: 0.5rem;
+}
+
+.bi-dim-name {
+  flex: 1;
+  min-width: 0;
+  font-family: var(--font-sans);
+  font-size: 0.78rem;
+  font-weight: var(--weight-caps-strong);
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-caps);
+  color: var(--dim-label-color);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.bi-dim-score {
+  font-family: var(--font-sans);
+  font-size: 1rem;
+  font-weight: var(--weight-num);
+  font-variant-numeric: tabular-nums;
+  color: var(--dim-label-color);
+}
+
+.bi-bar-track {
+  height: 0.7rem;
+  background: var(--surface-p, hsl(40 12% 88%));
+  border-radius: 3px;
+  overflow: hidden;
+  position: relative;
+}
+
+.bi-bar-fill {
+  height: 100%;
+  background: var(--row-color, var(--muted));
+  border-radius: 3px;
+}
+
+/* NA rows: muted name + score, ghosted bar */
+.bi-dim.is-na .bi-dim-name,
+.bi-dim.is-na .bi-dim-score {
+  color: var(--na-label-color);
+}
+
+.bi-dim.is-na .bi-bar-fill {
+  background: var(--na-color);
+  width: 100%;
+  opacity: 0.35;
+}
+
+/* ERR rows: red-tinted bar + ERR badge */
+.bi-dim.is-err .bi-dim-score {
+  color: var(--score-err);
+  font-weight: var(--weight-caps-strong);
+  font-size: 0.8rem;
+  letter-spacing: var(--tracking-caps);
+}
+
+.bi-dim.is-err .bi-bar-fill {
+  background: var(--score-err);
+  width: 100%;
+  opacity: 0.5;
+}
+
+/* Overall score footer below the grid. */
+.bi-card .doc-rollup {
+  margin: 1.5rem 0 0;
+  padding-top: 0.9rem;
+  border-top: 1px solid var(--border);
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+  gap: 0.6rem;
+}
+
+.bi-card .doc-rollup .label {
+  font-family: var(--font-sans);
+  font-size: 0.78rem;
+  font-weight: var(--weight-caps-strong);
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-caps);
+  color: var(--muted);
+}
+
+.bi-card .doc-rollup .value {
+  font-family: var(--font-sans);
+  font-size: 1.5rem;
+  font-weight: var(--weight-num);
+  font-variant-numeric: tabular-nums;
+  color: var(--fg);
+}

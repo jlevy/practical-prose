@@ -34,7 +34,15 @@ uvx pprose <command> ...
 ```
 
 **Evaluate** (action): `pprose metrics`, `pprose report`, `pprose score`,
-`pprose compare`.
+`pprose compare`, `pprose render`.
+
+`pprose render <doc.eval.md>` emits a clean, print-friendly static HTML page from an
+eval report — single self-contained file by default. It is the canonical shareable
+artifact for a single-doc eval. Pair it with `pprose score <doc.md> --render-html` to
+score and render in one shot; the two are composable primitives. Open the resulting
+HTML in any modern browser and use the print dialog to save as PDF (Letter by default;
+`--page-size a4` for A4). See
+[plan-2026-05-29-static-html-eval-report.md](specs/active/plan-2026-05-29-static-html-eval-report.md).
 
 **Reference** (print bundled docs the agent follows; `--list` to enumerate):
 `pprose guidelines <name>`, `pprose shortcut <name>`, `pprose runbook <name>`,

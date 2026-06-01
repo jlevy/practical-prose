@@ -191,9 +191,7 @@ def parse_surfaces(raw: str | None) -> SurfaceSpec:
             if tok == SURFACE_AGENTS_MD:
                 agents_md_explicit = True
         else:
-            raise ValueError(
-                f"unknown surface {tok!r}; valid: " + ", ".join(_VALID_SURFACE_TOKENS)
-            )
+            raise ValueError(f"unknown surface {tok!r}; valid: " + ", ".join(_VALID_SURFACE_TOKENS))
     return SurfaceSpec(frozenset(expanded), agents_md_explicit)
 
 
@@ -240,9 +238,7 @@ def compose_skill(name: str, pin: str | None = None) -> str:
     pin = pin if pin is not None else pinned_version()
     fm, body = _split_frontmatter(resources.read_doc("skills", name))
     head = f"---\n{fm}\n---\n" if fm else ""
-    return (
-        f"{head}{_skill_marker()}\n\n{_bootstrap_line(pin)}\n\n{body}"
-    ).rstrip() + "\n"
+    return (f"{head}{_skill_marker()}\n\n{_bootstrap_line(pin)}\n\n{body}").rstrip() + "\n"
 
 
 def _skill_description(name: str) -> str:
@@ -370,9 +366,7 @@ def _write_atomic(path: Path, content: str) -> None:
     tmp.replace(path)
 
 
-def _write_skill_file(
-    skill_dir: Path, surface: str, name: str, content: str
-) -> InstallResult:
+def _write_skill_file(skill_dir: Path, surface: str, name: str, content: str) -> InstallResult:
     out = skill_dir / "SKILL.md"
     existing = _existing_skill_format(out)
     # Forward-compatibility guard: never clobber a newer-format artifact.
@@ -408,8 +402,7 @@ def _update_agents_md(path: Path, block: str) -> InstallResult:
         matches = list(_AGENTS_BLOCK_RE.finditer(existing))
         head = existing[: matches[0].start()]
         tail_parts = [
-            existing[matches[i - 1].end() : matches[i].start()]
-            for i in range(1, len(matches))
+            existing[matches[i - 1].end() : matches[i].start()] for i in range(1, len(matches))
         ]
         tail_parts.append(existing[matches[-1].end() :])
         new_content = head + block + "".join(tail_parts)

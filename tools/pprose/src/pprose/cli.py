@@ -8,6 +8,7 @@ from contextlib import contextmanager
 from dataclasses import dataclass
 
 from pprose import eval_compare, eval_report, eval_score, install, metrics, reference
+from pprose.render_html import cli as render_cli
 
 CommandMain = Callable[[list[str] | None], int]
 
@@ -42,6 +43,11 @@ COMMANDS: dict[str, CommandSpec] = {
     "compare": CommandSpec(
         "Compare multiple eval reports in Markdown tables.",
         eval_compare.main,
+        "Evaluate",
+    ),
+    "render": CommandSpec(
+        "Render an eval report (.eval.md) as a print-friendly static HTML page.",
+        render_cli.main,
         "Evaluate",
     ),
     "guidelines": CommandSpec(
