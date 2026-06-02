@@ -1,6 +1,6 @@
 # Practical Prose
 
-## What is This Project?
+## What Is This Project?
 
 Clear writing and clear thinking are inseparable.
 A document is an instrument by which thought becomes visible, testable, and useful.
@@ -23,38 +23,7 @@ The documents and tools here are organized for both human and agent use:
 - To summarize and share visualizations of these quality dimensions to better raise our
   own awareness of clear thinking and clear writing
 
-* * *
-
-> ## A Personal Note
-
-> I always admired good writing, both fiction and nonfiction.
-> I have also written popular technical and business guides.
-> As I was building [Holloway](https://www.holloway.com) I spent much more time learning
-> and thinking about editorial processes, the production of print and digital books, and
-> publishing tools. I’m also an engineer.
-> I now use agents to write millions of lines of code and documents, including software
-> documentation, technical specifications, and business or financial analysis.
-> 
-> The latest models are both shockingly capable yet also can write and think in such
-> sloppy ways. LLMs tend toward mediocrity because they tend to write “in distribution”
-> of the training data.
-> But just as with human writers, many shortcomings are correctable errors or bad
-> habits.
-> 
-> I realize that trying to describe or measure the essence of what makes good writing is
-> incredibly difficult or perhaps impossible.
-> But even an unrealistic ambition can yield practical benefits.
-> 
-> Agents now let us combine insights from many sources.
-> Human insights that diverged or were scattered by historical accident can be
-> consolidated and forged into useful form.
-> It is still in progress, but I’ve tried to draw from the best thinkers and sources,
-> including classics about good writing, the plain-language writing tradition, science
-> and engineering writing, and journalistic practices.
-
-* * *
-
-## Contents
+### What Is Here
 
 1. Guiding [**principles**](#principles-of-quality-in-practical-writing) and
    [**guidelines**](docs/practical-prose-guidelines.md) for quality in practical writing
@@ -70,6 +39,50 @@ The documents and tools here are organized for both human and agent use:
 5. [**Skills**](#agent-skills) that use [**a CLI**](#tooling) to package these features
 6. A [**bibliography**](docs/practical-prose-bibliography.md) of notable works on
    practical writing
+
+* * *
+
+> [!NOTE]
+> **A Personal Note**
+> 
+> I always admired good writing, both fiction and nonfiction.
+> I have also written [open source](https://github.com/jlevy) technical and business
+> guides with millions of readers.
+> As I was building [Holloway](https://www.holloway.com), I spent much time learning and
+> thinking about editorial processes, the production of print and digital books, and
+> publishing tools. I now use agents to write millions of lines of code and documents,
+> including software documentation, technical specifications, and business or financial
+> analysis.
+> 
+> I mention this background because, since the early days of the Internet, I’ve felt
+> that words and code have a deep and often unappreciated kinship.
+> The line between language and software is now almost impossible to draw.
+> So it is an important time to explore the power of language.
+> 
+> Agents are a constant source of both delight and disappointment.
+> In some situations they are shockingly capable.
+> Yet they write and think in sloppy ways and can make disastrous errors.
+> LLMs tend toward mediocrity because they tend to write “in distribution” of the
+> training data.
+> 
+> But just as with human writers, many agent shortcomings are correctable errors or bad
+> habits. Agents should follow the principles embraced by the best thinkers and writers,
+> not just what is statistically probable.
+> 
+> I realize trying to codify rules for good writing is difficult to impossible.
+> But I prefer to think of this as improving our ability to learn the skills of the best
+> thinkers and writers.
+> So I’ve tried to draw from the best sources I know about clear thinking and writing,
+> including classics on style, the plain-language writing tradition, science and
+> engineering writing, and journalistic practices.
+> 
+> In my view, the higher purpose of AI is not replacing human effort or eliminating
+> work. As Doug Engelbart
+> [explained](https://www.dougengelbart.org/pubs/augment-3906.html) over 60 years ago,
+> it is in augmenting our own capabilities for understanding the world and solving
+> shared challenges.
+
+* * *
 
 ## Practical Writing in the Age of AI
 
