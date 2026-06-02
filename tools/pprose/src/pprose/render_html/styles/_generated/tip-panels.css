@@ -116,8 +116,15 @@
    tooltip and the visual read as parallel artifacts.  No rule
    underneath — the bi-card doesn't have one either. */
 .bi-tip-panel .tip-panel-heading {
+  /* Small-caps eyebrow — self-contained so the component doesn't depend on
+     the workbench's inline `.eyebrow` utility (which ships nowhere else).
+     Matches the approved `.eyebrow-lg` spec verbatim. */
+  font-family: var(--font-sans);
   font-size: 0.9rem;
   font-weight: var(--weight-caps-strong);
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-caps);
+  color: var(--muted);
   text-align: center;
   margin-bottom: 0.75rem;
 }

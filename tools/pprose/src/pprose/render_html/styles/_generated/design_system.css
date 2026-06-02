@@ -31,11 +31,11 @@ Regenerate with: uv run --script tools/design-system/generate.py */
 }
 
 :root {
-  --bg: hsl(40 38% 93%);
+  --bg: hsl(0 0% 98%);
   --fg: hsl(30 12% 10%);
   --muted: hsl(40 0% 28%);
-  --card: hsl(40 50% 96%);
-  --border: hsl(40 26% 79%);
+  --card: hsl(0 0% 100%);
+  --border: hsl(0 0% 88%);
   --rule: hsl(30 12% 10%);
 
   /* Group ink (primary accent per group) */
@@ -141,11 +141,11 @@ Regenerate with: uv run --script tools/design-system/generate.py */
 
 @media (prefers-color-scheme: dark) {
   :root {
-  --bg: hsl(40 8% 8%);
+  --bg: hsl(0 0% 8%);
     --fg: hsl(40 25% 88%);
     --muted: hsl(40 11% 53%);
-    --card: hsl(34 12% 10%);
-    --border: hsl(40 13% 17%);
+    --card: hsl(0 0% 12%);
+    --border: hsl(0 0% 18%);
     --rule: hsl(40 25% 88%);
 
     /* Group ink (primary accent per group) */
@@ -200,11 +200,11 @@ Regenerate with: uv run --script tools/design-system/generate.py */
 
 /* Explicit overrides — win over the media query when set. */
 :root[data-theme="dark"] {
-  --bg: hsl(40 8% 8%);
+  --bg: hsl(0 0% 8%);
   --fg: hsl(40 25% 88%);
   --muted: hsl(40 11% 53%);
-  --card: hsl(34 12% 10%);
-  --border: hsl(40 13% 17%);
+  --card: hsl(0 0% 12%);
+  --border: hsl(0 0% 18%);
   --rule: hsl(40 25% 88%);
 
   /* Group ink (primary accent per group) */
@@ -256,11 +256,11 @@ Regenerate with: uv run --script tools/design-system/generate.py */
   --score-err: hsl(0 75% 65%);
 }
 :root[data-theme="light"] {
-  --bg: hsl(40 38% 93%);
+  --bg: hsl(0 0% 98%);
   --fg: hsl(30 12% 10%);
   --muted: hsl(40 0% 28%);
-  --card: hsl(40 50% 96%);
-  --border: hsl(40 26% 79%);
+  --card: hsl(0 0% 100%);
+  --border: hsl(0 0% 88%);
   --rule: hsl(30 12% 10%);
 
   /* Group ink (primary accent per group) */

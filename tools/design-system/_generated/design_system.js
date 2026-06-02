@@ -6,8 +6,8 @@ export const designSystem = Object.freeze({
   "version": 1,
   "surfaces": {
     "bg": {
-      "light": "hsl(40 38% 93%)",
-      "dark": "hsl(40 8% 8%)"
+      "light": "hsl(0 0% 98%)",
+      "dark": "hsl(0 0% 8%)"
     },
     "fg": {
       "light": "hsl(30 12% 10%)",
@@ -18,12 +18,12 @@ export const designSystem = Object.freeze({
       "dark": "hsl(40 11% 53%)"
     },
     "card": {
-      "light": "hsl(40 50% 96%)",
-      "dark": "hsl(34 12% 10%)"
+      "light": "hsl(0 0% 100%)",
+      "dark": "hsl(0 0% 12%)"
     },
     "border": {
-      "light": "hsl(40 26% 79%)",
-      "dark": "hsl(40 13% 17%)"
+      "light": "hsl(0 0% 88%)",
+      "dark": "hsl(0 0% 18%)"
     },
     "rule": {
       "light": "hsl(30 12% 10%)",
