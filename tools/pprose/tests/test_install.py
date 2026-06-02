@@ -36,6 +36,29 @@ def home_tmp(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> Path:
 # ─────────────────────────────────────────────────────────────────────────────
 
 
+def test_generated_skills_are_flowmark_stable():
+    """compose_skill / agents_md_block output is already flowmark-formatted.
+
+    Generation must be idempotent under the repo's flowmark pre-commit hook: running
+    flowmark over a freshly generated artifact must be a no-op, or `make generate`
+    would emit long lines the hook silently rewraps into uncommitted drift (the
+    original CI break). install._flowmark uses the same flags, verified byte-identical
+    to flowmark-rs --auto.
+    """
+    from flowmark import reformat_text
+
+    def _is_stable(text: str) -> bool:
+        formatted = reformat_text(text, width=88, semantic=True, cleanups=True, smartquotes=True)
+        return formatted == text.rstrip() + "\n"
+
+    for name in resources.list_names("skills"):
+        composed = install.compose_skill(name, pin="0.1.0")
+        assert _is_stable(composed), f"compose_skill({name!r}) is not flowmark-stable"
+
+    block = install.agents_md_block(pin="0.1.0")
+    assert _is_stable(block), "agents_md_block() is not flowmark-stable"
+
+
 def test_resources_list_and_read():
     assert "common-doc-guidelines" in resources.list_names("guidelines")
     assert "shortcut-full-edit" in resources.list_names("shortcuts")

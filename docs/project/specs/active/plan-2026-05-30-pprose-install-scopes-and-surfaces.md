@@ -198,7 +198,7 @@ Installing pprose skills (user-global mode) into: /Users/me
 | `pprose install --global --dir X` | error: mutually exclusive |
 | `pprose install --project --global` | error: mutually exclusive |
 | `pprose install --global --surfaces=agents-md` | error: “agents-md is not supported in --global mode” |
-| `pprose install --surfaces=bogus` | error: “unknown surface 'bogus'; valid: portable, claude, agents-md, all” |
+| `pprose install --surfaces=bogus` | error: “unknown surface ‘bogus’; valid: portable, claude, agents-md, all” |
 
 ### Help-text outline
 
@@ -265,21 +265,21 @@ unreleased and the prior shape shipped only on this branch):
 
 ### Locked decisions (was: Open Questions)
 
-These were the open questions in the first spec draft and the resolutions adopted
-before implementation:
+These were the open questions in the first spec draft and the resolutions adopted before
+implementation:
 
-1. **`--global --surfaces=agents-md` → error**, not silent drop. Explicit user
-   intent we can't satisfy should be told to the user, not hidden.
+1. **`--global --surfaces=agents-md` → error**, not silent drop.
+   Explicit user intent we can’t satisfy should be told to the user, not hidden.
 2. **Implicit project requires a git repo.** Non-git projects use
    `--project --no-repo-check` explicitly; no `pyproject.toml`/`AGENTS.md`/etc.
    project sniffing for v1.
 3. **No `--print` mode.** Use `pprose skill <name>` for preview (already exists).
-4. **Cross-scope coexistence is the expected pattern**, not a duplicate-install
-   warning case. Project-scope shadows user-scope; that's how Codex (verified via
-   the loader's scope hierarchy in the cli-agent-skill-patterns guideline) and the
-   broader ecosystem (git config, PATH, npm, Python site-packages) behave. Document
-   the shadowing in a one-line help epilog / README note; no warning or enforcement
-   in code.
+4. **Cross-scope coexistence is the expected pattern**, not a duplicate-install warning
+   case. Project-scope shadows user-scope; that’s how Codex (verified via the loader’s
+   scope hierarchy in the cli-agent-skill-patterns guideline) and the broader ecosystem
+   (git config, PATH, npm, Python site-packages) behave.
+   Document the shadowing in a one-line help epilog / README note; no warning or
+   enforcement in code.
 5. **Exit codes**: 0 success, 1 blocked-newer (runtime), 2 argument-shape errors
    (mutually exclusive flags, unknown surface, ambiguous scope).
 6. **Pre-write target message lists the surface set** so a user can ctrl-c if the
@@ -288,29 +288,27 @@ before implementation:
    Installing pprose skills (project mode) into: /Users/me/myrepo
      surfaces: portable, claude, agents-md
    ```
-7. **`Path.home()`** for the `$HOME` refusal check; no `XDG_CONFIG_HOME` handling
-   in v1 (agent skill discovery paths are universally `$HOME`-rooted per §5 of the
+7. **`Path.home()`** for the `$HOME` refusal check; no `XDG_CONFIG_HOME` handling in v1
+   (agent skill discovery paths are universally `$HOME`-rooted per §5 of the
    cli-agent-skill-patterns guideline).
-8. **`--auto` does not relax the ambiguity check**, and the error message is the
-   same one a human sees. Pedagogical agent-specific wording would be
-   over-engineering.
+8. **`--auto` does not relax the ambiguity check**, and the error message is the same
+   one a human sees. Pedagogical agent-specific wording would be over-engineering.
 
-### One namespace for "surface" (locked decision)
+### One namespace for “surface” (locked decision)
 
-The earlier draft had two distinct namespaces both spelled "surface" — an
-artifact-metadata tag (`surface=skill-md` / `surface=agents-md`) inside generated
-files, and a CLI install selector (`--surfaces=portable,claude,agents-md`). We
-collapsed this to **one namespace**: `--surfaces` is the only place those names
-appear. The in-file DO-NOT-EDIT markers carry only `format=fNN`; the artifact's
-type is identified by its location (a `SKILL.md` under a skill directory, or the
+The earlier draft had two distinct namespaces both spelled “surface” — an
+artifact-metadata tag (`surface=skill-md` / `surface=agents-md`) inside generated files,
+and a CLI install selector (`--surfaces=portable,claude,agents-md`). We collapsed this
+to **one namespace**: `--surfaces` is the only place those names appear.
+The in-file DO-NOT-EDIT markers carry only `format=fNN`; the artifact’s type is
+identified by its location (a `SKILL.md` under a skill directory, or the
 BEGIN/END-bounded block inside `AGENTS.md`), not by an in-file tag.
 
-This deletes a namespace rather than collapsing two. Portable and Claude
-`SKILL.md` copies stay byte-identical (the marker no longer carries a
-per-destination tag), and `compose_skill(name, pin)` doesn't need a destination
-argument. The cli-agent-skill-patterns guideline only requires `format=fNN`
-stamping; a `surface=` field is optional future-proofing that pprose doesn't need
-today.
+This deletes a namespace rather than collapsing two.
+Portable and Claude `SKILL.md` copies stay byte-identical (the marker no longer carries
+a per-destination tag), and `compose_skill(name, pin)` doesn’t need a destination
+argument. The cli-agent-skill-patterns guideline only requires `format=fNN` stamping; a
+`surface=` field is optional future-proofing that pprose doesn’t need today.
 
 ## Implementation Plan
 
@@ -318,10 +316,11 @@ today.
 
 - [x] Refactor surface vocabulary in `install.py` to flowmark’s three-name set
   (`portable`, `claude`, `agents-md`), with `ALL_INSTALL_SURFACES` and
-  `parse_surfaces(raw) -> SurfaceSpec` helper that tracks whether `agents-md` was
-  named explicitly.
-- [x] Drop the artifact-metadata `surface=` namespace entirely (locked decision A
-  for the surface-naming overlap). DO-NOT-EDIT markers carry only `format=fNN`.
+  `parse_surfaces(raw) -> SurfaceSpec` helper that tracks whether `agents-md` was named
+  explicitly.
+- [x] Drop the artifact-metadata `surface=` namespace entirely (locked decision A for
+  the surface-naming overlap).
+  DO-NOT-EDIT markers carry only `format=fNN`.
 - [x] Replace `TARGET_CLAUDE` / `TARGET_CODEX` with the surface vocabulary in
   `InstallResult`, `install()`, `_print_summary`, and `agents_md_block`.
 - [x] Add `_is_within_git_repo(path)` and `_protected_target_reason(path)` helpers.
@@ -329,99 +328,101 @@ today.
   `--no-repo-check`; remove `--all` / `--claude` / `--codex` / `--skip-claude` /
   `--skip-codex` / `--no-agents-md` / `--print`. Manually check mutually-exclusive
   combinations so the error path returns an exit code instead of `SystemExit`.
-- [x] Print “Installing pprose skills (project|user-global mode) into: <path>”
-  followed by a `surfaces: …` line before any filesystem writes.
-- [x] Drop `agents-md` from the surface set in GLOBAL mode silently when
-  `--surfaces` is omitted/`all`; error if the user explicitly requested
-  `--surfaces=agents-md` in global mode.
+- [x] Print “Installing pprose skills (project|user-global mode) into: <path>” followed
+  by a `surfaces: …` line before any filesystem writes.
+- [x] Drop `agents-md` from the surface set in GLOBAL mode silently when `--surfaces` is
+  omitted/`all`; error if the user explicitly requested `--surfaces=agents-md` in global
+  mode.
 - [x] Add a `git_repo_tmp(tmp_path)` fixture that creates `tmp_path/.git/`.
 - [x] Add a `home_tmp(tmp_path, monkeypatch)` fixture that sets `$HOME=tmp_path`.
-- [x] Rewrite `tests/test_install.py` for the full error matrix:
-  resources/reference subcommands, skill composition, `parse_surfaces` parsing,
-  scope disambiguation (implicit + explicit-flag conflicts), `--project` mode
-  (in-repo, non-repo, `$HOME` refusal, byte-identical surfaces, idempotent,
-  forward-compat guard, duplicate-block collapse, `--pin` override), `--global`
-  mode (writes, `--surfaces=agents-md` error, portable-only filter), `--surfaces`
-  filtering in project mode, pre-write target message, discovery-copy drift.
+- [x] Rewrite `tests/test_install.py` for the full error matrix: resources/reference
+  subcommands, skill composition, `parse_surfaces` parsing, scope disambiguation
+  (implicit + explicit-flag conflicts), `--project` mode (in-repo, non-repo, `$HOME`
+  refusal, byte-identical surfaces, idempotent, forward-compat guard, duplicate-block
+  collapse, `--pin` override), `--global` mode (writes, `--surfaces=agents-md` error,
+  portable-only filter), `--surfaces` filtering in project mode, pre-write target
+  message, discovery-copy drift.
 - [x] Drop `tests/test_install.py::test_install_print_writes_nothing` (no `--print`).
-- [x] Update `tests/test_cli.py::test_top_level_help_lists_subcommands` to match
-  the new top-level help (no stale `--agents-md` reference).
+- [x] Update `tests/test_cli.py::test_top_level_help_lists_subcommands` to match the new
+  top-level help (no stale `--agents-md` reference).
 - [x] Update `tools/pprose/README.md` install paragraph.
 - [x] Update root `AGENTS.md` install paragraph.
 - [x] Update `tools/pprose/src/pprose/cli.py` command summary for `install`.
-- [x] Regenerate the committed discovery copies under `skills/pprose-*/SKILL.md`
-  via `devtools/sync_resources.py` so they drop the now-absent `surface=` tag.
-- [x] Run `uv run ruff check src tests devtools` and `uv run pytest` clean (210
-  tests passing).
+- [x] Regenerate the committed discovery copies under `skills/pprose-*/SKILL.md` via
+  `devtools/sync_resources.py` so they drop the now-absent `surface=` tag.
+- [x] Run `uv run ruff check src tests devtools` and `uv run pytest` clean (210 tests
+  passing).
 - [ ] Create tbd beads linked to this spec to record the work done.
-- [ ] Draft a §6.6 / §6.7 addition for the cli-agent-skill-patterns guideline
-  codifying the scope-when-ambiguous rule, the `--surfaces` vocabulary, the
-  guard rails, and the cross-scope shadowing convention. File the proposal as
-  a GitHub issue against `jlevy/tbd` via `gh`.
-- [ ] Final commit of implementation + spec on the
-  `pprose-skill-install-improvements` branch.
+- [ ] Draft a §6.6 / §6.7 addition for the cli-agent-skill-patterns guideline codifying
+  the scope-when-ambiguous rule, the `--surfaces` vocabulary, the guard rails, and the
+  cross-scope shadowing convention.
+  File the proposal as a GitHub issue against `jlevy/tbd` via `gh`.
+- [ ] Final commit of implementation + spec on the `pprose-skill-install-improvements`
+  branch.
 
 ### Phase 2: CLI doc coverage and dogfooded `AGENTS.md` install
 
 After landing Phase 1, the user identified two related gaps:
 
-1. **Doc coverage**: bundled CLI docs are limited to `/docs/*.md`,
-   `/shortcuts/*.md`, `/runbooks/*.runbook.md`, and the skills. Public-facing
-   content useful from *any* repo — the `README.md` project narrative, the
-   `tools/design-system/design-system.md` reference, and the authoring
-   principles currently buried in `/AGENTS.md` — isn't accessible via pprose.
-2. **AGENTS.md handling**: pprose's own repo had no `<!-- BEGIN PPROSE INTEGRATION -->`
-   block — its `/AGENTS.md` had been hand-authored without dogfooding
-   `pprose install`.
+1. **Doc coverage**: bundled CLI docs are limited to `/docs/*.md`, `/shortcuts/*.md`,
+   `/runbooks/*.runbook.md`, and the skills.
+   Public-facing content useful from *any* repo — the `README.md` project narrative, the
+   `tools/design-system/design-system.md` reference, and the authoring principles
+   currently buried in `/AGENTS.md` — isn’t accessible via pprose.
+2. **AGENTS.md handling**: pprose’s own repo had no `<!-- BEGIN PPROSE INTEGRATION -->`
+   block — its `/AGENTS.md` had been hand-authored without dogfooding `pprose install`.
 
-The corrected framing: pprose's job is to **install a marker-bounded block into
-whatever AGENTS.md a project already has**, alongside whatever other tools or
-hand-authored content live there. Our own `/AGENTS.md` is not special — it gets
-the same block any other project would. There is no "drift-tested generated
-AGENTS.md" mode and no need for one.
+The corrected framing: pprose’s job is to **install a marker-bounded block into whatever
+AGENTS.md a project already has**, alongside whatever other tools or hand-authored
+content live there. Our own `/AGENTS.md` is not special — it gets the same block any
+other project would.
+There is no “drift-tested generated AGENTS.md” mode and no need for one.
 
-The CLI bundles **public, cross-repo content only**. Repo-internal content (how
-to develop pprose, this repo's specific agent guide, internal specs) stays
-local and is not exposed via the CLI — an agent in another repo has no use for
-"how to release pprose to PyPI." Two clear lines:
+The CLI bundles **public, cross-repo content only**. Repo-internal content (how to
+develop pprose, this repo’s specific agent guide, internal specs) stays local and is not
+exposed via the CLI — an agent in another repo has no use for “how to release pprose to
+PyPI.” Two clear lines:
 
 | CLI-bundled (public, useful in any repo) | Repo-internal (local to practical-prose) |
 | --- | --- |
 | Principles, guidelines, rubric, bibliography, metrics, common-doc-guidelines, ai-prose-corrections | `/docs/development.md` (how to dev the pprose tool) |
 | Shortcuts, runbooks, skills | `/docs/project/` (specs, research, plans) |
-| `README.md` (project narrative) | `/AGENTS.md` (this repo's agent guide) |
+| `README.md` (project narrative) | `/AGENTS.md` (this repo’s agent guide) |
 | `tools/design-system/design-system.md` | New internal doc for the rich workflows table currently in `/AGENTS.md` |
-| New: `practical-prose-authoring-principles.md` | |
+| New: `practical-prose-authoring-principles.md` |  |
 
 #### Design
 
-1. **`pprose about`** new top-level command. Prints the bundled `README.md`
-   (project narrative — what Practical Prose is and why it matters). One-shot
-   command; no `--list` / subcommand. The natural name for the project intro.
+1. **`pprose about`** new top-level command.
+   Prints the bundled `README.md` (project narrative — what Practical Prose is and why
+   it matters). One-shot command; no `--list` / subcommand.
+   The natural name for the project intro.
 
-2. **`pprose guidelines design-system`** — add `tools/design-system/design-system.md`
-   to the bundled guidelines so agents working on palettes / eval-report CSS can
-   pull it on demand from any repo.
+2. **`pprose guidelines design-system`** — add `tools/design-system/design-system.md` to
+   the bundled guidelines so agents working on palettes / eval-report CSS can pull it on
+   demand from any repo.
 
 3. **`pprose guidelines practical-prose-authoring-principles`** — extract the eight
-   numbered authoring principles currently in `/AGENTS.md` into a new bundled doc
-   at `/docs/practical-prose-authoring-principles.md` (which `sync_resources.py`
-   already covers by category). Available from any repo via the CLI.
+   numbered authoring principles currently in `/AGENTS.md` into a new bundled doc at
+   `/docs/practical-prose-authoring-principles.md` (which `sync_resources.py` already
+   covers by category).
+   Available from any repo via the CLI.
 
 4. **`pprose skill` (no args) → richer overview.** Today `pprose skill` and
-   `pprose skill --list` print the same terse `name\tdescription` table. Change:
-   - `pprose skill` (no args) — short overview paragraph + the skill table + a
-     "for more detail" footer routing to `pprose guidelines --list`,
-     `pprose shortcut --list`, `pprose runbook --list`. Makes `pprose skill` the
-     natural entry-point answer to "what does pprose do?"
+   `pprose skill --list` print the same terse `name\tdescription` table.
+   Change:
+   - `pprose skill` (no args) — short overview paragraph + the skill table + a “for more
+     detail” footer routing to `pprose guidelines --list`, `pprose shortcut --list`,
+     `pprose runbook --list`. Makes `pprose skill` the natural entry-point answer to
+     “what does pprose do?”
    - `pprose skill --list` — keep terse listing for scripting / quick reference.
    - `pprose skill <name>` — unchanged (full composed `SKILL.md` content).
 
-5. **Keep the `agents_md_block` minimal.** The currently-installed block already
-   carries trigger keywords + routing pointers + a per-skill bullet list. Trim
-   the bullet list — `pprose skill --list` covers that, and the block needs to
-   sit comfortably alongside other tools' blocks (tbd, flowmark, …) in someone
-   else's AGENTS.md. End state of the block:
+5. **Keep the `agents_md_block` minimal.** The currently-installed block already carries
+   trigger keywords + routing pointers + a per-skill bullet list.
+   Trim the bullet list — `pprose skill --list` covers that, and the block needs to sit
+   comfortably alongside other tools’ blocks (tbd, flowmark, …) in someone else’s
+   AGENTS.md. End state of the block:
 
    ```
    <!-- BEGIN PPROSE INTEGRATION format=f01 -->
@@ -440,107 +441,105 @@ local and is not exposed via the CLI — an agent in another repo has no use for
    <!-- END PPROSE INTEGRATION -->
    ```
 
-   ~10 lines. No workflows table, no per-skill bullet list, no project intro
-   (the host project owns those lines). Just trigger keywords + routing.
+   ~10 lines. No workflows table, no per-skill bullet list, no project intro (the host
+   project owns those lines).
+   Just trigger keywords + routing.
 
-6. **Unbundle `/docs/development.md`.** It's about how to develop the pprose
-   tool itself — useless to an agent working in another repo. Move it to
-   `/docs/project/development.md` so `sync_resources.py`'s non-recursive
-   `/docs/*.md` glob stops picking it up. (Alternative: keep at
-   `/docs/development.md` and exclude by name; less clean.)
+6. **Unbundle `/docs/development.md`.** It’s about how to develop the pprose tool itself
+   — useless to an agent working in another repo.
+   Move it to `/docs/project/development.md` so `sync_resources.py`’s non-recursive
+   `/docs/*.md` glob stops picking it up.
+   (Alternative: keep at `/docs/development.md` and exclude by name; less clean.)
 
-7. **Slim `/AGENTS.md` and point it at an internal doc.** Our own `/AGENTS.md`
-   currently carries content that doesn't belong in the bundled CLI (this-repo
-   workflows table, pprose tooling overview, visual design pointer) *and*
-   isn't strictly part of pprose's marker block. Reshape it:
+7. **Slim `/AGENTS.md` and point it at an internal doc.** Our own `/AGENTS.md` currently
+   carries content that doesn’t belong in the bundled CLI (this-repo workflows table,
+   pprose tooling overview, visual design pointer) *and* isn’t strictly part of pprose’s
+   marker block. Reshape it:
 
-   - Top of file: title + brief project description + one-line pointer at the
-     internal doc (`See \`docs/project/agents-internal-guide.md\` for the
-     practical-prose-specific workflows table and tooling notes.`).
-   - One-line pointer at `pprose guidelines practical-prose-authoring-principles`
-     for the project-wide authoring principles.
+   - Top of file: title + brief project description + one-line pointer at the internal
+     doc
+     (`See \`docs/project/agents-internal-guide.md\` for the practical-prose-specific workflows table and tooling notes.`).
+   - One-line pointer at `pprose guidelines practical-prose-authoring-principles` for
+     the project-wide authoring principles.
    - The `<!-- BEGIN PPROSE INTEGRATION -->` block (added by dogfooding
      `pprose install --project`).
    - The existing `<!-- BEGIN TBD INTEGRATION -->` block (managed by tbd).
 
-   The rich hand-authored content (workflows table for this repo's specific
-   skill layout, tooling overview, visual design pointer) moves to
-   `/docs/project/agents-internal-guide.md` (new file, NOT bundled — lives in
-   the same internal-only directory as the specs).
+   The rich hand-authored content (workflows table for this repo’s specific skill
+   layout, tooling overview, visual design pointer) moves to
+   `/docs/project/agents-internal-guide.md` (new file, NOT bundled — lives in the same
+   internal-only directory as the specs).
 
-8. **Dogfood the install on our own repo.** Run `pprose install --project` to
-   write the pprose marker block into `/AGENTS.md`. Once Phase 2's slimmer
-   block shape and the internal-doc reshuffle have landed, `/AGENTS.md` is
-   ~15 lines: project header + internal pointer + principles pointer +
-   pprose block + tbd block.
+8. **Dogfood the install on our own repo.** Run `pprose install --project` to write the
+   pprose marker block into `/AGENTS.md`. Once Phase 2’s slimmer block shape and the
+   internal-doc reshuffle have landed, `/AGENTS.md` is ~15 lines: project header +
+   internal pointer + principles pointer + pprose block + tbd block.
 
 9. **Not in scope:**
-   - No "generated AGENTS.md" mode. Pprose owns its block; the host project
-     owns everything else.
-   - No auto-generated workflows table in the block. The host project may
-     have its own workflows table outside the markers (the internal-doc
-     version, for this repo) — that's project-specific content, not pprose's
-     to manage.
+   - No “generated AGENTS.md” mode.
+     Pprose owns its block; the host project owns everything else.
+   - No auto-generated workflows table in the block.
+     The host project may have its own workflows table outside the markers (the
+     internal-doc version, for this repo) — that’s project-specific content, not
+     pprose’s to manage.
    - No bundling of `/docs/development.md` or `/AGENTS.md` (both repo-internal).
    - No `--global-agents-md` flag (still deferred; global skills are enough).
 
 #### Implementation checklist
 
-- [ ] **Bundling — additions.** Add `tools/design-system/design-system.md` to
-  the `sync_resources.py` plan under the `guidelines` category. Add
-  `README.md` under a new `about` category (or as a small special case in the
-  loader — only one document).
+- [ ] **Bundling — additions.** Add `tools/design-system/design-system.md` to the
+  `sync_resources.py` plan under the `guidelines` category.
+  Add `README.md` under a new `about` category (or as a small special case in the loader
+  — only one document).
 - [ ] **Bundling — removal.** Move `/docs/development.md` to
-  `/docs/project/development.md` (`sync_resources.py` is non-recursive over
-  `/docs/`, so the move alone unbundles it). Update any internal links that
-  pointed at the old path.
+  `/docs/project/development.md` (`sync_resources.py` is non-recursive over `/docs/`, so
+  the move alone unbundles it).
+  Update any internal links that pointed at the old path.
 - [ ] **Authoring principles bundled doc.** Create
-  `/docs/practical-prose-authoring-principles.md` with the eight numbered
-  principles currently in `/AGENTS.md`, plus the closing "When a local rule
-  conflicts…" paragraph.
+  `/docs/practical-prose-authoring-principles.md` with the eight numbered principles
+  currently in `/AGENTS.md`, plus the closing “When a local rule conflicts…” paragraph.
 - [ ] **Internal doc for repo-specific agent guide.** Create
   `/docs/project/agents-internal-guide.md` with the workflows table and the
-  hand-authored "Tooling" / "Visual Design" sections currently in `/AGENTS.md`.
-  Adjust any cross-references.
-- [ ] **`pprose about` command.** Add to `cli.py` and a small command body
-  that prints the bundled `README.md`. No `--list`; one-shot.
-- [ ] **`pprose skill` overview mode.** Expand `skill_main` so the no-args
-  call prints an overview view (short intro paragraph + the skill table + a
-  routing footer); `--list` keeps the terse table; `<name>` is unchanged.
-- [ ] **Slim `agents_md_block`.** Drop the per-skill bullet list. End state:
-  trigger description + routing pointers (`pprose --help`, the four `--list`
-  commands, the `pprose <command>` / `uvx pprose@<pin>` line). ~10 lines
-  total.
-- [ ] **Dogfood install.** Run `pprose install --project` against this repo to
-  write the pprose marker block into `/AGENTS.md`. Slim the surrounding
-  hand-authored content: replace the Authoring Principles / Workflows /
-  Tooling / Visual Design sections with one-line pointers at the bundled doc
-  (`pprose guidelines practical-prose-authoring-principles`) and the internal
-  doc (`docs/project/agents-internal-guide.md`).
-- [ ] **Regenerate discovery copies.** `devtools/sync_resources.py` re-renders
-  the `/skills/pprose-*/SKILL.md` discovery copies against the slimmer block
-  (the discovery copies themselves don't carry the block — they're standalone
-  SKILL.md files — but the bundled resources sync may pick up new docs).
+  hand-authored “Tooling” / “Visual Design” sections currently in `/AGENTS.md`. Adjust
+  any cross-references.
+- [ ] **`pprose about` command.** Add to `cli.py` and a small command body that prints
+  the bundled `README.md`. No `--list`; one-shot.
+- [ ] **`pprose skill` overview mode.** Expand `skill_main` so the no-args call prints
+  an overview view (short intro paragraph + the skill table + a routing footer);
+  `--list` keeps the terse table; `<name>` is unchanged.
+- [ ] **Slim `agents_md_block`.** Drop the per-skill bullet list.
+  End state: trigger description + routing pointers (`pprose --help`, the four `--list`
+  commands, the `pprose <command>` / `uvx pprose@<pin>` line).
+  ~10 lines total.
+- [ ] **Dogfood install.** Run `pprose install --project` against this repo to write the
+  pprose marker block into `/AGENTS.md`. Slim the surrounding hand-authored content:
+  replace the Authoring Principles / Workflows / Tooling / Visual Design sections with
+  one-line pointers at the bundled doc
+  (`pprose guidelines practical-prose-authoring-principles`) and the internal doc
+  (`docs/project/agents-internal-guide.md`).
+- [ ] **Regenerate discovery copies.** `devtools/sync_resources.py` re-renders the
+  `/skills/pprose-*/SKILL.md` discovery copies against the slimmer block (the discovery
+  copies themselves don’t carry the block — they’re standalone SKILL.md files — but the
+  bundled resources sync may pick up new docs).
 - [ ] **Tests.**
-  - New test: `pprose about` prints bundled README content; covers a small
-    sentinel string ("Practical Prose project aims to improve" or similar).
-  - New test: `pprose skill` (no args) prints the overview view (a sentinel
-    string from the new intro paragraph, plus all skill names).
-  - New test: `pprose skill --list` is the terse table (existing behavior;
-    keep test).
-  - Update: existing `test_project_agents_md_block_carries_format_stamp` for
-    the slimmer block content; drop assertions on bullet-list lines.
+  - New test: `pprose about` prints bundled README content; covers a small sentinel
+    string ("Practical Prose project aims to improve" or similar).
+  - New test: `pprose skill` (no args) prints the overview view (a sentinel string from
+    the new intro paragraph, plus all skill names).
+  - New test: `pprose skill --list` is the terse table (existing behavior; keep test).
+  - Update: existing `test_project_agents_md_block_carries_format_stamp` for the slimmer
+    block content; drop assertions on bullet-list lines.
   - New test: `pprose guidelines design-system` resolves; bundled.
-  - New test: `pprose guidelines practical-prose-authoring-principles`
-    resolves; bundled.
-  - New test: `pprose guidelines development` no longer resolves (development
-    doc moved to `/docs/project/`, intentionally unbundled).
-- [ ] **Docs updates.** `tools/pprose/README.md` mentions `pprose about` and
-  the new bundled guidelines. `pprose --help` epilog mentions `pprose about`
-  and the four `--list` commands.
+  - New test: `pprose guidelines practical-prose-authoring-principles` resolves;
+    bundled.
+  - New test: `pprose guidelines development` no longer resolves (development doc moved
+    to `/docs/project/`, intentionally unbundled).
+- [ ] **Docs updates.** `tools/pprose/README.md` mentions `pprose about` and the new
+  bundled guidelines. `pprose --help` epilog mentions `pprose about` and the four
+  `--list` commands.
 - [ ] **Lint + tests clean.**
-- [ ] **Commit** on the same `pprose-skill-install-improvements` branch with
-  the bead IDs referenced.
+- [ ] **Commit** on the same `pprose-skill-install-improvements` branch with the bead
+  IDs referenced.
 
 ## Testing Strategy
 
@@ -592,7 +591,7 @@ New test coverage in `tests/test_install.py`:
 
 ## Open Questions
 
-All locked in the "Locked decisions" section above before implementation begins.
+All locked in the “Locked decisions” section above before implementation begins.
 
 ## References
 

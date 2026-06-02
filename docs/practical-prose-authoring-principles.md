@@ -24,9 +24,9 @@ which rule is set aside, what reader outcome it serves, and what risk it introdu
 These eight principles are short distillations of the seven-principle framework in
 [practical-prose-principles.md](practical-prose-principles.md) (Purposeful, Truthful,
 Essential, Lucid, Verifiable, Maintainable, Humane) and the 20 dimensions of
-[practical-prose-guidelines.md](practical-prose-guidelines.md). Reach for the longer
-documents when you need the underlying definitions; reach for this list when you need
-the standing operating rules.
+[practical-prose-guidelines.md](practical-prose-guidelines.md).
+Reach for the longer documents when you need the underlying definitions; reach for this
+list when you need the standing operating rules.
 
 <!-- This document follows common-doc-guidelines.md.
 See github.com/jlevy/practical-prose and review guidelines before editing.

@@ -1,0 +1,71 @@
+# Supply-Chain Security
+
+This repo follows the **Supply-Chain Hardening** policy
+(`tbd guidelines supply-chain-hardening`; full playbooks at
+<https://github.com/jlevy/supply-chain-hardening>). This file is the portable flag any
+agent or contributor should read before adding or upgrading a dependency.
+
+## The Policy Here
+
+- **14-day cool-off.** Do not add or upgrade to a dependency version less than 14 days
+  old unless a documented exception below applies.
+  Registries yank malicious versions within minutes to days, so waiting is nearly free.
+- **Lockfiles are committed; installs are frozen.** `uv.lock` and `package-lock.json`
+  are checked in. CI installs against them (`npm ci`; `uv sync` against the lock).
+  Never auto-update without reviewing the lockfile diff like a code diff.
+- **No unpinned zero-install runners.** Every `uvx` / `npx` invocation pins an exact
+  `@version` (see the `FLOWMARK_VERSION` pin in the [Makefile](Makefile) and the
+  `--no-install` biome/lefthook calls in [lefthook.yml](lefthook.yml), which resolve the
+  locked local binary rather than fetching latest).
+- **Pin fresh-ish or sensitive deps exactly.** Runtime deps that need a specific version
+  are pinned with a dated comment (see `pydantic-ai-slim` in
+  [tools/pprose/pyproject.toml](tools/pprose/pyproject.toml)).
+- **Audit and don’t update for its own sake.** The safest update is the one you skip;
+  bump only for a concrete, stated reason.
+
+### Per-ecosystem controls
+
+| Tool | Control in this repo |
+| --- | --- |
+| uv (Python, `tools/pprose`) | `uv.lock` committed; pins with cool-off comments; the contributor’s global `~/.config/uv/uv.toml` carries `exclude-newer`. |
+| npm (JS tooling, `tools/`) | `package-lock.json` committed; CI uses `npm ci`; cool-off enforced at upgrade time via `npm-check-updates --cooldown 14` and `npm view <pkg> time.<ver>`. |
+
+## First-Party Exemption
+
+Packages **maintained by this repo’s author** (the `github.com/jlevy` org — e.g.
+`flowmark` / `flowmark-rs`, `chopdiff`) are **exempt from the 14-day cool-off**. The
+trust basis the cool-off substitutes for is already satisfied: the source is
+author-controlled and auditable, and the published artifact is verified against its git
+tag. First-party deps are still **pinned to an exact version**, and any in-window
+override stays **surgical** (per-invocation, never relaxing the global cool-off).
+
+This is a standing exemption, recorded here rather than re-approved per bump.
+
+## Active Exceptions
+
+- **`flowmark-rs@0.3.1`** — first-party (see above).
+  Published 2026-05-30; adopted 2026-06-02 while inside the 14-day window.
+  Applied surgically in the [Makefile](Makefile) via
+  `uvx --exclude-newer-package 'flowmark-rs=2026-06-02'`, which overrides the cool-off
+  for this one package only and does not touch global uv config.
+  Reviewed-by: Joshua Levy.
+
+## Known Gap
+
+- **npm lifecycle scripts are not globally blocked.** The headline control
+  (`ignore-scripts=true`) is not set because `lefthook`’s npm package relies on a
+  `postinstall` to fetch its binary, and npm has no clean per-package script allowlist
+  (unlike pnpm’s `allowBuilds`). The residual risk is bounded by the small, pinned,
+  lockfiled JS dependency set (`@biomejs/biome`, `lefthook`) and the cool-off.
+  Revisit by migrating the JS tooling to pnpm (`minimumReleaseAge` + `allowBuilds`) if
+  the dependency surface grows.
+
+## References
+
+- `tbd guidelines supply-chain-hardening` — the concise cross-ecosystem policy.
+- <https://github.com/jlevy/supply-chain-hardening> — full playbooks, audit script,
+  incident watch list, and CI/publish-side hardening.
+
+<!-- This document follows common-doc-guidelines.md.
+See github.com/jlevy/practical-prose and review guidelines before editing.
+-->

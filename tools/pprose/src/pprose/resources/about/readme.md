@@ -39,11 +39,10 @@ The documents and tools here are organized for both human and agent use:
 6. A [**bibliography**](docs/practical-prose-bibliography.md) of notable works on
    practical writing
 
-## A Personal Note
+> ## A Personal Note
 
-> I care a lot about clear writing as a reader, a writer, an editor, and an engineer.
 > I always admired good writing, both fiction and nonfiction.
-> I have also written a fair amount of technical and business writing, but as I was
+> I have also written a fair amount of technical and business writing and as I was
 > building [Holloway](https://www.holloway.com) I spent much more time learning and
 > thinking about editorial processes, the production of print and digital books, and
 > publishing tools. Now every month I am using agents to write millions of lines of code

@@ -5,12 +5,12 @@ author: Joshua Levy (github.com/jlevy) with LLM assistance
 ---
 # Practical Prose — Agent Guide (Internal)
 
-This document is **internal to the practical-prose repo**. It holds material an
-agent working on *this* repo needs but that doesn't belong in the public pprose
-CLI surface (which bundles docs useful from any repo).
+This document is **internal to the practical-prose repo**. It holds material an agent
+working on *this* repo needs but that doesn’t belong in the public pprose CLI surface
+(which bundles docs useful from any repo).
 
-For the always-on root entrypoint, see [/AGENTS.md](../../AGENTS.md). For
-development workflows (build, test, format, lint), see
+For the always-on root entrypoint, see [/AGENTS.md](../../AGENTS.md).
+For development workflows (build, test, format, lint), see
 [development.md](development.md).
 
 ## Workflows
@@ -37,29 +37,32 @@ uvx pprose <command> ...
 `pprose compare`, `pprose render`.
 
 `pprose render <doc.eval.md>` emits a clean, print-friendly static HTML page from an
-eval report — single self-contained file by default. It is the canonical shareable
-artifact for a single-doc eval. Pair it with `pprose score <doc.md> --render-html` to
-score and render in one shot; the two are composable primitives. Open the resulting
-HTML in any modern browser and use the print dialog to save as PDF (Letter by default;
-`--page-size a4` for A4). The page is built from a small set of named **variants** —
-`pprose render --list-variants` shows what's available; today only `interactive` ships
-(one card + two hover-driven tip panels + theme toggle). See
+eval report — single self-contained file by default.
+It is the canonical shareable artifact for a single-doc eval.
+Pair it with `pprose score <doc.md> --render-html` to score and render in one shot; the
+two are composable primitives.
+Open the resulting HTML in any modern browser and use the print dialog to save as PDF
+(Letter by default; `--page-size a4` for A4). The page is built from a small set of
+named **variants** — `pprose render --list-variants` shows what’s available; today only
+`interactive` ships (one card + two hover-driven tip panels + theme toggle).
+See
 [plan-2026-05-29-static-html-eval-report.md](specs/active/plan-2026-05-29-static-html-eval-report.md).
 
 The card, tip panels, and theme toggle are **shared render components** at
 [tools/render-components/](../../tools/render-components/) — one canonical set of CSS +
 JavaScript + Jinja partials consumed by both the explorations playground and the
-`pprose render` pipeline. The CSS and JS lifted into the wheel are mirrored verbatim
-by `tools/pprose/devtools/sync_render_html_styles.py`; CI fails on drift via
+`pprose render` pipeline.
+The CSS and JS lifted into the wheel are mirrored verbatim by
+`tools/pprose/devtools/sync_render_html_styles.py`; CI fails on drift via
 `tests/test_render_html.py::test_sync_render_html_styles_in_sync`. To edit how the card
-or panels look, edit the component file under `tools/render-components/` and re-run
-the sync script. See
+or panels look, edit the component file under `tools/render-components/` and re-run the
+sync script. See
 [plan-2026-05-31-shared-render-components.md](specs/active/plan-2026-05-31-shared-render-components.md).
 
 **Reference** (print bundled docs the agent follows; `--list` to enumerate):
 `pprose guidelines <name>`, `pprose shortcut <name>`, `pprose runbook <name>`,
-`pprose skill <name>`, `pprose about`. The guidelines, shortcuts, runbooks, and
-rubric are bundled in the wheel, so these work in any repo without this source tree.
+`pprose skill <name>`, `pprose about`. The guidelines, shortcuts, runbooks, and rubric
+are bundled in the wheel, so these work in any repo without this source tree.
 
 **Setup**: `pprose install` runs in one of two scopes:
 
@@ -68,17 +71,18 @@ rubric are bundled in the wheel, so these work in any repo without this source t
   `<repo>/.claude/skills/` (Claude Code), plus a marker-bounded `pprose` block in
   `<repo>/AGENTS.md`.
 - `--global` writes the skills into `~/.agents/skills/pprose-*/` and
-  `~/.claude/skills/pprose-*/`, available across every project. The global
-  AGENTS.md is left user-authored.
+  `~/.claude/skills/pprose-*/`, available across every project.
+  The global AGENTS.md is left user-authored.
 
-Outside an unambiguous project context (`$HOME`, a non-git directory), `--project`
-or `--global` must be passed explicitly. Every generated artifact carries a
-`format=fNN` stamp; re-running install is idempotent and a newer-format artifact is
-never clobbered by an older pprose. Each generated skill bakes in a pinned,
-local-first invocation: `pprose` if on PATH, else `uvx pprose@<version>` (the
-version that ran install — a trusted pin, never an unpinned runner), else they tell
-the user to install uv or pprose. Pass `--surfaces=portable,claude,agents-md` to
-select install destinations within the chosen scope.
+Outside an unambiguous project context (`$HOME`, a non-git directory), `--project` or
+`--global` must be passed explicitly.
+Every generated artifact carries a `format=fNN` stamp; re-running install is idempotent
+and a newer-format artifact is never clobbered by an older pprose.
+Each generated skill bakes in a pinned, local-first invocation: `pprose` if on PATH,
+else `uvx pprose@<version>` (the version that ran install — a trusted pin, never an
+unpinned runner), else they tell the user to install uv or pprose.
+Pass `--surfaces=portable,claude,agents-md` to select install destinations within the
+chosen scope.
 
 For local development before publication, run from the package workspace:
 

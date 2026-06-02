@@ -1,12 +1,19 @@
 # Feature: Structural Document Decomposition for pprose Metrics
 
-**Date:** 2026-05-25 (last updated 2026-05-26)
+**Date:** 2026-05-25 (last updated 2026-06-02)
 
 **Author:** Joshua Levy with agent assistance
 
-**Status:** Draft — depends on chopdiff `v0.4.x` (a set of small additive PRs to
-`TextDoc` that expose per-block parse results; see
-[Chopdiff v0.4.x additions](#chopdiff-v04x-additions-needed)).
+**Status:** Draft — ready to start once chopdiff `0.3.1` is released.
+The `0.3.1` DocGraph work (chopdiff PRs
+[#12](https://github.com/jlevy/chopdiff/pull/12),
+[#14](https://github.com/jlevy/chopdiff/pull/14),
+[#15](https://github.com/jlevy/chopdiff/pull/15)) already ships almost everything this
+plan needs — the section tree, per-block heading/link accessors, the structural block
+tree, the `base_blocks()` per-list-item partition, and the `collect()` node-query
+primitive — under different names than this plan originally assumed.
+See [What chopdiff 0.3.1 already gives us](#what-chopdiff-031-already-gives-us) and
+[Still missing in 0.3.1](#still-missing-in-031).
 
 ## Overview
 
@@ -16,23 +23,26 @@ single Markdown parse that produces a typed structural decomposition of the docu
 then derive every quantitative metric from that decomposition rather than from
 independent regex sweeps.
 
-**The Markdown parse happens exactly once, in chopdiff.** Chopdiff `v0.3.0` already
-parses each block with marko for `Paragraph.block_type`
-([text_doc.py:116-133](../../../../../attic/chopdiff/src/chopdiff/docs/text_doc.py#L116-L133)).
-The plan is to cache that parse result on `Paragraph` and expose it via additional
-cached properties (`heading_level`, `code_language`, `list_info`, `table_info`,
-`inlines`) plus a `TextDoc.section_tree()` for the heading hierarchy.
-Pprose then becomes a thin serializer: walk the `TextDoc`, read those typed properties,
+**The Markdown parse happens exactly once, in chopdiff.** As of chopdiff `0.3.1` the
+per-block marko parse is cached (`Paragraph.block_type` is a `@cached_property`, and
+`TextDoc.blocks()` memoizes the structural parse on the immutable `source_text`), and
+the typed accessors this plan needs are largely already exposed:
+`Paragraph.heading_level()` / `heading_title()` / `links()`, `TextDoc.sections()` for
+the heading hierarchy, the `TextDoc.blocks()` / `base_blocks()` structural views (the
+latter gives per-list-item granularity), and a `collect()` node-query primitive over a
+typed `NodeKind` model that covers inline links, code spans, and images.
+Pprose then becomes a thin serializer: walk the `TextDoc`, read those typed accessors,
 compute the `Metrics` snapshot, render the CLI output.
 No marko import in pprose.
 No re-parsing per block.
 
 The work splits cleanly:
 
-- **chopdiff `v0.4.x`** ships the typed accessors and the section-tree helper.
-  Each addition is additive, cached on the same per-block marko parse `block_type`
-  already does, and small enough to land as a focused PR.
-- **pprose** bumps the chopdiff pin to `v0.4.x`, rewrites `Metrics` to the `*_count`
+- **chopdiff `0.3.1`** ships the typed accessors, the section tree, the structural and
+  base-block views, and the `collect()` node-query primitive (chopdiff PRs #12 / #14 /
+  #15). Most of what this plan calls for already exists there; the few genuinely missing
+  pieces are listed under [Still missing in 0.3.1](#still-missing-in-031).
+- **pprose** bumps the chopdiff pin to `0.3.1`, rewrites `Metrics` to the `*_count`
   schema, derives every field from chopdiff’s typed APIs plus pprose’s own lint regexes,
   updates `eval_report.py` / `eval_compare.py` for the field renames, and adjusts the
   tests.
@@ -56,7 +66,7 @@ Every count field uses the `*_count` convention.
   parse result is cached and exposed via additional typed accessors.
   No re-parsing in pprose; no `marko` import in pprose.
 - `sentence_count` and `paragraph_count` in `Metrics` are prose-only, computed via
-  `doc.filtered(include={paragraph, list, blockquote, footnote}).size(TextUnit.{sentences,paragraphs})`.
+  `doc.filtered(include={paragraph, list, ordered_list, blockquote, footnote}).size(TextUnit.{sentences,paragraphs})`.
   The `all_sentence_count` / `all_paragraph_count` variants come from `doc.size(...)`.
 - Field naming convention: every count field uses `*_count` (`sentence_count`,
   `paragraph_count`, `heading_count`, `list_item_count`, `table_cell_count`, …). No
@@ -64,17 +74,20 @@ Every count field uses the `*_count` convention.
 - `Metrics.from_text_doc(text_doc, file, ...)` returns a flattened numeric snapshot
   built by walking `TextDoc` once.
   Every count is computed inline; no separate decomposition module.
-- Heading outline with per-section rollups, derived from `TextDoc.section_tree()` and
-  the per-block sizes chopdiff already exposes.
-  Renderable as an indented tree.
+- Heading outline with per-section rollups, derived from `TextDoc.sections()` (each
+  `Section` exposes `.size(unit)`, `.block_type_counts()`, and `.subtree_blocks()` for
+  rollups). Renderable as an indented tree — chopdiff’s `TextDoc.section_size_tree()` and
+  `TextDoc.toc()` already do a basic version pprose can extend.
 - Distribution metrics for prose: P50 / P95 / max words per sentence and per paragraph,
   computed inline from chopdiff’s per-block sentence and paragraph sizes.
 - All current regex-based lint metrics (banned register, em-dash discipline, replacement
   history, pedantic markers, generic headings, bracket tags, bare URLs) keep their
   existing semantics but run against text extracted from the prose-only sub-document
-  (`text_doc.filtered(include={paragraph, list, blockquote, footnote}).reassemble()`).
-- YAML frontmatter handling: chopdiff `v0.4.x` either detects and isolates frontmatter
-  natively (preferred) or pprose detects-and-skips the leading block (fallback).
+  (`text_doc.filtered(include={paragraph, list, ordered_list, blockquote, footnote}).reassemble()`).
+- YAML frontmatter handling: chopdiff `0.3.1` does **not** isolate frontmatter —
+  `TextDoc.from_text` treats a leading `---`-fenced block as an ordinary paragraph (the
+  new `frontmatter-format` dependency is used only by the DocGraph serializer, not by
+  `from_text`). So pprose detects-and-skips the leading frontmatter block itself.
 - Pluggable sentence splitter via `TextDoc.from_text(text, sentence_splitter=...)`
   (already supported in chopdiff).
   Default stays `flowmark.split_sentences_regex`. No new CLI flag yet — added when there
@@ -87,9 +100,11 @@ Every count field uses the `*_count` convention.
   Those live in `chopdiff.TextDoc`.
 - Maintaining a parallel typed Block / Inline hierarchy in pprose.
   The typed accessors live on chopdiff’s `Paragraph`.
-- Waiting for chopdiff’s larger `BlockDoc` redesign
-  ([PR #8](https://github.com/jlevy/chopdiff/pull/8)). The `v0.4.x` additions above give
-  us what we need without the BlockDoc rewrite.
+- Waiting for any further chopdiff redesign.
+  The `BlockDoc` direction ([PR #8](https://github.com/jlevy/chopdiff/pull/8))
+  effectively landed as the DocGraph node model in `0.3.1`
+  ([PR #12](https://github.com/jlevy/chopdiff/pull/12)); pprose pins `0.3.1` and uses
+  what is already there.
 - Changing the qualitative rubric, guidelines, or any prompts.
   This is a measurement refactor.
 - Rewriting `eval_report.py` density calculations beyond pointing them at the new

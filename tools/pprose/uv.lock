@@ -6,6 +6,10 @@ requires-python = ">=3.11, <4.0"
 exclude-newer = "0001-01-01T00:00:00Z" # This has no effect and is included for backwards compatibility when using relative exclude-newer values.
 exclude-newer-span = "P7D"
 
+[options.exclude-newer-package]
+flowmark-rs = "2100-01-01T08:00:00Z"
+flowmark = "2100-01-01T08:00:00Z"
+
 [[package]]
 name = "aiolimiter"
 version = "1.2.1"
@@ -876,6 +880,7 @@ source = { editable = "." }
 dependencies = [
     { name = "aiolimiter" },
     { name = "chopdiff" },
+    { name = "flowmark" },
     { name = "jinja2" },
     { name = "pydantic" },
     { name = "pydantic-ai-slim", extra = ["anthropic", "google", "openai"] },
@@ -898,6 +903,7 @@ dev = [
 requires-dist = [
     { name = "aiolimiter", specifier = ">=1.2" },
     { name = "chopdiff", specifier = ">=0.2.1" },
+    { name = "flowmark", specifier = ">=0.6.5" },
     { name = "jinja2", specifier = ">=3.1" },
     { name = "pydantic", specifier = ">=2.0" },
     { name = "pydantic-ai-slim", extras = ["anthropic", "google", "openai"], specifier = "==1.93.0" },
