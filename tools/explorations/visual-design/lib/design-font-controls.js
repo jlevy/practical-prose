@@ -31,9 +31,12 @@
   // of the stack overrides ASCII + curly quotes with local Georgia.
   const fontStacks = {
     sans: {
-      sourcesans: '"Source Sans 3 Variable", -apple-system, BlinkMacSystemFont, "Inter", "Helvetica Neue", Arial, sans-serif',
-      ibmplex: '"IBM Plex Sans Variable", -apple-system, BlinkMacSystemFont, "Helvetica Neue", Arial, sans-serif',
-      hanken: '"Hanken Grotesk Variable", -apple-system, BlinkMacSystemFont, "Helvetica Neue", Arial, sans-serif',
+      sourcesans:
+        '"Source Sans 3 Variable", -apple-system, BlinkMacSystemFont, "Inter", "Helvetica Neue", Arial, sans-serif',
+      ibmplex:
+        '"IBM Plex Sans Variable", -apple-system, BlinkMacSystemFont, "Helvetica Neue", Arial, sans-serif',
+      hanken:
+        '"Hanken Grotesk Variable", -apple-system, BlinkMacSystemFont, "Helvetica Neue", Arial, sans-serif',
       inter: '"Inter Variable", "Inter", -apple-system, BlinkMacSystemFont, sans-serif',
       system: '-apple-system, BlinkMacSystemFont, "Inter", "Helvetica Neue", Arial, sans-serif',
       helvetica: '"Helvetica Neue", Helvetica, Arial, sans-serif',

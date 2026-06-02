@@ -2681,7 +2681,7 @@
 
             return {
               id: fx.id,
-              name: (fm.artifact && fm.artifact.label) || fx.id,
+              name: (fm.artifact?.label) || fx.id,
               meta: metaParts.join(" · "),
               scores,
               reasons,
@@ -2704,7 +2704,7 @@
          Appended at the bottom of each bi-card (V9), making each
          doc card a self-contained, shareable widget. */
       const REPO_URL = "github.com/jlevy/practical-prose";
-      function repoCredit() {
+      function _repoCredit() {
         const div = document.createElement("div");
         div.className = "bi-card-credit";
         div.innerHTML = `<a href="https://${REPO_URL}">${REPO_URL}</a>`;
@@ -4070,8 +4070,8 @@
          ever needs structurally different DOM. */
 
       const _groupById = (id) => groups.find((g) => g.id === id);
-      const biLeftGroups = ["P", "E", "F"].map(_groupById); // 4 + 3 + 3 = 10 dims
-      const biRightGroups = ["R", "G", "J"].map(_groupById); // 4 + 3 + 3 = 10 dims
+      const _biLeftGroups = ["P", "E", "F"].map(_groupById); // 4 + 3 + 3 = 10 dims
+      const _biRightGroups = ["R", "G", "J"].map(_groupById); // 4 + 3 + 3 = 10 dims
       const biDocIds = ["irs", "sqlite", "rubric"];
 
       /* Shared between 9A and 9B: build a stack of bi-cards + a

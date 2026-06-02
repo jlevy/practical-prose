@@ -58,16 +58,15 @@
 
   function _resolve(elOrSelector) {
     if (!elOrSelector) return null;
-    if (typeof elOrSelector === "string")
-      return document.querySelector(elOrSelector);
+    if (typeof elOrSelector === "string") return document.querySelector(elOrSelector);
     return elOrSelector;
   }
 
   // Extend rather than replace, so a same-page workbench can add its own
   // companion entries (e.g. `mountSurfaceToggle`) without load-order
   // sensitivity.
-  const ns = (globalThis.PracticalProseDesignColorControls =
-    globalThis.PracticalProseDesignColorControls || {});
+  globalThis.PracticalProseDesignColorControls = globalThis.PracticalProseDesignColorControls || {};
+  const ns = globalThis.PracticalProseDesignColorControls;
   ns.mountThemeToggle = mountThemeToggle;
   ns.isDarkMode = isDarkMode;
 })();

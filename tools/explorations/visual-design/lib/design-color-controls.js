@@ -59,7 +59,7 @@
   // Extend the shared theme-toggle namespace with the workbench-only
   // mountSurfaceToggle. Load order doesn't matter — whichever script runs
   // first creates the namespace; the other adds its entry.
-  const ns = (globalThis.PracticalProseDesignColorControls =
-    globalThis.PracticalProseDesignColorControls || {});
+  globalThis.PracticalProseDesignColorControls = globalThis.PracticalProseDesignColorControls || {};
+  const ns = globalThis.PracticalProseDesignColorControls;
   ns.mountSurfaceToggle = mountSurfaceToggle;
 })();

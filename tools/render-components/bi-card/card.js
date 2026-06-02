@@ -34,7 +34,7 @@
 
 (() => {
   function makeApi(data) {
-    if (!data || !data.groups || !data.dimensions) {
+    if (!data?.groups || !data.dimensions) {
       throw new Error("PracticalProseBiCard: data must include groups + dimensions");
     }
     const groups = data.groups;
@@ -51,8 +51,7 @@
       Object.entries(attrs).forEach(([k, v]) => {
         if (k === "style" && typeof v === "object") Object.assign(e.style, v);
         else if (k === "class") e.className = v;
-        else if (k.startsWith("on") && typeof v === "function")
-          e.addEventListener(k.slice(2), v);
+        else if (k.startsWith("on") && typeof v === "function") e.addEventListener(k.slice(2), v);
         else e.setAttribute(k, v);
       });
       children.flat().forEach((c) => {
@@ -96,9 +95,7 @@
     }
     function dimColorMix(dimId, alpha) {
       const a = Math.max(0, Math.min(1, alpha));
-      return `color-mix(in srgb, var(--dim-${dimId}) ${Math.round(
-        a * 100,
-      )}%, transparent)`;
+      return `color-mix(in srgb, var(--dim-${dimId}) ${Math.round(a * 100)}%, transparent)`;
     }
     function scoreColor(dimId, score) {
       const step = _readScoreAlphaStep();
@@ -176,9 +173,7 @@
 
     function biCard(doc, dimFn = biDim9B, headerExtra = null) {
       const card = el("div", { class: "bi-card" });
-      card.appendChild(
-        el("div", { class: "doc-kicker" }, "Practical Prose Evaluation"),
-      );
+      card.appendChild(el("div", { class: "doc-kicker" }, "Practical Prose Evaluation"));
       card.appendChild(el("div", { class: "doc-name" }, doc.name));
 
       const grid = el("div", { class: "bi-grid" });
@@ -275,7 +270,7 @@
       console.error("PracticalProseBiCard.mount: container not found", containerSelector);
       return null;
     }
-    if (!data || !data.doc) {
+    if (!data?.doc) {
       console.error("PracticalProseBiCard.mount: data.doc missing", data);
       return null;
     }

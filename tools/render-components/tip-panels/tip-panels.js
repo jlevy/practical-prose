@@ -44,14 +44,10 @@
     const detailEl = _resolve(detail);
     const assessEl = _resolve(assess);
     if (!detailEl || !assessEl) {
-      console.error(
-        "PracticalProseTipPanels.mount: panel(s) not found",
-        detail,
-        assess,
-      );
+      console.error("PracticalProseTipPanels.mount: panel(s) not found", detail, assess);
       return null;
     }
-    if (!data || !data.rubric) {
+    if (!data?.rubric) {
       console.error("PracticalProseTipPanels.mount: data.rubric missing", data);
       return null;
     }
@@ -61,11 +57,7 @@
     const dims = data.dimensions || [];
     // Accept `docs` (array, workbench multi-doc case) or `doc` (single,
     // pprose-render case).
-    const biRealDocs = Array.isArray(data.docs)
-      ? data.docs
-      : data.doc
-        ? [data.doc]
-        : [];
+    const biRealDocs = Array.isArray(data.docs) ? data.docs : data.doc ? [data.doc] : [];
 
     // ─── Local el helper (same shape as bi-card's; kept here so the
     // tip-panels component can be loaded independently of bi-card). ──
@@ -74,8 +66,7 @@
       Object.entries(attrs).forEach(([k, v]) => {
         if (k === "style" && typeof v === "object") Object.assign(e.style, v);
         else if (k === "class") e.className = v;
-        else if (k.startsWith("on") && typeof v === "function")
-          e.addEventListener(k.slice(2), v);
+        else if (k.startsWith("on") && typeof v === "function") e.addEventListener(k.slice(2), v);
         else e.setAttribute(k, v);
       });
       children.flat().forEach((c) => {
@@ -86,9 +77,7 @@
     }
 
     function mountPanel(panel, heading) {
-      panel.appendChild(
-        el("div", { class: "tip-panel-heading eyebrow" }, heading),
-      );
+      panel.appendChild(el("div", { class: "tip-panel-heading eyebrow" }, heading));
       const content = el("div", { class: "tip-content" });
       panel.appendChild(content);
       return content;
@@ -129,10 +118,9 @@
       const r = rubric[key];
       if (!r) return showPlaceholder();
 
-      const rulesMd =
-        r.rules && r.rules.length
-          ? `\n\n## Rules\n\n${r.rules.map((rule) => `- ${rule}`).join("\n")}`
-          : "";
+      const rulesMd = r.rules?.length
+        ? `\n\n## Rules\n\n${r.rules.map((rule) => `- ${rule}`).join("\n")}`
+        : "";
 
       const detailMd = `# *${r.label}*
 
@@ -149,7 +137,7 @@
 
       const score = doc.scores[key];
       const reason = doc.reasons ? doc.reasons[key] : undefined;
-      const findings = (doc.findings && doc.findings[key]) || [];
+      const findings = doc.findings?.[key] || [];
 
       const escapeHtml = (s) => (s || "").replace(/</g, "&lt;");
       let bodyHtml = "";
@@ -169,7 +157,7 @@
 
       assessContent.innerHTML = "";
       const dimMeta = dims.find((dd) => dd.id === key);
-      if (dimMeta && biCardApi && biCardApi.biDim9B) {
+      if (dimMeta && biCardApi?.biDim9B) {
         const dimRow = biCardApi.biDim9B(doc, dimMeta, "right");
         const mirror = el(
           "div",
@@ -191,15 +179,13 @@
       if (!g) return showPlaceholder();
       const groupDims = dims.filter((d) => d.g === g.id);
 
-      const sense = g.sense
-        ? g.sense.charAt(0).toUpperCase() + g.sense.slice(1) + "."
-        : "";
+      const sense = g.sense ? `${g.sense.charAt(0).toUpperCase() + g.sense.slice(1)}.` : "";
 
       const dimsMd = groupDims
         .map((d) => {
           const r = rubric[d.id];
           const q = r?.question || "";
-          return `**${d.label}**${q ? " — " + q : ""}`;
+          return `**${d.label}**${q ? ` — ${q}` : ""}`;
         })
         .join("\n\n");
 
@@ -221,7 +207,7 @@ ${dimsMd}`;
       if (!card || !layout) return;
       const layoutRect = layout.getBoundingClientRect();
       const cardRect = card.getBoundingClientRect();
-      const top = cardRect.top - layoutRect.top + "px";
+      const top = `${cardRect.top - layoutRect.top}px`;
       detailEl.style.top = top;
       assessEl.style.top = top;
     }
@@ -248,7 +234,7 @@ ${dimsMd}`;
     // Wire hover handlers. Default scope is `document` (single-instance
     // case — pprose render). Workbench passes opts.scope = layoutEl so
     // each per-viz tip-panel pair only listens within its own layout.
-    const scope = (opts && opts.scope) ? _resolve(opts.scope) : document;
+    const scope = opts?.scope ? _resolve(opts.scope) : document;
     scope.addEventListener("pointerover", onOver);
     scope.addEventListener("pointerleave", showPlaceholder);
 
@@ -258,7 +244,7 @@ ${dimsMd}`;
 
   // Extend rather than replace so other components can co-exist in the
   // same namespace if they ever choose to.
-  const ns = (globalThis.PracticalProseTipPanels =
-    globalThis.PracticalProseTipPanels || {});
+  globalThis.PracticalProseTipPanels = globalThis.PracticalProseTipPanels || {};
+  const ns = globalThis.PracticalProseTipPanels;
   ns.mount = mount;
 })();

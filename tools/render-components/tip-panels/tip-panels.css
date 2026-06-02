@@ -5,29 +5,29 @@
    so any widget-local rule that does set a numeric font-weight
    (eg. `.num { font-weight: var(--weight-num) }`) still wins. */
 :where(
-    .theme-toggle,
-    .surface-toggle,
-    .legend,
-    .controls-panel,
-    .controls-field select,
-    .heatmap .hm-axis,
-    .strip-row .doc-meta,
-    .group-card .gc-row .gc-dim,
-    .group-card .gc-score,
-    .chart-card .doc-meta,
-    .axis-label,
-    .bartable-card,
-    .bt-num,
-    .bi-tip-panel .tip-content .tip-empty,
-    .bi-tip-panel .tip-content .tip-assessment p,
-    .bi-tip-panel .tip-content .tip-assessment ul li,
-    .qm-card,
-    .qm-rollup-row .label,
-    .note-card .meta,
-    .panel-about-body .meta,
-    .palette-card .swatch-row,
-    footer
-  ) {
+  .theme-toggle,
+  .surface-toggle,
+  .legend,
+  .controls-panel,
+  .controls-field select,
+  .heatmap .hm-axis,
+  .strip-row .doc-meta,
+  .group-card .gc-row .gc-dim,
+  .group-card .gc-score,
+  .chart-card .doc-meta,
+  .axis-label,
+  .bartable-card,
+  .bt-num,
+  .bi-tip-panel .tip-content .tip-empty,
+  .bi-tip-panel .tip-content .tip-assessment p,
+  .bi-tip-panel .tip-content .tip-assessment ul li,
+  .qm-card,
+  .qm-rollup-row .label,
+  .note-card .meta,
+  .panel-about-body .meta,
+  .palette-card .swatch-row,
+  footer
+) {
   /* Excludes .bi-tip-panel and .bi-card wrappers — they have serif
      descendants (tip-content p/ul/h1/tip-context, doc-name) that
      must inherit the serif weight from body.  All sans children

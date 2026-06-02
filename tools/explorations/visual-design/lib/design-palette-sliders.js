@@ -337,10 +337,10 @@
        so the snapshot is always complete. */
     const root = document.documentElement;
     const tonePairs = [
-      ["icon", "--icon-color", ds.tones && ds.tones.icon],
-      ["dim_label", "--dim-label-color", ds.tones && ds.tones.dim_label],
-      ["na", "--na-color", ds.tones && ds.tones.na],
-      ["na_label", "--na-label-color", ds.tones && ds.tones.na_label],
+      ["icon", "--icon-color", ds.tones?.icon],
+      ["dim_label", "--dim-label-color", ds.tones?.dim_label],
+      ["na", "--na-color", ds.tones?.na],
+      ["na_label", "--na-label-color", ds.tones?.na_label],
     ];
     lines.push("", "tones:");
     tonePairs.forEach(([key, token, fallback]) => {
@@ -353,7 +353,7 @@
        the controls panel writes here on every input). */
     const alphaRaw =
       getComputedStyle(root).getPropertyValue("--score-alpha-step").trim() ||
-      String(ds.scoring && ds.scoring.alpha_step);
+      String(ds.scoring?.alpha_step);
     const alphaStep = parseFloat(alphaRaw);
     lines.push("", "scoring:", `  alpha_step: ${Number.isFinite(alphaStep) ? alphaStep : 0}`);
 
@@ -371,13 +371,13 @@
        fallback list.  `source` is taken from the catalog entry keyed
        by the select's value (or `system` if no entry matches the
        fontsource pattern). */
-    const fontsCfg = ds.typography && ds.typography.fonts;
+    const fontsCfg = ds.typography?.fonts;
     const fc = globalThis.PracticalProseDesignFontControls;
     function readFontRole(role) {
-      const fallback = (fontsCfg && fontsCfg[role]) || {};
+      const fallback = fontsCfg?.[role] || {};
       const sel = document.querySelector(`#font-${role}-select`);
       const optKey = sel ? sel.value : null;
-      const labelRaw = sel && sel.options[sel.selectedIndex]
+      const labelRaw = sel?.options[sel.selectedIndex]
         ? sel.options[sel.selectedIndex].textContent
         : "";
       /* Label looks like "Source Sans 3 (default, Fontsource)" — strip
@@ -394,19 +394,19 @@
       const primaryPrefix = `"${family}",`;
       const stack = stackVar.startsWith(primaryPrefix)
         ? stackVar.slice(primaryPrefix.length).trim()
-        : (fallback.stack || stackVar);
+        : fallback.stack || stackVar;
       /* Source: derive from the catalog the chooser uses — anything
          we don't load via fontsource is `system`. */
-      const stacks = fc && fc.fontStacks && fc.fontStacks[role];
+      const stacks = fc?.fontStacks?.[role];
       const source = (() => {
-        if (!optKey || !stacks || !stacks[optKey]) return fallback.source || "system";
+        if (!optKey || !stacks?.[optKey]) return fallback.source || "system";
         return FONT_SOURCE_BY_KEY[optKey] || "system";
       })();
       const readNum = (id, fb) => {
         const v = parseFloat(
           root.style.getPropertyValue(`--font-${role}-${id}`).trim() ||
-          getComputedStyle(root).getPropertyValue(`--font-${role}-${id}`).trim() ||
-          ""
+            getComputedStyle(root).getPropertyValue(`--font-${role}-${id}`).trim() ||
+            "",
         );
         return Number.isFinite(v) ? v : fb;
       };
@@ -427,9 +427,7 @@
     }
     const sansCfg = readFontRole("sans");
     const serifCfg = readFontRole("serif");
-    const tracking =
-      (ds.typography && ds.typography.caps && ds.typography.caps.tracking) ||
-      "0.09em";
+    const tracking = ds.typography?.caps?.tracking || "0.09em";
     lines.push(
       "",
       "typography:",

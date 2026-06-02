@@ -13,6 +13,8 @@
       "!**/__pycache__",
       "!**/node_modules",
       "!**/_generated",
+      "!**/vendor",
+      "!**/*.min.js",
       "!attic",
       "!tools/pprose/.venv",
       "!tools/pprose/dist"
@@ -37,6 +39,9 @@
     "enabled": true,
     "rules": {
       "recommended": true,
+      "complexity": {
+        "noImportantStyles": "off"
+      },
       "correctness": {
         "noUnusedVariables": "warn",
         "noUnusedImports": "warn"
@@ -44,7 +49,8 @@
       "style": {
         "useConst": "error",
         "useTemplate": "warn",
-        "noNonNullAssertion": "warn"
+        "noNonNullAssertion": "warn",
+        "noDescendingSpecificity": "off"
       },
       "suspicious": {
         "noExplicitAny": "warn",

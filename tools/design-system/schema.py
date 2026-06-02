@@ -217,9 +217,7 @@ _SOURCE_PATTERN = re.compile(r"^(system|fontsource:[a-z0-9-]+(?::vf)?)$")
 
 def _validate_font_source(v: str) -> str:
     if not isinstance(v, str) or not _SOURCE_PATTERN.match(v):
-        raise ValueError(
-            f"font source must be `system` or `fontsource:<font-id>[:vf]`; got {v!r}"
-        )
+        raise ValueError(f"font source must be `system` or `fontsource:<font-id>[:vf]`; got {v!r}")
     return v
 
 

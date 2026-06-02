@@ -62,8 +62,7 @@ PY_OUT = REPO_ROOT / "tools/pprose/src/pprose/_generated/design_system.py"
 # inliner can concatenate it without leaving the package.  Underscore-
 # prefixed dir signals "do not hand-edit".
 RENDERER_CSS_OUT = (
-    REPO_ROOT
-    / "tools/pprose/src/pprose/render_html/styles/_generated/design_system.css"
+    REPO_ROOT / "tools/pprose/src/pprose/render_html/styles/_generated/design_system.css"
 )
 
 # The name attached to `window` by the global-script variant.  Stable contract
@@ -212,20 +211,20 @@ def _font_face_block(family: str, source: str) -> str:
         font_id = rest[: -len(":vf")]
         base = f"https://cdn.jsdelivr.net/fontsource/fonts/{font_id}:vf@latest"
         return (
-            f'@font-face {{\n'
+            f"@font-face {{\n"
             f'  font-family: "{family}";\n'
-            f'  font-style: normal;\n'
-            f'  font-display: swap;\n'
-            f'  font-weight: 100 900;\n'
+            f"  font-style: normal;\n"
+            f"  font-display: swap;\n"
+            f"  font-weight: 100 900;\n"
             f'  src: url({base}/latin-wght-normal.woff2) format("woff2-variations");\n'
-            f'}}\n'
-            f'@font-face {{\n'
+            f"}}\n"
+            f"@font-face {{\n"
             f'  font-family: "{family}";\n'
-            f'  font-style: italic;\n'
-            f'  font-display: swap;\n'
-            f'  font-weight: 100 900;\n'
+            f"  font-style: italic;\n"
+            f"  font-display: swap;\n"
+            f"  font-weight: 100 900;\n"
             f'  src: url({base}/latin-wght-italic.woff2) format("woff2-variations");\n'
-            f'}}\n'
+            f"}}\n"
         )
     # Static cuts: 400 + 700, normal + italic.
     font_id = rest
@@ -234,13 +233,13 @@ def _font_face_block(family: str, source: str) -> str:
     for weight in (400, 700):
         for style in ("normal", "italic"):
             parts.append(
-                f'@font-face {{\n'
+                f"@font-face {{\n"
                 f'  font-family: "{family}";\n'
-                f'  font-style: {style};\n'
-                f'  font-display: swap;\n'
-                f'  font-weight: {weight};\n'
+                f"  font-style: {style};\n"
+                f"  font-display: swap;\n"
+                f"  font-weight: {weight};\n"
                 f'  src: url({base}/latin-{weight}-{style}.woff2) format("woff2");\n'
-                f'}}\n'
+                f"}}\n"
             )
     return "".join(parts)
 
@@ -379,9 +378,8 @@ def emit_css(resolved: dict) -> str:
     # @font-face declarations for each font role's webfont source.
     # Emitted before :root so the fonts are registered before any CSS
     # vars reference them.  `system` sources contribute nothing here.
-    font_face_block = (
-        _font_face_block(sans["family"], sans["source"])
-        + _font_face_block(serif["family"], serif["source"])
+    font_face_block = _font_face_block(sans["family"], sans["source"]) + _font_face_block(
+        serif["family"], serif["source"]
     )
 
     return (
