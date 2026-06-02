@@ -130,57 +130,82 @@ The plain-text pipeline has no Markdown awareness.
 Headings, table cells, blockquote text, list-item text, and paragraph text all flow
 through `TextDoc` as one undifferentiated stream.
 
-### What chopdiff v0.3.0 already gives us
+### What chopdiff 0.3.1 already gives us
 
-Verified by a direct smoke test against [attic/chopdiff](../../../../../attic/chopdiff)
-at the v0.3.0 tag on a sample Markdown document covering frontmatter, headings,
-paragraphs, a list, a table, a fenced code block, a blockquote, and a footnote
-definition:
+The `0.3.1` DocGraph work (PRs #12 / #14 / #15) lands most of what this plan needs.
+Verified against [attic/chopdiff](../../../../../attic/chopdiff) and the canonical
+source at `~/wrk/kmd/chopdiff`:
 
-- `BlockType` enum (paragraph, heading, list, table, code, blockquote, html, footnote)
-  and `Paragraph.block_type`, classified by parsing each blank-line block with marko.
-- `TextDoc.iter_blocks(include=, exclude=)` and `TextDoc.filtered(include=, exclude=)` —
-  block-typed iteration and aggregation.
+- `BlockType` enum — now
+  `paragraph, heading, list, ordered_list, list_item, table, code, blockquote, html, footnote, thematic_break`
+  (bulleted vs numbered lists are distinct; `list_item` and `thematic_break` are new
+  since the plan was first written) — and `Paragraph.block_type` (a `@cached_property`),
+  classified by the marko parser, not regex.
+- `Paragraph.heading_level()` (1–6 or `None`), `Paragraph.heading_title()` (text without
+  `#`), and `Paragraph.links()` → `list[Link(text, url, title, span)]` with autolink and
+  bare-URL recovery (PR #15). `TextDoc.links()` resolves reference links document-wide.
+  (Note: these are methods, not properties; the plan originally named them as properties
+  and called the heading-text one `heading_text` — it is `heading_title`.)
+- `TextDoc.sections()` → `list[Section]`: the heading hierarchy as a tree.
+  Each `Section` exposes `.title`, `.own_blocks()`, `.blocks()`, `.subtree_blocks()`,
+  `.block_type_counts()`, `.links()`, `.span`, and `.size(unit, subtree=True)` — i.e.
+  per-section rollups are built in.
+  `TextDoc.toc()` and `TextDoc.section_size_tree()` already render flat and indented
+  outlines. (This is the `section_tree()` the plan asked for, under the name
+  `sections()`.)
+- `TextDoc.blocks()` (recursive structural tree: fenced code kept whole, lists
+  decomposed to `list_item`s with nesting) and `TextDoc.base_blocks()` (flat,
+  depth-annotated, non-overlapping partition where each list item is its own base block)
+  — both cached on `source_text`. `TextDoc.block_type_counts()` tallies top-level block
+  types.
+- `collect(scope=, kinds=, where=, recursive=, inline=, layer=)` over a typed
+  `node_table()`: one query primitive across document / section / block scope.
+  `NodeKind` covers the block kinds plus inline `link`, `code_span`, `image`,
+  `inline_html`, plus `section` and `sentence`. This is how pprose counts images and
+  inline code spans without regex.
+- `TextDoc.iter_blocks(include=, exclude=)` and `TextDoc.filtered(include=, exclude=)`
+  (taking `set[BlockType]`) — block-typed iteration and aggregation.
   `doc.filtered(...).size(TextUnit.sentences)` answers “how many sentences across only
   these block kinds” in one call.
-- Exact `Offsets(doc_offset, block_offset)` on every paragraph and sentence; the input
-  is not stripped, so offsets round-trip exactly into the source text.
+- Exact `Offsets(doc_offset, block_offset)` and `span` on every paragraph, sentence, and
+  link; the input is not stripped, so offsets round-trip into the source text.
+- `SpanRef` durable span references and a `DocGraph` Pydantic projection
+  (`TextDoc.graph(...)`, schema “DocGraph/v0.1”) — not needed by pprose but available.
 - Heuristic token estimation (`TextUnit.tokens`) with no `tiktoken` / network
   dependency.
 
-Documented v0.3.0 limitations
-([BlockType docstring](../../../../../attic/chopdiff/src/chopdiff/docs/text_doc.py#L76-L98)):
+Remaining limitations relevant to pprose (see
+[Still missing in 0.3.1](#still-missing-in-031)):
 
-- A tight list is one `list` block; a loose list is one block per item with nesting
-  flattened. No per-item granularity, but `list_info` (proposed below) will expose it
-  from the same per-block marko parse.
+- A tight list is still one `list` / `ordered_list` block in the blank-line `paragraphs`
+  view; for per-item granularity use `base_blocks()` or `collect(kinds={list_item})`.
 - A continuation paragraph inside a list item is classified as `paragraph`.
-- A fenced code block containing a blank line can split across blocks.
-- Heading level, code language, table sub-structure, and typed inlines are not yet
-  exposed; the marko parse result is computed but not retained.
+- A fenced code block containing a blank line can split across `paragraphs` blocks
+  (`blocks()` keeps it whole).
+- Code language / code line count, and table row / cell sub-structure, are not yet
+  exposed as typed accessors.
 
-### Chopdiff v0.4.x additions needed
+### Still missing in 0.3.1
 
-Each item below is small and additive, cached on the same per-block marko parse
-`Paragraph.block_type` already does.
-The current `_classify_block` parses and discards the result; the refactor caches it so
-other properties can read from it.
+Almost everything this plan originally listed as a “v0.4.x addition” already shipped in
+`0.3.1` under the names in
+[What chopdiff 0.3.1 already gives us](#what-chopdiff-031-already-gives-us): the cached
+parse, `heading_level` / `heading_title`, typed links, `sections()` with per-section
+rollups, and per-list-item granularity via `base_blocks()` / `collect()`.
 
-| Addition | What it returns | Pprose metrics unlocked |
+The pieces pprose still needs that `0.3.1` does **not** expose:
+
+| Gap | What pprose needs | Workaround in pprose, or small chopdiff follow-up |
 | --- | --- | --- |
-| `Paragraph._parsed_element` (private cache) | The marko element from the per-block parse. Refactored from `_classify_block`. | Foundation for every other accessor below. |
-| `Paragraph.heading_level: int \| None` | `1..6` for ATX / setext headings, `None` otherwise. | `heading_counts_by_level`, `max_heading_depth`, `heading_level_skip_count`, `heading_outline`. |
-| `Paragraph.heading_text: str \| None` | Heading content without the `#` prefix / underline. | `heading_outline.text`. |
-| `Paragraph.code_language: str \| None` | The fence info string, e.g. `"python"`, `"bash"`. `None` for unfenced or no info. | `fenced_code_counts_by_language`. |
-| `Paragraph.code_line_count: int \| None` | Number of lines in the code body. | `total_code_line_count`. |
-| `Paragraph.list_info: ListInfo \| None` | `ListInfo(ordered, start, items, nesting_depth, total_item_count)`. | `list_item_count`, `max_list_nesting_depth`, `ordered_list_count`, `unordered_list_count`, `max_list_item_count`. |
-| `Paragraph.table_info: TableInfo \| None` | `TableInfo(header_cells, body_rows, alignments, row_count, column_count)`. | `table_row_count`, `table_cell_count`, `max_table_row_count`, `max_table_column_count`. |
-| `Paragraph.inlines: list[Inline]` | Typed walk of marko inline children: `Text`, `Link(url, text, kind: inline\|autolink\|reference_use)`, `Image(url, alt)`, `CodeSpan(text)`, `FootnoteRef(ref_id)`, `LineBreak`. (`Emphasis` / `Strong` flatten to their inner text for now.) | All link / image / footnote-ref / code-span metrics. Replaces every regex-based link / image / footnote sweep in pprose. |
-| `TextDoc.section_tree() -> list[Section]` | Ordered list of `Section(heading: Paragraph \| None, level: int, children: list[Paragraph])` covering every block. Sections at the same level are siblings; deeper levels are nested under their parent. Blocks before the first heading go under a synthetic `Section(heading=None, level=0)`. | `heading_outline` (pprose just walks this and adds rollups). |
-| `TextDoc.frontmatter: str \| None` (preferred; otherwise pprose detects) | The raw YAML frontmatter if the document begins with one, `None` otherwise. The frontmatter is excluded from `paragraphs`. | Frontmatter never inflates `paragraph_count` or appears in the prose stream. |
+| Code fence info | `code_language` and `code_line_count` per code block. | pprose reads the fence line and body length from each `code` block’s source text; or add `Paragraph.code_language` / `code_line_count` to chopdiff. |
+| Table sub-structure | row / cell / column counts and alignments per table. | pprose counts rows/cells from the `table` block’s source lines; or add a `TableInfo` accessor to chopdiff. |
+| Typed `ListInfo` | ordered / start / nesting-depth / total-item-count in one object. | Derive from `block_type` (`list` vs `ordered_list`) plus `collect(kinds={list_item})` / `base_blocks()` depths; a convenience `ListInfo` is optional. |
+| Inline footnote refs | a typed inline footnote-reference count. | `NodeKind` has no `footnote_ref`; keep pprose’s existing footnote-reference regex, or add the node kind upstream. |
+| Frontmatter isolation | `TextDoc.frontmatter` / frontmatter excluded from `paragraphs`. | `from_text` does not isolate frontmatter; pprose detects-and-skips the leading `---` block (see Goals). |
 
-Each row is one focused chopdiff PR. The first row (caching the parse result) is the
-prerequisite for the rest; the others can land in any order.
+None of these block the pprose work: each has a pprose-side workaround against the block
+source text. Promote any of them to a chopdiff follow-up only if the workaround proves
+fragile.
 
 ### Sentence-splitter landscape (informational)
 
@@ -217,26 +242,31 @@ way.
 
 ### Approach
 
-Pprose work is gated on chopdiff `v0.4.x` shipping the additions above.
-Once a tagged release exists with at least `Paragraph.heading_level`, `code_language`,
-`list_info`, `table_info`, `inlines`, and `TextDoc.section_tree()`, pprose lands as one
-focused PR:
+Pprose work is gated only on chopdiff `0.3.1` being released; the accessors it needs
+(`Paragraph.heading_level()` / `heading_title()` / `links()`, `TextDoc.sections()`,
+`blocks()` / `base_blocks()`, `collect()`) are already on `main` and listed under
+[What chopdiff 0.3.1 already gives us](#what-chopdiff-031-already-gives-us).
+It lands as one focused PR:
 
-1. Bump the `chopdiff` pin in `tools/pprose/pyproject.toml` to the v0.4.x release under
-   the supply-chain cool-off rule.
+1. Bump the `chopdiff` pin in `tools/pprose/pyproject.toml` (currently `>=0.2.1`) to
+   `0.3.1` under the supply-chain cool-off rule.
    Refresh `uv.lock`. Verify no pprose call sites use `TextUnit.tiktokens` (renamed to
    `TextUnit.tokens` in v0.3.0).
 2. Rewrite `Metrics` in `pprose/metrics.py` to the `*_count` schema (see API Changes
    below). Implement `Metrics.from_text_doc(text_doc, file, ...)` as a single walk over
    the `TextDoc`:
    - Iterate `text_doc.paragraphs`, classifying each by `block_type`.
-   - Aggregate counts by kind directly from chopdiff’s typed accessors (`heading_level`,
-     `code_language`, `list_info.items`, `table_info.row_count`, etc.).
-   - Walk inlines on each prose block and on each heading, classifying links, counting
-     images / footnote refs / code spans.
-   - Use `text_doc.section_tree()` to build the `HeadingOutline` — a flat ordered list
-     of `HeadingEntry` rows with per-section rollups, computed by aggregating sizes over
-     each section’s children.
+   - Aggregate counts by kind directly from chopdiff’s typed accessors
+     (`heading_level()`, `block_type`, `block_type_counts()`) plus per-block source
+     parsing for the gaps (code fence info, table rows / cells — see
+     [Still missing in 0.3.1](#still-missing-in-031)).
+   - Use `paragraph.links()` (and
+     `text_doc.collect(kinds={image, code_span}, inline=True)`) to classify links and
+     count images / code spans without regex; keep the footnote-ref regex until chopdiff
+     exposes a typed inline footnote node.
+   - Use `text_doc.sections()` to build the `HeadingOutline` — a flat ordered list of
+     `HeadingEntry` rows with per-section rollups, reading each `Section.size(...)` and
+     `Section.block_type_counts()` rather than re-aggregating by hand.
    - Compute sentence-length and paragraph-length distributions (P50 / P95 / max in
      words) by sorting per-sentence and per-paragraph word counts pulled from
      `paragraph.size(TextUnit.words)` and `sentence.size(TextUnit.words)`.
@@ -267,7 +297,7 @@ focused PR:
 - [tools/pprose/src/pprose/eval_compare.py](../../../../pprose/src/pprose/eval_compare.py)
   — minor: column lambdas read new field names.
 - [tools/pprose/pyproject.toml](../../../../pprose/pyproject.toml) — bump `chopdiff` pin
-  to v0.4.x.
+  to 0.3.1.
 - Tests in `tools/pprose/tests/`.
 
 ### Prose inclusion rules
@@ -278,30 +308,32 @@ classified explicitly:
 | chopdiff BlockType | Counted in `paragraph_count`? | Counted in `sentence_count` / `word_count`? | Counted elsewhere |
 | --- | --- | --- | --- |
 | `paragraph` (excluding frontmatter) | yes (1 per block) | yes | — |
-| `list` | yes (1 per block — chopdiff coarseness) | yes | `list_block_count`; `list_item_count` reads `Paragraph.list_info.total_item_count` |
+| `list` / `ordered_list` | yes (1 per block — chopdiff coarseness) | yes | `list_block_count`, `ordered_list_count`; `list_item_count` from `collect(kinds={list_item})` / `base_blocks()` |
 | `blockquote` | yes (1 per block) | yes | `blockquote_count` |
 | `footnote` | yes (1 per block) | yes | `footnote_definition_count` |
-| `heading` | **no** | **no** | `heading_count`, `heading_counts_by_level` (via `heading_level`), `heading_outline` |
-| `table` | **no** | **no** | `table_count` + row / cell counts via `table_info` |
-| `code` | **no** | **no** | `fenced_code_count`, `total_code_line_count`, `fenced_code_counts_by_language` (via `code_language` / `code_line_count`) |
+| `heading` | **no** | **no** | `heading_count`, `heading_counts_by_level` (via `heading_level()`), `heading_outline` |
+| `table` | **no** | **no** | `table_count` + row / cell counts parsed from block source (no `TableInfo` yet) |
+| `code` | **no** | **no** | `fenced_code_count`, `total_code_line_count`, `fenced_code_counts_by_language` (fence info parsed from block source — no `code_language` accessor yet) |
+| `thematic_break` | **no** | **no** | — (ignored) |
+| `list_item` | n/a (only in the structural / base-block view, not `paragraphs`) | — | feeds `list_item_count` via `collect` / `base_blocks` |
 | `html` | **no** | **no** | `html_block_count` |
 
-“Prose-bearing” = paragraph + list + blockquote + footnote.
+“Prose-bearing” = paragraph + list + ordered_list + blockquote + footnote.
 Pprose computes prose-only sums via
-`text_doc.filtered(include={paragraph, list, blockquote, footnote}).size(...)`. The
-`all_*` variants come from `text_doc.size(...)`.
+`text_doc.filtered(include={paragraph, list, ordered_list, blockquote, footnote}).size(...)`.
+The `all_*` variants come from `text_doc.size(...)`.
 
-Frontmatter handling: if chopdiff `v0.4.x` exposes `TextDoc.frontmatter`, pprose reads
-it directly and the `paragraphs` list never contains the frontmatter block.
-If not, pprose detects the leading block matching `^---\s*\n.*?\n---\s*$` (DOTALL) and
-skips it during the walk.
+Frontmatter handling: chopdiff `0.3.1` does not isolate frontmatter, so pprose detects
+the leading block matching `^---\s*\n.*?\n---\s*$` (DOTALL) and skips it during the
+walk.
 
 ### Heading outline and section rollups
 
 `HeadingOutline` is a flat ordered list of `HeadingEntry` rows, each with the heading
 itself (level, text, offset, words) plus rollups for everything under that heading until
 the next equal-or-shallower heading.
-Built by walking `text_doc.section_tree()` once and aggregating sizes per section.
+Built by walking `text_doc.sections()` once, reading each `Section.size(...)` and
+`Section.block_type_counts()` rollup.
 
 A consumer can render an outline like:
 
@@ -366,7 +398,7 @@ class Metrics:
 
     # Lists
     list_block_count: int                      # chopdiff list blocks
-    list_item_count: int                       # via Paragraph.list_info; includes nested
+    list_item_count: int                       # via collect(kinds={list_item}); includes nested
     ordered_list_count: int
     unordered_list_count: int
     max_list_nesting_depth: int                # 1 = top-level only
@@ -400,7 +432,7 @@ class Metrics:
     paragraph_length_p95_words: int
     paragraph_length_max_words: int
 
-    # Links / footnotes (from Paragraph.inlines, not regex)
+    # Links / footnotes (from Paragraph.links() + collect(), not regex)
     external_link_count: int
     internal_link_count: int
     inline_link_count: int
@@ -478,45 +510,49 @@ class Metrics:
 
 ## Implementation Plan
 
-### Phase 0: Chopdiff v0.4.x prerequisites (tracked in chopdiff repo)
+### Phase 0: Chopdiff prerequisites — largely shipped in 0.3.1
 
-Each is one focused chopdiff PR. The first (caching) is the prerequisite for the rest;
-the others land in any order.
+Most of this phase landed in chopdiff `0.3.1` (PRs #12 / #14 / #15). Status:
 
-- [ ] **(chopdiff)** Cache the per-block marko parse result on `Paragraph` so other
-  cached properties can read from it without re-parsing.
-  Internal refactor of `_classify_block`; no public API change yet.
-- [ ] **(chopdiff)** `Paragraph.heading_level: int | None` and
-  `Paragraph.heading_text: str | None`.
-- [ ] **(chopdiff)** `Paragraph.code_language: str | None` and
-  `Paragraph.code_line_count: int | None`.
-- [ ] **(chopdiff)** `Paragraph.list_info: ListInfo | None` (ordered / start / items /
-  nesting_depth / total_item_count).
-- [ ] **(chopdiff)** `Paragraph.table_info: TableInfo | None` (header_cells / body_rows
-  / alignments / row_count / column_count).
-- [ ] **(chopdiff)** `Paragraph.inlines: list[Inline]` typed walk (Text / Link with kind
-  / Image / CodeSpan / FootnoteRef / LineBreak).
-- [ ] **(chopdiff)** `TextDoc.section_tree() -> list[Section]` derived from heading
-  blocks (setext-safe, `#`-in-code-safe via the cached parse).
-- [ ] **(chopdiff, optional but preferred)** `TextDoc.frontmatter: str | None` with the
-  frontmatter block excluded from `paragraphs`.
-- [ ] **(chopdiff)** Cut a `v0.4.0` release with the additions above.
+- [x] **(chopdiff)** Per-block marko parse cached: `Paragraph.block_type` is a
+  `@cached_property` and `TextDoc.blocks()` memoizes the structural parse on
+  `source_text`.
+- [x] **(chopdiff)** `Paragraph.heading_level()` and `Paragraph.heading_title()` (note:
+  methods, not properties; `heading_title`, not `heading_text`).
+- [ ] **(chopdiff, optional)** `Paragraph.code_language` / `code_line_count` — not
+  exposed; pprose reads the fence line and body length from block source as a
+  workaround.
+- [ ] **(chopdiff, optional)** Typed `ListInfo` — not exposed; pprose derives from
+  `block_type` + `collect(kinds={list_item})` / `base_blocks()`.
+- [ ] **(chopdiff, optional)** Typed `TableInfo` (rows / cells / alignments) — not
+  exposed; pprose counts from the `table` block source as a workaround.
+- [x] **(chopdiff)** Typed inline access: `Paragraph.links()` / `TextDoc.links()` →
+  `Link(text, url, title, span)` with autolink + bare-URL recovery (PR #15); images and
+  code spans via `collect(kinds={image, code_span}, inline=True)`. (No typed inline
+  footnote-ref node yet — pprose keeps its regex.)
+- [x] **(chopdiff)** `TextDoc.sections()` → `list[Section]` with per-section rollups,
+  plus `toc()` and `section_size_tree()` (the section tree this plan called
+  `section_tree()`).
+- [ ] **(chopdiff, not done)** `TextDoc.frontmatter` — `from_text` treats frontmatter as
+  a paragraph; pprose detects-and-skips it.
+- [ ] **(chopdiff)** Cut the `0.3.1` release with the above.
 
-### Phase 1: pprose layer on chopdiff v0.4.x
+### Phase 1: pprose layer on chopdiff 0.3.1
 
-Blocked on chopdiff `v0.4.0` being released.
+Blocked on chopdiff `0.3.1` being released.
 
-- [ ] Bump `chopdiff` pin in `tools/pprose/pyproject.toml` to `v0.4.0` under the
-  supply-chain cool-off rule; refresh `uv.lock`. Verify no pprose call sites use
-  `TextUnit.tiktokens`.
+- [ ] Bump `chopdiff` pin in `tools/pprose/pyproject.toml` (currently `>=0.2.1`) to
+  `0.3.1` under the supply-chain cool-off rule; refresh `uv.lock`. Verify no pprose call
+  sites use `TextUnit.tiktokens`.
 - [ ] Rewrite `pprose/metrics.py`: replace the `Metrics` dataclass with the new
   `*_count` schema; implement `Metrics.from_text_doc` as a single walk over the
-  `TextDoc`. Use `text_doc.section_tree()` to build the heading outline; use
-  `Paragraph.list_info` / `table_info` / `code_language` / etc.
-  for the typed per-block info; use `Paragraph.inlines` for link / image / footnote-ref
-  / code span counts; compute distribution percentiles inline.
-  Delete the regex-based structural counters and `strip_code_and_frontmatter`. Keep the
-  lint regex constants and run them against the reassembled prose-only sub-document.
+  `TextDoc`. Use `text_doc.sections()` for the heading outline; use `block_type` plus
+  per-block source parsing for code fence info / table rows-cells / list items; use
+  `paragraph.links()` and `text_doc.collect(kinds={image, code_span}, inline=True)` for
+  link / image / code-span counts (footnote refs stay regex); compute distribution
+  percentiles inline. Delete the regex-based structural counters and
+  `strip_code_and_frontmatter`. Keep the lint regex constants and run them against the
+  reassembled prose-only sub-document.
 - [ ] Rewrite `format_human` in `metrics.py` to render: the heading outline as an
   indented tree with section sizes; new list / table / code / distribution sections; the
   existing lint sections (renamed).
@@ -542,9 +578,9 @@ Blocked on chopdiff `v0.4.0` being released.
   why.
 - **New tests** in `test_metrics.py` covering: heading outline + section rollups,
   prose-only vs `all_*` distinction, link classification (external / internal × inline /
-  autolink / reference-use), list / table counts via chopdiff’s `list_info` /
-  `table_info`, distribution percentiles on a fixture with known sentence-length spread,
-  frontmatter exclusion.
+  autolink / reference-use), list / table counts (via `collect(kinds={list_item})` and
+  table-source parsing), distribution percentiles on a fixture with known
+  sentence-length spread, frontmatter exclusion.
 - **Sanity sweep**: run `pprose metrics` on `docs/`, `runbooks/`, `shortcuts/`, and
   `skills/`, and report the before/after delta for sentences and paragraphs.
   Stash the comparison in the PR body.
@@ -552,8 +588,8 @@ Blocked on chopdiff `v0.4.0` being released.
 
 ## Rollout Plan
 
-- Chopdiff PRs (Phase 0) land first, in their own repo.
-  Cut `v0.4.0`.
+- Chopdiff PRs (Phase 0) land first, in their own repo (already merged for `0.3.1`). Cut
+  `0.3.1`.
 - Single pprose PR against `main`. No feature flag — the renamed schema and new
   semantics ship together with the chopdiff pin bump.
 - Pprose version bump: minor (0.x.y → 0.{x+1}.0) because every machine-readable field
@@ -568,9 +604,9 @@ Blocked on chopdiff `v0.4.0` being released.
 - Should `paragraph_count` count each list as one paragraph, or count each list-item
   paragraph as one? Current proposal: `paragraph_count` includes one per chopdiff `list`
   block (matching chopdiff’s coarse splitting).
-  The `list_item_count` (from `Paragraph.list_info.total_item_count`) is a separate
-  field. Confirm — alternative is to use `list_item_count` to expand `paragraph_count`,
-  but that mixes granularities and destabilizes density ratios.
+  The `list_item_count` (from `collect(kinds={list_item})` / `base_blocks()`) is a
+  separate field. Confirm — alternative is to use `list_item_count` to expand
+  `paragraph_count`, but that mixes granularities and destabilizes density ratios.
 - Should headings contribute to `word_count` (the headline word count), or do we want a
   separate `prose_word_count` and `heading_word_count`? Proposal: keep `word_count` as
   the total-words-across-all-non-code-blocks number it is today; split only sentence /
@@ -605,9 +641,14 @@ Blocked on chopdiff `v0.4.0` being released.
 - [jlevy/chopdiff#7](https://github.com/jlevy/chopdiff/pull/7) — `BlockType` +
   `iter_blocks` / `filtered` (shipped in v0.3.0)
 - [jlevy/chopdiff#9](https://github.com/jlevy/chopdiff/pull/9) — exact offsets + robust
-  paragraph splitting (shipped in v0.3.0)
+- [jlevy/chopdiff#12](https://github.com/jlevy/chopdiff/pull/12) — DocGraph node model,
+  block tree, `collect()`, `base_blocks()`, `SpanRef` (shipped in 0.3.1)
+- [jlevy/chopdiff#14](https://github.com/jlevy/chopdiff/pull/14) — doc-model
+  refinements, parse memoization, complete-cover fix (shipped in 0.3.1)
+- [jlevy/chopdiff#15](https://github.com/jlevy/chopdiff/pull/15) — autolink / bare-URL
+  link-span recovery (shipped in 0.3.1) paragraph splitting (shipped in v0.3.0)
 - [jlevy/chopdiff#8](https://github.com/jlevy/chopdiff/pull/8) — `BlockDoc` plan spec
-  (longer-term redesign; not on the critical path for this work)
+  (effectively realized as the DocGraph node model in #12)
 - [attic/chopdiff/src/chopdiff/docs/text_doc.py](../../../../../attic/chopdiff/src/chopdiff/docs/text_doc.py)
 - [attic/flowmark/src/flowmark/linewrapping/sentence_split_regex.py](../../../../../attic/flowmark/src/flowmark/linewrapping/sentence_split_regex.py)
 - [pysbd (Python Sentence Boundary Disambiguation)](https://github.com/nipunsadvilkar/pySBD)
