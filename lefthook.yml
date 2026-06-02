@@ -37,15 +37,21 @@ pre-commit:
     # stage them alongside the edit. The mirrors are deliberately
     # excluded from flowmark (.flowmarkignore) — they pick up formatting
     # via this sync, not directly.
+    # Keep this glob in lockstep with the canonical sources in
+    # devtools/sync_resources.py (_synced_plan): docs/, runbooks/, shortcuts/,
+    # skills/, plus README.md (→ about) and design-system.md (→ guidelines).
+    # A source missing here drifts silently until the pre-push check fails.
     pprose-resources-sync:
       glob:
+        - "README.md"
         - "docs/*.md"
         - "runbooks/*.md"
         - "shortcuts/*.md"
         - "skills/*/SKILL.md"
+        - "tools/design-system/design-system.md"
       run: |
-        cd tools/pprose && uv run python devtools/sync_resources.py
-        git add tools/pprose/src/pprose/resources/
+        (cd tools/pprose && uv run python devtools/sync_resources.py)
+        git add tools/pprose/src/pprose/resources/ skills/
 
     # Markdown formatting with flowmark-rs (pinned in the Makefile).
     #

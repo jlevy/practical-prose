@@ -305,7 +305,8 @@ uvx pprose report validate my-doc.eval.md
 
 ## License
 
-Code is MIT licensed. Content (principles, guidelines, rubric, and other prose) is
+Code is MIT licensed.
+Content (principles, guidelines, rubric, and other prose) is
 [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/). See [LICENSE](LICENSE) for
 details.
 
