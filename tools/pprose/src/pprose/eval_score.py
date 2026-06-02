@@ -28,13 +28,16 @@ Run `pprose score --help` for the CLI surface.
 from __future__ import annotations
 
 import argparse
+import asyncio
 import hashlib
 import os
 import sys
 from dataclasses import dataclass, field
+from importlib.metadata import PackageNotFoundError, version
 from pathlib import Path
 from typing import Literal
 
+from dotenv import find_dotenv, load_dotenv
 from pydantic import BaseModel, ConfigDict
 from pydantic_ai import Agent
 from pydantic_ai.models.anthropic import AnthropicModelSettings
@@ -42,6 +45,7 @@ from pydantic_ai.settings import ModelSettings
 
 from pprose import resources
 from pprose import rubric_schema as rs
+from pprose._concurrency import gather_limited
 from pprose.eval_render import render_single_doc_rollup
 from pprose.eval_report import (
     EvalReport,
@@ -175,8 +179,6 @@ def _load_env_files() -> None:
     Later files override earlier ones, so a more-specific .env.local trumps a
     less-specific .env.
     """
-    from dotenv import find_dotenv, load_dotenv
-
     for filename in (".env", ".env.local"):
         found = find_dotenv(filename=filename, usecwd=True)
         if found:
@@ -495,8 +497,6 @@ async def call_scorer_async(artifact_block: str, *, model: str) -> CallResult:
 
 def _pydantic_ai_version() -> str:
     try:
-        from importlib.metadata import version
-
         return version("pydantic-ai-slim")
     except Exception:
         return "unknown"
@@ -738,8 +738,6 @@ async def score_batch(
     calls within ~5 min read it at ~0.1× the input cost. Order of completion
     is unrelated to order of input; results are reported as docs finish.
     """
-    from pprose._concurrency import gather_limited
-
     if not yaml_paths:
         return 0
 
@@ -959,8 +957,6 @@ def main(argv: list[str] | None = None) -> int:
         return 2
 
     if args.batch:
-        import asyncio
-
         rc = asyncio.run(
             score_batch(
                 yaml_paths,
@@ -1032,8 +1028,6 @@ def _render_output_path(eval_md_path: Path) -> Path:
 
 
 def _pprose_version() -> str:
-    from importlib.metadata import PackageNotFoundError, version
-
     try:
         return version("pprose")
     except PackageNotFoundError:
