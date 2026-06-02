@@ -23,21 +23,7 @@ The documents and tools here are organized for both human and agent use:
 - To summarize and share visualizations of these quality dimensions to better raise our
   own awareness of clear thinking and clear writing
 
-## What is Here?
-
-1. Guiding [**principles**](#principles-of-quality-in-practical-writing) and
-   [**guidelines**](docs/practical-prose-guidelines.md) for quality in practical writing
-2. Metrics of writing quality that include
-   [**6 areas**](#qualitative-measures-of-writing) (purpose, expression, form,
-   reasoning, grounding, and judgment) divided into **20 dimensions** that reflect
-   different metrics
-3. An [**evaluation rubric**](docs/practical-prose-rubric.md) on how to evaluate text
-   according to these dimensions
-4. An automated [**visualization tool**](tools/pprose/) that uses an LLM to assess
-   quality and visualize it
-5. [**Skills**](#agent-skills) that use [**a CLI**](#tooling) to package these features
-6. A [**bibliography**](docs/practical-prose-bibliography.md) of notable works on
-   practical writing
+* * *
 
 > ## A Personal Note
 
@@ -65,6 +51,25 @@ The documents and tools here are organized for both human and agent use:
 > It is still in progress, but I’ve tried to draw from the best thinkers and sources,
 > including classics about good writing, the plain-language writing tradition, science
 > and engineering writing, and journalistic practices.
+
+* * *
+
+## Contents
+
+1. Guiding [**principles**](#principles-of-quality-in-practical-writing) and
+   [**guidelines**](docs/practical-prose-guidelines.md) for quality in practical writing
+   for use by agents and humans
+2. Metrics of writing quality that include
+   [**6 areas**](#qualitative-measures-of-writing) (purpose, expression, form,
+   reasoning, grounding, and judgment) divided into **20 dimensions** that reflect
+   different metrics
+3. An [**evaluation rubric**](docs/practical-prose-rubric.md) on how to evaluate text
+   according to these dimensions
+4. An automated [**visualization tool**](tools/pprose/) that uses an LLM to evaluate the
+   quality of any text across these dimensions and visualize it
+5. [**Skills**](#agent-skills) that use [**a CLI**](#tooling) to package these features
+6. A [**bibliography**](docs/practical-prose-bibliography.md) of notable works on
+   practical writing
 
 ## Practical Writing in the Age of AI
 

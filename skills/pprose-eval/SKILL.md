@@ -45,10 +45,11 @@ a subset.
    pprose metrics path/to/artifact.md --format yaml
    ```
 
-4. Score the qualitative dimensions:
+4. Score the qualitative dimensions (`--model` is required; run
+   `pprose score --list-models` for choices, or pass `--dry-run` to skip the API call):
 
    ```bash
-   pprose score artifact.eval.md
+   pprose score artifact.eval.md --model opus
    ```
 
 5. Validate the result:

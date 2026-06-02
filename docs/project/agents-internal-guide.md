@@ -22,6 +22,7 @@ For development workflows (build, test, format, lint), see
 | Full editorial pass across all 20 dimensions + editorial review (also covers audit-only review) | [pprose-full-edit](../../skills/pprose-full-edit/SKILL.md) | [shortcut-full-edit.md](../../shortcuts/shortcut-full-edit.md) |
 | Score one document with metrics and rubric grading | [pprose-eval](../../skills/pprose-eval/SKILL.md) | [practical-prose-eval-single.runbook.md](../../runbooks/practical-prose-eval-single.runbook.md) |
 | Compare multiple evaluated drafts or variants | [pprose-compare](../../skills/pprose-compare/SKILL.md) | [practical-prose-eval-compare.runbook.md](../../runbooks/practical-prose-eval-compare.runbook.md) |
+| Manually validate every pprose surface before a release | (this repo) | [e2e-testing.runbook.md](e2e-testing.runbook.md), [release-readiness-2026-06.md](release-readiness-2026-06.md) |
 
 ## Tooling
 
