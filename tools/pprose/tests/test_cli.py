@@ -20,7 +20,9 @@ def test_top_level_help_lists_subcommands(capsys: pytest.CaptureFixture[str]) ->
     captured = capsys.readouterr()
     assert rc == 0
     assert "pprose <command> [args]" in captured.out
-    assert "uvx pprose install --agents-md" in captured.out
+    assert "uvx pprose install" in captured.out
+    assert "pprose about" in captured.out
+    assert "pprose skill" in captured.out
     for command in ("metrics", "score", "report", "compare"):
         assert command in captured.out
     assert captured.err == ""

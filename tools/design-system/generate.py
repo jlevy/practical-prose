@@ -58,6 +58,12 @@ JS_OUT = GEN_DIR / "design_system.js"
 JS_GLOBAL_OUT = GEN_DIR / "design_system.global.js"
 CSS_OUT = GEN_DIR / "design_system.css"
 PY_OUT = REPO_ROOT / "tools/pprose/src/pprose/_generated/design_system.py"
+# Mirror of design_system.css inside the renderer's styles tree so the
+# inliner can concatenate it without leaving the package.  Underscore-
+# prefixed dir signals "do not hand-edit".
+RENDERER_CSS_OUT = (
+    REPO_ROOT / "tools/pprose/src/pprose/render_html/styles/_generated/design_system.css"
+)
 
 # The name attached to `window` by the global-script variant.  Stable contract
 # — HTML consumers reference `window.PracticalProseDesignSystem`.
@@ -181,6 +187,63 @@ def emit_js_global(resolved: dict) -> str:
     )
 
 
+def _font_face_block(family: str, source: str) -> str:
+    """Emit `@font-face` declarations for one font role.
+
+    ``source`` shapes:
+      - ``system``                  → no declarations (rely on locally
+                                      installed fonts in the fallback stack).
+      - ``fontsource:<id>:vf``      → one normal + one italic woff2 file
+                                      (variable-font weight axis 100–900).
+      - ``fontsource:<id>``         → static 400 + 700, normal + italic
+                                      (four cuts).
+
+    The fontsource CDN URLs follow a stable pattern; see
+    https://fontsource.org/docs/getting-started/install#self-host
+    """
+    if source == "system":
+        return ""
+
+    if not source.startswith("fontsource:"):
+        raise ValueError(f"unsupported font source: {source!r}")
+    rest = source[len("fontsource:") :]
+    if rest.endswith(":vf"):
+        font_id = rest[: -len(":vf")]
+        base = f"https://cdn.jsdelivr.net/fontsource/fonts/{font_id}:vf@latest"
+        return (
+            f"@font-face {{\n"
+            f'  font-family: "{family}";\n'
+            f"  font-style: normal;\n"
+            f"  font-display: swap;\n"
+            f"  font-weight: 100 900;\n"
+            f'  src: url({base}/latin-wght-normal.woff2) format("woff2-variations");\n'
+            f"}}\n"
+            f"@font-face {{\n"
+            f'  font-family: "{family}";\n'
+            f"  font-style: italic;\n"
+            f"  font-display: swap;\n"
+            f"  font-weight: 100 900;\n"
+            f'  src: url({base}/latin-wght-italic.woff2) format("woff2-variations");\n'
+            f"}}\n"
+        )
+    # Static cuts: 400 + 700, normal + italic.
+    font_id = rest
+    base = f"https://cdn.jsdelivr.net/fontsource/fonts/{font_id}@latest"
+    parts: list[str] = []
+    for weight in (400, 700):
+        for style in ("normal", "italic"):
+            parts.append(
+                f"@font-face {{\n"
+                f'  font-family: "{family}";\n'
+                f"  font-style: {style};\n"
+                f"  font-display: swap;\n"
+                f"  font-weight: {weight};\n"
+                f'  src: url({base}/latin-{weight}-{style}.woff2) format("woff2");\n'
+                f"}}\n"
+            )
+    return "".join(parts)
+
+
 def emit_css(resolved: dict) -> str:
     surfaces = resolved["surfaces"]
     groups = resolved["groups"]
@@ -245,20 +308,47 @@ def emit_css(resolved: dict) -> str:
     ]
     interaction_block = "\n".join(interaction_lines)
 
-    # Typography tokens — small-caps eyebrow tracking + weights and
-    # the numeric weight for quantitative readouts.  Theme-independent.
-    # These travel together because the letter-spacing rule in
-    # design-system.md fires only on uppercase text.
+    # Typography tokens — small-caps tracking + per-role font config.
+    # Three weight tiers per role (regular / medium / bold) are exposed
+    # as separate vars so consumers can pick the appropriate tier per
+    # element.  The design-system convenience tokens (--weight-caps,
+    # --weight-caps-strong, --weight-num) collapse to sans-weight-bold
+    # so dialing the sans Bold value moves every caps + num token in
+    # lockstep — matches the explorations chooser behavior.
     caps = resolved["typography"]["caps"]
-    numeric = resolved["typography"]["numeric"]
+    fonts = resolved["typography"]["fonts"]
+    sans, serif = fonts["sans"], fonts["serif"]
+
+    def _stack_var(role_cfg: dict) -> str:
+        # The CSS var leads with the role's primary family (quoted) plus the
+        # author-supplied fallback stack.  The exploration HTML's chooser uses
+        # the same pattern: chosen family first, then the stack.
+        return f'"{role_cfg["family"]}", {role_cfg["stack"]}'
+
     typography_lines = [
-        "  /* Typography — small-caps eyebrow tokens */",
+        "  /* Typography — small-caps eyebrow tracking */",
         f"  --tracking-caps: {caps['tracking']};",
-        f"  --weight-caps: {caps['weight']};",
-        f"  --weight-caps-strong: {caps['weight_strong']};",
         "",
-        "  /* Typography — quantitative numbers (scores, counts, stats) */",
-        f"  --weight-num: {numeric['weight']};",
+        "  /* Font stacks per role (primary family + fallbacks) */",
+        f"  --font-sans:  {_stack_var(sans)};",
+        f"  --font-serif: {_stack_var(serif)};",
+        "",
+        "  /* Font sizes (px) per role — base for rem (sans) and em (serif). */",
+        f"  --font-sans-size:  {sans['size_px']:g}px;",
+        f"  --font-serif-size: {serif['size_px']:g}px;",
+        "",
+        "  /* Font weights per role — three tiers (regular / medium / bold) */",
+        f"  --font-sans-weight:        {sans['weight']};",
+        f"  --font-sans-weight-medium: {sans['weight_medium']};",
+        f"  --font-sans-weight-bold:   {sans['weight_bold']};",
+        f"  --font-serif-weight:        {serif['weight']};",
+        f"  --font-serif-weight-medium: {serif['weight_medium']};",
+        f"  --font-serif-weight-bold:   {serif['weight_bold']};",
+        "",
+        "  /* Convenience aliases (eyebrow + numeric) — collapse to sans bold. */",
+        "  --weight-caps:        var(--font-sans-weight-bold);",
+        "  --weight-caps-strong: var(--font-sans-weight-bold);",
+        "  --weight-num:         var(--font-sans-weight-bold);",
     ]
     typography_block = "\n".join(typography_lines)
 
@@ -285,8 +375,17 @@ def emit_css(resolved: dict) -> str:
     ]
     scoring_block = "\n".join(scoring_lines)
 
+    # @font-face declarations for each font role's webfont source.
+    # Emitted before :root so the fonts are registered before any CSS
+    # vars reference them.  `system` sources contribute nothing here.
+    font_face_block = _font_face_block(sans["family"], sans["source"]) + _font_face_block(
+        serif["family"], serif["source"]
+    )
+
     return (
         f"/* {HEADER_NOTICE} */\n"
+        "\n"
+        f"{font_face_block}"
         "\n"
         ":root {\n"
         f"{light_vars}\n"
@@ -389,6 +488,7 @@ def main() -> int:
     stale |= _write(JS_GLOBAL_OUT, js_global, check=args.check)
     stale |= _write(CSS_OUT, css, check=args.check)
     stale |= _write(PY_OUT, py, check=args.check)
+    stale |= _write(RENDERER_CSS_OUT, css, check=args.check)
 
     if args.check and stale:
         print("\nRun without --check to regenerate.", file=sys.stderr)

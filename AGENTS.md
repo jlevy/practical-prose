@@ -4,79 +4,29 @@ Practical Prose is a reference system and evaluation toolkit for writing that he
 reader understand, decide, do, verify, or maintain something.
 Use it when the user asks to improve, audit, score, or compare practical documents.
 
-Keep this file short.
-Load the skill or source document for the specific workflow rather than copying the full
-guidelines into every context.
+For project-wide authoring principles, run
+`pprose guidelines practical-prose-authoring-principles`.
+For this repo's workflows table, pprose tooling layout, and visual-design notes, see
+[docs/project/agents-internal-guide.md](docs/project/agents-internal-guide.md).
 
-## Workflows
+<!-- BEGIN PPROSE INTEGRATION format=f01 -->
+## Practical Prose (pprose)
 
-| User intent | Use | Source |
-| --- | --- | --- |
-| Apply the common Markdown documentation standards (basic, universal) | [pprose-common-edit](skills/pprose-common-edit/SKILL.md) | [common-doc-guidelines.md](docs/common-doc-guidelines.md) |
-| Copy edit for language and formatting (the Expression and Form dimensions) | [pprose-copy-edit](skills/pprose-copy-edit/SKILL.md) | [shortcut-copy-edit.md](shortcuts/shortcut-copy-edit.md) |
-| Full editorial pass across all 20 dimensions + editorial review (also covers audit-only review) | [pprose-full-edit](skills/pprose-full-edit/SKILL.md) | [shortcut-full-edit.md](shortcuts/shortcut-full-edit.md) |
-| Score one document with metrics and rubric grading | [pprose-eval](skills/pprose-eval/SKILL.md) | [practical-prose-eval-single.runbook.md](runbooks/practical-prose-eval-single.runbook.md) |
-| Compare multiple evaluated drafts or variants | [pprose-compare](skills/pprose-compare/SKILL.md) | [practical-prose-eval-compare.runbook.md](runbooks/practical-prose-eval-compare.runbook.md) |
+Practical Prose: an evaluation toolkit and editorial workflows for
+practical documents.
+Use when the user asks to improve, audit, score, or compare practical
+documents.
 
-## Authoring Principles
+Discover the tool from the CLI itself: `pprose --help` for commands,
+`pprose about` for the project narrative, and `pprose skill --list` /
+`pprose shortcut --list` / `pprose guidelines --list` /
+`pprose runbook --list` for on-demand workflows, playbooks, style
+guides, and procedures.
 
-When generating, summarizing, or rewriting practical prose:
+Run pprose as `pprose <command>` if on PATH, else `uvx pprose@0.1.0
+<command>` (zero-install via uv).
 
-1. Answer the reader’s task and make the main output recoverable from a skim.
-2. State scope and claim boundaries early.
-3. Keep evidence, inference, and recommendation distinct.
-4. Make material claims traceable to sources, calculations, or explicit assumptions.
-5. Use concrete language and the most specific terms the reader can parse.
-6. Cut visible rigor that does not improve inspectability, accuracy, usefulness, or
-   reader trust.
-7. Apply fairness and robustness only when the task involves disputed or interpretive
-   claims.
-8. Mark unknowns instead of inventing support.
-
-When a local rule conflicts with the reader outcome, document the justified deviation:
-which rule is set aside, what reader outcome it serves, and what risk it introduces.
-
-## Tooling
-
-The Python package lives in `tools/pprose/`. The distribution and command are both
-`pprose`, so after publication agents can run it in any repo with `uvx` and no prior
-install:
-
-```bash
-uvx pprose <command> ...
-```
-
-**Evaluate** (action): `pprose metrics`, `pprose report`, `pprose score`,
-`pprose compare`.
-
-**Reference** (print bundled docs the agent follows; `--list` to enumerate):
-`pprose guidelines <name>`, `pprose shortcut <name>`, `pprose runbook <name>`,
-`pprose skill <name>`. The guidelines, shortcuts, runbooks, and rubric are bundled in
-the wheel, so these work in any repo without this source tree.
-
-**Setup**: `pprose install` writes the five Practical Prose skills into a repo’s
-`.claude/skills/`. Use `pprose install --agents-md` when the target repo should also get
-an `AGENTS.md` routing block.
-The generated skills reference `pprose` with a pinned, local-first invocation: `pprose`
-if on PATH, else `uvx pprose@<version>` (the version that ran install — a trusted pin,
-never an unpinned runner), else they tell the user to install uv or pprose.
-
-For local development before publication, run from the package workspace:
-
-```bash
-cd tools/pprose
-uv run pprose <command> ...
-```
-
-`score` requires `ANTHROPIC_API_KEY`; the package auto-loads `.env` and `.env.local`
-from the current directory hierarchy and `$HOME`.
-
-## Visual Design
-
-Any work that touches palettes, eval-report rendering, or CSS should follow
-[design-system.md](tools/design-system/design-system.md).
-All color values are written in `hsl()`, not hex, so the system’s structure is visible
-in the source.
+<!-- END PPROSE INTEGRATION -->
 
 <!-- BEGIN TBD INTEGRATION format=f04 surface=agents-md -->
 ## tbd

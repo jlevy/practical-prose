@@ -1,0 +1,329 @@
+/* Stop body's serif weight from leaking into sans UI chrome via
+   inheritance.  Every selector below uses `font-family: var(--font-sans)`
+   but no explicit `font-weight`, so without this rule the serif
+   slider would also dial them.  :where() carries zero specificity,
+   so any widget-local rule that does set a numeric font-weight
+   (eg. `.num { font-weight: var(--weight-num) }`) still wins. */
+:where(
+  .theme-toggle,
+  .surface-toggle,
+  .legend,
+  .controls-panel,
+  .controls-field select,
+  .heatmap .hm-axis,
+  .strip-row .doc-meta,
+  .group-card .gc-row .gc-dim,
+  .group-card .gc-score,
+  .chart-card .doc-meta,
+  .axis-label,
+  .bartable-card,
+  .bt-num,
+  .bi-tip-panel .tip-content .tip-empty,
+  .bi-tip-panel .tip-content .tip-assessment p,
+  .bi-tip-panel .tip-content .tip-assessment ul li,
+  .qm-card,
+  .qm-rollup-row .label,
+  .note-card .meta,
+  .panel-about-body .meta,
+  .palette-card .swatch-row,
+  footer
+) {
+  /* Excludes .bi-tip-panel and .bi-card wrappers — they have serif
+     descendants (tip-content p/ul/h1/tip-context, doc-name) that
+     must inherit the serif weight from body.  All sans children
+     inside them carry their own explicit font-weight already. */
+  font-weight: var(--font-sans-weight);
+}
+
+/* Flex children of .bi-layout (the stack-wrapped bi-card + the two
+   tip panels) need border-box so their padding + 1px border live
+   INSIDE the declared flex-basis / max-width.  Without this the
+   bi-card overflows its 32rem .bi-stack slot by ~2rem of padding,
+   which silently eats the visible gap between the stack and the
+   assess panel and breaks the inter-panel rhythm. */
+.bi-layout .bi-card,
+.bi-layout .bi-tip-panel {
+  box-sizing: border-box;
+}
+
+/* ─── Side detail panel (right of bi-stack) ────────────────────────
+   Updates contents on hover of any element carrying
+   `data-tip-kind` (dim | score | group).  A small fade between
+   content swaps; the panel itself is always visible. */
+.bi-tip-panel {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 1.1rem 1.25rem 1.25rem;
+  font-family: var(--font-sans);
+  /* em (not rem) so the panel's base size tracks body's
+     font-size = var(--font-serif-size).  The em-based serif
+     descendants (.tip-content h1/p/ul/.tip-context) then scale
+     with the serif slider; the rem-based sans descendants
+     (.tip-panel-heading, h2, .tip-empty, .tip-assessment p) keep
+     scaling with the sans slider via html-rem. */
+  font-size: 1.05em;
+  line-height: var(--line-height);
+  color: var(--fg);
+  min-height: 12rem;
+  width: 100%;
+  max-width: 32rem;
+  /* `position: relative` + JS-driven `top` slides the panel
+     vertically to align with the hovered card (on wide layouts).
+     Below 72rem the panel sits in flex flow below the stack and
+     we leave its top alone. */
+  position: relative;
+  top: 0;
+  transition:
+    top var(--hover-duration) var(--hover-easing),
+    background-color var(--hover-duration) var(--hover-easing),
+    border-color var(--hover-duration) var(--hover-easing);
+}
+
+/* Assessment panel — shares the bi-card's white background +
+   border treatment so the "evaluated values" side of the layout
+   (card + assessment) reads as one vocabulary, distinct from
+   the rubric-info Detail panel on the far right which keeps
+   the slightly-grey card chrome. */
+.bi-tip-panel.bi-tip-panel-assess {
+  background: var(--bg);
+}
+
+/* `.is-empty` keeps the panel in flow (so the row doesn't shift
+   when one panel goes quiet) but drops the chrome and content.
+   Used for the initial / pointer-leave state and for group hovers
+   where there's no per-doc assessment to show. */
+.bi-tip-panel.is-empty {
+  background: transparent;
+  border-color: transparent;
+}
+
+.bi-tip-panel.is-empty > * {
+  visibility: hidden;
+}
+
+@media (min-width: 72rem) {
+  .bi-tip-panel {
+    flex: 0 0 18rem;
+    max-width: none;
+    align-self: flex-start;
+  }
+}
+
+/* Permanent panel header — sits at the top of the panel and never
+   changes.  Identifies the panel itself; content below it swaps.
+   Weight + centering match the bi-card's .doc-kicker so the
+   tooltip and the visual read as parallel artifacts.  No rule
+   underneath — the bi-card doesn't have one either. */
+.bi-tip-panel .tip-panel-heading {
+  /* Small-caps eyebrow — self-contained so the component doesn't depend on
+     the workbench's inline `.eyebrow` utility (which ships nowhere else).
+     Matches the approved `.eyebrow-lg` spec verbatim. */
+  font-family: var(--font-sans);
+  font-size: 0.9rem;
+  font-weight: var(--weight-caps-strong);
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-caps);
+  color: var(--muted);
+  text-align: center;
+  margin-bottom: 0.75rem;
+}
+
+/* Content fade-in on every swap.  Uses the same design-system
+   tokens (--hover-duration + --hover-easing) as the hover affordance
+   so the page reads as one motion system. */
+@keyframes bi-tip-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(2px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.bi-tip-panel .tip-content.fade-in {
+  animation: bi-tip-fade-in var(--hover-duration) var(--hover-easing);
+}
+
+/* UI hint text — chrome, not content.  Always sans gray, never
+   italic, never serif.  Selectors scoped under .tip-content so they
+   out-specify the .tip-content p rule (which sets serif for body
+   prose).  See design-system.md "Content vs chrome". */
+.bi-tip-panel .tip-content .tip-empty {
+  font-family: var(--font-sans);
+  font-style: normal;
+  font-size: 0.95rem;
+  line-height: var(--line-height);
+  color: var(--muted);
+}
+
+/* ─── Tip panel content — markdown-rendered ──────────────────────
+   The body of the tip panel is produced by `marked.parse(md)`.
+   CSS targets the resulting semantic elements (h1, h2, p, ul, li,
+   em, strong, hr) so authors write compact markdown strings in JS
+   and the typography rules in one place handle the look. */
+
+/* Parent-group context label — shown above the title in dim/score
+   panels.  Codified-concept name in serif, not italic. */
+.bi-tip-panel .tip-content .tip-context {
+  font-family: var(--font-serif);
+  font-weight: var(--font-serif-weight-bold);
+  font-size: 1.15em;
+  color: var(--fg);
+  margin: 0 0 0.2rem;
+  line-height: 1.2;
+}
+
+/* h1 — primary heading.  Group titles render as `# Reasoning`
+   (plain h1, serif).  Dim titles render as `# *Discipline*` so
+   the <em> inside the h1 carries dim-label voice: sans, uppercase
+   small caps, weight-caps-strong, tracking-caps — mirroring the
+   .bi-dim-name treatment on the card so the panel and the card
+   agree on what a dim's "name" looks like.  Sized ~1.35rem (a
+   step up from the 0.9rem on-card label so it reads as a heading
+   in the panel). */
+.bi-tip-panel .tip-content h1 {
+  font-family: var(--font-serif);
+  font-weight: var(--font-serif-weight-medium);
+  font-size: 1.9em;
+  letter-spacing: -0.005em;
+  margin: 0 0 0.45rem;
+  color: var(--fg);
+  line-height: 1.1;
+}
+
+.bi-tip-panel .tip-content h1 em {
+  font-family: var(--font-sans);
+  font-size: 0.71em; /* renders ~1.35em against the 1.9em h1 */
+  /* Larger sans heading → medium reads cleaner than bold at this
+     size; the smaller eyebrows (h2 "Rules"/"Assessment", the
+     kicker above) stay bold. */
+  font-weight: var(--font-sans-weight-medium);
+  font-style: normal;
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-caps);
+  line-height: 1.25;
+  /* Same dark label tone as the dim labels in the main diagram —
+     the dim row mirror below carries the colored bar already, so
+     the heading itself can stay neutral. */
+  color: var(--dim-label-color, var(--fg));
+}
+
+/* h2 — section header (Rules, Assessment).  Small-caps eyebrow at
+   the *structural* weight (strong) — bigger and more solid than
+   the lightweight in-card labels, so it reads as a real divider
+   in the panel content.  Tracking + family inherited from tokens. */
+.bi-tip-panel .tip-content h2 {
+  font-family: var(--font-sans);
+  font-size: 0.85rem;
+  font-weight: var(--weight-caps-strong);
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-caps);
+  color: var(--muted);
+  margin: 1rem 0 0.45rem;
+}
+
+/* Body paragraph — codified content / definition prose. */
+.bi-tip-panel .tip-content p {
+  font-family: var(--font-serif);
+  font-size: 1.05em;
+  line-height: var(--line-height);
+  color: var(--fg);
+  margin: 0 0 0.55rem;
+}
+
+/* Standalone italic paragraph (the dim's question) — slightly
+   bigger, same "described in detail" voice as the title.
+   Nested inside a 1.05em p, so 1.05em here = ~1.10 × body
+   (matches the original 1.1rem default). */
+.bi-tip-panel .tip-content p > em:only-child {
+  font-size: 1.05em;
+}
+
+/* Bold name at the start of a paragraph (the dim names in the
+   group panel "**Name** — question.") — italic serif. */
+.bi-tip-panel .tip-content p strong {
+  font-style: italic;
+  font-weight: var(--font-serif-weight-bold);
+}
+
+/* Lists — rubric rules.  Use native disc bullets (browsers
+   vertically center these on the line correctly, unlike a
+   ::before " · " which sits high in most fonts). */
+.bi-tip-panel .tip-content ul {
+  margin: 0 0 0.7rem;
+  padding-left: 1.2rem;
+  list-style: disc outside;
+}
+
+.bi-tip-panel .tip-content ul li {
+  margin: 0 0 0.35rem;
+  font-family: var(--font-serif);
+  font-size: 1.05em;
+  color: var(--fg);
+  line-height: var(--line-height);
+}
+
+.bi-tip-panel .tip-content ul li::marker {
+  color: var(--muted);
+}
+
+/* Horizontal rule from `---` — separator between context and
+   grading details in the score panel. */
+.bi-tip-panel .tip-content hr {
+  border: none;
+  border-top: 1px solid var(--border);
+  margin: 0.85rem 0 0.7rem;
+}
+
+/* Assessment block — the computed per-doc evaluation (rule
+   findings bulleted, or the NA/ERR reason).  Computed outputs
+   read sans (design-system content-vs-chrome rule), overriding
+   the serif default for body prose + list items. */
+.bi-tip-panel .tip-content .tip-assessment p,
+.bi-tip-panel .tip-content .tip-assessment ul li {
+  font-family: var(--font-sans);
+  font-style: normal;
+  font-size: 1rem;
+  line-height: var(--line-height);
+}
+
+/* Finding bullet prefix — "Rule N · verdict".  Bold sans label
+   that introduces the finding's atomic point. */
+.bi-tip-panel .tip-content .tip-assessment ul li strong {
+  font-family: var(--font-sans);
+  font-style: normal;
+  font-weight: 700;
+  color: var(--fg);
+}
+
+.bi-tip-panel .tip-score-row {
+  display: flex;
+  align-items: baseline;
+  gap: 0.5rem;
+  margin: 0 0 0.55rem;
+}
+
+/* Tip-panel score readout — quantitative, so sans + canonical
+   --weight-num (matches .bi-num-circle in the main graphic). */
+.bi-tip-panel .tip-score {
+  font-family: var(--font-sans);
+  font-weight: var(--weight-num);
+  font-size: 2.2rem;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Score-meta sits inline with the big .tip-score number — treat it
+   as numeric chrome (sans + --weight-num + tabular nums), not as
+   an eyebrow.  Drops the small-caps tracking/uppercase that made
+   it read thin against the heavier numeral. */
+.bi-tip-panel .tip-score-meta {
+  font-family: var(--font-sans);
+  font-weight: var(--weight-num);
+  font-size: 1rem;
+  font-variant-numeric: tabular-nums;
+  color: var(--muted);
+}

@@ -41,6 +41,7 @@ classifiers = [
 dependencies = [
     "aiolimiter>=1.2",
     "chopdiff>=0.2.1",
+    "jinja2>=3.1",
     "pydantic>=2.0",
     # Provider-agnostic LLM client. Pinned (not >=) to honor the 14-day cool-off
     # supply-chain policy: 1.93.0 was released 2026-05-09. Re-pin when bumping.
@@ -100,6 +101,12 @@ include = [
     "src/pprose/rubric_schema.yaml",
     "src/pprose/prompts/*.md",
     "src/pprose/resources/**/*.md",
+    "src/pprose/render_html/templates/*.jinja",
+    "src/pprose/render_html/templates/variants/*.jinja",
+    "src/pprose/render_html/styles/*.css",
+    "src/pprose/render_html/styles/_generated/*.css",
+    "src/pprose/render_html/js/_generated/*.js",
+    "src/pprose/render_html/assets/*",
 ]
 
 
@@ -199,7 +206,7 @@ reportUnusedParameter = false
 # src/pprose/resources/ holds verbatim copies of the canonical repo docs (synced by
 # devtools/sync_resources.py); spell-checking is the source docs' concern, and the prose
 # intentionally uses domain terms (e.g. "SME") that codespell flags.
-skip = "src/pprose/resources/*,uv.lock"
+skip = "src/pprose/resources/*,uv.lock,src/pprose/render_html/js/_generated/*,src/pprose/render_html/styles/_generated/*"
 # Add here as needed:
 # ignore-words-list = "foo,bar"
 

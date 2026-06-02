@@ -5,6 +5,33 @@
     <title>Practical Prose — 20-Dimension Visualization Survey</title>
     <meta name="viewport" content="width=device-width,initial-scale=1" />
 
+    <!-- Webfonts: Source Sans 3 (sans) + PT Serif (serif) via fontsource CDN.
+         These match the defaults set in :root below and are exposed as
+         choices in the font chooser (lib/design-font-controls.js).
+         Preconnects warm the CDN; preloads pull the most-used cuts so
+         first paint doesn't fall back through the stack. -->
+    <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin />
+    <link rel="preload" as="font" type="font/woff2" crossorigin
+      href="https://cdn.jsdelivr.net/fontsource/fonts/pt-serif@latest/latin-400-normal.woff2" />
+    <link rel="preload" as="font" type="font/woff2" crossorigin
+      href="https://cdn.jsdelivr.net/fontsource/fonts/pt-serif@latest/latin-700-normal.woff2" />
+    <link rel="preload" as="font" type="font/woff2" crossorigin
+      href="https://cdn.jsdelivr.net/fontsource/fonts/pt-serif@latest/latin-400-italic.woff2" />
+    <link rel="preload" as="font" type="font/woff2" crossorigin
+      href="https://cdn.jsdelivr.net/fontsource/fonts/pt-serif@latest/latin-700-italic.woff2" />
+    <link rel="preload" as="font" type="font/woff2" crossorigin
+      href="https://cdn.jsdelivr.net/fontsource/fonts/source-sans-3:vf@latest/latin-wght-normal.woff2" />
+    <link rel="preload" as="font" type="font/woff2" crossorigin
+      href="https://cdn.jsdelivr.net/fontsource/fonts/source-sans-3:vf@latest/latin-wght-italic.woff2" />
+    <link rel="preload" as="font" type="font/woff2" crossorigin
+      href="https://cdn.jsdelivr.net/fontsource/fonts/noto-serif:vf@latest/latin-wght-normal.woff2" />
+    <link rel="preload" as="font" type="font/woff2" crossorigin
+      href="https://cdn.jsdelivr.net/fontsource/fonts/noto-serif:vf@latest/latin-wght-italic.woff2" />
+    <link rel="preload" as="font" type="font/woff2" crossorigin
+      href="https://cdn.jsdelivr.net/fontsource/fonts/source-serif-4:vf@latest/latin-wght-normal.woff2" />
+    <link rel="preload" as="font" type="font/woff2" crossorigin
+      href="https://cdn.jsdelivr.net/fontsource/fonts/source-serif-4:vf@latest/latin-wght-italic.woff2" />
+
     <script src="https://cdn.jsdelivr.net/npm/d3@7.9.0/dist/d3.min.js"></script>
     <!-- js-yaml is used to parse the in-repo rubric YAML + the YAML frontmatter
          in each *.eval.md fixture so the bidirectional viz (and its tooltips)
@@ -21,20 +48,41 @@
      (NA/ERR washes, rungs, overlay text, font stacks) live in the <style>
      block below.  Edit tools/design-system/design-system.yaml + run
      generate.py to update palette values. -->
+    <!-- ?v=ds2 cache-bust: the design system grew typography.fonts (font
+         family, stack, size, weights per role); a stale cached copy
+         would crash the chooser init and blank the visualizations. -->
     <link
       rel="stylesheet"
-      href="../../design-system/_generated/design_system.css"
+      href="../../design-system/_generated/design_system.css?v=ds2"
     />
 
     <!-- Production design-system runtime: the YAML data, attached to
      window.PracticalProseDesignSystem.  Plain script for file:// compat. -->
-    <script src="../../design-system/_generated/design_system.global.js"></script>
+    <script src="../../design-system/_generated/design_system.global.js?v=ds2"></script>
 
     <!-- Design-only tools — color / font / palette UI controls. Used only by
      these exploration pages; not part of the production design system. -->
-    <script src="lib/design-color-controls.js"></script>
-    <script src="lib/design-font-controls.js"></script>
-    <script src="lib/design-palette-sliders.js"></script>
+    <!-- ?v=lib2 cache-bust: design-palette-sliders.js gained the
+         typography export and design-font-controls.js gained the
+         weight-input mounting; old cached copies emit incomplete
+         YAML and won't see the new controls. -->
+    <script src="lib/design-color-controls.js?v=lib2"></script>
+    <script src="lib/design-font-controls.js?v=lib2"></script>
+    <script src="lib/design-palette-sliders.js?v=lib2"></script>
+
+    <!-- Shared render components — single source of truth for the Visual 9B
+         card, the Detail+Assessment tip-panels, and the Auto/Light/Dark
+         theme toggle. The pprose render pipeline mirrors these into its
+         wheel via tools/pprose/devtools/sync_render_html_styles.py.
+         Loading them here keeps the workbench in sync with the rendered
+         output by construction. See
+         docs/project/specs/active/plan-2026-05-31-shared-render-components.md. -->
+    <link rel="stylesheet" href="../../render-components/bi-card/card.css" />
+    <link rel="stylesheet" href="../../render-components/tip-panels/tip-panels.css" />
+    <link rel="stylesheet" href="../../render-components/theme-toggle/theme-toggle.css" />
+    <script src="../../render-components/bi-card/card.js"></script>
+    <script src="../../render-components/tip-panels/tip-panels.js"></script>
+    <script src="../../render-components/theme-toggle/theme-toggle.js"></script>
 
     <style>
       /* Colors expressed as hsl() per tools/design-system/design-system.md.
@@ -66,15 +114,366 @@
             inlining their own values.
          ─────────────────────────────────────────────────────────────── */
 
-      /* Font stacks — overridden live by the font chooser in the controls
-     panel below the header.  Defaults match the original cream-paper
-     book typography (serif body, system sans for UI). */
+      /* Webfont @font-face declarations — mirror the kash base webpage
+         template (src/kash/web_gen/templates/base_webpage.html.jinja) so
+         the same Source Sans 3 + PT Serif cuts are available here.  The
+         "LocalPunct" front-of-stack on the serif default works around
+         PT Serif's known quote-mark alignment bug by sourcing ASCII +
+         curly quotes from local Georgia. */
+      /* https://fontsource.org/fonts/pt-serif/cdn */
+      @font-face {
+        font-family: "PT Serif";
+        font-style: normal;
+        font-display: block;
+        font-weight: 400;
+        src: url(https://cdn.jsdelivr.net/fontsource/fonts/pt-serif@latest/latin-400-normal.woff2) format("woff2");
+        unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6,
+          U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122,
+          U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+      }
+      @font-face {
+        font-family: "PT Serif";
+        font-style: normal;
+        font-display: block;
+        font-weight: 700;
+        src: url(https://cdn.jsdelivr.net/fontsource/fonts/pt-serif@latest/latin-700-normal.woff2) format("woff2");
+        unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6,
+          U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122,
+          U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+      }
+      @font-face {
+        font-family: "PT Serif";
+        font-style: italic;
+        font-display: block;
+        font-weight: 400;
+        src: url(https://cdn.jsdelivr.net/fontsource/fonts/pt-serif@latest/latin-400-italic.woff2) format("woff2");
+        unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6,
+          U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122,
+          U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+      }
+      @font-face {
+        font-family: "PT Serif";
+        font-style: italic;
+        font-display: block;
+        font-weight: 700;
+        src: url(https://cdn.jsdelivr.net/fontsource/fonts/pt-serif@latest/latin-700-italic.woff2) format("woff2");
+        unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6,
+          U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122,
+          U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+      }
+      /* PT Serif has a known quote-alignment bug
+         (https://nedbatchelder.com/blog/201809/fixing_pt_serif.html).
+         Serve ASCII + curly quote glyphs from local Georgia via a
+         narrow unicode-range font, fronted on the serif stack. */
+      @font-face {
+        font-family: "LocalPunct";
+        src: local("Georgia");
+        unicode-range:
+          U+0022, U+0027,
+          U+2018, U+2019, U+201C, U+201D;
+      }
+      /* https://fontsource.org/fonts/source-sans-3/cdn */
+      @font-face {
+        font-family: "Source Sans 3 Variable";
+        font-style: normal;
+        font-display: block;
+        font-weight: 200 900;
+        src: url(https://cdn.jsdelivr.net/fontsource/fonts/source-sans-3:vf@latest/latin-wght-normal.woff2) format("woff2-variations");
+        unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6,
+          U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122,
+          U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+      }
+      @font-face {
+        font-family: "Source Sans 3 Variable";
+        font-style: italic;
+        font-display: block;
+        font-weight: 200 900;
+        src: url(https://cdn.jsdelivr.net/fontsource/fonts/source-sans-3:vf@latest/latin-wght-italic.woff2) format("woff2-variations");
+        unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6,
+          U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122,
+          U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+      }
+      /* https://fontsource.org/fonts/source-serif-4/cdn — variable serif,
+         weight axis 200–900.  Loaded so the chooser can switch in for
+         side-by-side comparison with PT Serif. */
+      @font-face {
+        font-family: "Source Serif 4 Variable";
+        font-style: normal;
+        font-display: block;
+        font-weight: 200 900;
+        src: url(https://cdn.jsdelivr.net/fontsource/fonts/source-serif-4:vf@latest/latin-wght-normal.woff2) format("woff2-variations");
+        unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6,
+          U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122,
+          U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+      }
+      @font-face {
+        font-family: "Source Serif 4 Variable";
+        font-style: italic;
+        font-display: block;
+        font-weight: 200 900;
+        src: url(https://cdn.jsdelivr.net/fontsource/fonts/source-serif-4:vf@latest/latin-wght-italic.woff2) format("woff2-variations");
+        unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6,
+          U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122,
+          U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+      }
+
+      /* ─── Alternate serif options for chooser comparison ────────────────
+         Charter-family / book-text candidates the user can flip between
+         live.  No preload links in <head> — these load on first use when
+         the chooser switches in.  Static fonts list all 4 cuts (400 +
+         700, normal + italic); Literata is variable so 2 cuts cover it. */
+
+      /* https://fontsource.org/fonts/charis-sil/cdn — SIL's Charter-derived
+         text face: quiet, sturdy, designed for long-form reading. */
+      @font-face {
+        font-family: "Charis SIL";
+        font-style: normal;
+        font-display: swap;
+        font-weight: 400;
+        src: url(https://cdn.jsdelivr.net/fontsource/fonts/charis-sil@latest/latin-400-normal.woff2) format("woff2");
+      }
+      @font-face {
+        font-family: "Charis SIL";
+        font-style: normal;
+        font-display: swap;
+        font-weight: 700;
+        src: url(https://cdn.jsdelivr.net/fontsource/fonts/charis-sil@latest/latin-700-normal.woff2) format("woff2");
+      }
+      @font-face {
+        font-family: "Charis SIL";
+        font-style: italic;
+        font-display: swap;
+        font-weight: 400;
+        src: url(https://cdn.jsdelivr.net/fontsource/fonts/charis-sil@latest/latin-400-italic.woff2) format("woff2");
+      }
+      @font-face {
+        font-family: "Charis SIL";
+        font-style: italic;
+        font-display: swap;
+        font-weight: 700;
+        src: url(https://cdn.jsdelivr.net/fontsource/fonts/charis-sil@latest/latin-700-italic.woff2) format("woff2");
+      }
+
+      /* https://fontsource.org/fonts/gelasio/cdn — metric-compatible
+         Georgia/Iowan substitute; nearly indistinguishable from Iowan
+         in body copy. */
+      @font-face {
+        font-family: "Gelasio";
+        font-style: normal;
+        font-display: swap;
+        font-weight: 400;
+        src: url(https://cdn.jsdelivr.net/fontsource/fonts/gelasio@latest/latin-400-normal.woff2) format("woff2");
+      }
+      @font-face {
+        font-family: "Gelasio";
+        font-style: normal;
+        font-display: swap;
+        font-weight: 700;
+        src: url(https://cdn.jsdelivr.net/fontsource/fonts/gelasio@latest/latin-700-normal.woff2) format("woff2");
+      }
+      @font-face {
+        font-family: "Gelasio";
+        font-style: italic;
+        font-display: swap;
+        font-weight: 400;
+        src: url(https://cdn.jsdelivr.net/fontsource/fonts/gelasio@latest/latin-400-italic.woff2) format("woff2");
+      }
+      @font-face {
+        font-family: "Gelasio";
+        font-style: italic;
+        font-display: swap;
+        font-weight: 700;
+        src: url(https://cdn.jsdelivr.net/fontsource/fonts/gelasio@latest/latin-700-italic.woff2) format("woff2");
+      }
+
+      /* https://fontsource.org/fonts/spectral/cdn — Production Type,
+         designed for screens.  Mature and sober.  Static cuts only on
+         Fontsource (no variable file); slider will snap. */
+      @font-face {
+        font-family: "Spectral";
+        font-style: normal;
+        font-display: swap;
+        font-weight: 400;
+        src: url(https://cdn.jsdelivr.net/fontsource/fonts/spectral@latest/latin-400-normal.woff2) format("woff2");
+      }
+      @font-face {
+        font-family: "Spectral";
+        font-style: normal;
+        font-display: swap;
+        font-weight: 700;
+        src: url(https://cdn.jsdelivr.net/fontsource/fonts/spectral@latest/latin-700-normal.woff2) format("woff2");
+      }
+      @font-face {
+        font-family: "Spectral";
+        font-style: italic;
+        font-display: swap;
+        font-weight: 400;
+        src: url(https://cdn.jsdelivr.net/fontsource/fonts/spectral@latest/latin-400-italic.woff2) format("woff2");
+      }
+      @font-face {
+        font-family: "Spectral";
+        font-style: italic;
+        font-display: swap;
+        font-weight: 700;
+        src: url(https://cdn.jsdelivr.net/fontsource/fonts/spectral@latest/latin-700-italic.woff2) format("woff2");
+      }
+
+      /* https://fontsource.org/fonts/newsreader/cdn — Production Type's
+         elegant book proportions, very transparent.  Variable wght. */
+      @font-face {
+        font-family: "Newsreader Variable";
+        font-style: normal;
+        font-display: swap;
+        font-weight: 200 800;
+        src: url(https://cdn.jsdelivr.net/fontsource/fonts/newsreader:vf@latest/latin-wght-normal.woff2) format("woff2-variations");
+      }
+      @font-face {
+        font-family: "Newsreader Variable";
+        font-style: italic;
+        font-display: swap;
+        font-weight: 200 800;
+        src: url(https://cdn.jsdelivr.net/fontsource/fonts/newsreader:vf@latest/latin-wght-italic.woff2) format("woff2-variations");
+      }
+
+      /* https://fontsource.org/fonts/crimson-pro/cdn — Garamond/Caslon
+         lineage, refined and bookish.  Variable wght. */
+      @font-face {
+        font-family: "Crimson Pro Variable";
+        font-style: normal;
+        font-display: swap;
+        font-weight: 200 900;
+        src: url(https://cdn.jsdelivr.net/fontsource/fonts/crimson-pro:vf@latest/latin-wght-normal.woff2) format("woff2-variations");
+      }
+      @font-face {
+        font-family: "Crimson Pro Variable";
+        font-style: italic;
+        font-display: swap;
+        font-weight: 200 900;
+        src: url(https://cdn.jsdelivr.net/fontsource/fonts/crimson-pro:vf@latest/latin-wght-italic.woff2) format("woff2-variations");
+      }
+
+      /* https://fontsource.org/fonts/stix-two-text/cdn — academic
+         transitional descended from Times Roman; modernized for digital
+         reading.  Variable wght. */
+      @font-face {
+        font-family: "STIX Two Text Variable";
+        font-style: normal;
+        font-display: swap;
+        font-weight: 400 700;
+        src: url(https://cdn.jsdelivr.net/fontsource/fonts/stix-two-text:vf@latest/latin-wght-normal.woff2) format("woff2-variations");
+      }
+      @font-face {
+        font-family: "STIX Two Text Variable";
+        font-style: italic;
+        font-display: swap;
+        font-weight: 400 700;
+        src: url(https://cdn.jsdelivr.net/fontsource/fonts/stix-two-text:vf@latest/latin-wght-italic.woff2) format("woff2-variations");
+      }
+
+      /* https://fontsource.org/fonts/vollkorn/cdn — German workhorse,
+         variable wght; dials noticeably lighter than Charis at the same
+         nominal weight. */
+      @font-face {
+        font-family: "Vollkorn Variable";
+        font-style: normal;
+        font-display: swap;
+        font-weight: 400 900;
+        src: url(https://cdn.jsdelivr.net/fontsource/fonts/vollkorn:vf@latest/latin-wght-normal.woff2) format("woff2-variations");
+      }
+      @font-face {
+        font-family: "Vollkorn Variable";
+        font-style: italic;
+        font-display: swap;
+        font-weight: 400 900;
+        src: url(https://cdn.jsdelivr.net/fontsource/fonts/vollkorn:vf@latest/latin-wght-italic.woff2) format("woff2-variations");
+      }
+
+      /* https://fontsource.org/fonts/noto-serif/cdn — Google's universal
+         serif, variable wght.  Neutral, broad language coverage. */
+      @font-face {
+        font-family: "Noto Serif Variable";
+        font-style: normal;
+        font-display: swap;
+        font-weight: 100 900;
+        src: url(https://cdn.jsdelivr.net/fontsource/fonts/noto-serif:vf@latest/latin-wght-normal.woff2) format("woff2-variations");
+      }
+      @font-face {
+        font-family: "Noto Serif Variable";
+        font-style: italic;
+        font-display: swap;
+        font-weight: 100 900;
+        src: url(https://cdn.jsdelivr.net/fontsource/fonts/noto-serif:vf@latest/latin-wght-italic.woff2) format("woff2-variations");
+      }
+
+      /* ─── Alternate sans options for chooser comparison ─────────────── */
+
+      /* https://fontsource.org/fonts/ibm-plex-sans/cdn — IBM's open-source
+         workhorse, variable wght. */
+      @font-face {
+        font-family: "IBM Plex Sans Variable";
+        font-style: normal;
+        font-display: swap;
+        font-weight: 100 700;
+        src: url(https://cdn.jsdelivr.net/fontsource/fonts/ibm-plex-sans:vf@latest/latin-wght-normal.woff2) format("woff2-variations");
+      }
+      @font-face {
+        font-family: "IBM Plex Sans Variable";
+        font-style: italic;
+        font-display: swap;
+        font-weight: 100 700;
+        src: url(https://cdn.jsdelivr.net/fontsource/fonts/ibm-plex-sans:vf@latest/latin-wght-italic.woff2) format("woff2-variations");
+      }
+
+      /* https://fontsource.org/fonts/hanken-grotesk/cdn — neutral
+         grotesque, variable wght.  Reads as a quieter Source Sans. */
+      @font-face {
+        font-family: "Hanken Grotesk Variable";
+        font-style: normal;
+        font-display: swap;
+        font-weight: 100 900;
+        src: url(https://cdn.jsdelivr.net/fontsource/fonts/hanken-grotesk:vf@latest/latin-wght-normal.woff2) format("woff2-variations");
+      }
+      @font-face {
+        font-family: "Hanken Grotesk Variable";
+        font-style: italic;
+        font-display: swap;
+        font-weight: 100 900;
+        src: url(https://cdn.jsdelivr.net/fontsource/fonts/hanken-grotesk:vf@latest/latin-wght-italic.woff2) format("woff2-variations");
+      }
+
+      /* https://fontsource.org/fonts/inter/cdn — Rasmus Andersson's UI
+         workhorse.  Already in the Source Sans fallback stack, but
+         loading the webfont here gives true rendering instead of the
+         system fallback when Inter isn't installed locally. */
+      @font-face {
+        font-family: "Inter Variable";
+        font-style: normal;
+        font-display: swap;
+        font-weight: 100 900;
+        src: url(https://cdn.jsdelivr.net/fontsource/fonts/inter:vf@latest/latin-wght-normal.woff2) format("woff2-variations");
+      }
+      @font-face {
+        font-family: "Inter Variable";
+        font-style: italic;
+        font-display: swap;
+        font-weight: 100 900;
+        src: url(https://cdn.jsdelivr.net/fontsource/fonts/inter:vf@latest/latin-wght-italic.woff2) format("woff2-variations");
+      }
+
+      /* Font stacks + sizes + weights are now declared in the generated
+         design-system CSS (loaded above).  The chooser below overrides
+         them live on <html>; "Copy YAML" round-trips the chosen state
+         into design-system.yaml. */
+
       :root {
-        --font-sans:
-          -apple-system, BlinkMacSystemFont, "Inter", "Helvetica Neue", Arial,
-          sans-serif;
-        --font-serif:
-          "Iowan Old Style", "Charter", "Hoefler Text", Georgia, serif;
+        /* Single line-height anchor for body / paragraph rhythm.
+           Anchored on `--font-sans-size` (the larger of the two
+           defaults) and emitted as a length, so every consumer that
+           opts into it gets identical line spacing regardless of its
+           own font-size.  Mixed sans/serif columns then share one
+           vertical rhythm — sans renders at a normal 1.5× ratio while
+           serif gets a more generous (~1.82× at defaults) ratio. */
+        --line-height: calc(1.5 * var(--font-sans-size));
       }
 
       /* ─── LAYER 2 — Shared utilities ────────────────────────────────────
@@ -293,19 +692,75 @@
         background: var(--bg);
         color: var(--fg);
       }
+      /* html font-size is the sans rem base — every rem-sized sans UI
+         element (eyebrows, labels, axis text, score numbers, etc.)
+         scales relative to this. */
+      html {
+        font-size: var(--font-sans-size);
+      }
       body {
         font-family: var(--font-serif);
+        /* Picked up by the serif weight slider in the controls panel —
+           variable serifs render exactly, fixed serifs snap.  Sans
+           descendants without explicit weights would otherwise inherit
+           this value; the :where(...) rule below pins them to the sans
+           slider instead. */
+        font-weight: var(--font-serif-weight);
         margin: 0;
-        line-height: 1.5;
-        font-size: 16px;
+        /* Inherit the shared --line-height (a px length anchored on
+           the larger of sans/serif sizes) — every paragraph-style
+           descendant uses the same physical line-height so the
+           vertical rhythm holds across mixed sans + serif blocks. */
+        line-height: var(--line-height);
+        /* body font-size is the serif em base — every serif body
+           element below uses `em` (parent-relative), so they all scale
+           with this size independently from the sans rem base. */
+        font-size: var(--font-serif-size);
+      }
+
+      /* Stop body's serif weight from leaking into sans UI chrome via
+         inheritance.  Every selector below uses `font-family: var(--font-sans)`
+         but no explicit `font-weight`, so without this rule the serif
+         slider would also dial them.  :where() carries zero specificity,
+         so any widget-local rule that does set a numeric font-weight
+         (eg. `.num { font-weight: var(--weight-num) }`) still wins. */
+      :where(
+          .theme-toggle,
+          .surface-toggle,
+          .legend,
+          .controls-panel,
+          .controls-field select,
+          .heatmap .hm-axis,
+          .strip-row .doc-meta,
+          .group-card .gc-row .gc-dim,
+          .group-card .gc-score,
+          .chart-card .doc-meta,
+          .axis-label,
+          .bartable-card,
+          .bt-num,
+          .bi-tip-panel .tip-content .tip-empty,
+          .bi-tip-panel .tip-content .tip-assessment p,
+          .bi-tip-panel .tip-content .tip-assessment ul li,
+          .qm-card,
+          .qm-rollup-row .label,
+          .note-card .meta,
+          .panel-about-body .meta,
+          .palette-card .swatch-row,
+          footer
+        ) {
+        /* Excludes .bi-tip-panel and .bi-card wrappers — they have serif
+           descendants (tip-content p/ul/h1/tip-context, doc-name) that
+           must inherit the serif weight from body.  All sans children
+           inside them carry their own explicit font-weight already. */
+        font-weight: var(--font-sans-weight);
       }
       header {
         padding: 2.25rem clamp(1rem, 4vw, 3rem) 1rem;
         max-width: 1400px;
       }
       h1 {
-        font-size: 1.8rem;
-        font-weight: 600;
+        font-size: 1.8em;
+        font-weight: var(--font-serif-weight-medium);
         margin: 0;
       }
       .lede {
@@ -329,40 +784,7 @@
         flex-shrink: 0;
         align-items: flex-start;
       }
-      .theme-toggle,
-      .surface-toggle {
-        display: inline-flex;
-        border: 1px solid var(--border);
-        border-radius: 999px;
-        padding: 2px;
-        background: var(--card);
-        font-family: var(--font-sans);
-        font-size: 0.74rem;
-        flex-shrink: 0;
-      }
-      .theme-toggle button,
-      .surface-toggle button {
-        border: 0;
-        background: transparent;
-        color: var(--muted);
-        padding: 4px 12px;
-        border-radius: 999px;
-        cursor: pointer;
-        font: inherit;
-        transition:
-          background-color 220ms ease,
-          color 220ms ease;
-      }
-      .theme-toggle button.active,
-      .surface-toggle button.active {
-        background: var(--fg);
-        color: var(--bg);
-      }
-      .theme-toggle button:hover:not(.active),
-      .surface-toggle button:hover:not(.active) {
-        color: var(--fg);
-      }
-      .legend {
+                              .legend {
         display: flex;
         flex-wrap: wrap;
         gap: 1rem 1.5rem;
@@ -462,6 +884,17 @@
       .controls-field input[type="range"] {
         width: 8rem;
       }
+      .controls-field input[type="number"] {
+        width: 3rem;
+        padding: 2px 4px;
+        background: var(--bg);
+        color: var(--fg);
+        border: 1px solid var(--border);
+        border-radius: 4px;
+        font-family: var(--font-sans);
+        font-size: 0.78rem;
+        font-variant-numeric: tabular-nums;
+      }
       .controls-field .controls-value {
         font-family: var(--font-sans);
         font-size: 0.72rem;
@@ -478,6 +911,15 @@
         color: var(--fg);
         border: 1px solid var(--border);
         border-radius: 4px;
+      }
+
+      /* Font controls — each role on its own row, since the row carries
+         many sub-controls (select + Reg slider + Bold slider + Size
+         input) and would wrap awkwardly side-by-side. */
+      .controls-fonts-section {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.45rem;
       }
 
       /* Palette controls — one row per group with H / S / Spread sliders. */
@@ -669,13 +1111,13 @@
       }
       .panel .title {
         font-family: var(--font-serif);
-        font-size: 1.15rem;
-        font-weight: 600;
+        font-size: 1.15em;
+        font-weight: var(--font-serif-weight-bold);
         margin: 0 0 0.2rem;
       }
       .panel .note {
         color: var(--muted);
-        font-size: 0.9rem;
+        font-size: 0.9em;
         margin: 0 0 1rem;
         max-width: 75ch;
       }
@@ -774,7 +1216,7 @@
         align-items: center;
         padding-right: 0.6rem;
         justify-content: flex-end;
-        font-size: 0.85rem;
+        font-size: 0.85em;
         white-space: nowrap;
       }
       .heatmap .hm-group-band {
@@ -805,7 +1247,7 @@
         border-bottom: none;
       }
       .strip-row .doc-name {
-        font-size: 0.95rem;
+        font-size: 0.95em;
       }
       .strip-row .doc-meta {
         color: var(--muted);
@@ -914,7 +1356,7 @@
         padding: 0.5rem 0;
       }
       .hex-doc-row .doc-name {
-        font-size: 0.95rem;
+        font-size: 0.95em;
       }
 
       /* ─────────── Radar / coxcomb / sunburst layout ─────────── */
@@ -933,7 +1375,7 @@
         align-items: center;
       }
       .chart-card .doc-name {
-        font-size: 0.95rem;
+        font-size: 0.95em;
         margin-bottom: 0.4rem;
         text-align: center;
       }
@@ -966,26 +1408,7 @@
         font-weight: 600;
       }
 
-      /* ─────────── Group icons (single SVG sprite) ───────────
-     Renders an <svg><use href="…icons.svg#icon-X"/></svg>; the symbols
-     use fill="currentColor" so the icon takes its color from the
-     parent's CSS color property. Sprite source:
-     tools/design-system/assets/icons.svg. */
-      .grp-icon {
-        display: inline-flex;
-        width: 1em;
-        height: 1em;
-        vertical-align: -0.15em;
-        flex-shrink: 0;
-        color: inherit;
-      }
-      .grp-icon svg {
-        width: 100%;
-        height: 100%;
-        display: block;
-        fill: currentColor;
-      }
-
+            
       /* ─────────── Visual 8: Overlay-text Bar Cards ───────────
      Per-doc cards. Each row is a single bar whose width encodes the
      score in the dim's group color, with the dim name overlaid via a
@@ -1113,100 +1536,8 @@
         font-weight: 800;
       }
 
-      /* ─────────── Visual 9A + 9B: Bidirectional Bars ─────────── */
-      /* Centered flex layout: bi-stack and tip panel sit adjacent (with a
-         1.5rem gap) and the whole pair centers in the available space.
-         On wide layouts the panel uses `position: relative` + JS-driven
-         `top` to slide vertically to align with whichever bi-card the
-         cursor is on (no gap between card and panel — the panel always
-         sits directly to the right of the card it's describing).
-         Below 72rem the panel drops below the stack and JS leaves its
-         top alone. */
-      .bi-layout {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        gap: 1.5rem;
-        position: relative;
-      }
-      @media (min-width: 72rem) {
-        .bi-layout {
-          flex-direction: row;
-          align-items: flex-start;
-          justify-content: center;
-        }
-      }
-      .bi-stack {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        gap: 1.25rem;
-        width: 100%;
-      }
-      @media (min-width: 72rem) {
-        .bi-stack {
-          flex: 0 0 32rem;
-          width: 32rem;
-        }
-      }
-
-      /* ─── Side detail panel (right of bi-stack) ────────────────────────
-         Updates contents on hover of any element carrying
-         `data-tip-kind` (dim | score | group).  A small fade between
-         content swaps; the panel itself is always visible. */
-      .bi-tip-panel {
-        background: var(--card);
-        border: 1px solid var(--border);
-        border-radius: 8px;
-        padding: 1.1rem 1.25rem 1.25rem;
-        font-family: var(--font-sans);
-        font-size: 1.05rem;
-        line-height: 1.5;
-        color: var(--fg);
-        min-height: 12rem;
-        width: 100%;
-        max-width: 32rem;
-        /* `position: relative` + JS-driven `top` slides the panel
-           vertically to align with the hovered card (on wide layouts).
-           Below 72rem the panel sits in flex flow below the stack and
-           we leave its top alone. */
-        position: relative;
-        top: 0;
-        transition:
-          top var(--hover-duration) var(--hover-easing),
-          background-color var(--hover-duration) var(--hover-easing),
-          border-color var(--hover-duration) var(--hover-easing);
-      }
-      /* `.is-empty` keeps the panel in flow (so the row doesn't shift
-         when one panel goes quiet) but drops the chrome and content.
-         Used for the initial / pointer-leave state and for group hovers
-         where there's no per-doc assessment to show. */
-      .bi-tip-panel.is-empty {
-        background: transparent;
-        border-color: transparent;
-      }
-      .bi-tip-panel.is-empty > * {
-        visibility: hidden;
-      }
-      @media (min-width: 72rem) {
-        .bi-tip-panel {
-          flex: 0 0 18rem;
-          max-width: none;
-          align-self: flex-start;
-        }
-      }
-      /* Permanent panel header — sits at the top of the panel and never
-         changes.  Identifies the panel itself; content below it swaps.
-         Weight + centering match the bi-card's .doc-kicker so the
-         tooltip and the visual read as parallel artifacts.  No rule
-         underneath — the bi-card doesn't have one either. */
-      .bi-tip-panel .tip-panel-heading {
-        font-size: 0.9rem;
-        font-weight: var(--weight-caps-strong);
-        text-align: center;
-        margin-bottom: 0.75rem;
-      }
-
+                              
+                                                      
       /* Content fade-in on every swap.  Uses the same design-system
          tokens (--hover-duration + --hover-easing) as the hover affordance
          so the page reads as one motion system. */
@@ -1220,500 +1551,17 @@
           transform: translateY(0);
         }
       }
-      .bi-tip-panel .tip-content.fade-in {
-        animation: bi-tip-fade-in var(--hover-duration) var(--hover-easing);
-      }
-      /* UI hint text — chrome, not content.  Always sans gray, never
-         italic, never serif.  Selectors scoped under .tip-content so they
-         out-specify the .tip-content p rule (which sets serif for body
-         prose).  See design-system.md "Content vs chrome". */
-      .bi-tip-panel .tip-content .tip-empty {
-        font-family: var(--font-sans);
-        font-style: normal;
-        font-size: 0.95rem;
-        line-height: 1.5;
-        color: var(--muted);
-      }
-      /* ─── Tip panel content — markdown-rendered ──────────────────────
-         The body of the tip panel is produced by `marked.parse(md)`.
-         CSS targets the resulting semantic elements (h1, h2, p, ul, li,
-         em, strong, hr) so authors write compact markdown strings in JS
-         and the typography rules in one place handle the look. */
-
-      /* Parent-group context label — shown above the title in dim/score
-         panels.  Codified-concept name in serif, not italic. */
-      .bi-tip-panel .tip-content .tip-context {
-        font-family: var(--font-serif);
-        font-weight: 600;
-        font-size: 1.15rem;
-        color: var(--fg);
-        margin: 0 0 0.2rem;
-        line-height: 1.2;
-      }
-
-      /* h1 — primary heading.  Group titles render as `# Reasoning`
-         (plain h1, serif).  Dim titles render as `# *Discipline*` so
-         the <em> inside the h1 carries dim-label voice: sans, uppercase
-         small caps, weight-caps-strong, tracking-caps — mirroring the
-         .bi-dim-name treatment on the card so the panel and the card
-         agree on what a dim's "name" looks like.  Sized ~1.35rem (a
-         step up from the 0.9rem on-card label so it reads as a heading
-         in the panel). */
-      .bi-tip-panel .tip-content h1 {
-        font-family: var(--font-serif);
-        font-weight: 600;
-        font-size: 1.9rem;
-        letter-spacing: -0.005em;
-        margin: 0 0 0.45rem;
-        color: var(--fg);
-        line-height: 1.1;
-      }
-      .bi-tip-panel .tip-content h1 em {
-        font-family: var(--font-sans);
-        font-size: 0.71em; /* renders ~1.35rem against the 1.9rem h1 */
-        font-weight: var(--weight-caps-strong);
-        font-style: normal;
-        text-transform: uppercase;
-        letter-spacing: var(--tracking-caps);
-        line-height: 1.25;
-        /* Same tone as the "Evaluation Detail" panel kicker above (which
-           uses .eyebrow → --muted) so the panel's dim heading reads as
-           the same label family. */
-        color: var(--muted);
-      }
-
-      /* h2 — section header (Rules, Assessment).  Small-caps eyebrow at
-         the *structural* weight (strong) — bigger and more solid than
-         the lightweight in-card labels, so it reads as a real divider
-         in the panel content.  Tracking + family inherited from tokens. */
-      .bi-tip-panel .tip-content h2 {
-        font-family: var(--font-sans);
-        font-size: 0.85rem;
-        font-weight: var(--weight-caps-strong);
-        text-transform: uppercase;
-        letter-spacing: var(--tracking-caps);
-        color: var(--muted);
-        margin: 1rem 0 0.45rem;
-      }
-
-      /* Body paragraph — codified content / definition prose. */
-      .bi-tip-panel .tip-content p {
-        font-family: var(--font-serif);
-        font-size: 1.05rem;
-        line-height: 1.5;
-        color: var(--fg);
-        margin: 0 0 0.55rem;
-      }
-      /* Standalone italic paragraph (the dim's question) — slightly
-         bigger, same "described in detail" voice as the title. */
-      .bi-tip-panel .tip-content p > em:only-child {
-        font-size: 1.1rem;
-      }
-      /* Bold name at the start of a paragraph (the dim names in the
-         group panel "**Name** — question.") — italic serif. */
-      .bi-tip-panel .tip-content p strong {
-        font-style: italic;
-        font-weight: 600;
-      }
-
-      /* Lists — rubric rules.  Use native disc bullets (browsers
-         vertically center these on the line correctly, unlike a
-         ::before " · " which sits high in most fonts). */
-      .bi-tip-panel .tip-content ul {
-        margin: 0 0 0.7rem;
-        padding-left: 1.2rem;
-        list-style: disc outside;
-      }
-      .bi-tip-panel .tip-content ul li {
-        margin: 0 0 0.35rem;
-        font-family: var(--font-serif);
-        font-size: 1.05rem;
-        color: var(--fg);
-        line-height: 1.5;
-      }
-      .bi-tip-panel .tip-content ul li::marker {
-        color: var(--muted);
-      }
-
-      /* Horizontal rule from `---` — separator between context and
-         grading details in the score panel. */
-      .bi-tip-panel .tip-content hr {
-        border: none;
-        border-top: 1px solid var(--border);
-        margin: 0.85rem 0 0.7rem;
-      }
-
-      /* Assessment block — the computed per-doc evaluation (rule
-         findings bulleted, or the NA/ERR reason).  Computed outputs
-         read sans (design-system content-vs-chrome rule), overriding
-         the serif default for body prose + list items. */
-      .bi-tip-panel .tip-content .tip-assessment p,
-      .bi-tip-panel .tip-content .tip-assessment ul li {
-        font-family: var(--font-sans);
-        font-style: normal;
-        font-size: 1rem;
-        line-height: 1.5;
-      }
-      /* Finding bullet prefix — "Rule N · verdict".  Bold sans label
-         that introduces the finding's atomic point. */
-      .bi-tip-panel .tip-content .tip-assessment ul li strong {
-        font-family: var(--font-sans);
-        font-style: normal;
-        font-weight: 700;
-        color: var(--fg);
-      }
-      .bi-tip-panel .tip-score-row {
-        display: flex;
-        align-items: baseline;
-        gap: 0.5rem;
-        margin: 0 0 0.55rem;
-      }
-      /* Tip-panel score readout — quantitative, so sans + canonical
-         --weight-num (matches .bi-num-circle in the main graphic). */
-      .bi-tip-panel .tip-score {
-        font-family: var(--font-sans);
-        font-weight: var(--weight-num);
-        font-size: 2.2rem;
-        line-height: 1;
-        font-variant-numeric: tabular-nums;
-      }
-      /* Score-meta sits inline with the big .tip-score number — treat it
-         as numeric chrome (sans + --weight-num + tabular nums), not as
-         an eyebrow.  Drops the small-caps tracking/uppercase that made
-         it read thin against the heavier numeral. */
-      .bi-tip-panel .tip-score-meta {
-        font-family: var(--font-sans);
-        font-weight: var(--weight-num);
-        font-size: 1rem;
-        font-variant-numeric: tabular-nums;
-        color: var(--muted);
-      }
-      /* ─── Hover affordance on tip triggers ────────────────────────────
-         At-rest appearance is unchanged.  On hover the element gets a
-         thin border with a small offset so it reads as a framed pill —
-         no motion, no fill change, no layout shift (outline doesn't
-         participate in layout, so the offset gives the "padding around
-         it" visual without inflating the box and without fighting any
-         existing padding like 9B's hanging indent). */
-      .bi-group-header[data-tip-kind],
-      .bi-dim[data-tip-kind] {
-        transition: var(--hover-transition);
-        border-radius: 4px;
-        outline: 1px solid transparent;
-        outline-offset: 3px;
-      }
-      .bi-group-header[data-tip-kind]:hover,
-      .bi-dim[data-tip-kind]:hover {
-        outline-color: var(--border);
-      }
-      .bi-card {
-        border: 1px solid var(--border);
-        border-radius: 8px;
-        background: var(--bg);
-        padding: 0.95rem 1.1rem 1.2rem;
-        font-family: var(--font-sans);
-        width: 100%;
-        max-width: 32rem; /* ~500px; keeps bars from getting too wide */
-      }
-      /* Doc kicker — bigger eyebrow variant, matches .bi-dim-name weight/tracking. */
-      .bi-card .doc-kicker {
-        font-family: var(--font-sans);
-        font-size: 0.9rem;
-        font-weight: var(--weight-caps-strong);
-        text-transform: uppercase;
-        letter-spacing: var(--tracking-caps);
-        text-align: center;
-        color: var(--muted);
-        margin: 0 0 0.25rem;
-      }
-      .bi-card .doc-name {
-        font-family: var(--font-serif);
-        font-style: italic;
-        font-size: 1.9rem;
-        font-weight: 600;
-        text-align: center;
-        margin: 0 0 0.9rem;
-        color: var(--fg);
-      }
-      .bi-grid {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        column-gap: 0.5rem;
-      }
-      .bi-col {
-        display: flex;
-        flex-direction: column;
-        min-width: 0;
-      }
-      /* Group header: outward-stretching rule + label + group icon at the
-     inner edge (near the center spine). */
-      .bi-group-header {
-        display: flex;
-        align-items: center; /* icon + label share the same center line */
-        justify-content: space-between;
-        gap: 0.55rem;
-        font-family: var(--font-serif);
-        font-size: 1.5rem;
-        font-weight: 600;
-        margin: 0.7rem 0 0.3rem;
-      }
-      /* Padded so the category label lands at the same x as the dim
-         labels below it (right edge sits over the bar's inner edge).
-         Pad matches the score-circle reserve in .bi-dim-name above. */
-      .bi-col.left .bi-group-header {
-        padding-right: calc(2.4rem + 0.5rem);
-      }
-      .bi-col.right .bi-group-header {
-        padding-left: calc(2.4rem + 0.5rem);
-      }
-      /* ─── Visual 9B variant (.bi-ltr) ──────────────────────────────────
-         Same DOM as 9A — biCard() is shared.  The .bi-ltr marker class on
-         the bi-stack flips the layout so both columns read left-to-right:
-         icons at the left of every group header, dim labels left-aligned,
-         bars grow rightward, score circle on the right of every row.
-         Scoped under .bi-ltr so 9A is unchanged. */
-      .bi-ltr .bi-col.left .bi-group-header,
-      .bi-ltr .bi-col.right .bi-group-header {
-        justify-content: flex-start;
-        padding-left: 0;
-        padding-right: 0;
-      }
-      /* Right column emits [label, icon]; use flex order to put the icon
-         visually first without changing JS emission order. */
-      .bi-ltr .bi-col.right .bi-group-header .grp-icon {
-        order: -1;
-      }
-      /* Dim names align with the bar's left edge — no padding to reserve
-         circle space, because the circle sits on the right of the row. */
-      .bi-ltr .bi-col.left .bi-dim-name,
-      .bi-ltr .bi-col.right .bi-dim-name {
-        text-align: left;
-        padding-left: 0;
-        padding-right: 0;
-      }
-      /* Left column's bar segments are positioned via inline `right: X%`
-         in JS; CSS can't override inline style without !important.
-         Mirror the whole track instead — segments, fill, and ticks flip
-         in one rule.  Ticks are symmetric (20/40/60/80%) so the mirror
-         is invisible there.  Result: bars grow rightward, brightest
-         segment at the right end, matching the right column. */
-      .bi-ltr .bi-dim.left .bi-bar-track {
-        transform: scaleX(-1);
-      }
-      /* Head row: name on the left, score circle on the right above the
-         bar's right edge.  Name expands to fill via flex:1; min-width:0
-         keeps the white-space:nowrap name truncating cleanly when the
-         column gets narrow. */
-      .bi-ltr .bi-dim-head {
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-      }
-      .bi-ltr .bi-dim-head .bi-dim-name {
-        flex: 1;
-        min-width: 0;
-      }
-      /* Hanging-indent layout: the group icon stays at the column's left
-         edge; everything else (group label and every dim row below it)
-         is indented past the icon to share one left edge.  `--bi-icon-size`
-         drives the icon width and the matching dim-row padding so they
-         can't drift apart. */
-      .bi-ltr {
-        --bi-icon-size: 2rem;
-      }
-      .bi-ltr .bi-group-header .grp-icon {
-        font-size: var(--bi-icon-size);
-      }
-      .bi-ltr .bi-dim {
-        padding-left: calc(var(--bi-icon-size) + 0.55rem);
-      }
-      /* Wider gap between the two columns in 9B — the columns are
-         independent here (no shared central spine like 9A) so the extra
-         breathing room reads as "two parallel reports" rather than one
-         joined chart. */
-      .bi-ltr .bi-grid {
-        column-gap: 2rem;
-      }
-      /* Group average: mean of the group's numeric scores, right-aligned
-         in the header.  Sans + tabular nums (numeric content uses sans
-         per design system).  Color matches the group label (a single
-         "group header voice"); sized ~1.3× the dim score number below
-         so the rollup reads as the heavier value. */
-      .bi-ltr .bi-group-avg {
-        margin-left: auto;
-        font-family: var(--font-sans);
-        font-size: 1.43rem;
-        font-weight: var(--weight-num);
-        font-variant-numeric: tabular-nums;
-        color: color-mix(in oklch, var(--fg) 70%, var(--muted));
-      }
-      /* Dim score in 9B: drop the colored circle chip, render as a clean
-         sans number in the same color as the dim label so name + score
-         read as one pair.  NA/ERR rows pick up --na-label-color via the
-         .is-na cascade.  `background: none !important` overrides the
-         inline `style.background` set by _biDimPrep. */
-      .bi-ltr .bi-num-circle {
-        width: auto;
-        height: auto;
-        background: none !important;
-        border-radius: 0;
-        font-size: 1.1rem;
-        color: var(--dim-label-color, var(--muted));
-      }
-      .bi-ltr .bi-dim.is-na .bi-num-circle {
-        color: var(--na-label-color, var(--muted));
-        font-size: 0.85rem;
-      }
-      .bi-ltr .bi-num-circle.err {
-        font-size: 0.85rem;
-      }
-      /* Thinner bars in 9B — the layout has more vertical room per row
-         now that name + score share one line, so a tighter track reads
-         as a sparkline rather than a hefty progress bar. */
-      .bi-ltr .bi-bar-track {
-        height: 1rem;
-      }
-      .bi-group-header .grp-icon {
-        font-size: 2.6rem; /* ~2× the previous size; anchors the outer corner */
-        line-height: 1;
-      }
-      /* Group label text sits between --muted and --fg — more prominent
-         than the dim names (which use --muted) but a step under the title
-         (which uses --fg).  color-mix keeps it theme-aware. */
-      .bi-group-header .label {
-        color: color-mix(in oklch, var(--fg) 70%, var(--muted));
-      }
-
-      /* Dim entry — name stacked above a row containing bar + circle.
-         Bar and circle share a flex row with align-items: center, so
-         the circle sits on the bar's vertical center (not pulled up
-         toward the dim name). */
-      .bi-dim {
-        display: flex;
-        flex-direction: column;
-        gap: 2px;
-        margin: 4px 0;
-      }
-      .bi-dim-row {
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-      }
-      .bi-dim-name {
-        font-family: var(--font-sans);
-        font-size: 0.9rem;
-        font-weight: var(--weight-caps-strong);
-        text-transform: uppercase;
-        letter-spacing: var(--tracking-caps);
-        /* Dim-label color — fallback to --muted, override via the
-           "Dim-label color" slider (writes --dim-label-color).  When
-           the score is NA, .bi-dim.is-na switches the color to the
-           lighter --na-label-color. */
-        color: var(--dim-label-color, var(--muted));
-        line-height: 1.2;
-        white-space: nowrap;
-        overflow: hidden;
-        min-width: 0;
-      }
-      /* Label aligns with the inner edge of the bar (not the row width,
-         which extends past the bar into the circle).  Pad by the
-         circle's reserved column (2.4rem) + the bar/circle gap (0.5rem). */
-      /* NA rows get a lighter dim-label color so the row reads as
-         "not applicable" at a glance, before the user sees the bar /
-         NA chip.  Drives --na-label-color from the design system tones. */
-      .bi-dim.is-na .bi-dim-name {
-        color: var(--na-label-color, var(--muted));
-      }
-      .bi-dim.left .bi-dim-name {
-        text-align: right;
-        padding-right: calc(2.4rem + 0.5rem);
-      }
-      .bi-dim.right .bi-dim-name {
-        text-align: left;
-        padding-left: calc(2.4rem + 0.5rem);
-      }
-
-      .bi-bar-track {
-        height: 1.5rem;
-        background: hsl(0 0% 50% / 0.1);
-        border-radius: 4px;
-        position: relative;
-        min-width: 0;
-        width: 100%;
-        overflow: hidden;
-      }
-      .bi-bar-fill {
-        position: absolute;
-        top: 0;
-        height: 100%;
-        border-radius: 4px;
-      }
-      .bi-dim.left .bi-bar-fill {
-        right: 0;
-      } /* anchored at right, grows left */
-      .bi-dim.right .bi-bar-fill {
-        left: 0;
-      } /* anchored at left, grows right */
-
-      /* Bar segments — each 20% wide, alpha-graduated from inner (full
-         vividness) to outer (faded by --score-alpha-step per step).
-         The track has overflow:hidden, so segments clip cleanly to the
-         track's rounded corners at the bar ends. */
-      .bi-bar-seg {
-        position: absolute;
-        top: 0;
-        height: 100%;
-        width: 20%;
-      }
-
-      /* Score circle — bigger than the bar, vertically centered across
-         the body so the number sits on a line between the dim label
-         and the bar.  Score number is canonical numeric (sans,
-         --weight-num, tabular nums). */
-      .bi-num-circle {
-        width: 2.4rem;
-        height: 2.4rem;
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: #fff;
-        font-family: var(--font-sans);
-        font-size: 1.1rem;
-        font-weight: var(--weight-num);
-        font-variant-numeric: tabular-nums;
-        line-height: 1;
-        flex-shrink: 0;
-      }
-      .bi-num-circle.na {
-        /* NA background — fallback to --score-na, override via the
-           "NA color" slider (writes --na-color). */
-        background: var(--na-color, var(--score-na));
-        font-size: 0.72rem;
-        font-weight: 800;
-      }
-      .bi-num-circle.err {
-        background: var(--score-err);
-        font-size: 0.72rem;
-        font-weight: 800;
-      }
-
-      /* Group-header padding aligns the category label with the id label
-     in the head row below (which sits 1.6rem from the spine + the row
-     gap of 0.45rem). */
-
-      /* Unit tick marks at score positions 1/2/3/4 — thin lines in the
-     page background color so they appear as small gaps cut into the
-     colored bar fill (like a battery indicator). */
-      .bi-tick {
-        position: absolute;
-        top: 0;
-        bottom: 0;
-        width: 1.5px;
-        background: var(--bg);
-        pointer-events: none;
-      }
-
+                  
+            
+      
+                  
+                  
+      
+                                                                                                                                                                                                
+                                    
+                  
+                  
+      
       /* ──────────────── Visual 10: Quantitative Metrics ────────────────
          Per-doc summary of the eval YAML's `quant` + `derived` sections.
          Card identity matches Visual 9A (same width, kicker + italic title,
@@ -1988,8 +1836,8 @@
       .note-card h3,
       .panel-about-body h3 {
         font-family: var(--font-serif);
-        font-size: 1.02rem;
-        font-weight: 600;
+        font-size: 1.02em;
+        font-weight: var(--font-serif-weight-bold);
         margin: 0 0 0.15rem;
       }
       .note-card .accent-bar {
@@ -2013,8 +1861,8 @@
       .note-card p,
       .panel-about-body p {
         margin: 0.45rem 0;
-        font-size: 0.92rem;
-        line-height: 1.5;
+        font-size: 0.92em;
+        line-height: var(--line-height);
       }
       .note-card .label,
       .panel-about-body .label {
@@ -2029,7 +1877,7 @@
       .note-card ul {
         margin: 0.3rem 0 0;
         padding-left: 1.1rem;
-        font-size: 0.88rem;
+        font-size: 0.88em;
       }
       .note-card ul li {
         margin: 0.15rem 0;
@@ -2071,31 +1919,7 @@
       footer code {
         font-size: 0.85em;
       }
-      /* Per-card credit — sits at the bottom of each bi-card so each
-         doc card is a self-contained, shareable widget.  Same
-         typographic treatment as the dim labels, but lowercase. */
-      .bi-card-credit {
-        font-family: var(--font-sans);
-        font-size: 0.9rem;
-        font-weight: 800;
-        text-align: center;
-        text-transform: lowercase;
-        margin-top: 1rem;
-      }
-      .bi-card-credit a {
-        color: var(--muted);
-        opacity: 0.5;
-        text-decoration: none;
-        transition:
-          color 220ms ease,
-          opacity 220ms ease;
-      }
-      .bi-card-credit a:hover {
-        color: var(--fg);
-        opacity: 1;
-        text-decoration: none;
-      }
-    </style>
+                      </style>
   </head>
   <body>
     <!-- Group icon sprite (inlined copy of tools/design-system/assets/icons.svg).
@@ -2220,16 +2044,98 @@
           <button data-surface-set="gray" type="button">Gray</button>
         </div>
       </div>
-      <div class="controls-section">
+      <div class="controls-section controls-fonts-section">
         <span class="controls-label">Fonts</span>
         <div class="controls-field">
           <label for="font-sans-select">Sans</label>
           <select id="font-sans-select"></select>
+          <label for="font-sans-weight">Reg</label>
+          <input
+            type="number"
+            id="font-sans-weight"
+            min="100"
+            max="900"
+            step="25"
+            aria-label="Sans regular weight"
+          />
+          <label for="font-sans-weight-medium">Med</label>
+          <input
+            type="number"
+            id="font-sans-weight-medium"
+            min="100"
+            max="900"
+            step="25"
+            aria-label="Sans medium weight"
+          />
+          <label for="font-sans-weight-bold">Bold</label>
+          <input
+            type="number"
+            id="font-sans-weight-bold"
+            min="100"
+            max="900"
+            step="25"
+            aria-label="Sans bold weight"
+          />
+          <label for="font-sans-size">Size</label>
+          <input
+            type="number"
+            id="font-sans-size"
+            min="10"
+            max="28"
+            step="1"
+            aria-label="Sans base size (px)"
+          />
         </div>
         <div class="controls-field">
           <label for="font-serif-select">Serif</label>
           <select id="font-serif-select"></select>
+          <label for="font-serif-weight">Reg</label>
+          <input
+            type="number"
+            id="font-serif-weight"
+            min="100"
+            max="900"
+            step="25"
+            aria-label="Serif regular weight"
+          />
+          <label for="font-serif-weight-medium">Med</label>
+          <input
+            type="number"
+            id="font-serif-weight-medium"
+            min="100"
+            max="900"
+            step="25"
+            aria-label="Serif medium weight"
+          />
+          <label for="font-serif-weight-bold">Bold</label>
+          <input
+            type="number"
+            id="font-serif-weight-bold"
+            min="100"
+            max="900"
+            step="25"
+            aria-label="Serif bold weight"
+          />
+          <label for="font-serif-size">Size</label>
+          <input
+            type="number"
+            id="font-serif-size"
+            min="10"
+            max="28"
+            step="1"
+            aria-label="Serif base size (px)"
+          />
         </div>
+        <span class="controls-hint"
+          >Reg drives body copy.  Medium suits large headings that read
+          better with a softer stroke than full bold; Bold suits smaller
+          headings + emphasized inline text.  Size (px) sets the role's
+          base — sans-size scales every rem-based UI element via the
+          html root; serif-size scales body and the em-based serif
+          headings.  Variable fonts render the exact weight; fixed fonts
+          (PT Serif = 400, 700; Spectral, Charis SIL, Gelasio likewise)
+          snap to the nearest cut.</span
+        >
       </div>
       <div class="controls-section controls-palette-section">
         <span class="controls-label">Palette</span>
@@ -2464,6 +2370,46 @@
         sans: "#font-sans-select",
         serif: "#font-serif-select",
       });
+      /* Seed the eight font number inputs with values from the
+         generated design system (typography.fonts.{sans,serif}).
+         mountWeightSliders writes the input's `.value` straight onto a
+         CSS var on <html>, so the initial values flow into :root and
+         everything reads the YAML-canonical defaults on load.  When
+         the user types a new value, the var updates live; "Copy YAML"
+         snapshots the current vars back into the YAML shape. */
+      (() => {
+        /* Defensive — if the page is loaded against a stale cached
+           design_system.global.js (pre-typography.fonts), fall back to
+           hard-coded defaults rather than throwing and killing every
+           visualization init below. */
+        const ds = window.PracticalProseDesignSystem?.designSystem;
+        const fonts = ds?.typography?.fonts || {
+          sans: { weight: 400, weight_medium: 500, weight_bold: 600, size_px: 14 },
+          serif: { weight: 400, weight_medium: 500, weight_bold: 650, size_px: 14 },
+        };
+        const seed = (id, val) => {
+          const el = document.getElementById(id);
+          if (el && val != null) el.value = String(val);
+        };
+        seed("font-sans-weight", fonts.sans.weight);
+        seed("font-sans-weight-medium", fonts.sans.weight_medium);
+        seed("font-sans-weight-bold", fonts.sans.weight_bold);
+        seed("font-sans-size", fonts.sans.size_px);
+        seed("font-serif-weight", fonts.serif.weight);
+        seed("font-serif-weight-medium", fonts.serif.weight_medium);
+        seed("font-serif-weight-bold", fonts.serif.weight_bold);
+        seed("font-serif-size", fonts.serif.size_px);
+      })();
+      PracticalProseDesignFontControls.mountWeightSliders([
+        { varName: "font-sans-weight",         slider: "#font-sans-weight" },
+        { varName: "font-sans-weight-medium",  slider: "#font-sans-weight-medium" },
+        { varName: "font-sans-weight-bold",    slider: "#font-sans-weight-bold" },
+        { varName: "font-serif-weight",        slider: "#font-serif-weight" },
+        { varName: "font-serif-weight-medium", slider: "#font-serif-weight-medium" },
+        { varName: "font-serif-weight-bold",   slider: "#font-serif-weight-bold" },
+        { varName: "font-sans-size",  slider: "#font-sans-size",  unit: "px" },
+        { varName: "font-serif-size", slider: "#font-serif-size", unit: "px" },
+      ]);
 
       /* ───────────────────────────── data ─────────────────────────────────── */
       /* Groups and dimensions are derived from the design-system YAML, loaded by
@@ -2484,6 +2430,41 @@
         short: d.short,
         label: d.label,
       }));
+
+      // Phase 1b rewire — source shared bi-card helpers from
+      // tools/render-components/. Must sit right after `groups` + `dims`
+      // are populated and before any later code consumes the destructured
+      // bindings (notably setupAlphaStepSlider uses _readScoreAlphaStep).
+      // See docs/project/specs/active/plan-2026-05-31-shared-render-components.md.
+      const biCardApi = PracticalProseBiCard.makeApi({
+        groups,
+        dimensions: dims,
+      });
+      const {
+        biCard,
+        biDim9B,
+        _biDimPrep,
+        groupAvgChip,
+        dimColorMix,
+        scoreColor,
+        _readScoreAlphaStep,
+        segmentAlpha,
+      } = biCardApi;
+      // Tip-panel adapter: the workbench's setupTipPanel(detailEl, assessEl, opts?)
+      // is a thin wrapper over PracticalProseTipPanels.mount() that scopes
+      // hover to each visualization's layout via opts.scope (per-viz, not
+      // document-wide). `rubric` and `biRealDocs` are referenced lazily —
+      // they're populated later but only read when the adapter is called
+      // during render, at which point both exist.
+      function setupTipPanel(detailEl, assessEl, opts = {}) {
+        return PracticalProseTipPanels.mount(
+          detailEl,
+          assessEl,
+          { groups, dimensions: dims, rubric, docs: biRealDocs },
+          biCardApi,
+          opts,
+        );
+      }
 
       /* Score values: 1-5, 'NA', or 'ERR'.
    18-dim values are real from comparison-all.md.
@@ -2700,7 +2681,7 @@
 
             return {
               id: fx.id,
-              name: (fm.artifact && fm.artifact.label) || fx.id,
+              name: (fm.artifact?.label) || fx.id,
               meta: metaParts.join(" · "),
               scores,
               reasons,
@@ -2723,7 +2704,7 @@
          Appended at the bottom of each bi-card (V9), making each
          doc card a self-contained, shareable widget. */
       const REPO_URL = "github.com/jlevy/practical-prose";
-      function repoCredit() {
+      function _repoCredit() {
         const div = document.createElement("div");
         div.className = "bi-card-credit";
         div.innerHTML = `<a href="https://${REPO_URL}">${REPO_URL}</a>`;
@@ -4089,8 +4070,8 @@
          ever needs structurally different DOM. */
 
       const _groupById = (id) => groups.find((g) => g.id === id);
-      const biLeftGroups = ["P", "E", "F"].map(_groupById); // 4 + 3 + 3 = 10 dims
-      const biRightGroups = ["R", "G", "J"].map(_groupById); // 4 + 3 + 3 = 10 dims
+      const _biLeftGroups = ["P", "E", "F"].map(_groupById); // 4 + 3 + 3 = 10 dims
+      const _biRightGroups = ["R", "G", "J"].map(_groupById); // 4 + 3 + 3 = 10 dims
       const biDocIds = ["irs", "sqlite", "rubric"];
 
       /* Shared between 9A and 9B: build a stack of bi-cards + a
@@ -4115,12 +4096,17 @@
         const detailEl = el("aside", { class: "bi-tip-panel" });
         const assessEl = el("aside", { class: "bi-tip-panel bi-tip-panel-assess" });
 
+        /* Assess sits in the middle (next to the card), then detail on
+           the far right.  The "evaluated values" — the bi-card and its
+           Assessment mirror — share the same sans + white-bg vocabulary;
+           the rubric Detail panel keeps the serif + gray-card chrome to
+           read as "background information". */
         const layout = el(
           "div",
           { class: "bi-layout" },
           stack,
-          detailEl,
           assessEl,
+          detailEl,
         );
 
         /* Wire up tooltip behaviors after the panels are in the DOM. */
@@ -4138,215 +4124,9 @@
         renderBidirectional("9B", "bi-stack bi-ltr", biDim9B, groupAvgChip);
       }
 
-      /* Group-average chip — used by 9B's group header.  Mean of the
-         numeric scores in the group; NA/ERR rows are skipped so a group
-         with one out-of-scope dim still gets a meaningful average. */
-      function groupAvgChip(g, doc) {
-        const scores = dims
-          .filter((d) => d.g === g.id)
-          .map((d) => doc.scores[d.id])
-          .filter((s) => typeof s === "number");
-        if (scores.length === 0) return null;
-        const avg = scores.reduce((a, b) => a + b, 0) / scores.length;
-        return el("span", { class: "bi-group-avg" }, avg.toFixed(1));
-      }
 
-      /* `dimFn(doc, d, side)` decides per-row DOM — biDim for 9A, biDim9B
-         for 9B.  `headerExtra(g, doc)` (optional) returns an extra node
-         to append to each group header (9B uses it for the group average
-         on the right).  Everything else (card chrome, column structure,
-         group header order) is identical between the two variants. */
-      function biCard(doc, dimFn = biDim, headerExtra = null) {
-        const card = el("div", { class: "bi-card" });
-        card.appendChild(
-          el("div", { class: "doc-kicker" }, "Practical Prose Evaluation"),
-        );
-        card.appendChild(el("div", { class: "doc-name" }, doc.name));
 
-        const grid = el("div", { class: "bi-grid" });
 
-        /* Left column — bars grow leftward, text right-aligned on bar, num at
-     the rightmost edge (touching the center spine). */
-        const left = el("div", { class: "bi-col left" });
-        biLeftGroups.forEach((g) => {
-          /* Order: icon (outer) → label (inner, aligned with dim labels
-       below via the header's padding-right). */
-          const header = el(
-            "div",
-            {
-              class: "bi-group-header",
-              style: {
-                color: `var(--icon-color, var(--accent-${g.id.toLowerCase()}))`,
-              },
-              "data-tip-kind": "group",
-              "data-tip-key": g.id,
-            },
-            groupIcon(g),
-            el("span", { class: "label" }, g.label),
-          );
-          if (headerExtra) {
-            const extra = headerExtra(g, doc);
-            if (extra) header.appendChild(extra);
-          }
-          left.appendChild(header);
-          dims
-            .filter((d) => d.g === g.id)
-            .forEach((d) => {
-              left.appendChild(dimFn(doc, d, "left"));
-            });
-        });
-        grid.appendChild(left);
-
-        /* Right column — bars grow rightward; circle on the inner side
-     (touching the center spine). */
-        const right = el("div", { class: "bi-col right" });
-        biRightGroups.forEach((g) => {
-          /* Order: label (inner, aligned with dim labels below via the
-       header's padding-left) → icon (outer). */
-          const header = el(
-            "div",
-            {
-              class: "bi-group-header",
-              style: {
-                color: `var(--icon-color, var(--accent-${g.id.toLowerCase()}))`,
-              },
-              "data-tip-kind": "group",
-              "data-tip-key": g.id,
-            },
-            el("span", { class: "label" }, g.label),
-            groupIcon(g),
-          );
-          if (headerExtra) {
-            const extra = headerExtra(g, doc);
-            if (extra) header.appendChild(extra);
-          }
-          right.appendChild(header);
-          dims
-            .filter((d) => d.g === g.id)
-            .forEach((d) => {
-              right.appendChild(dimFn(doc, d, "right"));
-            });
-        });
-        grid.appendChild(right);
-
-        card.appendChild(grid);
-        card.appendChild(repoCredit());
-        return card;
-      }
-
-      /* Read --score-alpha-step fresh on every call so the slider in
-         the design controls (which writes the CSS var live) updates the
-         bar / chip color immediately. */
-      function _readScoreAlphaStep() {
-        const v = getComputedStyle(document.documentElement)
-          .getPropertyValue("--score-alpha-step")
-          .trim();
-        const n = parseFloat(v);
-        return Number.isFinite(n) ? n : 0.14;
-      }
-      /* dimColorMix(id, alpha) → an HSL color-mix expression that fades
-         the dim's base color toward the surface. */
-      function dimColorMix(dimId, alpha) {
-        const a = Math.max(0, Math.min(1, alpha));
-        return `color-mix(in srgb, var(--dim-${dimId}) ${Math.round(
-          a * 100,
-        )}%, transparent)`;
-      }
-      /* Score → score-chip color: fade the dim's base color toward the
-         surface by --score-alpha-step per step below 5. */
-      function scoreColor(dimId, score) {
-        const step = _readScoreAlphaStep();
-        return dimColorMix(dimId, 1 - (5 - score) * step);
-      }
-      /* Bar segment alpha — segment 5 (the absolute outermost position)
-         is always full alpha (1.0); each step inward fades by
-         --score-alpha-step.  This is the *point* of the visual: a
-         score-5 bar reaches full vividness at its tip, a score-3 bar
-         tops out at the alpha of position 3 (so the tip is visibly
-         less vivid than a 5).  Higher scores read brighter AND longer. */
-      function segmentAlpha(segIdx) {
-        const step = _readScoreAlphaStep();
-        return 1 - (5 - segIdx) * step;
-      }
-
-      /* Shared between biDim (9A) and biDim9B: build the row's entry,
-         name span, fully-populated track (segments or NA/ERR fill, plus
-         tick marks), and score circle.  Variants differ only in how
-         they assemble these into the final DOM. */
-      function _biDimPrep(doc, d, side) {
-        const s = doc.scores[d.id];
-        /* One row, one trigger.  The whole .bi-dim is the hover zone +
-           tooltip target: dim label, bar, and score chip all refer to
-           the same dim/doc.  Per design system: adjacent UI elements
-           that fire the same action must share one trigger. */
-        const classes = ["bi-dim", side];
-        /* Treat anything that's not a numeric score and not ERR as NA
-           — covers explicit "NA" and dims missing from the fixture
-           (older eval files used legacy keys that don't map to the
-           current schema, e.g. "inference_discipline" → Discipline). */
-        if (typeof s !== "number" && s !== "ERR") classes.push("is-na");
-        const entry = el("div", {
-          class: classes.join(" "),
-          style: { color: `var(--dim-${d.id})` },
-          "data-tip-kind": "dim",
-          "data-tip-key": d.id,
-          "data-tip-doc": doc.id,
-        });
-
-        const name = el("span", { class: "bi-dim-name" }, d.label);
-        const track = el("div", { class: "bi-bar-track" });
-        const circle = el("div", { class: "bi-num-circle" });
-
-        if (typeof s === "number") {
-          /* Bar is composed of `s` unit segments (each 20% wide), each
-             with its own alpha.  Segment 1 sits at the inner side
-             (nearest the spine / score circle) at full vividness; each
-             segment outward fades by --score-alpha-step. */
-          for (let i = 1; i <= s; i++) {
-            const seg = el("div", {
-              class: "bi-bar-seg",
-              "data-seg": String(i),
-            });
-            seg.style.background = dimColorMix(d.id, segmentAlpha(i));
-            if (side === "left") {
-              seg.style.right = `${(i - 1) * 20}%`;
-            } else {
-              seg.style.left = `${(i - 1) * 20}%`;
-            }
-            track.appendChild(seg);
-          }
-          /* Score chip still uses the score-based alpha so a low-score
-             chip still reads as muted (matches the bar's "less filled"
-             story without color mismatch at the inner edge). */
-          circle.style.background = scoreColor(d.id, s);
-          circle.textContent = s;
-        } else {
-          /* ERR / NA — full-width single fill, no segmentation.
-             Circle bg comes from the .na / .err CSS rules so the
-             --na-color / (future --err-color) overrides can apply. */
-          const fill = el("div", { class: "bi-bar-fill" });
-          fill.style.width = "100%";
-          if (s === "ERR") {
-            fill.style.background = "var(--score-err-fill)";
-            circle.textContent = "ERR";
-            circle.classList.add("err");
-          } else {
-            fill.style.background = "var(--score-na-fill)";
-            circle.textContent = "NA";
-            circle.classList.add("na");
-          }
-          track.appendChild(fill);
-        }
-
-        /* Tick marks at score positions 1/2/3/4. */
-        for (let k = 1; k <= 4; k++) {
-          const tick = el("div", { class: "bi-tick" });
-          tick.style.left = `${side === "left" ? 100 - k * 20 : k * 20}%`;
-          track.appendChild(tick);
-        }
-
-        return { entry, name, track, circle };
-      }
 
       /* 9A: name stacked above; bar + circle on one row, vertically
          centered against each other so the circle sits on the bar's
@@ -4366,223 +4146,7 @@
         return entry;
       }
 
-      /* 9B: name + circle share the top row (name left, circle right
-         above the bar's right edge); the bar sits on its own row below
-         at full column width. */
-      function biDim9B(doc, d, side) {
-        const { entry, name, track, circle } = _biDimPrep(doc, d, side);
-        const head = el("div", { class: "bi-dim-head" }, name, circle);
-        entry.appendChild(head);
-        entry.appendChild(track);
-        return entry;
-      }
 
-      /* ───────────────── Tip-panel renderer (reusable) ─────────────────────
-         Two side panels update on hover of any element carrying
-         `data-tip-kind` ("dim" | "score" | "group") + `data-tip-key`
-         + optional `data-tip-doc`:
-           - detailEl  ("Evaluation Detail"): rubric core — group context,
-             dim title, question, rules.  Always populated.
-           - assessEl ("Assessment"): per-doc score + reasons / findings.
-             Populated when the trigger carries a docId; otherwise shows
-             a placeholder so the column doesn't jump around. */
-      function setupTipPanel(detailEl, assessEl) {
-        function mountPanel(panel, heading) {
-          panel.appendChild(
-            el("div", { class: "tip-panel-heading eyebrow" }, heading),
-          );
-          const content = el("div", { class: "tip-content" });
-          panel.appendChild(content);
-          return content;
-        }
-        const detailContent = mountPanel(detailEl, "Evaluation Detail");
-        const assessContent = mountPanel(assessEl, "Assessment");
-
-        /* Render content from a markdown string.  Headers / bullets /
-           emphasis come from markdown; chrome decorations (score chip,
-           finding cards, separator) can be inline HTML in the same
-           string.  marked.js handles both. */
-        function setMarkdown(contentEl, md) {
-          contentEl.innerHTML = marked.parse(md, {
-            breaks: true,
-            gfm: true,
-          });
-          contentEl.classList.remove("fade-in");
-          void contentEl.offsetWidth;
-          contentEl.classList.add("fade-in");
-        }
-
-        /* `.is-empty` drops a panel's chrome + content while keeping its
-           layout slot, so toggling visibility doesn't shift the rest of
-           the page.  Initial state / pointer-leave / group hovers (which
-           have no per-doc context) drop the assess panel; the detail
-           panel also goes empty when there's nothing to show, instead
-           of a "hover a dimension" placeholder. */
-        function hideAssess() {
-          assessEl.classList.add("is-empty");
-        }
-        function showAssess() {
-          assessEl.classList.remove("is-empty");
-        }
-        function hideDetail() {
-          detailEl.classList.add("is-empty");
-        }
-        function showDetail() {
-          detailEl.classList.remove("is-empty");
-        }
-
-        function showPlaceholder() {
-          _lastSig = "";
-          hideDetail();
-          hideAssess();
-        }
-
-        /* Single render function for every dim-level hover (the dim name,
-           the dim id, the bar, the score circle).  Detail panel always
-           gets the rubric core (group → dim → question → rules).  If a
-           docId is attached, the assessment panel gets the per-doc score
-           + reason + findings; otherwise it shows the placeholder. */
-        function renderDim(key, docId) {
-          const r = rubric[key];
-          if (!r) return showPlaceholder();
-
-          const rulesMd = r.rules.length
-            ? `\n\n## Rules\n\n${r.rules.map((rule) => `- ${rule}`).join("\n")}`
-            : "";
-
-          const detailMd = `<p class="tip-context">${r.group}</p>
-
-# *${r.label}*
-
-*${r.question || ""}*${rulesMd}`;
-          showDetail();
-          setMarkdown(detailContent, detailMd);
-
-          const doc = docId ? biRealDocs.find((d) => d.id === docId) : null;
-          if (!doc) {
-            hideAssess();
-            return;
-          }
-          showAssess();
-
-          const score = doc.scores[key];
-          const reason = doc.reasons[key];
-          const findings = doc.findings[key] || [];
-
-          const scoreLabel =
-            typeof score === "number"
-              ? "/ 5"
-              : score === "NA"
-                ? "not applicable"
-                : score === "ERR"
-                  ? "unassessable"
-                  : "no score";
-
-          const scoreHtml = `<div class="tip-score-row"><span class="tip-score">${score ?? "—"}</span><span class="tip-score-meta">${scoreLabel}</span></div>`;
-
-          /* Structured rule_findings (newer fixtures) → bullets; else
-             fall back to qual_reasons prose (older baseline fixtures
-             only carry that, and NA/ERR rows always do).  .tip-assessment
-             keeps the block in sans (computed output, not codified rule). */
-          const escapeHtml = (s) => (s || "").replace(/</g, "&lt;");
-          let bodyHtml = "";
-          if (typeof score === "number" && findings.length) {
-            const items = findings
-              .map(
-                (f) =>
-                  `<li><strong>Rule ${f.rule_number ?? "?"} · ${f.verdict || "noted"}</strong> — ${escapeHtml(f.description)}</li>`,
-              )
-              .join("");
-            bodyHtml = `<div class="tip-assessment"><ul>${items}</ul></div>`;
-          } else if (reason) {
-            bodyHtml = `<div class="tip-assessment"><p>${escapeHtml(reason)}</p></div>`;
-          } else {
-            bodyHtml = `<div class="tip-assessment"><p class="tip-empty">No assessment recorded for this dimension.</p></div>`;
-          }
-
-          setMarkdown(assessContent, `${scoreHtml}\n\n${bodyHtml}`);
-        }
-
-        function renderGroup(key) {
-          const g = groups.find((g) => g.id === key);
-          if (!g) return showPlaceholder();
-          const groupDims = dims.filter((d) => d.g === g.id);
-
-          const sense = g.sense
-            ? g.sense.charAt(0).toUpperCase() + g.sense.slice(1) + "."
-            : "";
-
-          /* Each dim becomes "**Name** — question." on its own paragraph.
-             Markdown handles the bold + the dash, CSS handles the rhythm. */
-          const dimsMd = groupDims
-            .map((d) => {
-              const r = rubric[d.id];
-              const q = r?.question || "";
-              return `**${d.label}**${q ? " — " + q : ""}`;
-            })
-            .join("\n\n");
-
-          /* Zooming into a GROUP — title in serif (matches .bi-group-header),
-             the group's sense statement, then the dims as their own
-             paragraphs.  No section header above the list — the rhythm
-             of "bold name — question" makes the structure self-evident.
-             Group hover has no per-doc context, so the assessment panel
-             shows its placeholder. */
-          const md = `# ${g.label}
-
-${sense}
-
-${dimsMd}`;
-          showDetail();
-          setMarkdown(detailContent, md);
-          hideAssess();
-        }
-
-        /* Slide both panels vertically to align with the hovered bi-card.
-           Only on wide layouts where the panels sit in a flex row next
-           to the stack; below the breakpoint they flow below the stack
-           and we leave their top alone. */
-        function moveToCard(trig) {
-          if (!matchMedia("(min-width: 72rem)").matches) return;
-          const card = trig.closest(".bi-card");
-          const layout = detailEl.parentElement;
-          if (!card || !layout) return;
-          const layoutRect = layout.getBoundingClientRect();
-          const cardRect = card.getBoundingClientRect();
-          const top = cardRect.top - layoutRect.top + "px";
-          detailEl.style.top = top;
-          assessEl.style.top = top;
-        }
-
-        /* Last-rendered signature — guards against re-rendering when the
-           pointer moves within the same trigger element (e.g. from name
-           to bar inside one .bi-dim row).  pointerover bubbles, so
-           without this guard we'd refire on every child crossing and
-           the panel content would flicker (replace + fade re-trigger). */
-        let _lastSig = "";
-
-        function onOver(e) {
-          const trig = e.target.closest("[data-tip-kind]");
-          if (!trig) return;
-          const kind = trig.dataset.tipKind;
-          const key = trig.dataset.tipKey;
-          const docId = trig.dataset.tipDoc;
-          const sig = `${kind}/${key}/${docId || ""}`;
-          if (sig === _lastSig) {
-            moveToCard(trig);
-            return;
-          }
-          _lastSig = sig;
-          /* "dim" and "score" both render the same dim panel; if a docId
-             is attached, the per-doc assessment block is appended. */
-          if (kind === "dim" || kind === "score") renderDim(key, docId);
-          else if (kind === "group") renderGroup(key);
-          moveToCard(trig);
-        }
-
-        showPlaceholder();
-        return { onOver, showPlaceholder };
-      }
 
       /* ─────────────────────── Visual 10: Quant Metrics ────────────────────
          Per-doc summary card pairing with Visual 9A.  See the panel note below

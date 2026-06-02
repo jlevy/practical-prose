@@ -1,0 +1,36 @@
+/* Page base — screen typography + surface foundation.
+ *
+ * Applies the design-system font + surface tokens to the document root.
+ * The workbench carries this same base inline; `pprose render` doesn't
+ * inherit that, so it lives here. Without it:
+ *   - `body` has no font-size, so the em-based serif content anchors on the
+ *     browser default (16px) instead of --font-serif-size and renders too
+ *     large relative to the rem-based sans chrome (which keys off `html`);
+ *   - `html`/`body` never paint --bg/--fg, so the page background doesn't
+ *     track the active light/dark theme.
+ *
+ * Tokens come from design_system.css (bundled first). print.css (bundled
+ * last) overrides these for @media print.
+ */
+
+html,
+body {
+  background: var(--bg);
+  color: var(--fg);
+}
+
+/* html font-size is the sans rem base — every rem-sized sans UI element
+   (eyebrows, labels, score numbers) scales relative to this. */
+html {
+  font-size: var(--font-sans-size);
+}
+
+/* body font-size is the serif em base — serif body elements use `em`, so
+   they scale with this independently from the sans rem base. */
+body {
+  font-family: var(--font-serif);
+  font-weight: var(--font-serif-weight);
+  margin: 0;
+  line-height: var(--line-height);
+  font-size: var(--font-serif-size);
+}

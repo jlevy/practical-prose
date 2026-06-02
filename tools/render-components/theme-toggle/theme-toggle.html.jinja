@@ -1,0 +1,8 @@
+{# Practical Prose — theme toggle markup partial.
+   The companion JS reads `data-theme-set` from each button.
+   Default mode is Auto (tracks prefers-color-scheme). #}
+<div class="theme-toggle" role="group" aria-label="Color theme">
+  <button data-theme-set="auto" type="button">Auto</button>
+  <button data-theme-set="light" type="button">Light</button>
+  <button data-theme-set="dark" type="button">Dark</button>
+</div>

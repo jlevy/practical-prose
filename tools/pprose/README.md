@@ -31,14 +31,38 @@ pprose report from-metrics doc.md --out doc.eval.md  # build an eval report stub
 pprose score doc.eval.md                           # qualitative rubric scoring (Anthropic SDK)
 pprose compare a.eval.md b.eval.md                 # compare N eval reports
 
-pprose guidelines --list                           # bundled guidelines / shortcuts / runbooks
-pprose shortcut shortcut-full-edit                 # print a workflow playbook the agent follows
-pprose install --agents-md                        # install skills and add AGENTS.md routing
+pprose about                                       # the project narrative (bundled README)
+pprose skill                                       # workflow skills overview + routing pointers
+pprose guidelines --list                           # bundled style guides and writing rules
+pprose shortcut --list                             # workflow playbooks the skills invoke
+pprose runbook --list                              # operational procedures (eval, compare)
+pprose install                                     # install skills into the current project
+pprose install --global                            # install skills user-wide for every project
 ```
 
-`pprose install` writes skills that invoke pprose with a pinned, local-first runner
-(`pprose` if on PATH, else `uvx pprose@<version>`), so they work in any repo.
-Run `pprose --help` or `pprose <command> --help` for full options.
+`pprose install` runs in one of two **scopes**:
+
+- **Project** (`--project`, the default when cwd is inside a git repo) writes into
+  `<repo>/.agents/skills/` (Codex, Gemini CLI, pi), `<repo>/.claude/skills/` (Claude
+  Code), and a marker-bounded block in `<repo>/AGENTS.md`.
+- **User-global** (`--global`) writes into `~/.agents/skills/pprose-*/` and
+  `~/.claude/skills/pprose-*/`, making the skills available across every project.
+  Skips `~/.codex/AGENTS.md` so the global instruction file stays user-authored.
+
+Outside an unambiguous project context (`$HOME`, a non-git directory), `--project`
+or `--global` must be passed explicitly — no silent default. `$HOME` is always
+refused under `--project`; use `--global` for a user-wide install. Pass
+`--surfaces=portable,claude,agents-md` (or `--surfaces=all`, the default) to select
+install destinations within the chosen scope, or `--pin <version>` to override the
+version baked into the bootstrap line.
+
+Every generated artifact carries a `format=fNN` stamp; re-running install is
+idempotent, and a newer-format artifact is never clobbered by an older pprose.
+Each generated skill bakes in a pinned, local-first invocation (`pprose` if on
+PATH, else `uvx pprose@<version>`).
+Cross-scope coexistence is the supported pattern: project-scope skills shadow
+user-scope skills of the same name in modern agents.
+Run `pprose --help` or `pprose install --help` for full options.
 
 `score` requires `ANTHROPIC_API_KEY`; the package auto-loads `.env` and `.env.local`
 from the current directory hierarchy and `$HOME`.

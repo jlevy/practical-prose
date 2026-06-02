@@ -309,9 +309,10 @@
     if (!palette) palette = _initialPalette();
     const ds = globalThis.PracticalProseDesignSystem.designSystem;
     const lines = [
-      "# Snapshot from the palette sliders.",
-      "# Paste into tools/design-system/design-system.yaml under `groups:` to",
-      "# adopt these values, then re-run generate.py to refresh the artifacts.",
+      "# Snapshot from the explorations chooser — palette + typography state.",
+      "# Paste into tools/design-system/design-system.yaml under the matching",
+      "# top-level keys (`groups`, `tones`, `scoring`, `typography`), then",
+      "# re-run generate.py to refresh the artifacts.",
       "",
       "groups:",
     ];
@@ -336,10 +337,10 @@
        so the snapshot is always complete. */
     const root = document.documentElement;
     const tonePairs = [
-      ["icon", "--icon-color", ds.tones && ds.tones.icon],
-      ["dim_label", "--dim-label-color", ds.tones && ds.tones.dim_label],
-      ["na", "--na-color", ds.tones && ds.tones.na],
-      ["na_label", "--na-label-color", ds.tones && ds.tones.na_label],
+      ["icon", "--icon-color", ds.tones?.icon],
+      ["dim_label", "--dim-label-color", ds.tones?.dim_label],
+      ["na", "--na-color", ds.tones?.na],
+      ["na_label", "--na-label-color", ds.tones?.na_label],
     ];
     lines.push("", "tones:");
     tonePairs.forEach(([key, token, fallback]) => {
@@ -352,10 +353,134 @@
        the controls panel writes here on every input). */
     const alphaRaw =
       getComputedStyle(root).getPropertyValue("--score-alpha-step").trim() ||
-      String(ds.scoring && ds.scoring.alpha_step);
+      String(ds.scoring?.alpha_step);
     const alphaStep = parseFloat(alphaRaw);
     lines.push("", "scoring:", `  alpha_step: ${Number.isFinite(alphaStep) ? alphaStep : 0}`);
+
+    /* Typography — small-caps tracking + per-role fonts.  The font
+       chooser + the four-input-per-role typography panel both write to
+       inline styles on <html>, so we read them back here.  Each field
+       falls back to the YAML-canonical default so a "no overrides yet"
+       export still reproduces the original config.
+
+       The font `family` is inferred from the currently-selected
+       <select> option's text label (stripped of the trailing
+       "(...)" source-tag).  The `stack` is read from --font-{role} on
+       <html>: it starts with the primary family in quotes followed by
+       commas — drop the leading `"<family>",` chunk to recover the
+       fallback list.  `source` is taken from the catalog entry keyed
+       by the select's value (or `system` if no entry matches the
+       fontsource pattern). */
+    const fontsCfg = ds.typography?.fonts;
+    const fc = globalThis.PracticalProseDesignFontControls;
+    function readFontRole(role) {
+      const fallback = fontsCfg?.[role] || {};
+      const sel = document.querySelector(`#font-${role}-select`);
+      const optKey = sel ? sel.value : null;
+      const labelRaw = sel?.options[sel.selectedIndex]
+        ? sel.options[sel.selectedIndex].textContent
+        : "";
+      /* Label looks like "Source Sans 3 (default, Fontsource)" — strip
+         the trailing parenthetical to get the human name; fall back to
+         the YAML family if we can't parse. */
+      const family = labelRaw.replace(/\s*\(.*$/, "").trim() || fallback.family || "";
+      const stackVar =
+        root.style.getPropertyValue(`--font-${role}`).trim() ||
+        getComputedStyle(root).getPropertyValue(`--font-${role}`).trim() ||
+        "";
+      /* Stack starts with `"<family>", ` — drop that chunk to get the
+         fallback list alone, matching the YAML shape.  If we can't
+         find the prefix (unusual), fall back to the YAML stack. */
+      const primaryPrefix = `"${family}",`;
+      const stack = stackVar.startsWith(primaryPrefix)
+        ? stackVar.slice(primaryPrefix.length).trim()
+        : fallback.stack || stackVar;
+      /* Source: derive from the catalog the chooser uses — anything
+         we don't load via fontsource is `system`. */
+      const stacks = fc?.fontStacks?.[role];
+      const source = (() => {
+        if (!optKey || !stacks?.[optKey]) return fallback.source || "system";
+        return FONT_SOURCE_BY_KEY[optKey] || "system";
+      })();
+      const readNum = (id, fb) => {
+        const v = parseFloat(
+          root.style.getPropertyValue(`--font-${role}-${id}`).trim() ||
+            getComputedStyle(root).getPropertyValue(`--font-${role}-${id}`).trim() ||
+            "",
+        );
+        return Number.isFinite(v) ? v : fb;
+      };
+      const sizeStr =
+        root.style.getPropertyValue(`--font-${role}-size`).trim() ||
+        getComputedStyle(root).getPropertyValue(`--font-${role}-size`).trim() ||
+        "";
+      const size = parseFloat(sizeStr) || fallback.size_px || 16;
+      return {
+        family,
+        stack,
+        source,
+        size_px: size,
+        weight: readNum("weight", fallback.weight || 400),
+        weight_medium: readNum("weight-medium", fallback.weight_medium || 500),
+        weight_bold: readNum("weight-bold", fallback.weight_bold || 600),
+      };
+    }
+    const sansCfg = readFontRole("sans");
+    const serifCfg = readFontRole("serif");
+    const tracking = ds.typography?.caps?.tracking || "0.09em";
+    lines.push(
+      "",
+      "typography:",
+      "  caps:",
+      `    tracking: "${tracking}"`,
+      "  fonts:",
+      ...fontBlock("sans", sansCfg),
+      ...fontBlock("serif", serifCfg),
+    );
     return lines.join("\n");
+  }
+
+  /* Catalog of `font key → font source` covering every Fontsource font
+     the chooser loads (and the system stacks).  Keep in sync with
+     design-font-controls.js's fontStacks. */
+  const FONT_SOURCE_BY_KEY = Object.freeze({
+    // sans
+    sourcesans: "fontsource:source-sans-3:vf",
+    ibmplex: "fontsource:ibm-plex-sans:vf",
+    hanken: "fontsource:hanken-grotesk:vf",
+    inter: "fontsource:inter:vf",
+    system: "system",
+    helvetica: "system",
+    // serif
+    notoserif: "fontsource:noto-serif:vf",
+    sourceserif: "fontsource:source-serif-4:vf",
+    ptserif: "fontsource:pt-serif",
+    charissil: "fontsource:charis-sil",
+    gelasio: "fontsource:gelasio",
+    spectral: "fontsource:spectral",
+    newsreader: "fontsource:newsreader:vf",
+    crimsonpro: "fontsource:crimson-pro:vf",
+    stixtwo: "fontsource:stix-two-text:vf",
+    vollkorn: "fontsource:vollkorn:vf",
+    iowan: "system",
+    georgia: "system",
+    times: "system",
+    ui: "system",
+  });
+
+  function fontBlock(role, cfg) {
+    /* Quote the stack string with single quotes so embedded `"`s in
+       font names don't need YAML escaping. */
+    return [
+      `    ${role}:`,
+      `      family: "${cfg.family}"`,
+      `      stack: '${cfg.stack.replace(/'/g, "''")}'`,
+      `      source: "${cfg.source}"`,
+      `      size_px: ${cfg.size_px}`,
+      `      weight: ${cfg.weight}`,
+      `      weight_medium: ${cfg.weight_medium}`,
+      `      weight_bold: ${cfg.weight_bold}`,
+    ];
   }
 
   // ────────────── DOM helper ──────────────

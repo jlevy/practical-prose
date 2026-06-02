@@ -6,24 +6,24 @@ export const designSystem = Object.freeze({
   "version": 1,
   "surfaces": {
     "bg": {
-      "light": "hsl(40 38% 93%)",
-      "dark": "hsl(40 8% 8%)"
+      "light": "hsl(0 0% 98%)",
+      "dark": "hsl(0 0% 8%)"
     },
     "fg": {
       "light": "hsl(30 12% 10%)",
       "dark": "hsl(40 25% 88%)"
     },
     "muted": {
-      "light": "hsl(40 9% 39%)",
+      "light": "hsl(40 0% 28%)",
       "dark": "hsl(40 11% 53%)"
     },
     "card": {
-      "light": "hsl(40 50% 96%)",
-      "dark": "hsl(34 12% 10%)"
+      "light": "hsl(0 0% 100%)",
+      "dark": "hsl(0 0% 12%)"
     },
     "border": {
-      "light": "hsl(40 26% 79%)",
-      "dark": "hsl(40 13% 17%)"
+      "light": "hsl(0 0% 88%)",
+      "dark": "hsl(0 0% 18%)"
     },
     "rule": {
       "light": "hsl(30 12% 10%)",
@@ -40,14 +40,14 @@ export const designSystem = Object.freeze({
     {
       "id": "P",
       "label": "Purpose",
-      "spread": 45.0,
+      "spread": 22.0,
       "ink": {
-        "light": "hsl(72 19% 73%)",
-        "dark": "hsl(72 19% 27%)"
+        "light": "hsl(214 19% 73%)",
+        "dark": "hsl(214 19% 27%)"
       },
       "surface": {
-        "light": "hsl(72 19% 92%)",
-        "dark": "hsl(72 19% 18%)"
+        "light": "hsl(214 19% 92%)",
+        "dark": "hsl(214 19% 18%)"
       },
       "icon": "mdi:compass-rose",
       "sense": "orientation toward the reader's task"
@@ -57,12 +57,12 @@ export const designSystem = Object.freeze({
       "label": "Expression",
       "spread": 30.0,
       "ink": {
-        "light": "hsl(206 19% 73%)",
-        "dark": "hsl(206 19% 27%)"
+        "light": "hsl(134 19% 73%)",
+        "dark": "hsl(134 19% 27%)"
       },
       "surface": {
-        "light": "hsl(206 19% 92%)",
-        "dark": "hsl(206 19% 18%)"
+        "light": "hsl(134 19% 92%)",
+        "dark": "hsl(134 19% 18%)"
       },
       "icon": "mdi:quill",
       "sense": "language, surface form"
@@ -70,14 +70,14 @@ export const designSystem = Object.freeze({
     {
       "id": "F",
       "label": "Form",
-      "spread": 20.0,
+      "spread": 30.0,
       "ink": {
-        "light": "hsl(35 19% 73%)",
-        "dark": "hsl(35 19% 27%)"
+        "light": "hsl(58 19% 73%)",
+        "dark": "hsl(58 19% 27%)"
       },
       "surface": {
-        "light": "hsl(35 19% 92%)",
-        "dark": "hsl(35 19% 18%)"
+        "light": "hsl(58 19% 92%)",
+        "dark": "hsl(58 19% 18%)"
       },
       "icon": "mdi:scroll",
       "sense": "the document as a structured artifact"
@@ -85,7 +85,7 @@ export const designSystem = Object.freeze({
     {
       "id": "R",
       "label": "Reasoning",
-      "spread": 40.0,
+      "spread": 35.0,
       "ink": {
         "light": "hsl(0 19% 73%)",
         "dark": "hsl(0 19% 27%)"
@@ -100,14 +100,14 @@ export const designSystem = Object.freeze({
     {
       "id": "G",
       "label": "Grounding",
-      "spread": 40.0,
+      "spread": 30.0,
       "ink": {
-        "light": "hsl(162 19% 73%)",
-        "dark": "hsl(162 19% 27%)"
+        "light": "hsl(195 17% 73%)",
+        "dark": "hsl(195 17% 27%)"
       },
       "surface": {
-        "light": "hsl(162 19% 92%)",
-        "dark": "hsl(162 19% 16%)"
+        "light": "hsl(195 17% 92%)",
+        "dark": "hsl(195 17% 16%)"
       },
       "icon": "mdi:anchor",
       "sense": "tied to sources and facts"
@@ -115,14 +115,14 @@ export const designSystem = Object.freeze({
     {
       "id": "J",
       "label": "Judgment",
-      "spread": 45.0,
+      "spread": 22.0,
       "ink": {
-        "light": "hsl(265 19% 73%)",
-        "dark": "hsl(265 19% 27%)"
+        "light": "hsl(294 19% 73%)",
+        "dark": "hsl(294 19% 27%)"
       },
       "surface": {
-        "light": "hsl(265 19% 92%)",
-        "dark": "hsl(265 19% 18%)"
+        "light": "hsl(294 19% 92%)",
+        "dark": "hsl(294 19% 18%)"
       },
       "icon": "mdi:scale-balance",
       "sense": "weighing claims, calibration"
@@ -136,8 +136,8 @@ export const designSystem = Object.freeze({
       "group": "P",
       "h_offset": -4.0,
       "color": {
-        "light": "hsl(68 19% 40%)",
-        "dark": "hsl(68 19% 65%)"
+        "light": "hsl(210 19% 40%)",
+        "dark": "hsl(210 19% 65%)"
       }
     },
     {
@@ -147,8 +147,8 @@ export const designSystem = Object.freeze({
       "group": "P",
       "h_offset": 0.0,
       "color": {
-        "light": "hsl(72 19% 37%)",
-        "dark": "hsl(72 19% 62%)"
+        "light": "hsl(214 19% 37%)",
+        "dark": "hsl(214 19% 62%)"
       }
     },
     {
@@ -158,8 +158,8 @@ export const designSystem = Object.freeze({
       "group": "P",
       "h_offset": 4.0,
       "color": {
-        "light": "hsl(76 19% 34%)",
-        "dark": "hsl(76 19% 59%)"
+        "light": "hsl(218 19% 34%)",
+        "dark": "hsl(218 19% 59%)"
       }
     },
     {
@@ -169,8 +169,8 @@ export const designSystem = Object.freeze({
       "group": "P",
       "h_offset": 8.0,
       "color": {
-        "light": "hsl(80 19% 31%)",
-        "dark": "hsl(80 19% 56%)"
+        "light": "hsl(222 19% 31%)",
+        "dark": "hsl(222 19% 56%)"
       }
     },
     {
@@ -180,8 +180,8 @@ export const designSystem = Object.freeze({
       "group": "E",
       "h_offset": -5.0,
       "color": {
-        "light": "hsl(201 19% 35%)",
-        "dark": "hsl(201 19% 68%)"
+        "light": "hsl(129 19% 35%)",
+        "dark": "hsl(129 19% 68%)"
       }
     },
     {
@@ -191,8 +191,8 @@ export const designSystem = Object.freeze({
       "group": "E",
       "h_offset": -2.0,
       "color": {
-        "light": "hsl(204 19% 32%)",
-        "dark": "hsl(204 19% 66%)"
+        "light": "hsl(132 19% 32%)",
+        "dark": "hsl(132 19% 66%)"
       }
     },
     {
@@ -202,8 +202,8 @@ export const designSystem = Object.freeze({
       "group": "E",
       "h_offset": 1.0,
       "color": {
-        "light": "hsl(207 19% 30%)",
-        "dark": "hsl(207 19% 64%)"
+        "light": "hsl(135 19% 30%)",
+        "dark": "hsl(135 19% 64%)"
       }
     },
     {
@@ -213,8 +213,8 @@ export const designSystem = Object.freeze({
       "group": "F",
       "h_offset": -4.0,
       "color": {
-        "light": "hsl(31 19% 38%)",
-        "dark": "hsl(31 19% 64%)"
+        "light": "hsl(54 19% 38%)",
+        "dark": "hsl(54 19% 64%)"
       }
     },
     {
@@ -224,8 +224,8 @@ export const designSystem = Object.freeze({
       "group": "F",
       "h_offset": 0.0,
       "color": {
-        "light": "hsl(35 19% 35%)",
-        "dark": "hsl(35 19% 61%)"
+        "light": "hsl(58 19% 35%)",
+        "dark": "hsl(58 19% 61%)"
       }
     },
     {
@@ -235,8 +235,8 @@ export const designSystem = Object.freeze({
       "group": "F",
       "h_offset": 4.0,
       "color": {
-        "light": "hsl(39 19% 32%)",
-        "dark": "hsl(39 19% 58%)"
+        "light": "hsl(62 19% 32%)",
+        "dark": "hsl(62 19% 58%)"
       }
     },
     {
@@ -290,8 +290,8 @@ export const designSystem = Object.freeze({
       "group": "G",
       "h_offset": -4.0,
       "color": {
-        "light": "hsl(158 19% 32%)",
-        "dark": "hsl(158 19% 62%)"
+        "light": "hsl(191 17% 32%)",
+        "dark": "hsl(191 17% 62%)"
       }
     },
     {
@@ -301,8 +301,8 @@ export const designSystem = Object.freeze({
       "group": "G",
       "h_offset": 0.0,
       "color": {
-        "light": "hsl(162 19% 29%)",
-        "dark": "hsl(162 19% 58%)"
+        "light": "hsl(195 17% 29%)",
+        "dark": "hsl(195 17% 58%)"
       }
     },
     {
@@ -312,8 +312,8 @@ export const designSystem = Object.freeze({
       "group": "G",
       "h_offset": 4.0,
       "color": {
-        "light": "hsl(166 19% 26%)",
-        "dark": "hsl(166 19% 54%)"
+        "light": "hsl(199 17% 26%)",
+        "dark": "hsl(199 17% 54%)"
       }
     },
     {
@@ -323,8 +323,8 @@ export const designSystem = Object.freeze({
       "group": "J",
       "h_offset": -6.0,
       "color": {
-        "light": "hsl(259 19% 42%)",
-        "dark": "hsl(259 19% 70%)"
+        "light": "hsl(288 19% 42%)",
+        "dark": "hsl(288 19% 70%)"
       }
     },
     {
@@ -334,8 +334,8 @@ export const designSystem = Object.freeze({
       "group": "J",
       "h_offset": 0.0,
       "color": {
-        "light": "hsl(265 19% 39%)",
-        "dark": "hsl(265 19% 67%)"
+        "light": "hsl(294 19% 39%)",
+        "dark": "hsl(294 19% 67%)"
       }
     },
     {
@@ -345,8 +345,8 @@ export const designSystem = Object.freeze({
       "group": "J",
       "h_offset": 6.0,
       "color": {
-        "light": "hsl(271 19% 36%)",
-        "dark": "hsl(271 19% 64%)"
+        "light": "hsl(300 19% 36%)",
+        "dark": "hsl(300 19% 64%)"
       }
     }
   ],
@@ -428,16 +428,31 @@ export const designSystem = Object.freeze({
   },
   "typography": {
     "caps": {
-      "tracking": "0.09em",
-      "weight": 600,
-      "weight_strong": 800
+      "tracking": "0.09em"
     },
-    "numeric": {
-      "weight": 600
+    "fonts": {
+      "sans": {
+        "family": "Source Sans 3",
+        "stack": "-apple-system, BlinkMacSystemFont, \"Inter\", \"Helvetica Neue\", Arial, sans-serif",
+        "source": "fontsource:source-sans-3:vf",
+        "size_px": 16.5,
+        "weight": 425,
+        "weight_medium": 650,
+        "weight_bold": 675
+      },
+      "serif": {
+        "family": "Noto Serif",
+        "stack": "\"Iowan Old Style\", \"Charter\", Georgia, serif",
+        "source": "fontsource:noto-serif:vf",
+        "size_px": 14.0,
+        "weight": 425,
+        "weight_medium": 425,
+        "weight_bold": 550
+      }
     }
   },
   "scoring": {
-    "alpha_step": 0.0
+    "alpha_step": 0.16
   }
 });
 

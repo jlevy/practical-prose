@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="en" data-theme-mode="auto">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{{ title }}</title>
+  <meta name="generator" content="pprose render {{ pprose_version }}">
+  <style>
+{{ css | safe }}
+  </style>
+  <script>
+{{ js | safe }}
+  </script>
+</head>
+<body>
+  {# Inline icon sprite — group icons reference #icon-purpose etc. #}
+  {{ icons_svg | safe }}
+
+  <header class="pp-page-header">
+    {% include 'theme-toggle.html.jinja' %}
+  </header>
+
+  <main>
+    {% block layout %}{% endblock %}
+  </main>
+
+  {# The eval data payload — parsed by the bootstrap below. #}
+  <script type="application/json" id="pp-eval-data">{{ data_json | safe }}</script>
+
+  <script>
+    {% block bootstrap %}{% endblock %}
+  </script>
+</body>
+</html>

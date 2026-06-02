@@ -31,21 +31,31 @@ tones:
 # Surface tokens are arbitrary HSL — they are page-level and don't belong to a
 # group's hue family.
 surfaces:
+  # Official surfaces are a softened off-white (light) + off-black (dark) —
+  # close to pure light/dark but knocked back slightly so neither extreme
+  # reads as stark.  Both are tokens (--bg), resolved per theme; nothing is
+  # hard-coded to white in the markup.  The warm cream and cool gray surfaces
+  # stay workbench-only experiments (see dimension-visualizations.html); they
+  # are deliberately NOT mapped into the design system.
   bg:
-    light: "hsl(40 38% 93%)"
-    dark: "hsl(40 8% 8%)"
+    light: "hsl(0 0% 98%)"
+    dark: "hsl(0 0% 8%)"
   fg:
     light: "hsl(30 12% 10%)"
     dark: "hsl(40 25% 88%)"
+  # Unified with tones.dim_label / tones.icon so eyebrows, dim labels,
+  # and icons all use the same dark gray.  Design principle: fewer
+  # grayscale levels.  Dark-mode value stays separate (the dim_label
+  # tone is mode-independent and doesn't translate to dark surfaces).
   muted:
-    light: "hsl(40 9% 39%)"
+    light: "hsl(40 0% 28%)"
     dark: "hsl(40 11% 53%)"
   card:
-    light: "hsl(40 50% 96%)"
-    dark: "hsl(34 12% 10%)"
+    light: "hsl(0 0% 100%)"
+    dark: "hsl(0 0% 12%)"
   border:
-    light: "hsl(40 26% 79%)"
-    dark: "hsl(40 13% 17%)"
+    light: "hsl(0 0% 88%)"
+    dark: "hsl(0 0% 18%)"
   rule:
     light: "hsl(30 12% 10%)"
     dark: "hsl(40 25% 88%)"
@@ -56,37 +66,37 @@ surfaces:
 groups:
   - id: P
     label: Purpose
-    spread: 45
-    ink_light: "hsl(72 19% 73%)"
-    ink_dark: "hsl(72 19% 27%)"
-    surface_light: "hsl(72 19% 92%)"
-    surface_dark: "hsl(72 19% 18%)"
+    spread: 22
+    ink_light: "hsl(214 19% 73%)"
+    ink_dark: "hsl(214 19% 27%)"
+    surface_light: "hsl(214 19% 92%)"
+    surface_dark: "hsl(214 19% 18%)"
     icon: mdi:compass-rose
     sense: orientation toward the reader's task
 
   - id: E
     label: Expression
     spread: 30
-    ink_light: "hsl(206 19% 73%)"
-    ink_dark: "hsl(206 19% 27%)"
-    surface_light: "hsl(206 19% 92%)"
-    surface_dark: "hsl(206 19% 18%)"
+    ink_light: "hsl(134 19% 73%)"
+    ink_dark: "hsl(134 19% 27%)"
+    surface_light: "hsl(134 19% 92%)"
+    surface_dark: "hsl(134 19% 18%)"
     icon: mdi:quill
     sense: language, surface form
 
   - id: F
     label: Form
-    spread: 20
-    ink_light: "hsl(35 19% 73%)"
-    ink_dark: "hsl(35 19% 27%)"
-    surface_light: "hsl(35 19% 92%)"
-    surface_dark: "hsl(35 19% 18%)"
+    spread: 30
+    ink_light: "hsl(58 19% 73%)"
+    ink_dark: "hsl(58 19% 27%)"
+    surface_light: "hsl(58 19% 92%)"
+    surface_dark: "hsl(58 19% 18%)"
     icon: mdi:scroll
     sense: the document as a structured artifact
 
   - id: R
     label: Reasoning
-    spread: 40
+    spread: 35
     ink_light: "hsl(0 19% 73%)"
     ink_dark: "hsl(0 19% 27%)"
     surface_light: "hsl(0 19% 92%)"
@@ -96,21 +106,21 @@ groups:
 
   - id: G
     label: Grounding
-    spread: 40
-    ink_light: "hsl(162 19% 73%)"
-    ink_dark: "hsl(162 19% 27%)"
-    surface_light: "hsl(162 19% 92%)"
-    surface_dark: "hsl(162 19% 16%)"
+    spread: 30
+    ink_light: "hsl(195 17% 73%)"
+    ink_dark: "hsl(195 17% 27%)"
+    surface_light: "hsl(195 17% 92%)"
+    surface_dark: "hsl(195 17% 16%)"
     icon: mdi:anchor
     sense: tied to sources and facts
 
   - id: J
     label: Judgment
-    spread: 45
-    ink_light: "hsl(265 19% 73%)"
-    ink_dark: "hsl(265 19% 27%)"
-    surface_light: "hsl(265 19% 92%)"
-    surface_dark: "hsl(265 19% 18%)"
+    spread: 22
+    ink_light: "hsl(294 19% 73%)"
+    ink_dark: "hsl(294 19% 27%)"
+    surface_light: "hsl(294 19% 92%)"
+    surface_dark: "hsl(294 19% 18%)"
     icon: mdi:scale-balance
     sense: weighing claims, calibration
 
@@ -334,18 +344,48 @@ interactions:
     duration: "480ms"
     easing: "cubic-bezier(0.32, 0.72, 0, 1)"
 
-# Typography tokens — small-caps eyebrow pattern that's used everywhere the
-# design system has a small overline-style heading (panel kickers, section
-# headers, stat labels, navigation eyebrows).  Per design-system.md the
-# letter-spacing rule fires only on uppercase text, so these tokens travel
-# together; widgets that opt into small caps reach for all three.
+# Typography tokens.  Two halves:
+#   - caps:  the small-caps eyebrow pattern (panel kickers, section
+#            headers, stat labels, navigation eyebrows).  Per design-
+#            system.md the letter-spacing rule only fires on uppercase
+#            text, so the tracking value lives here as a design constant.
+#   - fonts: per-role family + stack + size + weights, captured live by
+#            the explorations chooser.  Pasted from "Copy YAML" so a
+#            tuned design becomes the new default.  `source` drives the
+#            generated `@font-face` declaration: `fontsource:<font>:<vf>`
+#            emits the standard fontsource CDN cuts (woff2 normal +
+#            italic, variable or static), `system` emits no `@font-face`
+#            (the stack relies on locally-installed fonts).
 typography:
   caps:
     tracking: "0.09em" # canonical small-caps tracking (range 0.06-0.10em)
-    weight: 600 # normal eyebrow weight (.eyebrow utility)
-    weight_strong: 800 # bolder variant for prominent labels (e.g. data labels on bars)
-  numeric:
-    weight: 600 # quantitative numbers everywhere (scores, counts, stats)
+  fonts:
+    # Three weight tiers per role:
+    #   weight        — body / regular reading copy
+    #   weight_medium — large headings that read better with a softer weight
+    #                   than full bold (eg. big card titles); also used as
+    #                   the eyebrow / numeric tier in some places
+    #   weight_bold   — smaller headings + emphasized inline text where you
+    #                   want a truly heavy stroke
+    sans:
+      family: "Source Sans 3"
+      stack: '-apple-system, BlinkMacSystemFont, "Inter", "Helvetica Neue", Arial, sans-serif'
+      source: "fontsource:source-sans-3:vf"
+      # Source Sans 3 has a low x-height + narrow letterforms — it reads
+      # noticeably smaller than serif fonts at the same nominal size.
+      # 16.5px here optically matches Noto Serif at 14px.
+      size_px: 16.5
+      weight: 425
+      weight_medium: 650
+      weight_bold: 675
+    serif:
+      family: "Noto Serif"
+      stack: '"Iowan Old Style", "Charter", Georgia, serif'
+      source: "fontsource:noto-serif:vf"
+      size_px: 14
+      weight: 425
+      weight_medium: 425
+      weight_bold: 550
 
 # Scoring presentation — encodes a score's *value* through alpha on the
 # dimension's base color.  Each step below the maximum (5) reduces alpha
@@ -353,4 +393,4 @@ typography:
 # a faint one.  The effect is symmetric in light + dark mode because we
 # mix toward `transparent`, letting the surface show through.
 scoring:
-  alpha_step: 0 # alpha decrement per score step below 5 (0 = no gradient)
+  alpha_step: 0.16 # alpha decrement per score step below 5 (0 = no gradient)

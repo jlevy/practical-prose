@@ -1,0 +1,31 @@
+{% extends 'base.html.jinja' %}
+{# Interactive variant — one card + two hover-driven tip panels. #}
+
+{% block layout %}
+<div class="bi-layout">
+  <div class="bi-stack"></div>
+  <aside class="bi-tip-panel"></aside>
+  <aside class="bi-tip-panel bi-tip-panel-assess"></aside>
+</div>
+{% endblock %}
+
+{% block bootstrap %}
+(function () {
+  function go() {
+    var data = JSON.parse(document.getElementById("pp-eval-data").textContent);
+    var biCardApi = PracticalProseBiCard.mount(".bi-stack", data);
+    PracticalProseTipPanels.mount(
+      ".bi-tip-panel:not(.bi-tip-panel-assess)",
+      ".bi-tip-panel-assess",
+      data,
+      biCardApi
+    );
+    PracticalProseDesignColorControls.mountThemeToggle(".theme-toggle");
+  }
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", go);
+  } else {
+    go();
+  }
+})();
+{% endblock %}
