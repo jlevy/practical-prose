@@ -39,22 +39,21 @@ The documents and tools here are organized for both human and agent use:
 6. A [**bibliography**](docs/practical-prose-bibliography.md) of notable works on
    practical writing
 
-## A Personal Note
+> ## A Personal Note
 
-> I care a lot about clear writing as a reader, a writer, an editor, and an engineer.
 > I always admired good writing, both fiction and nonfiction.
-> I have also written a fair amount of technical and business writing, but as I was
-> building [Holloway](https://www.holloway.com) I spent much more time learning and
-> thinking about editorial processes, the production of print and digital books, and
-> publishing tools. Now every month I am using agents to write millions of lines of code
-> and documents, including software documentation, technical specifications, and
-> business or financial analysis.
+> I have also written popular technical and business guides.
+> As I was building [Holloway](https://www.holloway.com) I spent much more time learning
+> and thinking about editorial processes, the production of print and digital books, and
+> publishing tools. I’m also an engineer.
+> I now use agents to write millions of lines of code and documents, including software
+> documentation, technical specifications, and business or financial analysis.
 > 
-> I’m constantly in amazement at how the latest models can be both incredibly capable
-> yet write and think in such sloppy ways.
-> LLMs tend toward mediocrity because they tend to write “in distribution” of the
-> training data. But just as with human writers, many shortcomings are correctable errors
-> or bad habits.
+> The latest models are both shockingly capable yet also can write and think in such
+> sloppy ways. LLMs tend toward mediocrity because they tend to write “in distribution”
+> of the training data.
+> But just as with human writers, many shortcomings are correctable errors or bad
+> habits.
 > 
 > I realize that trying to describe or measure the essence of what makes good writing is
 > incredibly difficult or perhaps impossible.
@@ -63,9 +62,9 @@ The documents and tools here are organized for both human and agent use:
 > Agents now let us combine insights from many sources.
 > Human insights that diverged or were scattered by historical accident can be
 > consolidated and forged into useful form.
-> It is still in progress, but I try to draw from the best thinkers and sources, such as
-> writing classics, the plain-language writing tradition, science and engineering
-> writing, and journalistic practices.
+> It is still in progress, but I’ve tried to draw from the best thinkers and sources,
+> including classics about good writing, the plain-language writing tradition, science
+> and engineering writing, and journalistic practices.
 
 ## Practical Writing in the Age of AI
 
