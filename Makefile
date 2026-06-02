@@ -36,7 +36,15 @@ ROOT := $(CURDIR)
         test clean
 
 # Pinned for security/stability — bump deliberately, honoring the 14-day rule.
-FLOWMARK := uvx flowmark-rs@0.2.6
+#
+# Supply-chain exception (see SUPPLY-CHAIN-SECURITY.md): flowmark-rs is a
+# first-party package (github.com/jlevy/flowmark) maintained by this repo's
+# author, so we pin a version still inside the 14-day cool-off. The override is
+# surgical and per-invocation — it never relaxes the global cool-off — and
+# scoped to this one package via --exclude-newer-package. Reviewed-by: Joshua Levy.
+#   flowmark-rs@0.3.1 published 2026-05-30; cutoff 2026-06-02 admits it.
+FLOWMARK_VERSION := 0.3.1
+FLOWMARK := uvx --exclude-newer-package 'flowmark-rs=2026-06-02' flowmark-rs@$(FLOWMARK_VERSION)
 
 # Order matters: format the canonical sources first, then `generate` syncs the
 # vendored mirrors and design-system derivatives off those formatted sources.

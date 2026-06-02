@@ -36,6 +36,8 @@ from importlib.metadata import PackageNotFoundError, version
 from pathlib import Path
 from typing import NamedTuple
 
+from flowmark import reformat_text
+
 from pprose import resources
 
 PACKAGE_NAME = "pprose"
@@ -200,6 +202,24 @@ def parse_surfaces(raw: str | None) -> SurfaceSpec:
 # ─────────────────────────────────────────────────────────────────────────────
 
 
+def _flowmark(text: str) -> str:
+    """Format generated Markdown exactly as the repo's flowmark pre-commit hook would.
+
+    pprose *generates* Markdown (the composed `SKILL.md` files and the `AGENTS.md`
+    block); the repo's pre-commit hook then runs `flowmark-rs --auto` over those same
+    files. Pre-applying the byte-identical flowmark-py transform here makes generation
+    idempotent: `make generate`, `pprose install`, and the `test_resources_sync` drift
+    check all emit flowmark-clean output the hook leaves untouched — instead of long
+    lines the hook silently rewraps into uncommitted drift (the original CI break).
+
+    The flags mirror flowmark-rs `--auto` and are verified byte-identical against it
+    (see tests/test_install.py::test_generated_skills_are_flowmark_stable). flowmark is
+    a guaranteed dependency (direct, and transitively via chopdiff), so this never
+    falls back to unformatted output.
+    """
+    return reformat_text(text, width=88, semantic=True, cleanups=True, smartquotes=True)
+
+
 def _split_frontmatter(raw: str) -> tuple[str, str]:
     """Return (frontmatter_without_delimiters, body). Empty frontmatter if absent."""
     lines = raw.splitlines()
@@ -238,7 +258,8 @@ def compose_skill(name: str, pin: str | None = None) -> str:
     pin = pin if pin is not None else pinned_version()
     fm, body = _split_frontmatter(resources.read_doc("skills", name))
     head = f"---\n{fm}\n---\n" if fm else ""
-    return (f"{head}{_skill_marker()}\n\n{_bootstrap_line(pin)}\n\n{body}").rstrip() + "\n"
+    composed = f"{head}{_skill_marker()}\n\n{_bootstrap_line(pin)}\n\n{body}"
+    return _flowmark(composed).rstrip() + "\n"
 
 
 def _skill_description(name: str) -> str:
@@ -313,28 +334,30 @@ def agents_md_block(pin: str | None = None) -> str:
     older blocks (and refuse to clobber a newer one).
     """
     pin = pin if pin is not None else pinned_version()
-    return "\n".join(
+    # Authored as long lines; _flowmark applies the same semantic wrapping the
+    # pre-commit hook would, so the block stays idempotent inside AGENTS.md.
+    block = "\n".join(
         [
             f"{AGENTS_BEGIN_PREFIX} format={PPROSE_FORMAT} -->",
             "## Practical Prose (pprose)",
             "",
-            "Practical Prose: an evaluation toolkit and editorial workflows for",
+            "Practical Prose: an evaluation toolkit and editorial workflows for practical "
+            "documents. Use when the user asks to improve, audit, score, or compare "
             "practical documents.",
-            "Use when the user asks to improve, audit, score, or compare practical",
-            "documents.",
             "",
-            "Discover the tool from the CLI itself: `pprose --help` for commands,",
-            "`pprose about` for the project narrative, and `pprose skill --list` /",
-            "`pprose shortcut --list` / `pprose guidelines --list` /",
-            "`pprose runbook --list` for on-demand workflows, playbooks, style",
-            "guides, and procedures.",
+            "Discover the tool from the CLI itself: `pprose --help` for commands, "
+            "`pprose about` for the project narrative, and `pprose skill --list` / "
+            "`pprose shortcut --list` / `pprose guidelines --list` / "
+            "`pprose runbook --list` for on-demand workflows, playbooks, style guides, "
+            "and procedures.",
             "",
-            f"Run pprose as `pprose <command>` if on PATH, else `uvx pprose@{pin}",
+            f"Run pprose as `pprose <command>` if on PATH, else `uvx pprose@{pin} "
             "<command>` (zero-install via uv).",
             "",
             AGENTS_END_MARKER,
         ]
     )
+    return _flowmark(block).rstrip()
 
 
 # ─────────────────────────────────────────────────────────────────────────────

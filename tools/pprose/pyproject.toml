@@ -41,6 +41,10 @@ classifiers = [
 dependencies = [
     "aiolimiter>=1.2",
     "chopdiff>=0.2.1",
+    # Formats generated Markdown (composed SKILL.md, the AGENTS.md block) so generation
+    # is idempotent under the repo's flowmark pre-commit hook. Already resolved
+    # transitively via chopdiff; declared directly since install.py imports it.
+    "flowmark>=0.6.5",
     "jinja2>=3.1",
     "pydantic>=2.0",
     # Provider-agnostic LLM client. Pinned (not >=) to honor the 14-day cool-off

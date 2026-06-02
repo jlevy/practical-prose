@@ -49,19 +49,18 @@ pprose install --global                            # install skills user-wide fo
   `~/.claude/skills/pprose-*/`, making the skills available across every project.
   Skips `~/.codex/AGENTS.md` so the global instruction file stays user-authored.
 
-Outside an unambiguous project context (`$HOME`, a non-git directory), `--project`
-or `--global` must be passed explicitly — no silent default. `$HOME` is always
-refused under `--project`; use `--global` for a user-wide install. Pass
-`--surfaces=portable,claude,agents-md` (or `--surfaces=all`, the default) to select
+Outside an unambiguous project context (`$HOME`, a non-git directory), `--project` or
+`--global` must be passed explicitly — no silent default.
+`$HOME` is always refused under `--project`; use `--global` for a user-wide install.
+Pass `--surfaces=portable,claude,agents-md` (or `--surfaces=all`, the default) to select
 install destinations within the chosen scope, or `--pin <version>` to override the
 version baked into the bootstrap line.
 
-Every generated artifact carries a `format=fNN` stamp; re-running install is
-idempotent, and a newer-format artifact is never clobbered by an older pprose.
-Each generated skill bakes in a pinned, local-first invocation (`pprose` if on
-PATH, else `uvx pprose@<version>`).
-Cross-scope coexistence is the supported pattern: project-scope skills shadow
-user-scope skills of the same name in modern agents.
+Every generated artifact carries a `format=fNN` stamp; re-running install is idempotent,
+and a newer-format artifact is never clobbered by an older pprose.
+Each generated skill bakes in a pinned, local-first invocation (`pprose` if on PATH,
+else `uvx pprose@<version>`). Cross-scope coexistence is the supported pattern:
+project-scope skills shadow user-scope skills of the same name in modern agents.
 Run `pprose --help` or `pprose install --help` for full options.
 
 `score` requires `ANTHROPIC_API_KEY`; the package auto-loads `.env` and `.env.local`
