@@ -249,10 +249,11 @@ The package name and command are both `pprose`. `pprose install` writes one `SKI
 per workflow into both `.agents/skills/` (Codex, Gemini CLI, pi read this natively) and
 `.claude/skills/` (Claude Code mirror), and maintains a marker-bounded `pprose` block in
 `AGENTS.md` (preserving any other content).
-Re-running it is idempotent. Scope it with `--project` (the default inside a git repo)
-or `--global`, and select destinations with `--surfaces=portable,claude,agents-md`.
-See [Agent Skills](#agent-skills) for the skill catalog and [Tooling](#tooling) for the
-CLI reference.
+Re-running it is idempotent.
+Scope it with `--project` (the default inside a git repo) or `--global`, and select
+destinations with `--surfaces=portable,claude,agents-md`. See
+[Agent Skills](#agent-skills) for the skill catalog and [Tooling](#tooling) for the CLI
+reference.
 
 ## Agent Skills
 
