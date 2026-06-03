@@ -49,6 +49,16 @@ This is a standing exemption, recorded here rather than re-approved per bump.
   `uvx --exclude-newer-package 'flowmark-rs=2026-06-02'`, which overrides the cool-off
   for this one package only and does not touch global uv config.
   Reviewed-by: Joshua Levy.
+- **`chopdiff==0.3.1`** — first-party (see above).
+  Published 2026-06-02; adopted the same day.
+  Pinned exact in [tools/pprose/pyproject.toml](tools/pprose/pyproject.toml).
+  To let a contributor’s global uv `exclude-newer` admit it during resolution, the same
+  file carries a per-package, repo-scoped
+  `[tool.uv] exclude-newer-package = { chopdiff = … }` — it caps only chopdiff and never
+  relaxes the cool-off for any other dependency.
+  CI has no global cutoff and installs it from the committed `uv.lock`. Remove the
+  `exclude-newer-package` entry once 0.3.1 ages out of the window.
+  Reviewed-by: Joshua Levy.
 
 ## Known Gap
 

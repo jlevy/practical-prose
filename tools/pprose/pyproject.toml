@@ -40,7 +40,9 @@ classifiers = [
 
 dependencies = [
     "aiolimiter>=1.2",
-    "chopdiff>=0.2.1",
+    # First-party (github.com/jlevy); pinned exact and adopted inside the 14-day window
+    # under the standing first-party cool-off exemption (see SUPPLY-CHAIN-SECURITY.md).
+    "chopdiff==0.3.1",
     # Formats generated Markdown (composed SKILL.md, the AGENTS.md block) so generation
     # is idempotent under the repo's flowmark pre-commit hook. Already resolved
     # transitively via chopdiff; declared directly since install.py imports it.
@@ -225,3 +227,9 @@ testpaths = [
 ]
 norecursedirs = []
 filterwarnings = []
+
+[tool.uv]
+# First-party cool-off exemption (see SUPPLY-CHAIN-SECURITY.md): admit chopdiff past the
+# contributor's global `exclude-newer` cutoff. Per-package + repo-scoped — it never
+# relaxes the cool-off for any other dependency. Remove once 0.3.1 ages out of the window.
+exclude-newer-package = { chopdiff = "2026-06-03" }
