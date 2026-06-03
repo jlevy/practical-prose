@@ -14,6 +14,16 @@ FIXTURE_DIR = Path(__file__).parent / "fixtures"
 METRICS_FIXTURES = Path(__file__).parent / "test_fixtures" / "practical_prose_metrics"
 
 
+@pytest.mark.parametrize("flag", ["--version", "-V"])
+def test_version_flag_prints_version(flag: str, capsys: pytest.CaptureFixture[str]) -> None:
+    rc = cli.main([flag])
+    captured = capsys.readouterr()
+    assert rc == 0
+    assert captured.out.startswith("pprose ")
+    assert captured.out.strip() != "pprose"  # a version string follows
+    assert captured.err == ""
+
+
 def test_top_level_help_lists_subcommands(capsys: pytest.CaptureFixture[str]) -> None:
     rc = cli.main(["--help"])
 

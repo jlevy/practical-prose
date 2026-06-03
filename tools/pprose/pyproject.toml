@@ -12,6 +12,9 @@ authors = [
     { name="Joshua Levy", email="joshuadlevy@gmail.com" },
 ]
 readme = "README.md"
+# Code is MIT. The wheel also bundles practical-prose *content* (guidelines, rubric,
+# runbooks, other prose under resources/) which remains CC BY 4.0 — see the repo LICENSE
+# and the README License section. SPDX expresses only the code license here.
 license = "MIT"
 requires-python = ">=3.11,<4.0"
 dynamic = ["version"]

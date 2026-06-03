@@ -6,6 +6,7 @@ import sys
 from collections.abc import Callable, Generator
 from contextlib import contextmanager
 from dataclasses import dataclass
+from importlib.metadata import PackageNotFoundError, version
 
 from pprose import eval_compare, eval_report, eval_score, install, metrics, reference
 from pprose.render_html import cli as render_cli
@@ -100,7 +101,8 @@ def _print_help() -> None:
     lines.extend(
         [
             "",
-            f"Run `{PROGRAM} <command> --help` for command-specific options.",
+            f"Run `{PROGRAM} <command> --help` for command-specific options, "
+            f"`{PROGRAM} --version` for the installed version.",
             "",
             "Getting started:",
             f"  uvx {PROGRAM} install        # install skills into the current project",
@@ -133,10 +135,21 @@ def _run_with_prog(command: str, func: CommandMain, args: list[str]) -> int:
             return exc.code if isinstance(exc.code, int) else 1
 
 
+def _version() -> str:
+    """Installed pprose version, or 'unknown' if not resolvable (e.g. odd dev layout)."""
+    try:
+        return version(PROGRAM)
+    except PackageNotFoundError:
+        return "unknown"
+
+
 def main(argv: list[str] | None = None) -> int:
     args = list(sys.argv[1:] if argv is None else argv)
     if args and args[0] in {"-h", "--help"}:
         _print_help()
+        return 0
+    if args and args[0] in {"-V", "--version"}:
+        print(f"{PROGRAM} {_version()}")
         return 0
     if not args:
         _print_help()

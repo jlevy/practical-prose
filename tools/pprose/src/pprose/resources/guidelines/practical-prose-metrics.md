@@ -83,6 +83,12 @@ fair.
   machine-readable schema for the 20 dimensions, the six groups, allowed score values,
   and `NA`-eligible dimensions.
 
+> Note: `pprose metrics` reports more lint signals than the eval report carries. The
+> replacement-history, pedantic-marker, generic-heading, and em-dash-density lints (and
+> bracket-tag examples) appear in `pprose metrics` output but are intentionally **not**
+> copied into the eval report's `quant` block, so `pprose report` / `pprose compare`
+> never surface them. Run `pprose metrics` directly to see the full lint set.
+
 ## Recommended Frontmatter Schema
 
 For practical-prose documents (the artifacts being written and evaluated, not the eval
