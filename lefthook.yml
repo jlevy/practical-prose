@@ -2,8 +2,13 @@
 # Install once: `make hooks-install` (or `npx lefthook install`).
 # Bypass for an emergency commit: `git commit --no-verify` (avoid in PRs).
 
+# Run pre-commit commands sequentially (not parallel). Several commands stage
+# fixups with `git add` (format-and-sync, design-system-generate), and concurrent
+# `git add` contends on .git/index.lock; sequential execution removes that and every
+# other inter-hook race. The cost is negligible here — `format-and-sync` (flowmark)
+# dominates the runtime, so serializing the fast biome/ruff steps adds almost nothing.
 pre-commit:
-  parallel: true
+  parallel: false
   commands:
     biome:
       glob: "*.{js,jsx,ts,tsx,json,jsonc,css,html}"
