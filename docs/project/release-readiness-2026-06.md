@@ -107,9 +107,15 @@ The [e2e runbook](e2e-testing.runbook.md) points back here.
     tooling configs (`biome.json`, `package.json`, `node_modules/`, `ruff.toml`,
     `lefthook.yml`) and large archives (`attic/` with vendored copies,
     `research-archive/`). Project specs live in **two** places
-    (`docs/project/specs/active` and `tools/docs/project/specs/active`). *Fix: move JS
-    tooling under `tools/` (in progress), pick one specs home, and gitignore or remove
-    `attic/` and loose root drafts before tagging.*
+    (`docs/project/specs/active` and `tools/docs/project/specs/active`). *Fix: pick one
+    specs home, and gitignore or remove `attic/` and loose root drafts before tagging.*
+    Moving the JS tooling (`package.json`/`node_modules`) under `tools/` was considered
+    and **deliberately deferred**: lefthook’s git hook discovers its binary by walking
+    `<repo-root>/node_modules` (never down into a subdir) and this hook template sources
+    no rc file, so a full move would break hook discovery or force a second root
+    `package.json` — more clutter, not less.
+    `package.json`/`node_modules` are kept at the root as git-hook infrastructure;
+    `biome.json` stays beside them so biome resolves its config from the same root.
 
 ## What works (do not re-litigate)
 
