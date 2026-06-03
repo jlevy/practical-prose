@@ -32,46 +32,35 @@ pre-commit:
         git add tools/design-system/_generated/ \
                 tools/pprose/src/pprose/_generated/design_system.py
 
-    # If any source doc that the pprose package vendors was touched,
-    # resync the mirrors under tools/pprose/src/pprose/resources/ and
-    # stage them alongside the edit. The mirrors are deliberately
-    # excluded from flowmark (.flowmarkignore) — they pick up formatting
-    # via this sync, not directly.
-    # Keep this glob in lockstep with the canonical sources in
-    # devtools/sync_resources.py (_synced_plan): docs/, runbooks/, shortcuts/,
-    # skills/, plus README.md (→ about) and design-system.md (→ guidelines).
-    # A source missing here drifts silently until the pre-push check fails.
-    pprose-resources-sync:
-      glob:
-        - "README.md"
-        - "docs/*.md"
-        - "runbooks/*.md"
-        - "shortcuts/*.md"
-        - "skills/*/SKILL.md"
-        - "tools/design-system/design-system.md"
+    # Markdown formatting + resource-mirror sync, run SEQUENTIALLY in one command.
+    #
+    # ORDER IS LOAD-BEARING and these MUST NOT be split into separate parallel
+    # hooks: `make format` (flowmark) reformats the canonical docs, then
+    # sync_resources.py mirrors the *formatted* docs into the wheel and stages
+    # them. As two parallel hooks they raced — sync could read a canonical doc
+    # before flowmark finished reformatting it, committing a source/mirror
+    # mismatch that the pre-push resources-sync-check then failed on. Folding
+    # them into one ordered command removes the race; it still runs in parallel
+    # with biome/ruff (which touch only non-Markdown files, so no contention).
+    #
+    # `make format` is the single source of truth (the same command developers
+    # run locally): the pinned `uvx flowmark-rs@<version> --auto .` at the repo
+    # root, which traverses the whole tree and honors .flowmarkignore. Whole-repo
+    # (not {staged_files}) is required — flowmark-rs only reads .flowmarkignore
+    # relative to its target arg, so passing subdirs/globs bypasses the exclusion
+    # list and damages example-texts/ corpora and other vendored content.
+    #
+    # The mirrors under tools/pprose/src/pprose/resources/ are excluded from
+    # flowmark (.flowmarkignore); they pick up formatting via this sync. The
+    # canonical sources sync_resources mirrors are docs/, runbooks/, shortcuts/,
+    # skills/, README.md (→ about), and design-system.md (→ guidelines) — all
+    # Markdown, so the `*.md` glob covers every case that needs a resync.
+    format-and-sync:
+      glob: "*.md"
       run: |
+        make format
         (cd tools/pprose && uv run python devtools/sync_resources.py)
         git add tools/pprose/src/pprose/resources/ skills/
-
-    # Markdown formatting with flowmark-rs (pinned in the Makefile).
-    #
-    # Single source of truth: delegates to `make format`, which is the same
-    # command developers run locally. Both paths invoke the pinned
-    # `uvx flowmark-rs@<version> --auto .` at the repo root so flowmark
-    # traverses the whole tree and honors .flowmarkignore.
-    #
-    # Why whole-repo (not `{staged_files}`)? flowmark-rs only reads
-    # .flowmarkignore relative to its target arg — passing subdirs or
-    # globs bypasses the exclusion list and damages example-texts/ corpora
-    # and other vendored content. Do not split this into per-dir hooks.
-    #
-    # The `glob: '*.md'` filter ensures the hook only fires when at least
-    # one staged file is Markdown. Flowmark is fast (well under a second
-    # across the whole repo with the incremental cache) so the whole-tree
-    # scan is cheap.
-    format-markdown:
-      glob: "*.md"
-      run: make format
       stage_fixed: true
 
 pre-push:
