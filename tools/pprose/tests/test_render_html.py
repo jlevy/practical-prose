@@ -196,3 +196,43 @@ def test_sync_render_html_styles_in_sync() -> None:
         f"stderr:\n{result.stderr}\n"
         "Run `uv run python devtools/sync_render_html_styles.py` to refresh."
     )
+
+
+# ─── print.css palette drift guard (pp-lpun) ─────────────────────────────────
+
+
+def _css_vars(text: str) -> dict[str, str]:
+    """Extract `--name: value` custom properties from a CSS string."""
+    return dict(re.findall(r"--([\w-]+):\s*([^;]+);", text))
+
+
+def test_print_css_palette_tokens_match_generated_light_theme() -> None:
+    """print.css mirrors the light accent/dim palette; guard against silent drift.
+
+    print.css intentionally overrides bg/fg/card to pure-paper values, but its
+    `--accent-*` / `--dim-*` tokens are copied from the light theme. The light theme
+    is generated from design-system.yaml into _generated/design_system.css, so if the
+    YAML palette changes, the hand-maintained print.css block would silently drift
+    (the sync --check gate does not cover print.css). This locks them together.
+    """
+    import re as _re
+
+    import pprose.render_html as rh
+
+    styles = Path(rh.__file__).resolve().parent / "styles"
+    design_css = (styles / "_generated" / "design_system.css").read_text(encoding="utf-8")
+    print_css = (styles / "print.css").read_text(encoding="utf-8")
+
+    # Light theme = the first `:root { ... }` block of the generated CSS.
+    light_block = _re.search(r":root\s*\{([^}]*)\}", design_css)
+    assert light_block, "could not find light :root block in design_system.css"
+    light = _css_vars(light_block.group(1))
+    printed = _css_vars(print_css)
+
+    palette = {k: v for k, v in printed.items() if k.startswith(("accent-", "dim-"))}
+    assert palette, "print.css exposes no accent-/dim- tokens — block moved?"
+    mismatches = {k: (printed[k], light.get(k)) for k in palette if printed[k] != light.get(k)}
+    assert not mismatches, (
+        "print.css palette drifted from the generated light theme; regenerate the "
+        f"design system and resync print.css: {mismatches}"
+    )

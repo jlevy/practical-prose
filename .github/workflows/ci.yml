@@ -63,8 +63,11 @@ jobs:
       - name: Install all dependencies
         run: uv sync --all-extras
 
-      - name: Run linting
-        run: uv run python devtools/lint.py
+      - name: Run linting (check-only; fails on lint/format drift)
+        run: uv run python devtools/lint.py --check
+
+      - name: Verify bundled resources are in sync with canonical docs
+        run: uv run python devtools/sync_resources.py --check
 
       - name: Run tests
         run: uv run pytest
@@ -112,3 +115,42 @@ jobs:
 
       - name: Lint JS / CSS / HTML / JSON via Biome
         run: npx --no-install @biomejs/biome ci .
+
+  # Build the wheel and exercise it from a clean, isolated install — catches
+  # data-file packaging regressions (the pyproject `include=` list is long) that
+  # the editable-source test run would not, before they reach a real release.
+  wheel-smoke:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: tools/pprose
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v7
+        with:
+          version: "0.10.2"
+          enable-cache: true
+          python-version: "3.13"
+
+      - name: Set up Python
+        run: uv python install
+
+      - name: Build sdist + wheel
+        # Build into a clean out-dir so the glob can't match any stale wheel.
+        run: uv build --out-dir /tmp/dist
+
+      - name: Install the built wheel into a clean venv
+        run: |
+          uv venv /tmp/wheeltest --python 3.13
+          uv pip install --python /tmp/wheeltest /tmp/dist/pprose-*.whl
+
+      - name: Smoke-test the installed CLI (bundled resources resolve)
+        run: |
+          /tmp/wheeltest/bin/pprose --help
+          /tmp/wheeltest/bin/pprose guidelines --list
+          /tmp/wheeltest/bin/pprose about | head -n 5

@@ -370,3 +370,58 @@ class TestOutputFormats:
         loaded = json.loads(j)
         assert loaded["links_total"] == m.links_total
         assert loaded["bracket_tags"] == m.bracket_tags
+
+
+# ---------------------------------------------------------------------------
+# CLI argv path (main): --format dispatch, multi-file summary, --banned-words-file.
+# The other tests call measure()/format_* directly; these drive main(argv).
+# ---------------------------------------------------------------------------
+
+
+class TestCliArgvPath:
+    def test_yaml_single_file_emits_one_element_list(self, capsys: pytest.CaptureFixture[str]):
+        rc = pwm.main([str(FIXTURES / "all_headings.md"), "--format", "yaml"])
+        out = capsys.readouterr().out
+        assert rc == 0
+        # YAML sequence even for a single file (leading "- ", one "file:" entry).
+        assert out.startswith("- ")
+        assert out.count("\n- file:") + out.startswith("- file:") == 1
+
+    def test_json_single_file_is_list_of_one(self, capsys: pytest.CaptureFixture[str]):
+        import json
+
+        rc = pwm.main([str(FIXTURES / "all_headings.md"), "--format", "json"])
+        assert rc == 0
+        loaded = json.loads(capsys.readouterr().out)
+        assert isinstance(loaded, list)
+        assert len(loaded) == 1
+        assert "headings" in loaded[0]
+
+    def test_multi_file_renders_summary_table(self, capsys: pytest.CaptureFixture[str]):
+        rc = pwm.main([str(FIXTURES / "all_headings.md"), str(FIXTURES / "links_mixed.md")])
+        out = capsys.readouterr().out
+        assert rc == 0
+        # The >1-file branch uses format_summary_table (one row per file).
+        assert "all_headings" in out and "links_mixed" in out
+
+    def test_nonexistent_file_warns_and_exits_1(self, capsys: pytest.CaptureFixture[str]):
+        rc = pwm.main([str(FIXTURES / "does_not_exist.md")])
+        assert rc == 1
+        assert "not a file" in capsys.readouterr().err
+
+    def test_banned_words_file_replaces_default_list(
+        self, tmp_path: Path, capsys: pytest.CaptureFixture[str]
+    ):
+        import json
+
+        doc = tmp_path / "doc.md"
+        # "monumental" is in the default banned list; "frobnicate" is not.
+        doc.write_text("This is a monumental and frobnicate result.\n", encoding="utf-8")
+        words = tmp_path / "words.txt"
+        words.write_text("# custom list\nfrobnicate\n\n", encoding="utf-8")
+
+        rc = pwm.main([str(doc), "--banned-words-file", str(words), "--format", "json"])
+        assert rc == 0
+        m = json.loads(capsys.readouterr().out)[0]
+        assert "frobnicate" in m["banned_register_examples"]
+        assert "monumental" not in m["banned_register_examples"]

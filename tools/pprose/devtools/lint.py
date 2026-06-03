@@ -1,4 +1,5 @@
 import subprocess
+import sys
 
 from funlog import log_calls
 from rich import get_console, reconfigure
@@ -13,12 +14,20 @@ reconfigure(emoji=not get_console().options.legacy_windows)  # No emojis on lega
 
 
 def main():
+    # `--check` is read-only: report problems and fail (exit non-zero) without modifying
+    # files. Use it in CI as a lint gate; the default auto-fixes for local development.
+    check = "--check" in sys.argv[1:]
     rprint()
 
     errcount = 0
-    errcount += run(["codespell", "--write-changes", *SRC_PATHS, *DOC_PATHS])
-    errcount += run(["ruff", "check", "--fix", *SRC_PATHS])
-    errcount += run(["ruff", "format", *SRC_PATHS])
+    if check:
+        errcount += run(["codespell", *SRC_PATHS, *DOC_PATHS])
+        errcount += run(["ruff", "check", *SRC_PATHS])
+        errcount += run(["ruff", "format", "--check", *SRC_PATHS])
+    else:
+        errcount += run(["codespell", "--write-changes", *SRC_PATHS, *DOC_PATHS])
+        errcount += run(["ruff", "check", "--fix", *SRC_PATHS])
+        errcount += run(["ruff", "format", *SRC_PATHS])
     errcount += run(["basedpyright", "--stats", *SRC_PATHS])
 
     rprint()

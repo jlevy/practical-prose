@@ -945,3 +945,22 @@ def test_from_metrics_stub_qual_is_consistent_with_alignment_principle():
     from pprose import rubric_schema as rs
 
     assert qual.all_scores() == ["ERR"] * rs.dimension_count()
+
+
+def test_compute_derived_in_place_is_idempotent(tmp_path: Path):
+    """`report compute-derived --in-place` run twice is byte-stable (no churn)."""
+    import shutil
+
+    from pprose.eval_report import main as report_main
+
+    src = Path(__file__).resolve().parent / "fixtures" / "rev1-net.eval.md"
+    work = tmp_path / "r.eval.md"
+    shutil.copyfile(src, work)
+
+    assert report_main(["compute-derived", str(work), "--in-place"]) == 0
+    first = work.read_text(encoding="utf-8")
+    assert report_main(["compute-derived", str(work), "--in-place"]) == 0
+    second = work.read_text(encoding="utf-8")
+    assert first == second  # second pass changed nothing
+    # And the result still validates.
+    assert report_main(["validate", str(work)]) == 0
