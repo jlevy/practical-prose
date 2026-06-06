@@ -26,7 +26,6 @@
 |  |  | Fairness | 4 | 4 | **5** | 4 | 4 | **5** |
 |  |  | Robustness | ERR | ERR | ERR | ERR | ERR | ERR |
 |  |  | *Mean* | 3.50 | 3.50 | **5.00** | 3.50 | 3.50 | **5.00** |
-|  | Overall | *Mean (20 dims)* | 4.00 | 3.83 | 4.64 | 4.17 | 3.83 | **4.73** |
 | **Quantitative** | Size | Words | 9,742 | 11,347 | 12,512 | 9,065 | 10,736 | 7,143 |
 |  |  | Sentences | 468 | 495 | 538 | 417 | 502 | 345 |
 |  |  | Paragraphs | 260 | 290 | 297 | 188 | 271 | 188 |
@@ -80,7 +79,6 @@
 | Calibration | +2 |
 | Fairness | +1 |
 | Robustness | ERR |
-| **Mean** | **+0.64** |
 
 ### Delta: NET-r1 → NET-r4
 
@@ -106,7 +104,6 @@
 | Calibration | +2 |
 | Fairness | +1 |
 | Robustness | ERR |
-| **Mean** | **+0.56** |
 
 ### Delta: DDOG-r2 → DDOG-r4
 
@@ -132,7 +129,6 @@
 | Calibration | +2 |
 | Fairness | +1 |
 | Robustness | ERR |
-| **Mean** | **+0.80** |
 
 ### Delta: NET-r2 → NET-r4
 
@@ -158,4 +154,3 @@
 | Calibration | +2 |
 | Fairness | +1 |
 | Robustness | ERR |
-| **Mean** | **+0.89** |

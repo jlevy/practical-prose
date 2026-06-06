@@ -7,7 +7,7 @@ Agent with the rubric + guidelines + artifact + structured-output schema, and
 fills the YAML's qual + rule_findings + metadata.
 
 Provider abstraction:
-  The model is selected by a Pydantic AI model string (e.g. `anthropic:claude-opus-4-7`,
+  The model is selected by a Pydantic AI model string (e.g. `anthropic:claude-opus-4-8`,
   `openai:gpt-5.2`). The default is the latest Claude Opus over Anthropic. Switching to a
   non-Anthropic provider requires that provider's `[extra]` in pyproject.toml
   (`pydantic-ai-slim[anthropic,openai,...]`); the call shape is identical.
@@ -119,7 +119,7 @@ DEFAULT_TIMEOUT_S = 600.0  # 10 minutes — Q10 decision
 # it. An unknown provider prefix raises at the agent boundary.
 SUGGESTED_MODELS: tuple[tuple[str, str, str], ...] = (
     # (alias, full model string, one-line description)
-    ("opus", "anthropic:claude-opus-4-7", "Anthropic Claude Opus 4.7 (flagship)"),
+    ("opus", "anthropic:claude-opus-4-8", "Anthropic Claude Opus 4.8 (flagship)"),
     ("sonnet", "anthropic:claude-sonnet-4-6", "Anthropic Claude Sonnet 4.6 (balanced)"),
     ("haiku", "anthropic:claude-haiku-4-5", "Anthropic Claude Haiku 4.5 (fast/cheap)"),
     ("gpt", "openai:gpt-5.5", "OpenAI GPT-5.5 (flagship)"),
@@ -819,7 +819,7 @@ def main(argv: list[str] | None = None) -> int:
             "Model to score with (required for actual scoring; not needed for "
             "--dry-run or --list-models). Accepts a short alias from --list-models "
             "(e.g. opus, gpt, gemini), a Pydantic AI model string "
-            "(anthropic:claude-opus-4-7, openai:gpt-5.5, google:gemini-3.5-flash), "
+            "(anthropic:claude-opus-4-8, openai:gpt-5.5, google:gemini-3.5-flash), "
             "or a bare claude-* ID (auto-prefixed with anthropic:). Unknown "
             "provider prefixes or model IDs raise at the agent boundary."
         ),

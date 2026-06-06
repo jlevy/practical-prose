@@ -59,10 +59,14 @@ You will be given, in order:
    For dimensions scored 5, emit one or two `"met"` findings only when the basis is
    non-obvious; otherwise leave the dimension uncited.
 
-   **Volume.** Aim to cite the items that genuinely drove the scores, not every rule on
-   the books. A long, dense document may warrant up to ~10 findings across the whole
-   report; a short or simple document may warrant only 1-2. Don’t pad with trivia; don’t
-   omit a rule that moved a score.
+   **Volume.** The one-finding-per-sub-5-dimension floor above is mandatory and
+   overrides any sense of brevity: a report that scores N dimensions below 5 must carry
+   at least N `"violated"` / `"partial"` findings — one citing each such dimension —
+   however large N is. (A report scoring 18 dimensions below 5 therefore carries at least
+   18 such findings, not a capped “handful.”) Beyond that floor, add a further finding
+   only for an item that genuinely drove a score; one dimension may warrant several.
+   Don’t pad with trivia, and don’t omit a rule that moved a score — but it is the
+   *discretionary* findings beyond the per-dimension floor that should stay few.
 
    Each finding cites:
    - the dimension by its canonical name (the exact label used in the rubric:
@@ -85,6 +89,17 @@ You will be given, in order:
    “not applicable”). For example:
    `NA — the document makes no probability, forecast, confidence, or uncertainty claims; the task does not require them.`
 
+   **Genre alone does not trigger NA.** A document being performative, contractual,
+   normative, or legal does not by itself make Verifiability (or its Factuality cascade)
+   NA. Per the G1 NA anchor, *attributions to specific people, works, or institutions*
+   and other checkable claims — statutory or regulatory citations (e.g. “48 C.F.R.”),
+   named legal entities and their addresses, dated facts, quantitative limits — are
+   verifiable assertions.
+   If the artifact contains any such claim, score Verifiability 1-5 (typically low when
+   the claims are checkable in principle but unsourced inline), not NA. Reserve
+   Verifiability NA for artifacts whose entire content is definitional, hypothetical,
+   normative, or self-referential with no checkable assertion anywhere.
+
 8. When using `ERR`, the reason must name the procedural cause (truncated artifact, tool
    failure, etc.). Never use ERR to register a quality complaint.
 
@@ -102,6 +117,9 @@ Hard requirements:
 - Each `score` is either an integer 1-5 or the literal string `"NA"` or `"ERR"`.
 - Each `reason` is a short string (under 200 chars).
 - `rule_findings` may be empty only if every dimension scored 5, `NA`, or `ERR`.
+- Every dimension scored 1-4 has at least one `"violated"` or `"partial"` finding citing
+  it — no exceptions, regardless of report length (this floor overrides the Volume
+  guidance).
 - `dimension` in each finding matches one of the canonical names exactly (all
   single-word labels: e.g. “Discipline”, “Consistency”).
 - Each finding’s `verdict` is one of: `"violated"`, `"partial"`, `"met"`, `"na"`.

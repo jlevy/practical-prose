@@ -95,17 +95,6 @@ def _qual_rows(reports: list[EvalReport]) -> list[Row]:
             )
         )
 
-    overall_means = [r.derived.rubric_rollup.overall_mean for r in reports]
-    rows.append(
-        Row(
-            "Qualitative",
-            "Overall",
-            f"*Mean ({rs.dimension_count()} dims)*",
-            overall_means,
-            [fmt_float_2(v) for v in overall_means],
-        )
-    )
-
     return rows
 
 
@@ -470,9 +459,6 @@ def render_per_pair_deltas(
                 sign = "+" if d > 0 else ""
                 cell = f"{sign}{d}"
             out.append(f"| {dim.label} | {cell} |")
-        d_mean = r_to.derived.rubric_rollup.overall_mean - r_from.derived.rubric_rollup.overall_mean
-        sign_m = "+" if d_mean > 0 else ""
-        out.append(f"| **Mean** | **{sign_m}{d_mean:.2f}** |")
         out.append("")
     return "\n".join(out).rstrip() + "\n"
 

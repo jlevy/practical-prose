@@ -77,7 +77,7 @@ GOLDEN_BY_DOC = FIXTURE_DIR / "expected-comparison-by-doc.md"
 
 def test_golden_by_doc(capsys: pytest.CaptureFixture[str]):
     # Byte-for-byte lock on the `--format by-doc` rollup (render_per_doc_rollup): the
-    # per-doc header line, group + overall means, the numbered Violations list, and the
+    # per-doc header line, group means + assessed-count line, the numbered Violations list, and the
     # Quant/Derived tables. To bless an intentional change, regenerate the golden:
     #   uv run pprose compare tests/fixtures/figma-ddog-r1.eval.md \
     #     tests/fixtures/figma-ddog-r4.eval.md --format by-doc \
@@ -162,8 +162,9 @@ def test_pair_deltas_compute_correctly():
     # Discipline is ERR (cannot assess) on both DDOG-r1 and DDOG-r4, so the delta
     # is "ERR", not a numeric 0 (ERR has no-numeric-comparison semantics).
     assert "| Discipline | ERR |" in text
-    # Mean delta sign is the regression-test signal (DDOG-r4 still higher than DDOG-r1).
-    assert "**Mean** | **+" in text
+    # The cross-dimension mean delta is intentionally not emitted (overall mean is
+    # misleading when NA/ERR dimensions drop out of the average).
+    assert "**Mean**" not in text
 
 
 def test_pair_deltas_unknown_label_raises():
