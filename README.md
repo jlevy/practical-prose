@@ -2,38 +2,66 @@
 
 ## What Is This Project?
 
+### Clear Writing Aids Clear Thinking
+
 Clear writing and clear thinking are inseparable.
 A document is an instrument by which thought becomes visible, testable, and useful.
 
 This project assembles principles, guidelines, and tools to improve the quality of
 practical writing by humans and by agents.
 
-The benefits are more than consistency and polished language.
+The benefits are more than polished language.
 The goal is to improve thinking as expressed in language and to encourage prose where
 the form, content, and expression fit both human needs and the work to be done.
 
-In many professional and technical domains, documents are increasingly written in mostly
-two ways:
+### Clear Writing in the Age of Slop
+
+In many professional and technical domains, documents are increasingly written in two
+main ways:
 
 - humans writing with agent review or assistance
 - agents writing with human oversight
 
-Sadly, agents don’t always write well.
-Poor writing leads to poor conclusions.
+Sadly, agents often don’t write well.
 And humans don’t pay enough attention to notice.
 
-But in both publishing and in software development, we’ve learned that it’s possible to
-improve quality by combining good judgement with being specific and meticulous about
+But this is not a hopeless situation.
+In both publishing and in software development, we’ve learned that it’s possible to
+improve quality by combining good judgment with being specific and meticulous about
 avoiding common errors.
-This was true long before LLMs and it’s still true today.
+This has been true with humans for decades and it’s still true today with agents.
 
-### What Is Here
+### Scope
+
+The focus here is **practical prose**: writing that helps a reader—human or
+agent—understand, decide, do, or verify something.
+Practical prose includes technical documents, research reports, specifications, memos,
+plans, and other artifacts where value depends on usefulness.
+
+Three key points:
+
+- Many elements here do not apply to creative writing, personal essays, fiction, or
+  other writing where the primary goals are expressive or creative.
+
+- We focus only on English.
+  In the future, this could be extended to other languages.
+  With the help of sensitive native speakers and increasingly powerful AI translations,
+  it’s likely we could adapt them to other languages effectively while preserving the
+  nuances specific to each language.
+
+- The focus on utility does not mean rejecting the needs of human readers.
+  Good prose serves human needs and reflects human qualities.
+  Usefulness is not in opposition to style, beauty, or human expression.
+  The best practical writing often joins the classic virtues of structure, precision,
+  and evidence with the romantic virtues of voice, rhythm, and feeling.
+
+### What Is Here?
 
 1. Guiding [**principles**](#principles-of-quality-in-practical-writing) and
    [**guidelines**](docs/practical-prose-guidelines.md) for quality in practical writing
    for use by agents and humans
 2. Metrics of writing quality that include
-   [**6 areas**](#qualitative-measures-of-writing) (purpose, expression, form,
+   [**six areas**](#qualitative-measures-of-writing) (purpose, expression, form,
    reasoning, grounding, and judgment) divided into **20 dimensions** that reflect
    different metrics
 3. An [**evaluation rubric**](docs/practical-prose-rubric.md) on how to evaluate text
@@ -44,6 +72,14 @@ This was true long before LLMs and it’s still true today.
    documents and evaluation tools
 6. A [**bibliography**](docs/practical-prose-bibliography.md) of notable works on
    practical writing
+
+### Is It Mature?
+
+No. It is a new project.
+I’ve only been using it for the last month or two on my own projects.
+It likely has a lot of ways it could improve.
+But it does draw on years of reading and editing both human-written and now
+agent-written text.
 
 * * *
 
@@ -116,12 +152,7 @@ At its best, AI does not replace but rather augments human intellect.
 Clear thinking is essential to solving the hardest problems.
 And clear language is the way we will work with this new generation of knowledge tools.
 
-## Scope
-
-The focus here is **practical prose**: writing that helps a reader—human or
-agent—understand, decide, do, or verify something.
-Practical prose includes technical documents, research reports, specifications, memos,
-plans, and other artifacts where value depends on usefulness.
+## Goals
 
 The key ways these tools can be useful:
 
@@ -132,24 +163,6 @@ The key ways these tools can be useful:
   agents
 - To summarize and share visualizations of these quality dimensions to better raise our
   own awareness of clear thinking and clear writing
-
-Three key points:
-
-- The focus is on practical writing.
-  Many elements here do not apply to creative writing, personal essays, fiction, or
-  other writing where the primary goals are expressive or creative.
-
-- We focus only on English.
-  In the future, this could be extended to other languages.
-  With the help of sensitive native speakers and increasingly powerful AI translations,
-  it’s likely we could adapt them to other languages effectively while preserving the
-  nuances specific to each language.
-
-- The focus on utility does not mean rejecting the needs of human readers.
-  Good prose serves human needs and reflects human qualities.
-  Usefulness is not in opposition to style, beauty, or human expression.
-  The best practical writing often joins the classic virtues of structure, precision,
-  and evidence with the romantic virtues of voice, rhythm, and feeling.
 
 ## Principles of Quality in Practical Writing
 
