@@ -2,40 +2,70 @@
 
 ## What Is This Project?
 
+### Clear Writing Aids Clear Thinking
+
 Clear writing and clear thinking are inseparable.
 A document is an instrument by which thought becomes visible, testable, and useful.
 
 This project assembles principles, guidelines, and tools to improve the quality of
 practical writing by humans and by agents.
 
-The benefits are more than consistency and polished language.
+The benefits are more than polished language.
 The goal is to improve thinking as expressed in language and to encourage prose where
 the form, content, and expression fit both human needs and the work to be done.
 
-In many professional and technical domains, documents are increasingly written in mostly
-two ways:
+### Clear Writing in the Age of Slop
+
+In many professional and technical domains, documents are increasingly written in two
+main ways:
 
 - humans writing with agent review or assistance
 - agents writing with human oversight
 
-Sadly, agents don’t always write well.
-Poor writing leads to poor conclusions.
+Sadly, agents often don’t write well.
 And humans don’t pay enough attention to notice.
 
-But in both publishing and in software development, we’ve learned that it’s possible to
-improve quality by combining good judgement with being specific and meticulous about
-avoiding common errors.
-This was true long before LLMs and it’s still true today.
+But this is not hopeless.
+The disciplines that have long improved human writing—good judgment, plus care to avoid
+common errors—improve agent writing too.
 
-### What Is Here
+### Scope
+
+The focus here is **practical prose**: writing that helps a reader—human or
+agent—understand, decide, do, or verify something.
+Practical prose includes technical documents, research reports, specifications, memos,
+plans, and other artifacts where value depends on usefulness.
+
+Three key points:
+
+- Many elements here do not apply to creative writing, personal essays, fiction, or
+  other writing where the primary goals are expressive or creative.
+
+- We focus only on English.
+  In the future, this could be extended to other languages.
+  With the help of sensitive native speakers and increasingly powerful AI translations,
+  it’s likely we could adapt them to other languages effectively while preserving the
+  nuances specific to each language.
+
+- The focus on utility does not mean rejecting the needs of human readers.
+  Good prose serves human needs and reflects human qualities.
+  Usefulness is not in opposition to style, beauty, or human expression.
+  The best practical writing often joins the classic virtues of structure, precision,
+  and evidence with the romantic virtues of voice, rhythm, and feeling.
+
+### What Is Here?
+
+These tools help you use agents more effectively when writing, give agents context that
+improves fully agent-written text, provide a framework to find weaknesses in human or
+agent writing, and visualize quality to sharpen your own awareness.
+Concretely:
 
 1. Guiding [**principles**](#principles-of-quality-in-practical-writing) and
    [**guidelines**](docs/practical-prose-guidelines.md) for quality in practical writing
    for use by agents and humans
 2. Metrics of writing quality that include
-   [**6 areas**](#qualitative-measures-of-writing) (purpose, expression, form,
-   reasoning, grounding, and judgment) divided into **20 dimensions** that reflect
-   different metrics
+   [**six areas**](#qualitative-measures-of-writing) (purpose, expression, form,
+   reasoning, grounding, and judgment) divided into **20 dimensions**
 3. An [**evaluation rubric**](docs/practical-prose-rubric.md) on how to evaluate text
    according to these dimensions
 4. An automated [**visualization tool**](tools/pprose/) that uses an LLM to evaluate the
@@ -44,6 +74,33 @@ This was true long before LLMs and it’s still true today.
    documents and evaluation tools
 6. A [**bibliography**](docs/practical-prose-bibliography.md) of notable works on
    practical writing
+
+### Example Evaluations
+
+The visualization tool scores any document across all 20 dimensions and renders the
+result as a card:
+
+<p align="center">
+<img src="images/as-we-may-think.png" width="46%" alt="Practical Prose evaluation card for Vannevar Bush, As We May Think" />
+&nbsp;&nbsp;
+<img src="images/apple-media-services-terms.png" width="46%" alt="Practical Prose evaluation card for the Apple Media Services Terms" />
+</p>
+
+*Left: Vannevar Bush, “As We May Think” (The Atlantic, 1945)—lucid prose but unsourced
+and single-lens. Right: the Apple Media Services Terms—broad in scope yet middling in
+clarity, with the Judgment group marked N/A where a contract neither calibrates claims
+nor weighs alternatives.
+Both were graded by Claude Opus 4.8; scores depend on the model and vary slightly
+between runs. Source texts are in [example-texts/](example-texts/); see
+[the dev note](docs/project/eval-screenshots.runbook.md) for how these are generated.*
+
+### Is It Mature?
+
+No. It is a new project.
+I’ve only been using it for the last month or two on my own projects.
+It likely has a lot of ways it could improve.
+But it does draw on years of reading and editing both human-written and now
+agent-written text.
 
 * * *
 
@@ -96,10 +153,7 @@ By enforcing standards for quality writing, we think more clearly.
 
 What is different now is that language is drafted, transformed, summarized, and
 evaluated by LLMs in greater volume than by humans.
-
-Poor-quality AI writing is everywhere.
-Slop and spam are not just distasteful; they are often inaccurate or harmfully
-misleading.
+Much of it is slop: not just distasteful but often inaccurate or harmfully misleading.
 
 Fluency is cheap. Judgment remains precious.
 
@@ -115,41 +169,6 @@ But you can’t outsource your understanding or your judgment.
 At its best, AI does not replace but rather augments human intellect.
 Clear thinking is essential to solving the hardest problems.
 And clear language is the way we will work with this new generation of knowledge tools.
-
-## Scope
-
-The focus here is **practical prose**: writing that helps a reader—human or
-agent—understand, decide, do, or verify something.
-Practical prose includes technical documents, research reports, specifications, memos,
-plans, and other artifacts where value depends on usefulness.
-
-The key ways these tools can be useful:
-
-- To help a human use agents more effectively when writing or editing
-- To give context, especially principles and guidelines, that improve the quality of
-  fully agent-written text
-- To provide an evaluation framework to identify weaknesses in text written by humans or
-  agents
-- To summarize and share visualizations of these quality dimensions to better raise our
-  own awareness of clear thinking and clear writing
-
-Three key points:
-
-- The focus is on practical writing.
-  Many elements here do not apply to creative writing, personal essays, fiction, or
-  other writing where the primary goals are expressive or creative.
-
-- We focus only on English.
-  In the future, this could be extended to other languages.
-  With the help of sensitive native speakers and increasingly powerful AI translations,
-  it’s likely we could adapt them to other languages effectively while preserving the
-  nuances specific to each language.
-
-- The focus on utility does not mean rejecting the needs of human readers.
-  Good prose serves human needs and reflects human qualities.
-  Usefulness is not in opposition to style, beauty, or human expression.
-  The best practical writing often joins the classic virtues of structure, precision,
-  and evidence with the romantic virtues of voice, rhythm, and feeling.
 
 ## Principles of Quality in Practical Writing
 
@@ -171,8 +190,8 @@ The seven principles below decompose that fit into specific attributes.
 
 ## Qualitative Measures of Writing
 
-Principles are of value, but when an editor evaluates a piece of writing, they are
-looking at specific qualities or dimensions.
+Principles are of value, but when an editor evaluates a piece of writing, they look at
+specific qualities or dimensions.
 
 | Area | Dimension | Question |
 | --- | --- | --- |
@@ -279,10 +298,8 @@ Agent Skills under [skills/](skills/). The eval skills use the
 
 Install paths:
 
-1. **Recommended:** let `pprose install` set up every supported surface in any repo:
-   `uvx pprose install` writes one `SKILL.md` per workflow into both `.agents/skills/`
-   (Codex, Gemini CLI, pi) and `.claude/skills/` (Claude Code), and maintains a
-   marker-bounded `pprose` block in `AGENTS.md`.
+1. **Recommended:** let `pprose install` set up every supported surface in any repo (see
+   [Quick Start](#quick-start) for what it writes and the scope flags).
 2. Point the agent at *this* repo and let `AGENTS.md` route to the right skill: the
    committed `skills/<name>/SKILL.md` files are version-pinned discovery copies that
    work as a `npx skills add` / skills.sh landing page.
@@ -312,13 +329,11 @@ console-script entry point are both `pprose`:
 It also bundles the guidelines, shortcuts, runbooks, and rubric and serves them as
 reference subcommands (`pprose guidelines|shortcut|runbook|skill <name>`, `--list` to
 enumerate), so the skills work in any repo.
-`pprose install` writes the five Practical Prose skills into both `.agents/skills/` and
-`.claude/skills/`, plus a marker-bounded block in `AGENTS.md`. Every generated artifact
-carries a `format=fNN surface=…` stamp, so re-running install is idempotent and a
-newer-format artifact is never clobbered by an older pprose.
-Each generated skill references pprose with a pinned, local-first invocation (`pprose`
-if on PATH, else `uvx pprose@<version>`—the trusted version that ran install—else a
-message telling the user to install uv or pprose).
+Every artifact `pprose install` generates carries a `format=fNN surface=…` stamp, so
+re-running install is idempotent and a newer-format artifact is never clobbered by an
+older pprose. Each generated skill references pprose with a pinned, local-first
+invocation (`pprose` if on PATH, else `uvx pprose@<version>`—the trusted version that
+ran install—else a message telling the user to install uv or pprose).
 
 Quick start:
 
