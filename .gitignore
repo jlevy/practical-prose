@@ -243,8 +243,10 @@ Thumbs.db
 .codex/settings.local.*
 .aider*
 
-# Local self-eval runs (in flux; not yet ready to track)
-evals/
+# Local self-eval runs (in flux; not yet ready to track), except the committed
+# baseline snapshot under evals/baselines/.
+evals/*
+!evals/baselines/
 
 # Local scratchpad / reference store (templates, archived experiments, scratch)
 attic/
