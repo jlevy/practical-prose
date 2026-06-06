@@ -55,7 +55,7 @@ dependencies = [
     # Provider-agnostic LLM client. Pinned (not >=) to honor the 14-day cool-off
     # supply-chain policy: 1.93.0 was released 2026-05-09. Re-pin when bumping.
     # Provider extras (anthropic, openai, google) pull in the matching SDK so a
-    # user can pick `--model anthropic:claude-opus-4-7` / `openai:gpt-5.5` /
+    # user can pick `--model anthropic:claude-opus-4-8` / `openai:gpt-5.5` /
     # `google:gemini-3.5-flash` without further installs.
     "pydantic-ai-slim[anthropic,openai,google]==1.93.0",
     "python-dotenv>=1.0",

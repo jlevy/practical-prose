@@ -367,7 +367,7 @@ def test_resolve_model_handles_aliases_and_full_ids():
     with pytest.raises(ValueError, match="model is required"):
         _resolve_model(None)  # pyright: ignore[reportArgumentType]
     # Short aliases resolve to provider-prefixed strings.
-    assert _resolve_model("opus") == "anthropic:claude-opus-4-7"
+    assert _resolve_model("opus") == "anthropic:claude-opus-4-8"
     assert _resolve_model("sonnet") == "anthropic:claude-sonnet-4-6"
     assert _resolve_model("haiku") == "anthropic:claude-haiku-4-5"
     assert _resolve_model("gpt") == "openai:gpt-5.5"
@@ -387,7 +387,7 @@ def test_list_models_includes_all_providers(capsys):
     assert rc == 0
     out = capsys.readouterr().out
     # At least one model from each provider extra appears.
-    assert "anthropic:claude-opus-4-7" in out
+    assert "anthropic:claude-opus-4-8" in out
     assert "openai:gpt-5.5" in out
     assert "google:gemini-3.5-flash" in out
 

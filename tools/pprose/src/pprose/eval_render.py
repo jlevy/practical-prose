@@ -183,8 +183,8 @@ def render_single_doc_rollup(
 
     Layout:
       <H_n>   <label>
-      metadata line (scope, overall mean, model, eval date)
-      <H_n+1> Qualitative (table: Group | Dimension | Score | Reason; with group means + overall mean)
+      metadata line (scope, dimensions assessed, model, eval date)
+      <H_n+1> Qualitative (table: Group | Dimension | Score | Reason; with group means)
       <H_n+1> Violations (numbered list with dimension, rule, description, location)
       <H_n+1> Quantitative (table: Section | Measure | Value)
       <H_n+1> Density concerns (bulleted, if any)
@@ -193,19 +193,26 @@ def render_single_doc_rollup(
     h_sub = "#" * (heading_level + 1)
     out: list[str] = []
     label = report.artifact.label
-    overall = report.derived.rubric_rollup.overall_mean
+    rollup = report.derived.rubric_rollup
     scope = report.artifact.scope_class or "—"
     meta = report.metadata
     model_str = meta.model_id or meta.model or "—"
     eval_date = meta.eval_date or "—"
     rubric_v = meta.rubric_version or "—"
 
+    # Replaces the (misleading) overall mean: NA/ERR dimensions drop out of any
+    # cross-dimension average, so report how many dimensions were actually scored.
+    excluded = [f"{rollup.na_dimensions} N/A"]
+    if rollup.err_dimensions:
+        excluded.append(f"{rollup.err_dimensions} ERR")
+    assessed_str = f"{rollup.assessed_dimensions}/{rs.dimension_count()} ({', '.join(excluded)})"
+
     out.append(f"{h_top} {label}")
     out.append("")
     out.append(
         f"**Source:** `{report.artifact.path}`  "
         f"**Scope:** `{scope}`  "
-        f"**Overall mean ({rs.dimension_count()} dims):** {overall:.2f}  "
+        f"**Assessed:** {assessed_str}  "
         f"**Rubric:** `{rubric_v}`  "
         f"**Model:** `{model_str}`  "
         f"**Eval date:** {eval_date}"
@@ -217,7 +224,6 @@ def render_single_doc_rollup(
     out.append("")
     out.append("| Group | Dimension | Score | Reason |")
     out.append("| --- | --- | ---: | --- |")
-    rollup = report.derived.rubric_rollup
     group_means: dict[str, float] = {
         "purpose": rollup.purpose_mean,
         "expression": rollup.expression_mean,
@@ -240,7 +246,6 @@ def render_single_doc_rollup(
         mean = group_means[group.key]
         mean_cell = f"**{mean:.2f}**" if mean > 0 else "—"
         out.append(f"|  | **Mean** | {mean_cell} | |")
-    out.append(f"|  | **Overall mean ({rs.dimension_count()} dims)** | **{overall:.2f}** | |")
     out.append("")
 
     # Violations — the miss subset of rule_findings (verdict in {violated, partial}).

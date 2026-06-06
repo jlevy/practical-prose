@@ -114,7 +114,7 @@ call. Useful flags:
 - `--out path`: write the filled eval report to a different file.
 - `--model <name>`: **required.** Pydantic AI model spec.
   Accepts short aliases (`opus`, `sonnet`, `haiku`, `gpt`, `gpt-mini`, `gemini`, ...) or
-  a provider- prefixed string (`anthropic:claude-opus-4-7`, `openai:gpt-5.5`,
+  a provider- prefixed string (`anthropic:claude-opus-4-8`, `openai:gpt-5.5`,
   `google:gemini-3.5-flash`). Run `pprose score --list-models` for the full suggested
   set; any other Pydantic AI model string is accepted too.
 - `--list-models`: print the suggested model list and exit (no scoring).

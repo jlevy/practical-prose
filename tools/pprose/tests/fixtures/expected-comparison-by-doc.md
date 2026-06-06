@@ -1,6 +1,6 @@
 ## DDOG-r1
 
-**Source:** `<external artifact not in this repo>`  **Scope:** `—`  **Overall mean (20 dims):** 4.00  **Rubric:** `pp20v1`  **Model:** `—`  **Eval date:** 2026-05-07
+**Source:** `<external artifact not in this repo>`  **Scope:** `—`  **Assessed:** 4/20 (0 N/A, 16 ERR)  **Rubric:** `pp20v1`  **Model:** `—`  **Eval date:** 2026-05-07
 
 ### Qualitative
 
@@ -32,7 +32,6 @@
 |  | Fairness | 4 |  |
 |  | Robustness | ERR |  |
 |  | **Mean** | **3.50** | |
-|  | **Overall mean (20 dims)** | **4.00** | |
 
 ### Violations
 
@@ -77,7 +76,7 @@
 
 ## DDOG-r4
 
-**Source:** `<external artifact not in this repo>`  **Scope:** `—`  **Overall mean (20 dims):** 4.64  **Rubric:** `pp20v1`  **Model:** `—`  **Eval date:** 2026-05-07
+**Source:** `<external artifact not in this repo>`  **Scope:** `—`  **Assessed:** 11/20 (0 N/A, 9 ERR)  **Rubric:** `pp20v1`  **Model:** `—`  **Eval date:** 2026-05-07
 
 ### Qualitative
 
@@ -109,7 +108,6 @@
 |  | Fairness | 5 |  |
 |  | Robustness | ERR |  |
 |  | **Mean** | **5.00** | |
-|  | **Overall mean (20 dims)** | **4.64** | |
 
 ### Violations
 
