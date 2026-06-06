@@ -38,7 +38,6 @@ class RenderOpts:
     page_size: str = "letter"
     variant: str = _DEFAULT_VARIANT
     pprose_version: str = "dev"
-    folder_mode: bool = False
 
 
 def available_variants() -> tuple[str, ...]:

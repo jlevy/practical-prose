@@ -9,6 +9,7 @@ exclude-newer-span = "P7D"
 [options.exclude-newer-package]
 flowmark-rs = "2100-01-01T08:00:00Z"
 flowmark = "2100-01-01T08:00:00Z"
+chopdiff = "2026-06-04T07:00:00Z"
 
 [[package]]
 name = "aiolimiter"
@@ -242,21 +243,23 @@ wheels = [
 
 [[package]]
 name = "chopdiff"
-version = "0.2.6"
+version = "0.3.1"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "cydifflib" },
     { name = "flowmark" },
+    { name = "frontmatter-format" },
     { name = "funlog" },
+    { name = "marko" },
     { name = "prettyfmt" },
+    { name = "pydantic" },
     { name = "regex" },
     { name = "selectolax" },
     { name = "strif" },
-    { name = "tiktoken" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/2b/3b/dc4c9c08a963dfc16a363553a9817c4ff051275f9a623bb45c5a1a45d6fd/chopdiff-0.2.6.tar.gz", hash = "sha256:b8bba31405284a43726b91e812c831dee6d20a39a3b8b7ea225afe2b7407374d", size = 99130, upload-time = "2025-08-20T23:41:17.875Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/39/93/b0ad75c2397311dfdaeff52ddcf7fb6a2319ba196cb10e0827f5f1a77349/chopdiff-0.3.1.tar.gz", hash = "sha256:8b2d6306e32f10419ba89429c596377295cbfe69133998f5b3de907f5226417c", size = 365378, upload-time = "2026-06-02T22:48:14.189Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/62/6f/b404a9e4226a1e074c9ace53047c3de210f903000ea5a2c1de7f86c6aa65/chopdiff-0.2.6-py3-none-any.whl", hash = "sha256:f8158384bcad394e37649f925e769de682ba4eabd10f67af9644767186b89e1d", size = 47481, upload-time = "2025-08-20T23:41:16.981Z" },
+    { url = "https://files.pythonhosted.org/packages/c7/c9/22a4087c49323b661c2700ba12b5bf38d3d3d216ec2450ce8b3331dafcff/chopdiff-0.3.1-py3-none-any.whl", hash = "sha256:08be5817e3fce5552cc4cf34f404acef3e70d8c095b771bb1ddf439be5ce8210", size = 88921, upload-time = "2026-06-02T22:48:12.858Z" },
 ]
 
 [[package]]
@@ -415,7 +418,7 @@ wheels = [
 
 [[package]]
 name = "flowmark"
-version = "0.6.5"
+version = "0.7.2"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "marko" },
@@ -424,9 +427,21 @@ dependencies = [
     { name = "strif" },
     { name = "typing-extensions" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/4e/cc/eac8218c043842af17e7bab947ee653712b8335be572b074d0a5cc5f7e5a/flowmark-0.6.5.tar.gz", hash = "sha256:f4136cd176a5fa2346c0bff5f84d2f757228c51e164a75682daee4bb2df5578b", size = 454443, upload-time = "2026-02-26T05:23:23.673Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/98/c0/912328f03eb01937f60fd43faea081586404f9abc9cd294087954e390db5/flowmark-0.7.2.tar.gz", hash = "sha256:adcd21c26a256da8324892fa059635e9434aca0183f18adc5dde28b7d98099d2", size = 558129, upload-time = "2026-05-30T03:05:38.32Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/3e/3e/92367d19bd97df6fee87f6f58df19fea42c02573a0713a217e4dc56d3b84/flowmark-0.6.5-py3-none-any.whl", hash = "sha256:984f4fc70f8a237658936bb4b05371d9de001960ecff2f90eac3662828e79c9f", size = 64331, upload-time = "2026-02-26T05:23:22.264Z" },
+    { url = "https://files.pythonhosted.org/packages/22/4e/4f7ef0bf91678ffdd66239c362a329f2d5c7b333e28d005650216631a511/flowmark-0.7.2-py3-none-any.whl", hash = "sha256:0a8a55b6910a7f49e794a4beff82694bfdc9e6d9377ef8537824fdbec26cb3d6", size = 84905, upload-time = "2026-05-30T03:05:39.586Z" },
+]
+
+[[package]]
+name = "frontmatter-format"
+version = "0.3.0"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "ruamel-yaml" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/c5/bf/eb850cd4d32cafc342dbb3a8b64058511da188c7270a61219788ac141ca6/frontmatter_format-0.3.0.tar.gz", hash = "sha256:4ebd3d3068315945d418dfd320ce6ed727b90e1605473c6244039d34cbcb0253", size = 439709, upload-time = "2026-02-28T22:37:37.068Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/06/67/b003f8d851679714e00cc5353dd772027529d893b346f91279d0b9f17f17/frontmatter_format-0.3.0-py3-none-any.whl", hash = "sha256:55c1dafbcb0ca5dee5ff3e1dcb6c3fbde6d18860a2250c9d67779fd91c86c81e", size = 13824, upload-time = "2026-02-28T22:37:35.821Z" },
 ]
 
 [[package]]
@@ -902,7 +917,7 @@ dev = [
 [package.metadata]
 requires-dist = [
     { name = "aiolimiter", specifier = ">=1.2" },
-    { name = "chopdiff", specifier = ">=0.2.1" },
+    { name = "chopdiff", specifier = "==0.3.1" },
     { name = "flowmark", specifier = ">=0.6.5" },
     { name = "jinja2", specifier = ">=3.1" },
     { name = "pydantic", specifier = ">=2.0" },
@@ -1364,6 +1379,15 @@ wheels = [
 ]
 
 [[package]]
+name = "ruamel-yaml"
+version = "0.19.1"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/c7/3b/ebda527b56beb90cb7652cb1c7e4f91f48649fbcd8d2eb2fb6e77cd3329b/ruamel_yaml-0.19.1.tar.gz", hash = "sha256:53eb66cd27849eff968ebf8f0bf61f46cdac2da1d1f3576dd4ccee9b25c31993", size = 142709, upload-time = "2026-01-02T16:50:31.84Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/b8/0c/51f6841f1d84f404f92463fc2b1ba0da357ca1e3db6b7fbda26956c3b82a/ruamel_yaml-0.19.1-py3-none-any.whl", hash = "sha256:27592957fedf6e0b62f281e96effd28043345e0e66001f97683aa9a40c667c93", size = 118102, upload-time = "2026-01-02T16:50:29.201Z" },
+]
+
+[[package]]
 name = "ruff"
 version = "0.15.13"
 source = { registry = "https://pypi.org/simple" }
@@ -1452,11 +1476,11 @@ wheels = [
 
 [[package]]
 name = "strif"
-version = "3.0.1"
+version = "3.1.0"
 source = { registry = "https://pypi.org/simple" }
-sdist = { url = "https://files.pythonhosted.org/packages/5c/63/bf90e5632aea866c1bbd2567f04a7026191728c648ecf44ff489829898a3/strif-3.0.1.tar.gz", hash = "sha256:a312ea9540062ccd386132ac2eece93c0c4adaeb25a5f5da11eed7867b1ff31e", size = 33981, upload-time = "2025-05-04T18:40:27.713Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/39/7e/5822171da928d7b0a398f96ae5ec393ddab4115198516a073718fc59d7e8/strif-3.1.0.tar.gz", hash = "sha256:6ea9f62d5d19013db170a7efab20b1b08153604acc94bc9d64bc18543d96c3ad", size = 40127, upload-time = "2026-05-23T21:03:03.873Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/a4/fd/94ebfa518f46b473d238a8ad5837ce75cfe4ea0ce5a91544a88198d8a8d3/strif-3.0.1-py3-none-any.whl", hash = "sha256:5dca44af3ff2f8a947a0398b619d138014f4d29a5aaf6c7e73fe7bec5f5973da", size = 18446, upload-time = "2025-05-04T18:40:26.07Z" },
+    { url = "https://files.pythonhosted.org/packages/21/83/6dd4e9ef8717dab7539863ad7728ce64611a41b95b238aa7846460016702/strif-3.1.0-py3-none-any.whl", hash = "sha256:9337b67a7019cee445ac15f96dd2c7f8fda9a5166a1cfb95e695e33200db00d3", size = 20171, upload-time = "2026-05-23T21:03:02.978Z" },
 ]
 
 [[package]]

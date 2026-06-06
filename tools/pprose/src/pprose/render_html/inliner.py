@@ -71,17 +71,3 @@ def bundled_js() -> str:
 def bundled_icons_svg() -> str:
     """Return the inline SVG symbol set."""
     return (_ASSETS_DIR / "icons.svg").read_text(encoding="utf-8")
-
-
-def write_folder_assets(out_dir: Path) -> None:
-    """Copy the synced trees + print.css into <out_dir>/assets/ for folder mode."""
-    asset_dir = out_dir / "assets"
-    styles_out = asset_dir / "styles"
-    styles_out.mkdir(parents=True, exist_ok=True)
-    for path in _CSS_ORDER:
-        (styles_out / path.name).write_text(path.read_text(encoding="utf-8"), encoding="utf-8")
-    js_out = asset_dir / "js"
-    js_out.mkdir(parents=True, exist_ok=True)
-    for path in _JS_ORDER:
-        (js_out / path.name).write_text(path.read_text(encoding="utf-8"), encoding="utf-8")
-    (asset_dir / "icons.svg").write_text(bundled_icons_svg(), encoding="utf-8")

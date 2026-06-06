@@ -12,16 +12,20 @@ The benefits are more than consistency and polished language.
 The goal is to improve thinking as expressed in language and to encourage prose where
 the form, content, and expression fit both human needs and the work to be done.
 
-The documents and tools here are organized for both human and agent use:
+In many professional and technical domains, documents are increasingly written in mostly
+two ways:
 
-- To help a human use agents more effectively when writing or editing practical writing
-  themselves
-- To give context, especially principles and guidelines, that improve the quality of
-  fully agent-written text
-- To provide an evaluation framework to identify weaknesses in text written by humans or
-  agents
-- To summarize and share visualizations of these quality dimensions to better raise our
-  own awareness of clear thinking and clear writing
+- humans writing with agent review or assistance
+- agents writing with human oversight
+
+Sadly, agents don’t always write well.
+Poor writing leads to poor conclusions.
+And humans don’t pay enough attention to notice.
+
+But in both publishing and in software development, we’ve learned that it’s possible to
+improve quality by combining good judgement with being specific and meticulous about
+avoiding common errors.
+This was true long before LLMs and it’s still true today.
 
 ### What Is Here
 
@@ -36,7 +40,8 @@ The documents and tools here are organized for both human and agent use:
    according to these dimensions
 4. An automated [**visualization tool**](tools/pprose/) that uses an LLM to evaluate the
    quality of any text across these dimensions and visualize it
-5. [**Skills**](#agent-skills) that use [**a CLI**](#tooling) to package these features
+5. [**Agent skills**](#agent-skills) and a [**CLI**](#tooling) to package all of these
+   documents and evaluation tools
 6. A [**bibliography**](docs/practical-prose-bibliography.md) of notable works on
    practical writing
 
@@ -47,17 +52,15 @@ The documents and tools here are organized for both human and agent use:
 > 
 > I always admired good writing, both fiction and nonfiction.
 > I have also written [open source](https://github.com/jlevy) technical and business
-> guides with millions of readers.
-> As I was building [Holloway](https://www.holloway.com), I spent much time learning and
-> thinking about editorial processes, the production of print and digital books, and
-> publishing tools. I now use agents to write millions of lines of code and documents,
-> including software documentation, technical specifications, and business or financial
-> analysis.
+> guides with millions of readers and (as I was building
+> [Holloway](https://www.holloway.com)) spent years developing editorial processes and
+> the production of print and digital books.
 > 
-> I mention this background because, since the early days of the Internet, I’ve felt
-> that words and code have a deep and often unappreciated kinship.
-> The line between language and software is now almost impossible to draw.
-> So it is an important time to explore the power of language.
+> A remarkable thing about the rise of LLMs is how deeply code and human language have
+> become connected. I now use agents to write about equal volumes of code and documents,
+> in a quantity I could never have imagined a few years ago.
+> I’ve found that much of what I’ve learned about improving agent code quality applies
+> to language too.
 > 
 > Agents are a constant source of both delight and disappointment.
 > In some situations they are shockingly capable.
@@ -66,8 +69,8 @@ The documents and tools here are organized for both human and agent use:
 > training data.
 > 
 > But just as with human writers, many agent shortcomings are correctable errors or bad
-> habits. Agents should follow the principles embraced by the best thinkers and writers,
-> not just what is statistically probable.
+> habits. Good work arises not from statistical probabilities but from the creative
+> application of *principles* of quality embraced by the best thinkers and writers.
 > 
 > I realize trying to codify rules for good writing is difficult to impossible.
 > But I prefer to think of this as improving our ability to learn the skills of the best
@@ -93,11 +96,6 @@ By enforcing standards for quality writing, we think more clearly.
 
 What is different now is that language is drafted, transformed, summarized, and
 evaluated by LLMs in greater volume than by humans.
-In many professional and technical domains, documents are increasingly written in mostly
-two ways:
-
-- humans writing with agent review or assistance
-- agents writing with human oversight
 
 Poor-quality AI writing is everywhere.
 Slop and spam are not just distasteful; they are often inaccurate or harmfully
@@ -111,7 +109,7 @@ machines assist us in thinking and writing clearly.
 
 Many of the challenges in working with AI involve improving the quality of thinking of
 both the agents and the people who oversee the work.
-You can now outsource writing and thinking to agents.
+You *can* outsource writing and thinking to agents.
 But you can’t outsource your understanding or your judgment.
 
 At its best, AI does not replace but rather augments human intellect.
@@ -124,6 +122,16 @@ The focus here is **practical prose**: writing that helps a reader—human or
 agent—understand, decide, do, or verify something.
 Practical prose includes technical documents, research reports, specifications, memos,
 plans, and other artifacts where value depends on usefulness.
+
+The key ways these tools can be useful:
+
+- To help a human use agents more effectively when writing or editing
+- To give context, especially principles and guidelines, that improve the quality of
+  fully agent-written text
+- To provide an evaluation framework to identify weaknesses in text written by humans or
+  agents
+- To summarize and share visualizations of these quality dimensions to better raise our
+  own awareness of clear thinking and clear writing
 
 Three key points:
 
@@ -263,18 +271,18 @@ Agent Skills under [skills/](skills/). The eval skills use the
 | Skill | Kind | Use When |
 | --- | --- | --- |
 | [pprose-common-edit](skills/pprose-common-edit/SKILL.md) | Apply | Tidy, clean up, conform, fix formatting/structure, or add the documentation footer. The basic, universal tier. |
-| [pprose-copy-edit](skills/pprose-copy-edit/SKILL.md) | Apply | Copy edit, proofread, polish, tighten, or line edit — language and formatting (Expression). Superset of common-edit. |
+| [pprose-copy-edit](skills/pprose-copy-edit/SKILL.md) | Apply | Copy edit, proofread, polish, tighten, or line edit: language and formatting (Expression). Superset of common-edit. |
 | [pprose-full-edit](skills/pprose-full-edit/SKILL.md) | Apply | Deep edit across all 20 dimensions; also writes an editorial review (strengths, weaknesses, suggested fixes). Superset of copy-edit; covers audit-only review. |
 | [pprose-eval](skills/pprose-eval/SKILL.md) | Evaluate | Score, grade, rubric-check, or measure the quality of one document. |
 | [pprose-compare](skills/pprose-compare/SKILL.md) | Evaluate | Compare drafts, A/B versions, quality-diff documents, or pick a best variant. |
 
 Install paths:
 
-1. **Recommended** — let `pprose install` set up every supported surface in any repo:
+1. **Recommended:** let `pprose install` set up every supported surface in any repo:
    `uvx pprose install` writes one `SKILL.md` per workflow into both `.agents/skills/`
    (Codex, Gemini CLI, pi) and `.claude/skills/` (Claude Code), and maintains a
    marker-bounded `pprose` block in `AGENTS.md`.
-2. Point the agent at *this* repo and let `AGENTS.md` route to the right skill — the
+2. Point the agent at *this* repo and let `AGENTS.md` route to the right skill: the
    committed `skills/<name>/SKILL.md` files are version-pinned discovery copies that
    work as a `npx skills add` / skills.sh landing page.
 3. If a Claude Code plugin marketplace entry exists, install that as a Claude-only

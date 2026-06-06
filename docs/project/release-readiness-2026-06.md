@@ -145,6 +145,52 @@ synthesis) that read the source and tests and ran `--help` / `--dry-run` / `uv b
 install-from-wheel / a real HTML render.
 No real LLM calls and no repo mutations were made during the review.
 
+## Release scope and bead map (v0.1.0)
+
+Scope decision: **lean v0.1.0 now.** Ship the current feature set; do the release gate
+plus the low-risk stabilization set; defer the in-flight feature initiatives so the
+first release ships a stable `.eval.md` format and a small, well-tested surface.
+The rapid-fix beads from this review are already done (epic `pp-28l5`, landed in PR
+#20).
+
+**A. Release gate (must land for v0.1.0)**
+
+- `pp-wgmr` — Prepare first pprose PyPI release (tag `v0.1.0`, register the trusted
+  publisher). Everything `uvx pprose@0.1.0` depends on this; see risk #1.
+
+**B. Stabilization set (low-risk; land before tagging)** — under `pp-28l5` unless noted:
+
+- `pp-0hqc` — CI workflow running `make lint-check` (drift + lint gate)
+- `pp-yane` — CI `uv build` + install-from-wheel smoke (catches wheel-packaging
+  regressions)
+- `pp-le8y` — golden test: `compare --format by-doc` (only untested output shape)
+- `pp-urta` — golden tests: `metrics` CLI argv path + `--banned-words-file`
+- `pp-n57s` — integration: `compute-derived --in-place` idempotency + `compare` draft
+  rejection
+- `pp-6l39` — test: `score --batch` partial-failure isolation (zero coverage today)
+- `pp-sd3z` — fix-or-remove `render --format folder` (ships dead sidecar files)
+- `pp-lpun` — generate print.css light tokens from design-system.yaml (silent-drift
+  risk)
+
+**C. Deferred to v0.2.0 (in-flight features; shipping mid-flight risks instability)**
+
+- `pp-ph3e` epic — Eval output improvements (frontmatter-format `.eval.md` YAML +
+  `pprose show` + HTML location anchors).
+  Changes the serialization; defer so v0.1.0 ships a stable format.
+- `pp-3hg4` epic + the chopdiff v0.4.x cluster — structural-metrics rewrite on a
+  not-yet-released chopdiff 0.4.0 (cross-repo, large).
+- `pp-h780` epic — pprose score loose ends (provider adapters, source-check modes,
+  multi-run executor).
+
+**D. Defer (polish / niceties)** — design-system: `pp-i4uh`, `pp-tfdk`, `pp-asi7`,
+`pp-fzlx`, `pp-hssa`; plus `pp-5zgc` (Playwright visual smoke), `pp-3g59`
+(SUGGESTED_MODELS drift note), `pp-wlwj` (repo org / `attic/`), `pp-olqf` (lefthook
+onboarding message).
+
+**Near-complete epics (close once verified):** `pp-ict2` (shared render components — no
+open children) and `pp-rdnm` (Visual 9B — only `pp-kmv5` manual print verification
+left).
+
 <!-- This document follows common-doc-guidelines.md.
 See github.com/jlevy/practical-prose and review guidelines before editing.
 -->
