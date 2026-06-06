@@ -25,11 +25,9 @@ main ways:
 Sadly, agents often don’t write well.
 And humans don’t pay enough attention to notice.
 
-But this is not a hopeless situation.
-In both publishing and in software development, we’ve learned that it’s possible to
-improve quality by combining good judgment with being specific and meticulous about
-avoiding common errors.
-This has been true with humans for decades and it’s still true today with agents.
+But this is not hopeless.
+The disciplines that have long improved human writing—good judgment, plus care to avoid
+common errors—improve agent writing too.
 
 ### Scope
 
@@ -57,13 +55,17 @@ Three key points:
 
 ### What Is Here?
 
+These tools help you use agents more effectively when writing, give agents context that
+improves fully agent-written text, provide a framework to find weaknesses in human or
+agent writing, and visualize quality to sharpen your own awareness.
+Concretely:
+
 1. Guiding [**principles**](#principles-of-quality-in-practical-writing) and
    [**guidelines**](docs/practical-prose-guidelines.md) for quality in practical writing
    for use by agents and humans
 2. Metrics of writing quality that include
    [**six areas**](#qualitative-measures-of-writing) (purpose, expression, form,
-   reasoning, grounding, and judgment) divided into **20 dimensions** that reflect
-   different metrics
+   reasoning, grounding, and judgment) divided into **20 dimensions**
 3. An [**evaluation rubric**](docs/practical-prose-rubric.md) on how to evaluate text
    according to these dimensions
 4. An automated [**visualization tool**](tools/pprose/) that uses an LLM to evaluate the
@@ -72,6 +74,25 @@ Three key points:
    documents and evaluation tools
 6. A [**bibliography**](docs/practical-prose-bibliography.md) of notable works on
    practical writing
+
+### Example Evaluations
+
+The visualization tool scores any document across all 20 dimensions and renders the
+result as a card:
+
+<p align="center">
+<img src="images/as-we-may-think.png" width="46%" alt="Practical Prose evaluation card for Vannevar Bush, As We May Think" />
+&nbsp;&nbsp;
+<img src="images/apple-media-services-terms.png" width="46%" alt="Practical Prose evaluation card for the Apple Media Services Terms" />
+</p>
+
+*Left: Vannevar Bush, “As We May Think” (The Atlantic, 1945)—lucid prose but unsourced
+and single-lens. Right: the Apple Media Services Terms—broad in scope yet middling in
+clarity, with the Judgment group marked N/A where a contract neither calibrates claims
+nor weighs alternatives.
+Both were graded by Claude Opus 4.8; scores depend on the model and vary slightly
+between runs. Source texts are in [example-texts/](example-texts/); see
+[the dev note](docs/project/eval-screenshots.runbook.md) for how these are generated.*
 
 ### Is It Mature?
 
@@ -132,10 +153,7 @@ By enforcing standards for quality writing, we think more clearly.
 
 What is different now is that language is drafted, transformed, summarized, and
 evaluated by LLMs in greater volume than by humans.
-
-Poor-quality AI writing is everywhere.
-Slop and spam are not just distasteful; they are often inaccurate or harmfully
-misleading.
+Much of it is slop: not just distasteful but often inaccurate or harmfully misleading.
 
 Fluency is cheap. Judgment remains precious.
 
@@ -151,18 +169,6 @@ But you can’t outsource your understanding or your judgment.
 At its best, AI does not replace but rather augments human intellect.
 Clear thinking is essential to solving the hardest problems.
 And clear language is the way we will work with this new generation of knowledge tools.
-
-## Goals
-
-The key ways these tools can be useful:
-
-- To help a human use agents more effectively when writing or editing
-- To give context, especially principles and guidelines, that improve the quality of
-  fully agent-written text
-- To provide an evaluation framework to identify weaknesses in text written by humans or
-  agents
-- To summarize and share visualizations of these quality dimensions to better raise our
-  own awareness of clear thinking and clear writing
 
 ## Principles of Quality in Practical Writing
 
@@ -184,8 +190,8 @@ The seven principles below decompose that fit into specific attributes.
 
 ## Qualitative Measures of Writing
 
-Principles are of value, but when an editor evaluates a piece of writing, they are
-looking at specific qualities or dimensions.
+Principles are of value, but when an editor evaluates a piece of writing, they look at
+specific qualities or dimensions.
 
 | Area | Dimension | Question |
 | --- | --- | --- |
@@ -292,10 +298,8 @@ Agent Skills under [skills/](skills/). The eval skills use the
 
 Install paths:
 
-1. **Recommended:** let `pprose install` set up every supported surface in any repo:
-   `uvx pprose install` writes one `SKILL.md` per workflow into both `.agents/skills/`
-   (Codex, Gemini CLI, pi) and `.claude/skills/` (Claude Code), and maintains a
-   marker-bounded `pprose` block in `AGENTS.md`.
+1. **Recommended:** let `pprose install` set up every supported surface in any repo (see
+   [Quick Start](#quick-start) for what it writes and the scope flags).
 2. Point the agent at *this* repo and let `AGENTS.md` route to the right skill: the
    committed `skills/<name>/SKILL.md` files are version-pinned discovery copies that
    work as a `npx skills add` / skills.sh landing page.
@@ -325,13 +329,11 @@ console-script entry point are both `pprose`:
 It also bundles the guidelines, shortcuts, runbooks, and rubric and serves them as
 reference subcommands (`pprose guidelines|shortcut|runbook|skill <name>`, `--list` to
 enumerate), so the skills work in any repo.
-`pprose install` writes the five Practical Prose skills into both `.agents/skills/` and
-`.claude/skills/`, plus a marker-bounded block in `AGENTS.md`. Every generated artifact
-carries a `format=fNN surface=…` stamp, so re-running install is idempotent and a
-newer-format artifact is never clobbered by an older pprose.
-Each generated skill references pprose with a pinned, local-first invocation (`pprose`
-if on PATH, else `uvx pprose@<version>`—the trusted version that ran install—else a
-message telling the user to install uv or pprose).
+Every artifact `pprose install` generates carries a `format=fNN surface=…` stamp, so
+re-running install is idempotent and a newer-format artifact is never clobbered by an
+older pprose. Each generated skill references pprose with a pinned, local-first
+invocation (`pprose` if on PATH, else `uvx pprose@<version>`—the trusted version that
+ran install—else a message telling the user to install uv or pprose).
 
 Quick start:
 
