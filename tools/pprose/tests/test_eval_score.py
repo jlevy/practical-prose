@@ -712,3 +712,56 @@ def test_main_google_missing_key_lists_both_accepted_names(tmp_path: Path, monke
     rc = main([str(stub), "--model", "gemini"])
     assert rc == 2
     assert "GOOGLE_API_KEY or GEMINI_API_KEY not set" in capsys.readouterr().err
+
+
+def test_score_batch_isolates_one_failure(tmp_path: Path, monkeypatch, capsys):
+    """One bad input in a --batch run fails alone; the others still score, exit code is 1.
+
+    Covers score_batch / gather_limited's return_exceptions isolation with the Agent
+    mocked (no real API). The middle stub's artifact path is corrupted so its prep
+    raises, while the other two score via the stubbed async scorer.
+    """
+    from pprose import eval_score
+    from pprose.eval_report import main as report_main
+    from pprose.eval_score import CallResult
+
+    stubs: list[Path] = []
+    for i in range(3):
+        s = tmp_path / f"s{i}.eval.md"
+        assert (
+            report_main(["from-metrics", str(FIXTURES / "all_headings.md"), "--out", str(s)]) == 0
+        )
+        stubs.append(s)
+
+    # Corrupt the middle stub's artifact path so _prepare_score raises.
+    bad = stubs[1]
+    lines = bad.read_text(encoding="utf-8").splitlines(keepends=True)
+    bad.write_text(
+        "".join(
+            "  path: /nonexistent/does-not-exist.md\n" if ln.startswith("  path:") else ln
+            for ln in lines
+        ),
+        encoding="utf-8",
+    )
+
+    fake = CallResult(
+        output=_full_response(score=5, with_violation=False),
+        model_id="x",
+        cache_write_tokens=0,
+        cache_read_tokens=0,
+        input_tokens=1,
+        output_tokens=1,
+    )
+
+    async def fake_async(_artifact_block, *, model):
+        return fake
+
+    monkeypatch.setattr(eval_score, "_load_env_files", lambda: None)
+    monkeypatch.setattr(eval_score, "call_scorer_async", fake_async)
+    monkeypatch.setenv("ANTHROPIC_API_KEY", "sk-test-fake")
+
+    rc = main([str(s) for s in stubs] + ["--batch", "--model", "opus"])
+    err = capsys.readouterr().err
+    assert rc == 1  # any failure -> overall exit 1
+    assert "2/3 OK, 1 failed" in err  # the other two were isolated and succeeded
+    assert f"FAIL [{bad.name}]" in err

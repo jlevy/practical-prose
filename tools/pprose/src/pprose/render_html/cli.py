@@ -1,9 +1,8 @@
 """argparse entry point for `pprose render`.
 
 Takes an input path (an `.eval.md` today; other kinds in the future),
-detects the kind, renders an HTML string, and writes it to disk —
-either as a single self-contained file (default) or as an HTML +
-sidecar `assets/` directory (`--format folder`).
+detects the kind, renders an HTML string, and writes it to disk as a single
+self-contained file (CSS, JS, and assets are inlined).
 """
 
 from __future__ import annotations
@@ -14,7 +13,6 @@ import webbrowser
 from importlib.metadata import PackageNotFoundError, version
 from pathlib import Path
 
-from pprose.render_html.inliner import write_folder_assets
 from pprose.render_html.renderer import (
     RenderOpts,
     available_variants,
@@ -49,15 +47,6 @@ def _build_parser() -> argparse.ArgumentParser:
         type=Path,
         default=None,
         help="Output HTML path. Default: <input-stem>.html alongside the input.",
-    )
-    p.add_argument(
-        "--format",
-        choices=("single", "folder"),
-        default="single",
-        help=(
-            "single: self-contained HTML with inlined CSS and assets (default). "
-            "folder: HTML + sibling assets/ directory."
-        ),
     )
     p.add_argument(
         "--page-size",
@@ -117,7 +106,6 @@ def main(argv: list[str] | None = None) -> int:
         page_size=args.page_size,
         variant=args.variant,
         pprose_version=_pprose_version(),
-        folder_mode=(args.format == "folder"),
     )
 
     try:
@@ -129,9 +117,6 @@ def main(argv: list[str] | None = None) -> int:
     out_path: Path = args.output if args.output else _default_output_path(input_path)
     out_path.parent.mkdir(parents=True, exist_ok=True)
     out_path.write_text(html, encoding="utf-8")
-
-    if opts.folder_mode:
-        write_folder_assets(out_path.parent)
 
     print(f"wrote {out_path}")
     if args.open_after:

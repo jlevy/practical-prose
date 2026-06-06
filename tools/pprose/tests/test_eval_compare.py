@@ -72,6 +72,27 @@ def test_golden_six_way_unified_with_pairs(capsys: pytest.CaptureFixture[str]):
     assert captured == GOLDEN.read_text(encoding="utf-8")
 
 
+GOLDEN_BY_DOC = FIXTURE_DIR / "expected-comparison-by-doc.md"
+
+
+def test_golden_by_doc(capsys: pytest.CaptureFixture[str]):
+    # Byte-for-byte lock on the `--format by-doc` rollup (render_per_doc_rollup): the
+    # per-doc header line, group + overall means, the numbered Violations list, and the
+    # Quant/Derived tables. To bless an intentional change, regenerate the golden:
+    #   uv run pprose compare tests/fixtures/figma-ddog-r1.eval.md \
+    #     tests/fixtures/figma-ddog-r4.eval.md --format by-doc \
+    #     > tests/fixtures/expected-comparison-by-doc.md
+    args = [
+        str(FIXTURE_DIR / "figma-ddog-r1.eval.md"),
+        str(FIXTURE_DIR / "figma-ddog-r4.eval.md"),
+        "--format",
+        "by-doc",
+    ]
+    rc = main(args)
+    assert rc == 0
+    assert capsys.readouterr().out == GOLDEN_BY_DOC.read_text(encoding="utf-8")
+
+
 def test_bold_max_picks_unique_max():
     indices = _bold_indices([1, 2, 3, 2], rule="max", mode="max")
     assert indices == {2}
@@ -452,3 +473,28 @@ def test_unified_emits_scope_warning_block(capsys):
     assert rc == 0
     out = capsys.readouterr().out
     assert "Scope-class warning" in out
+
+
+def test_compare_rejects_draft_then_accepts_with_flags(
+    tmp_path: Path, capsys: pytest.CaptureFixture[str]
+):
+    """A real draft input is rejected by default (exit 1) and passes with the override flags.
+
+    All committed fixtures are complete+aligned, so this is the only coverage of the
+    default-reject UX on a genuine draft built by `report from-metrics`.
+    """
+    from pprose.eval_report import main as report_main
+
+    artifact = FIXTURE_DIR.parent / "test_fixtures" / "practical_prose_metrics" / "all_headings.md"
+    draft = tmp_path / "draft.eval.md"
+    assert report_main(["from-metrics", str(artifact), "--out", str(draft)]) == 0
+
+    complete = str(FIXTURE_DIR / "figma-ddog-r1.eval.md")
+    capsys.readouterr()  # clear
+
+    rc = main([str(draft), complete])
+    assert rc == 1
+    assert "need 'complete'" in capsys.readouterr().err
+
+    rc = main([str(draft), complete, "--allow-draft", "--allow-misalignment"])
+    assert rc == 0

@@ -1,7 +1,7 @@
 # Practical Prose: Agent Guide
 
 Practical Prose is a reference system and evaluation toolkit for writing that helps a
-reader understand, decide, do, verify, or maintain something.
+reader understand, decide, do, or verify something.
 Use it when the user asks to improve, audit, score, or compare practical documents.
 
 For project-wide authoring principles, run
