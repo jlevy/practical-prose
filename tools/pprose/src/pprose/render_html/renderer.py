@@ -22,6 +22,8 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
+import yaml
+
 from pprose import rubric_schema as rs
 from pprose.eval_report import EvalReport
 from pprose.render_html import inliner
@@ -59,9 +61,13 @@ def detect_kind(path: Path) -> str | None:
     if name.endswith(".eval.md"):
         return "eval_report"
     if name.endswith(".md"):
+        # A plain `.md` is an eval report only if its frontmatter parses + validates.
+        # Catch only the "not a valid eval report" signals (ValueError covers pydantic
+        # ValidationError; yaml.YAMLError covers malformed frontmatter) so genuinely
+        # unexpected errors (IO, bugs) propagate instead of silently reading as "None".
         try:
             EvalReport.from_eval_md(path.read_text(encoding="utf-8"))
-        except Exception:
+        except (ValueError, yaml.YAMLError):
             return None
         return "eval_report"
     return None

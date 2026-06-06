@@ -71,3 +71,11 @@ from the current directory hierarchy and `$HOME`.
 - Installing uv and Python: [installation.md](docs/installation.md)
 - Development workflows: [development.md](docs/development.md)
 - Publishing to PyPI: [publishing.md](docs/publishing.md)
+
+## License
+
+The package code is MIT licensed (the `license` field in package metadata).
+The wheel also bundles practical-prose **content** (the guidelines, rubric, runbooks,
+and other prose under `resources/`), which is licensed under Creative Commons
+Attribution 4.0 ([CC BY 4.0](https://creativecommons.org/licenses/by/4.0/)). See the
+[repository LICENSE](https://github.com/jlevy/practical-prose/blob/main/LICENSE).

@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import os
 import re
 from pathlib import Path
 
@@ -658,6 +659,59 @@ def test_main_end_to_end_writes_filled_report(tmp_path: Path, monkeypatch):
     }
     # The .eval.md hybrid file is the only persisted scoring artifact.
     assert not (stub.parent / "stub.eval.raw.txt").exists()
+
+
+def _gemini_stub(tmp_path: Path) -> Path:
+    from pprose.eval_report import main as report_main
+
+    stub = tmp_path / "stub.eval.md"
+    assert report_main(["from-metrics", str(FIXTURES / "all_headings.md"), "--out", str(stub)]) == 0
+    return stub
+
+
+def test_main_accepts_gemini_api_key_alias_for_google(tmp_path: Path, monkeypatch):
+    """`--model gemini` works with only GEMINI_API_KEY set, bridged to GOOGLE_API_KEY.
+
+    The google-genai SDK and many environments use GEMINI_API_KEY; pydantic-ai's google
+    provider reads GOOGLE_API_KEY. main() must accept the alias and bridge it rather than
+    failing the missing-key guard.
+    """
+    from pprose import eval_score
+    from pprose.eval_score import CallResult
+
+    stub = _gemini_stub(tmp_path)
+    fake = CallResult(
+        output=_full_response(score=5, with_violation=False),
+        model_id="gemini-3.5-flash-fake",
+        cache_write_tokens=0,
+        cache_read_tokens=0,
+        input_tokens=10,
+        output_tokens=10,
+    )
+    # Hermetic: ignore any real .env/.env.local on the machine.
+    monkeypatch.setattr(eval_score, "_load_env_files", lambda: None)
+    monkeypatch.setattr(eval_score, "call_scorer", lambda _artifact, *, model: fake)
+    monkeypatch.delenv("GOOGLE_API_KEY", raising=False)
+    monkeypatch.setenv("GEMINI_API_KEY", "gm-test-fake")
+
+    rc = main([str(stub), "--model", "gemini"])
+    assert rc == 0
+    # The alias was bridged to the canonical name the provider SDK reads.
+    assert os.environ["GOOGLE_API_KEY"] == "gm-test-fake"
+
+
+def test_main_google_missing_key_lists_both_accepted_names(tmp_path: Path, monkeypatch, capsys):
+    """With neither google key set, the guard errors and names both accepted env vars."""
+    from pprose import eval_score
+
+    stub = _gemini_stub(tmp_path)
+    monkeypatch.setattr(eval_score, "_load_env_files", lambda: None)
+    monkeypatch.delenv("GOOGLE_API_KEY", raising=False)
+    monkeypatch.delenv("GEMINI_API_KEY", raising=False)
+
+    rc = main([str(stub), "--model", "gemini"])
+    assert rc == 2
+    assert "GOOGLE_API_KEY or GEMINI_API_KEY not set" in capsys.readouterr().err
 
 
 def test_score_batch_isolates_one_failure(tmp_path: Path, monkeypatch, capsys):

@@ -793,6 +793,16 @@ def main(argv: list[str] | None = None) -> int:
             "via Pydantic AI. On Anthropic the rubric + guidelines block is cached "
             "across calls within ~5 minutes."
         ),
+        epilog=(
+            "Cost note: scoring makes a real, paid API call. The default --model is the "
+            "flagship Opus; pass a cheaper alias (sonnet/haiku/gpt-mini/gemini-lite) for "
+            "smoke tests. API keys load from the environment and from .env then .env.local "
+            "auto-discovered up the cwd hierarchy and in $HOME (later files override "
+            "earlier). Because of that autoload, `env -u ANTHROPIC_API_KEY pprose score` "
+            "can still make a billable call if a reachable .env/.env.local defines the key; "
+            "use --dry-run for a no-call smoke test."
+        ),
+        formatter_class=argparse.RawDescriptionHelpFormatter,
     )
     parser.add_argument(
         "yaml_paths",
@@ -942,19 +952,29 @@ def main(argv: list[str] | None = None) -> int:
     # the SDK to raise on the first request.
     resolved = _resolve_model(args.model)
     provider = _provider_of(resolved)
-    _API_KEY_ENV = {
-        "anthropic": "ANTHROPIC_API_KEY",
-        "openai": "OPENAI_API_KEY",
-        "google": "GOOGLE_API_KEY",
+    # Accepted API-key env vars per provider, canonical name first. google accepts
+    # GEMINI_API_KEY too (the google-genai SDK's own name, and what many environments
+    # set); when only the alias is present we bridge it to the canonical GOOGLE_API_KEY
+    # that pydantic-ai's google provider reads.
+    _API_KEY_ENV: dict[str, tuple[str, ...]] = {
+        "anthropic": ("ANTHROPIC_API_KEY",),
+        "openai": ("OPENAI_API_KEY",),
+        "google": ("GOOGLE_API_KEY", "GEMINI_API_KEY"),
     }
-    key_env = _API_KEY_ENV.get(provider)
-    if key_env and key_env not in os.environ:
-        print(
-            f"error: {key_env} not set (required for provider {provider!r}); "
-            "add it to .env or .env.local (auto-loaded), or export it",
-            file=sys.stderr,
-        )
-        return 2
+    accepted = _API_KEY_ENV.get(provider)
+    if accepted:
+        present = next((name for name in accepted if os.environ.get(name)), None)
+        if present is None:
+            names = " or ".join(accepted)
+            print(
+                f"error: {names} not set (required for provider {provider!r}); "
+                "add it to .env or .env.local (auto-loaded), or export it",
+                file=sys.stderr,
+            )
+            return 2
+        canonical = accepted[0]
+        if present != canonical and not os.environ.get(canonical):
+            os.environ[canonical] = os.environ[present]
 
     if args.batch:
         rc = asyncio.run(

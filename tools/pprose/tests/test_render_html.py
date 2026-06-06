@@ -51,6 +51,36 @@ def test_render_unsupported_kind_lists_supported_kinds(tmp_path: Path) -> None:
         render(bogus, RenderOpts())
 
 
+def test_detect_kind_returns_none_for_near_miss_plain_md(tmp_path: Path) -> None:
+    """A plain `.md` with eval-ish-but-invalid frontmatter is not an eval report."""
+    near = tmp_path / "near.md"
+    near.write_text("---\ntitle: x\nfoo: 1\n---\nbody\n", encoding="utf-8")
+    assert detect_kind(near) is None
+
+
+def test_detect_kind_does_not_swallow_unexpected_errors(tmp_path: Path, monkeypatch) -> None:
+    """The narrowed except lets genuinely unexpected errors propagate, not read as None."""
+    from pprose.render_html import renderer
+
+    def boom(_source):
+        raise RuntimeError("unexpected parser failure")
+
+    monkeypatch.setattr(renderer.EvalReport, "from_eval_md", staticmethod(boom))
+    target = tmp_path / "x.md"
+    target.write_text("# doc\n", encoding="utf-8")
+    with pytest.raises(RuntimeError, match="unexpected parser failure"):
+        detect_kind(target)
+
+
+def test_render_malformed_eval_md_raises_clear_validation_error(tmp_path: Path) -> None:
+    """A `.eval.md` named-but-invalid file errors clearly rather than rendering empty."""
+    bad = tmp_path / "bad.eval.md"
+    bad.write_text("---\ntitle: x\nfoo: 1\n---\nbody\n", encoding="utf-8")
+    assert detect_kind(bad) == "eval_report"  # routed by name
+    with pytest.raises(ValueError, match="(?i)eval"):
+        render(bad, RenderOpts())
+
+
 # ─── Variant discovery ─────────────────────────────────────────────────────
 
 
