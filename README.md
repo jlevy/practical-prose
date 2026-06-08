@@ -86,10 +86,11 @@ result as a card:
 <img src="images/apple-media-services-terms.png" width="46%" alt="Practical Prose evaluation card for the Apple Media Services Terms" />
 </p>
 
-*Left: Vannevar Bush, “As We May Think” (The Atlantic, 1945)—lucid prose but unsourced
-and single-lens. Right: the Apple Media Services Terms—broad in scope yet middling in
-clarity, with the Judgment group marked N/A where a contract neither calibrates claims
-nor weighs alternatives.
+*Left: Vannevar Bush, “As We May Think” (The Atlantic, 1945)—lucid prose but lightly
+sourced and single-lens.
+Right: the Apple Media Services Terms—broad in scope and cleanly organized, yet with
+several Reasoning and Judgment dimensions N/A: a contract states terms rather than
+arguing or weighing them.
 Both were graded by Claude Opus 4.8; scores depend on the model and vary slightly
 between runs. Source texts are in [example-texts/](example-texts/); see
 [the dev note](docs/project/eval-screenshots.runbook.md) for how these are generated.*

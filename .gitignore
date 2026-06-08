@@ -244,9 +244,10 @@ Thumbs.db
 .aider*
 
 # Local self-eval runs (in flux; not yet ready to track), except the committed
-# baseline snapshot under evals/baselines/.
+# baseline snapshot and the README example-card sources.
 evals/*
 !evals/baselines/
+!evals/readme-cards/
 
 # Local scratchpad / reference store (templates, archived experiments, scratch)
 attic/

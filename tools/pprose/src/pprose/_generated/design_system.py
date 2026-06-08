@@ -141,10 +141,10 @@ DESIGN_SYSTEM: dict[str, Any] = {
             "label": "Suitability",
             "short": "Suit",
             "group": "P",
-            "h_offset": -4.0,
+            "h_offset": -11.0,
             "color": {
-                "light": "hsl(210 19% 40%)",
-                "dark": "hsl(210 19% 65%)"
+                "light": "hsl(203 19% 40%)",
+                "dark": "hsl(203 19% 65%)"
             }
         },
         {
@@ -152,10 +152,10 @@ DESIGN_SYSTEM: dict[str, Any] = {
             "label": "Scope",
             "short": "Scope",
             "group": "P",
-            "h_offset": 0.0,
+            "h_offset": -3.7,
             "color": {
-                "light": "hsl(214 19% 37%)",
-                "dark": "hsl(214 19% 62%)"
+                "light": "hsl(210.3 19% 37%)",
+                "dark": "hsl(210.3 19% 62%)"
             }
         },
         {
@@ -163,10 +163,10 @@ DESIGN_SYSTEM: dict[str, Any] = {
             "label": "Breadth",
             "short": "Brd",
             "group": "P",
-            "h_offset": 4.0,
+            "h_offset": 3.7,
             "color": {
-                "light": "hsl(218 19% 34%)",
-                "dark": "hsl(218 19% 59%)"
+                "light": "hsl(217.7 19% 34%)",
+                "dark": "hsl(217.7 19% 59%)"
             }
         },
         {
@@ -174,10 +174,10 @@ DESIGN_SYSTEM: dict[str, Any] = {
             "label": "Depth",
             "short": "Dep",
             "group": "P",
-            "h_offset": 8.0,
+            "h_offset": 11.0,
             "color": {
-                "light": "hsl(222 19% 31%)",
-                "dark": "hsl(222 19% 56%)"
+                "light": "hsl(225 19% 31%)",
+                "dark": "hsl(225 19% 56%)"
             }
         },
         {
@@ -185,10 +185,10 @@ DESIGN_SYSTEM: dict[str, Any] = {
             "label": "Clarity",
             "short": "Clar",
             "group": "E",
-            "h_offset": -5.0,
+            "h_offset": -15.0,
             "color": {
-                "light": "hsl(129 19% 35%)",
-                "dark": "hsl(129 19% 68%)"
+                "light": "hsl(119 19% 35%)",
+                "dark": "hsl(119 19% 68%)"
             }
         },
         {
@@ -196,10 +196,10 @@ DESIGN_SYSTEM: dict[str, Any] = {
             "label": "Coherence",
             "short": "Coh",
             "group": "E",
-            "h_offset": -2.0,
+            "h_offset": 0.0,
             "color": {
-                "light": "hsl(132 19% 32%)",
-                "dark": "hsl(132 19% 66%)"
+                "light": "hsl(134 19% 32%)",
+                "dark": "hsl(134 19% 66%)"
             }
         },
         {
@@ -207,10 +207,10 @@ DESIGN_SYSTEM: dict[str, Any] = {
             "label": "Concision",
             "short": "Conc",
             "group": "E",
-            "h_offset": 1.0,
+            "h_offset": 15.0,
             "color": {
-                "light": "hsl(135 19% 30%)",
-                "dark": "hsl(135 19% 64%)"
+                "light": "hsl(149 19% 30%)",
+                "dark": "hsl(149 19% 64%)"
             }
         },
         {
@@ -218,10 +218,10 @@ DESIGN_SYSTEM: dict[str, Any] = {
             "label": "Organization",
             "short": "Org",
             "group": "F",
-            "h_offset": -4.0,
+            "h_offset": -15.0,
             "color": {
-                "light": "hsl(54 19% 38%)",
-                "dark": "hsl(54 19% 64%)"
+                "light": "hsl(43 19% 38%)",
+                "dark": "hsl(43 19% 64%)"
             }
         },
         {
@@ -240,10 +240,10 @@ DESIGN_SYSTEM: dict[str, Any] = {
             "label": "Formatting",
             "short": "Fmt",
             "group": "F",
-            "h_offset": 4.0,
+            "h_offset": 15.0,
             "color": {
-                "light": "hsl(62 19% 32%)",
-                "dark": "hsl(62 19% 58%)"
+                "light": "hsl(73 19% 32%)",
+                "dark": "hsl(73 19% 58%)"
             }
         },
         {
@@ -251,10 +251,10 @@ DESIGN_SYSTEM: dict[str, Any] = {
             "label": "Discipline",
             "short": "Disc",
             "group": "R",
-            "h_offset": -6.0,
+            "h_offset": -17.5,
             "color": {
-                "light": "hsl(354 19% 40%)",
-                "dark": "hsl(354 19% 68%)"
+                "light": "hsl(342.5 19% 40%)",
+                "dark": "hsl(342.5 19% 68%)"
             }
         },
         {
@@ -262,10 +262,10 @@ DESIGN_SYSTEM: dict[str, Any] = {
             "label": "Soundness",
             "short": "Snd",
             "group": "R",
-            "h_offset": -3.0,
+            "h_offset": -5.8,
             "color": {
-                "light": "hsl(357 19% 37%)",
-                "dark": "hsl(357 19% 65%)"
+                "light": "hsl(354.2 19% 37%)",
+                "dark": "hsl(354.2 19% 65%)"
             }
         },
         {
@@ -273,10 +273,10 @@ DESIGN_SYSTEM: dict[str, Any] = {
             "label": "Precision",
             "short": "Prec",
             "group": "R",
-            "h_offset": 0.0,
+            "h_offset": 5.8,
             "color": {
-                "light": "hsl(0 19% 34%)",
-                "dark": "hsl(0 19% 62%)"
+                "light": "hsl(5.8 19% 34%)",
+                "dark": "hsl(5.8 19% 62%)"
             }
         },
         {
@@ -284,10 +284,10 @@ DESIGN_SYSTEM: dict[str, Any] = {
             "label": "Parsimony",
             "short": "Pars",
             "group": "R",
-            "h_offset": 3.0,
+            "h_offset": 17.5,
             "color": {
-                "light": "hsl(3 19% 31%)",
-                "dark": "hsl(3 19% 59%)"
+                "light": "hsl(17.5 19% 31%)",
+                "dark": "hsl(17.5 19% 59%)"
             }
         },
         {
@@ -295,10 +295,10 @@ DESIGN_SYSTEM: dict[str, Any] = {
             "label": "Verifiability",
             "short": "Ver",
             "group": "G",
-            "h_offset": -4.0,
+            "h_offset": -15.0,
             "color": {
-                "light": "hsl(191 17% 32%)",
-                "dark": "hsl(191 17% 62%)"
+                "light": "hsl(180 17% 32%)",
+                "dark": "hsl(180 17% 62%)"
             }
         },
         {
@@ -317,10 +317,10 @@ DESIGN_SYSTEM: dict[str, Any] = {
             "label": "Relevance",
             "short": "Rel",
             "group": "G",
-            "h_offset": 4.0,
+            "h_offset": 15.0,
             "color": {
-                "light": "hsl(199 17% 26%)",
-                "dark": "hsl(199 17% 54%)"
+                "light": "hsl(210 17% 26%)",
+                "dark": "hsl(210 17% 54%)"
             }
         },
         {
@@ -328,10 +328,10 @@ DESIGN_SYSTEM: dict[str, Any] = {
             "label": "Calibration",
             "short": "Cal",
             "group": "J",
-            "h_offset": -6.0,
+            "h_offset": -11.0,
             "color": {
-                "light": "hsl(288 19% 42%)",
-                "dark": "hsl(288 19% 70%)"
+                "light": "hsl(283 19% 42%)",
+                "dark": "hsl(283 19% 70%)"
             }
         },
         {
@@ -350,10 +350,10 @@ DESIGN_SYSTEM: dict[str, Any] = {
             "label": "Robustness",
             "short": "Rob",
             "group": "J",
-            "h_offset": 6.0,
+            "h_offset": 11.0,
             "color": {
-                "light": "hsl(300 19% 36%)",
-                "dark": "hsl(300 19% 64%)"
+                "light": "hsl(305 19% 36%)",
+                "dark": "hsl(305 19% 64%)"
             }
         }
     ],

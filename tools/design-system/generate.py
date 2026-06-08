@@ -88,6 +88,23 @@ def _resolve(ds: DesignSystem) -> dict:
     """
     groups_by_id: dict[str, Group] = {g.id: g for g in ds.groups}
 
+    # Per-dimension hue offset is DERIVED from the group's `spread` so the
+    # dimensions fan evenly across the full declared hue range, centered on the
+    # group hue. This matches the explorations' palette logic
+    # (tools/explorations/visual-design/lib/design-palette-sliders.js:
+    # step = spread / (n - 1); hueOffset = (i - (n - 1) / 2) * step). `spread`
+    # is the single source of truth; the authored YAML `h_offset` is ignored for
+    # color, so the declared spread and the rendered fan can't drift apart.
+    dims_by_group: dict[str, list[Dimension]] = {}
+    for _d in ds.dimensions:
+        dims_by_group.setdefault(_d.group, []).append(_d)
+    derived_h_offset: dict[str, float] = {}
+    for _gid, _dims in dims_by_group.items():
+        _n = len(_dims)
+        _step = groups_by_id[_gid].spread / (_n - 1) if _n > 1 else 0.0
+        for _i, _dim in enumerate(_dims):
+            derived_h_offset[_dim.id] = round((_i - (_n - 1) / 2) * _step, 1)
+
     def group_dict(g: Group) -> dict:
         return {
             "id": g.id,
@@ -107,6 +124,7 @@ def _resolve(ds: DesignSystem) -> dict:
 
     def dim_dict(d: Dimension) -> dict:
         g = groups_by_id[d.group]
+        d = d.model_copy(update={"h_offset": derived_h_offset[d.id]})
         return {
             "id": d.id,
             "label": d.label,
