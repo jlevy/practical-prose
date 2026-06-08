@@ -322,8 +322,9 @@ console-script entry point are both `pprose`:
 
 - `pprose metrics`: deterministic metrics over a document (banned-register hits,
   vague-word counts, link validity, frontmatter presence, etc.).
-- `pprose score`: score a document against the rubric via the Anthropic SDK with prompt
-  caching; supports `--batch` for parallel runs over N artifacts.
+- `pprose score`: score a document against the rubric via Pydantic AI (Anthropic,
+  OpenAI, or Google; `--model` required); Anthropic runs reuse a cached
+  rubric+guidelines block, and `--batch` runs N artifacts in parallel.
 - `pprose report`: combine metrics and scores into an eval report; validate,
   compute-derived, and from-metrics subcommands.
 - `pprose compare`: compare N eval reports across versions or variants.
@@ -340,9 +341,9 @@ ran install—else a message telling the user to install uv or pprose).
 Quick start:
 
 ```bash
-# Run with no install via uv (https://docs.astral.sh/uv/). `score` needs ANTHROPIC_API_KEY.
+# Run with no install via uv (https://docs.astral.sh/uv/). `score` needs --model + a provider API key.
 uvx pprose report from-metrics path/to/doc.md --label my-doc --scope-class brief --out my-doc.eval.md
-uvx pprose score my-doc.eval.md
+uvx pprose score my-doc.eval.md --model opus
 uvx pprose report validate my-doc.eval.md
 ```
 
