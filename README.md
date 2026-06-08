@@ -294,6 +294,7 @@ Agent Skills under [skills/](skills/). The eval skills use the
 | [pprose-common-edit](skills/pprose-common-edit/SKILL.md) | Apply | Tidy, clean up, conform, fix formatting/structure, or add the documentation footer. The basic, universal tier. |
 | [pprose-copy-edit](skills/pprose-copy-edit/SKILL.md) | Apply | Copy edit, proofread, polish, tighten, or line edit: language and formatting (Expression). Superset of common-edit. |
 | [pprose-full-edit](skills/pprose-full-edit/SKILL.md) | Apply | Deep edit across all 20 dimensions; also writes an editorial review (strengths, weaknesses, suggested fixes). Superset of copy-edit; covers audit-only review. |
+| [pprose-review](skills/pprose-review/SKILL.md) | Review | Review, critique, or get a tiered edit plan (what a common edit, copy edit, and full substantive pass would each change) without modifying the document and without scores. Read-only. |
 | [pprose-eval](skills/pprose-eval/SKILL.md) | Evaluate | Score, grade, rubric-check, or measure the quality of one document. |
 | [pprose-compare](skills/pprose-compare/SKILL.md) | Evaluate | Compare drafts, A/B versions, quality-diff documents, or pick a best variant. |
 
