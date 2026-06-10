@@ -64,14 +64,6 @@ def _synced_plan() -> dict[Path, str]:
         dest_name = p.name.replace(".runbook.md", ".md")
         plan[RESOURCES / "runbooks" / dest_name] = p.read_text(encoding="utf-8")
 
-    # tools/design-system/design-system.md → guidelines (referenced from any
-    # repo working on palettes / eval-report CSS).
-    design_system = REPO_ROOT / "tools" / "design-system" / "design-system.md"
-    if design_system.is_file():
-        plan[RESOURCES / "guidelines" / "design-system.md"] = design_system.read_text(
-            encoding="utf-8"
-        )
-
     # README.md → about (the project narrative; surfaced as `pprose about`).
     readme = REPO_ROOT / "README.md"
     if readme.is_file():

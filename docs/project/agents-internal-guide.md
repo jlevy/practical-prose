@@ -23,6 +23,7 @@ For development workflows (build, test, format, lint), see
 | Review one document and report tiered feedback (common-edit, copy-edit, and substantive layers) without editing or scoring | [pprose-review](../../skills/pprose-review/SKILL.md) | [shortcut-review.md](../../shortcuts/shortcut-review.md) |
 | Score one document with metrics and rubric grading | [pprose-eval](../../skills/pprose-eval/SKILL.md) | [practical-prose-eval-single.runbook.md](../../runbooks/practical-prose-eval-single.runbook.md) |
 | Compare multiple evaluated drafts or variants | [pprose-compare](../../skills/pprose-compare/SKILL.md) | [practical-prose-eval-compare.runbook.md](../../runbooks/practical-prose-eval-compare.runbook.md) |
+| Regenerate this repo’s baseline eval set (example texts + self-eval docs) | (this repo) | [practical-prose-baseline-evals.runbook.md](practical-prose-baseline-evals.runbook.md) |
 | Manually validate every pprose surface before a release | (this repo) | [e2e-testing.runbook.md](e2e-testing.runbook.md), [release-readiness-2026-06.md](release-readiness-2026-06.md) |
 
 ## Tooling

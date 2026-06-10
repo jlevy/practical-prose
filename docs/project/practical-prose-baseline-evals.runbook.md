@@ -24,7 +24,7 @@ Use the subset commands only when you are debugging one side of the baseline set
 When asking an agent to run this workflow, invoke the local `pprose-eval` skill and
 point it at this runbook:
 
-> Use `pprose-eval` and run `runbooks/practical-prose-baseline-evals.runbook.md`.
+> Use `pprose-eval` and run `docs/project/practical-prose-baseline-evals.runbook.md`.
 
 Unless the request names a subset, run **Default: Run All Baselines**. Subset runs are
 available for debugging, but the ordinary baseline process should regenerate third-party
