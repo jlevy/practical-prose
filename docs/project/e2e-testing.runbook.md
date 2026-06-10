@@ -333,7 +333,7 @@ cd /tmp/pp-scratch2 && git init && uvx pprose@0.1.0 install   # baked pin must r
 
 - [ ] The pin baked into generated files is the published version (not the `0.1.0`
   `DISCOVERY_VERSION` fallback masking an unpublished release).
-- [ ] In a live Claude Code / Codex session in the scratch repo, the 5 pprose skills are
+- [ ] In a live Claude Code / Codex session in the scratch repo, the 6 pprose skills are
   invocable and the AGENTS.md block shows in context; triggering “score this doc” routes
   to `pprose-eval`.
 

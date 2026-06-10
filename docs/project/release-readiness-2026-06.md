@@ -2,12 +2,12 @@
 title: pprose First-Release Readiness Review (2026-06)
 description: A snapshot assessment of how well-organized pprose is for a first public release — what works, the ranked risks to clear, and what should become automated tests.
 date: 2026-06-02
-last_updated: 2026-06-02
+last_updated: 2026-06-09
 status: active
 ---
 # pprose First-Release Readiness Review (2026-06)
 
-Version: v0.1 (last update 2026-06-02)\
+Version: v0.1 (last update 2026-06-09; added status update)\
 Joshua Levy (github.com/jlevy)
 
 ## Purpose
@@ -41,6 +41,33 @@ What is solid:
 What is not ready: the version/publish story (no tag exists yet), a few stale docs, and
 an entirely manual visual contract.
 Details below.
+
+## Status update (2026-06-09)
+
+Progress since the 2026-06-02 snapshot:
+
+- **Rapid-fix risks cleared** (verified): #5 (root README now matches the shipped
+  `--project`/`--global`/`--surfaces` CLI), #7 (`publishing.md`/`installation.md` no
+  longer carry `OWNER/PROJECT` stubs), and #13 (`pprose --version` now exists).
+  The CI gates from the stabilization set are live and green: `lint-root` (drift + lint)
+  and `wheel-smoke` (build + install-from-wheel), addressing risk #2’s automated
+  coverage.
+- **Sixth skill shipped:** `pprose-review` (read-only tiered review) landed in #26, so a
+  release now offers all six skills.
+- **Version-pin hardening:** `devtools/check_release_version.py` (run from
+  `publish.yml`) fails the publish unless the release tag equals `DISCOVERY_VERSION`.
+  With `test_resources_sync.py` this chains
+  `tag == DISCOVERY_VERSION == committed uvx pprose@<pin>`, closing the “stale or
+  unresolvable baked pin” gap for this and future releases.
+
+**The lone remaining hard blocker is risk #1: actually publish v0.1.0.** Two human
+steps: register the PyPI trusted publisher (pending-publisher, one-time), then
+`gh release create v0.1.0`, which tags and triggers `publish.yml`. `DISCOVERY_VERSION`
+is already `0.1.0`, so the new guard passes for this release.
+
+The remaining open children of the hardening epic (`pp-28l5`) — `pp-5zgc` (Playwright
+visual smoke), `pp-3g59` (SUGGESTED_MODELS drift note), `pp-wlwj` (repo org / `attic/`)
+— are the D-tier deferred-polish items below and do not block v0.1.0.
 
 ## Ranked release risks
 
