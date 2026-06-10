@@ -288,6 +288,13 @@ correct spelling and grammar?
    catch. Rhetoric is not decoration when it compresses thought; it is decoration when it
    adds only force.
 
+   Four named voice failures are useful as a self-check: *marketing voice* ("expert tips
+   you won’t find anywhere else"), *know-it-all voice* ("follow our advice and you’ll be
+   fine"), *it’ll-be-easy voice* ("just learn these 17 tricks"), and *lifeless voice*
+   (dry writing with no care in it).
+   The first three are register violations under this dimension; the fourth is the Tone
+   / Reader Respect check.
+
 5. **Earn rhetorical force; cut symmetry-for-its-own-sake.** Parallel structures (*“It’s
    not X, it’s Y”*; *“Not just X but Y”*; *“X did A, ours does B”*; *“Where X asks A, Y
    asks B”*) are licensed when X is a position someone actually holds and the contrast
@@ -795,6 +802,13 @@ Specificity is the precondition for source-traceability.
    to fool. See the *Failure-Mode Questions* table in
    [practical-prose-rubric.md](practical-prose-rubric.md) for claim-type-specific
    prompts.
+
+7. **Links serve readers, not only verification.** Beyond citations, two further link
+   kinds carry weight in web-published documents: *recommended* links (resources called
+   out with context—who made them and why they matter) and *elaborative* links (detail
+   or context on a passing mention, needing no setup beyond the inline link).
+   Choose each link deliberately and prefer the best available source; a laundry list of
+   low-value links dilutes credibility and fails G3 Relevance.
 
 ### G2. Factuality
 

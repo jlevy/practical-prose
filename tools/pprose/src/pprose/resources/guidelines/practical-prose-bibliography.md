@@ -176,6 +176,12 @@ writing. We list these up front for those looking for a shortlist.
   creation of value for a community of readers.
 - **Graham, “How to Write Usefully”** (2020)[^graham-useful]. Defines useful writing as
   importance + novelty + correctness + strength.
+- **Holloway, *Editorial Guidance for Writers and Editors***
+  (2021)[^holloway-editorial-guidance]. Editorial guidance for comprehensive practical
+  guides: dual-audience depth, frameworks over answers, attention-brokering, multi-sided
+  audiences, and guide groundwork.
+  The direct ancestor of [writing-practical-guides.md](writing-practical-guides.md) and
+  the origin of the “broker attention helpfully” phrasing in the Lucid principle.
 
 ## Structure, Genre, and Craft
 
@@ -785,6 +791,11 @@ practitioner rule sheets that would feed such a pack.
 
 [^graham-useful]: Graham, Paul. “How to Write Usefully.”
     February 2020. <https://paulgraham.com/useful.html>.
+
+[^holloway-editorial-guidance]: Levy, Joshua, with Rachel Jepsen and Andy Sparks (eds.).
+    *Editorial Guidance for Writers and Editors*. San Francisco: Holloway, 2021.
+    <https://www.holloway.com/g/editorial-guidance>. Source repository:
+    <https://github.com/feynmanlabs/editorial-guidance>.
 
 [^sloane]: Sloane, William. *The Craft of Writing*. Edited by Julia H. Sloane.
     New York: W. W. Norton, 1979. <https://wwnorton.com/books/9780393007466>.

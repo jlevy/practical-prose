@@ -241,7 +241,7 @@ scoring anchors in [practical-prose-rubric.md](docs/practical-prose-rubric.md).
 
 ## Layers
 
-The system has six reference layers and two operational layers.
+The system has seven reference layers and two operational layers.
 Each layer answers a different question.
 
 | Layer | Doc | Answers |
@@ -250,6 +250,7 @@ Each layer answers a different question.
 | **Principles** | [practical-prose-principles.md](docs/practical-prose-principles.md) | Why these rules: what seven principles do they descend from? |
 | **Guidelines** | [practical-prose-guidelines.md](docs/practical-prose-guidelines.md) | What should the writer do: prescriptive rules for the 20 dimensions? |
 | **Rubric** | [practical-prose-rubric.md](docs/practical-prose-rubric.md) | How is a document scored: descriptive 1-5 anchors for the same 20 dimensions? |
+| **Genre: Guides** | [writing-practical-guides.md](docs/writing-practical-guides.md) | What does the comprehensive-guide genre additionally demand, and when do those extra rules apply? |
 | **Bibliography** | [practical-prose-bibliography.md](docs/practical-prose-bibliography.md) | Where do these ideas come from: what works ground each tradition? |
 | **Metrics** | [practical-prose-metrics.md](docs/practical-prose-metrics.md) | Which quantitative metrics and qualitative checks map to which dimensions; recommended frontmatter schema. |
 | **Shortcut** | [practical-prose-quick-checklist.md](shortcuts/practical-prose-quick-checklist.md) | One-page pre-publish self-audit across the 20 dimensions. |
@@ -263,6 +264,9 @@ The practical-prose layers (Principles, Guidelines, Rubric) build on top of it w
 seven principles and 20 dimensions specific to evaluating practical writing.
 Principles, Guidelines, and Rubric form a tight triple: same seven principles, same 20
 dimensions, same six groups (Purpose, Expression, Form, Reasoning, Grounding, Judgment).
+Genre supplements extend those core layers only where a genre demands more; the first
+one covers [comprehensive practical guides](docs/writing-practical-guides.md), not all
+practical documents.
 The bibliography supplies the intellectual basis; the shortcuts and runbooks are how the
 system gets used in practice.
 
@@ -270,6 +274,9 @@ system gets used in practice.
 
 - **Writing a document and want the rules:**
   [practical-prose-guidelines.md](docs/practical-prose-guidelines.md).
+- **Writing a comprehensive practical guide:**
+  [writing-practical-guides.md](docs/writing-practical-guides.md), including its
+  groundwork process for scoping the guide before outlining.
 - **Scoring a document and want the anchors:**
   [practical-prose-rubric.md](docs/practical-prose-rubric.md).
 - **Running a pre-publish self-audit:**
@@ -336,7 +343,11 @@ older pprose. Each generated skill references pprose with a pinned, local-first
 invocation (`pprose` if on PATH, else `uvx pprose@<version>`—the trusted version that
 ran install—else a message telling the user to install uv or pprose).
 Scope installs with `--project` (the default inside a git repo) or `--global`, and
-select destinations with `--surfaces=portable,claude,agents-md`.
+select destinations with `--surfaces=portable,claude,agents-md`. New releases can add
+guidelines and skills; because installed skills pin the version that installed them, a
+repo picks up additions only when you upgrade and re-run install
+(`uvx pprose@latest install`, or `uv tool install --upgrade pprose && pprose install`).
+Re-running refreshes the artifacts and the version pin they bake.
 
 Example eval pass (no install via [uv](https://docs.astral.sh/uv/); `score` needs
 `--model` plus a provider API key):

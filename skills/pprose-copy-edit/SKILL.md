@@ -31,12 +31,16 @@ that also writes an editorial review, use `pprose-full-edit`.
 3. Apply the Expression and Form dimensions (E1–E3, F1–F3) from
    `pprose guidelines practical-prose-guidelines` (§Expression Dimensions, §Form
    Dimensions).
-4. Audit the document, track issues (project issue/bead tooling when available, else the
+4. If the target is a comprehensive practical guide (a reference work helping readers
+   navigate a complex topic), also read `pprose guidelines writing-practical-guides` and
+   apply its language-level genre guidance (voice, accessibility, intrigue), honoring
+   each guideline’s applies-when caveat.
+5. Audit the document, track issues (project issue/bead tooling when available, else the
    agent’s to-do/checklist), and apply edits directly.
-5. Preserve factual meaning, claim strength, citations, and intentional voice.
+6. Preserve factual meaning, claim strength, citations, and intentional voice.
    Do not edit the substantive dimensions (Purpose, Reasoning, Grounding, Judgment); if
    those need work, note it and recommend `pprose-full-edit`.
-6. Re-scan the diff for regressions before reporting.
+7. Re-scan the diff for regressions before reporting.
 
 ## Output
 

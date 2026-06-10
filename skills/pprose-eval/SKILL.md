@@ -17,10 +17,6 @@ It writes eval report files.
 
 Use it when the user wants a formal Practical Prose evaluation of one document.
 
-For the repo’s baseline batch evals, run `pprose runbook practical-prose-baseline-evals`
-and default to running all third-party and self-eval artifacts unless the user asks for
-a subset.
-
 ## Inputs
 
 - Path to one Markdown artifact.
@@ -33,26 +29,31 @@ a subset.
 
 1. Run `pprose runbook practical-prose-eval-single` for the full procedure.
 
-2. Generate the eval stub:
+2. If the artifact is a comprehensive practical guide (a reference work helping readers
+   navigate a complex topic), read `pprose guidelines writing-practical-guides` for
+   genre context before scoring; the rubric’s anchors scale with purpose, audience,
+   genre, and risk level.
+
+3. Generate the eval stub:
 
    ```bash
    pprose report from-metrics path/to/artifact.md --label NAME --scope-class brief --out artifact.eval.md
    ```
 
-3. Inspect deterministic metrics:
+4. Inspect deterministic metrics:
 
    ```bash
    pprose metrics path/to/artifact.md --format yaml
    ```
 
-4. Score the qualitative dimensions (`--model` is required; run
+5. Score the qualitative dimensions (`--model` is required; run
    `pprose score --list-models` for choices, or pass `--dry-run` to skip the API call):
 
    ```bash
    pprose score artifact.eval.md --model opus
    ```
 
-5. Validate the result:
+6. Validate the result:
 
    ```bash
    pprose report validate artifact.eval.md --complete

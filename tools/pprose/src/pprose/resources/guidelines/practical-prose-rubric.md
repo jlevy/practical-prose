@@ -20,7 +20,7 @@ Use the guidelines to author; use the rubric to assess.
 
 The doc-type list above is a descriptive framing of what this rubric applies to.
 The eval tooling has a separate, narrower tag (`artifact.scope_class`, set via
-`--scope-class` on `eval_report.py from-metrics`) for density-threshold flagging:
+`--scope-class` on `pprose report from-metrics`) for density-threshold flagging:
 `status`, `memo`, `brief`, `deep_research`, `design_doc`. See
 [practical-prose-eval-single.runbook.md](../runbooks/practical-prose-eval-single.runbook.md)
 for the scope-class table and when to set each value.

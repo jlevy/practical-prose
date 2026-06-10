@@ -26,6 +26,10 @@ rewriting — never change factual meaning, claim strength, scope, or citations.
    editorial-review structure.
 2. Follow it: per-group passes against `pprose guidelines practical-prose-guidelines`,
    apply the safe fixes, flag the substantive ones, and write the editorial review.
+3. If the artifact is a comprehensive practical guide (a reference work helping readers
+   navigate a complex topic), also audit against
+   `pprose guidelines writing-practical-guides` — each guideline there carries an
+   applies-when caveat — and fold genre findings into the same passes and review.
 
 ## Output
 

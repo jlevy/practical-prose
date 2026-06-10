@@ -30,7 +30,11 @@ For other intents, route elsewhere: to actually apply the edits use `pprose-copy
 
 1. Run `pprose shortcut shortcut-review` and follow it: run the audit passes, change
    nothing, and sort each finding into Tier 1, Tier 2, or Tier 3.
-2. Write the tiered review to the output path; make no edits to the source and assign no
+2. If the document is a comprehensive practical guide (a reference work helping readers
+   navigate a complex topic), also audit against
+   `pprose guidelines writing-practical-guides` (honoring each guideline’s applies-when
+   caveat) and sort its findings into the same tiers.
+3. Write the tiered review to the output path; make no edits to the source and assign no
    scores.
 
 ## Output

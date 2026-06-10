@@ -40,9 +40,11 @@ substantive dimensions and produces an editorial review.
    `pprose shortcut practical-prose-quick-checklist` §Audit-pass operationalization —
    required for high-stakes docs; keep them separate):
    - **Lint pass** — F1 Organization, F2 Consistency, F3 Formatting, E1 banned-register
-     and vague-word checks.
-     Use `pprose metrics`. *Auto-apply.*
-   - **Expression pass** — E1-E3 clarity, coherence, concision.
+     and vague-word checks, plus the lexical catalog in
+     `pprose guidelines ai-prose-corrections`. Use `pprose metrics`. *Auto-apply.*
+   - **Expression pass** — E1-E3 clarity, coherence, concision, plus the structural
+     patterns and attention flags in `pprose guidelines ai-prose-corrections` (false
+     agency, negative listing, fragments, adverb density).
      *Auto-apply.*
    - **Reasoning audit** — R1-R4, J2 Fairness, J3 Robustness: assumptions, mechanisms,
      counter-evidence, parsimony, alternative lenses.
