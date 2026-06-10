@@ -44,14 +44,32 @@ Three key points:
 - We focus only on English.
   In the future, this could be extended to other languages.
   With the help of sensitive native speakers and increasingly powerful AI translations,
-  it’s likely we could adapt them to other languages effectively while preserving the
-  nuances specific to each language.
+  it’s likely we could adapt these guidelines to other languages effectively while
+  preserving the nuances specific to each language.
 
 - The focus on utility does not mean rejecting the needs of human readers.
   Good prose serves human needs and reflects human qualities.
   Usefulness is not in opposition to style, beauty, or human expression.
   The best practical writing often joins the classic virtues of structure, precision,
   and evidence with the romantic virtues of voice, rhythm, and feeling.
+
+### Quick Start
+
+Run the Practical Prose CLI in any repo with [uv](https://docs.astral.sh/uv/)—no install
+step required:
+
+```bash
+uvx pprose --help        # explore the commands
+uvx pprose install       # add the Agent Skills to the current repo
+```
+
+The PyPI package and the command are both `pprose`. `pprose install` writes one
+`SKILL.md` per workflow into both `.agents/skills/` (Codex, Gemini CLI, and pi read
+these natively) and `.claude/skills/` (Claude Code mirror), and maintains a
+marker-bounded `pprose` block in `AGENTS.md` (preserving any other content).
+Re-running it is idempotent.
+See [Agent Skills](#agent-skills) for the skill catalog and [Tooling](#tooling) for the
+CLI reference and install flags.
 
 ### What Is Here?
 
@@ -63,7 +81,7 @@ Concretely:
 1. Guiding [**principles**](#principles-of-quality-in-practical-writing) and
    [**guidelines**](docs/practical-prose-guidelines.md) for quality in practical writing
    for use by agents and humans
-2. Metrics of writing quality that include
+2. Measures of writing quality that include
    [**six areas**](#qualitative-measures-of-writing) (purpose, expression, form,
    reasoning, grounding, and judgment) divided into **20 dimensions**
 3. An [**evaluation rubric**](docs/practical-prose-rubric.md) on how to evaluate text
@@ -77,7 +95,7 @@ Concretely:
 
 ### Example Evaluations
 
-The visualization tool scores any document across all 20 dimensions and renders the
+The visualization tool evaluates any document across all 20 dimensions and renders the
 result as a card:
 
 <p align="center">
@@ -97,9 +115,8 @@ between runs. Source texts are in [example-texts/](example-texts/); see
 
 ### Is It Mature?
 
-No. It is a new project.
-I’ve only been using it for the last month or two on my own projects.
-It likely has a lot of ways it could improve.
+No. It is a new project; v0.1.0 shipped in June 2026. I’ve only been using it on my own
+projects since spring 2026. It likely has a lot of ways it could improve.
 But it does draw on years of reading and editing both human-written and now
 agent-written text.
 
@@ -191,7 +208,7 @@ The seven principles below decompose that fit into specific attributes.
 
 ## Qualitative Measures of Writing
 
-Principles are of value, but when an editor evaluates a piece of writing, they look at
+Principles set direction, but when an editor evaluates a piece of writing, they look at
 specific qualities or dimensions.
 
 | Area | Dimension | Question |
@@ -219,7 +236,7 @@ specific qualities or dimensions.
 
 Each dimension maps back to one or more principles in
 [practical-prose-principles.md](docs/practical-prose-principles.md); prescriptive rules
-live in [practical-prose-guidelines.md](docs/practical-prose-guidelines.md) and 0-5
+live in [practical-prose-guidelines.md](docs/practical-prose-guidelines.md) and 1-5
 scoring anchors in [practical-prose-rubric.md](docs/practical-prose-rubric.md).
 
 ## Layers
@@ -232,7 +249,7 @@ Each layer answers a different question.
 | **Common** | [common-doc-guidelines.md](docs/common-doc-guidelines.md) | What general document standards do all docs (practical or otherwise) follow? |
 | **Principles** | [practical-prose-principles.md](docs/practical-prose-principles.md) | Why these rules: what seven principles do they descend from? |
 | **Guidelines** | [practical-prose-guidelines.md](docs/practical-prose-guidelines.md) | What should the writer do: prescriptive rules for the 20 dimensions? |
-| **Rubric** | [practical-prose-rubric.md](docs/practical-prose-rubric.md) | How is a document scored: descriptive 0-5 anchors for the same 20 dimensions? |
+| **Rubric** | [practical-prose-rubric.md](docs/practical-prose-rubric.md) | How is a document scored: descriptive 1-5 anchors for the same 20 dimensions? |
 | **Bibliography** | [practical-prose-bibliography.md](docs/practical-prose-bibliography.md) | Where do these ideas come from: what works ground each tradition? |
 | **Metrics** | [practical-prose-metrics.md](docs/practical-prose-metrics.md) | Which quantitative metrics and qualitative checks map to which dimensions; recommended frontmatter schema. |
 | **Shortcut** | [practical-prose-quick-checklist.md](shortcuts/practical-prose-quick-checklist.md) | One-page pre-publish self-audit across the 20 dimensions. |
@@ -263,25 +280,6 @@ system gets used in practice.
   tradition in [practical-prose-bibliography.md](docs/practical-prose-bibliography.md).
 - **Looking at the tooling:** [tools/pprose/](tools/pprose/) is the installable Python
   package with the metrics, scoring, and report generators.
-
-## Quick Start
-
-Use the Practical Prose CLI in any repo with [uv](https://docs.astral.sh/uv/):
-
-```bash
-uvx pprose --help
-uvx pprose install
-```
-
-The package name and command are both `pprose`. `pprose install` writes one `SKILL.md`
-per workflow into both `.agents/skills/` (Codex, Gemini CLI, pi read this natively) and
-`.claude/skills/` (Claude Code mirror), and maintains a marker-bounded `pprose` block in
-`AGENTS.md` (preserving any other content).
-Re-running it is idempotent.
-Scope it with `--project` (the default inside a git repo) or `--global`, and select
-destinations with `--surfaces=portable,claude,agents-md`. See
-[Agent Skills](#agent-skills) for the skill catalog and [Tooling](#tooling) for the CLI
-reference.
 
 ## Agent Skills
 
@@ -337,11 +335,13 @@ re-running install is idempotent and a newer-format artifact is never clobbered 
 older pprose. Each generated skill references pprose with a pinned, local-first
 invocation (`pprose` if on PATH, else `uvx pprose@<version>`—the trusted version that
 ran install—else a message telling the user to install uv or pprose).
+Scope installs with `--project` (the default inside a git repo) or `--global`, and
+select destinations with `--surfaces=portable,claude,agents-md`.
 
-Quick start:
+Example eval pass (no install via [uv](https://docs.astral.sh/uv/); `score` needs
+`--model` plus a provider API key):
 
 ```bash
-# Run with no install via uv (https://docs.astral.sh/uv/). `score` needs --model + a provider API key.
 uvx pprose report from-metrics path/to/doc.md --label my-doc --scope-class brief --out my-doc.eval.md
 uvx pprose score my-doc.eval.md --model opus
 uvx pprose report validate my-doc.eval.md
