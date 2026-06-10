@@ -1,6 +1,6 @@
 # Common Documentation Guidelines
 
-Version: v0.1 (last update 2026-05-11)\
+Version: v0.2 (last update 2026-06-09)\
 Joshua Levy (github.com/jlevy)
 
 ## Purpose
@@ -206,6 +206,17 @@ Stylistically, emphasize **clarity**, **depth**, **rigor**, and **warmth**.
 - **Conjunctions:** Write “and” rather than `+` or `&` in prose, list separators, and
   cross-references. Reserve `+` and `&` for code, identifiers, and proper names where
   they are part of the canonical form (for example, “Strunk & White”).
+- **Hyphens:** Follow the Chicago Manual of Style (CMOS 7.85 and its hyphenation table).
+  The cases most often handled wrong:
+  - Hyphenate a compound modifier before a noun (“open-source tool”) but not after it
+    (“the tool is open source”).
+  - Never hyphenate an “-ly” adverb plus adjective (“highly cited paper”).
+  - Leave familiar open compounds open even as modifiers (“high school student”, “real
+    estate broker”).
+  - Close up most prefixes (“nonprofit”, “preprocess”, “subset”); hyphenate only before
+    a proper noun (“non-Western”) or to avoid misreading (“re-cover” a chair vs.
+    “recover”).
+  - Do not stack hyphenated modifiers; if a sentence accumulates several, rewrite it.
 - **Section headings:** Use Title Case (Chicago Manual of Style rules) for H1 `#` and H2
   `##` headings (as in this document).
   For H3 `###` and H4 `####`, title case is optional but should be applied consistently.
