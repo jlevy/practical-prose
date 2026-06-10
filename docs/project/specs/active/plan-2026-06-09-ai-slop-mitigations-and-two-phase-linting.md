@@ -4,7 +4,10 @@
 
 **Author:** Joshua Levy (github.com/jlevy) with agent assistance
 
-**Status:** Draft
+**Status:** Phase 1 implemented (commit 59333d1, 2026-06-10: ai-prose-corrections
+consolidation + ai-prose-checklist shortcut).
+Phases 2-3 (rule YAML, pprose lint) not started; tracked under pp-ybcx, pp-ggui, pp-twg4
+and the lint task chain.
 
 ## Overview
 

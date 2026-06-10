@@ -9,7 +9,10 @@ author: Joshua Levy (github.com/jlevy) with LLM assistance
 
 **Author:** Joshua Levy
 
-**Status:** Draft
+**Status:** Phase 1 implemented (commit 549e556, 2026-06-02: scopes, surfaces, ambiguity
+checks, format stamps).
+Phase 2 items have partially landed since (`pprose about` and `pprose skill` overview
+shipped); remaining Phase 2 doc moves are deferred.
 
 ## Overview
 

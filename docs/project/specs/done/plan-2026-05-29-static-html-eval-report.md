@@ -9,7 +9,10 @@ author: Joshua Levy (github.com/jlevy) with LLM assistance
 
 **Author:** Joshua Levy
 
-**Status:** Draft
+**Status:** Implemented (shipped in v0.1.0; `pprose render` with the variant
+architecture). Outcome notes: the planned `--sections` flag became `--variant`, and the
+per-section templates became `variants/*.html.jinja`. Manual print verification is
+tracked as pp-kmv5.
 
 ## Overview
 

@@ -9,7 +9,7 @@ status: active
 
 After upgrading pprose to **chopdiff 0.3.1**, an audit against the structural-metrics
 plan
-([plan-2026-05-25-structural-document-metrics.md](../../../tools/docs/project/specs/active/plan-2026-05-25-structural-document-metrics.md))
+([plan-2026-05-25-structural-document-metrics.md](../../tools/docs/project/specs/active/plan-2026-05-25-structural-document-metrics.md))
 found that almost everything once scoped as a “chopdiff v0.4.x addition” already shipped
 in 0.3.1 (PRs #12 / #14 / #15): the cached per-block parse (`Paragraph.block_type` is a
 `@cached_property`), `Paragraph.heading_level()` / `heading_title()`, typed

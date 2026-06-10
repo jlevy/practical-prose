@@ -9,7 +9,10 @@ author: Joshua Levy (github.com/jlevy) with LLM assistance
 
 **Author:** Joshua Levy
 
-**Status:** Draft
+**Status:** Implemented in substance (tools/render-components/ + sync into
+`_generated/`, variant architecture, workbench-consumes-shared tests).
+The Phase 1 checklist below was never ticked; treat the shipped artifacts as
+authoritative. Epic pp-ict2 closed 2026-06-10.
 
 ## Overview
 
@@ -378,7 +381,7 @@ same as today.
 ### CLI surface
 
 `pprose render <eval.md> [options]` — primitive surface as defined in
-[plan-2026-05-29-static-html-eval-report.md](plan-2026-05-29-static-html-eval-report.md).
+[plan-2026-05-29-static-html-eval-report.md](../done/plan-2026-05-29-static-html-eval-report.md).
 `pprose score --render-html` — composition flag, unchanged.
 
 This spec adds one CLI flag and otherwise leaves the surface intact:
@@ -507,7 +510,7 @@ explorations workbench, the new shared-components tree, and the renderer.
   if anything in `design-system.yaml` changed; re-run the sync script; re-render the
   bundled fixture goldens.
 - The earlier static-HTML-eval-report spec
-  ([plan-2026-05-29-static-html-eval-report.md](plan-2026-05-29-static-html-eval-report.md))
+  ([plan-2026-05-29-static-html-eval-report.md](../done/plan-2026-05-29-static-html-eval-report.md))
   remains the source of truth for the CLI surface and the user-facing workflow.
   This spec amends only the internal architecture.
 
@@ -540,7 +543,7 @@ explorations workbench, the new shared-components tree, and the renderer.
 
 ## References
 
-- [plan-2026-05-29-static-html-eval-report.md](plan-2026-05-29-static-html-eval-report.md)
+- [plan-2026-05-29-static-html-eval-report.md](../done/plan-2026-05-29-static-html-eval-report.md)
   — the CLI surface and user-facing workflow this spec implements
 - [tools/design-system/design-system.md](../../../../tools/design-system/design-system.md)
   — the token system the components consume

@@ -10,7 +10,7 @@ author: Joshua Levy (github.com/jlevy) with LLM assistance
 **Author:** Joshua Levy
 
 **Status:** Superseded by
-[plan-2026-06-03-reporting-cli-redesign.md](plan-2026-06-03-reporting-cli-redesign.md)
+[plan-2026-06-03-reporting-cli-redesign.md](../active/plan-2026-06-03-reporting-cli-redesign.md)
 
 > **Superseded.** This plan’s three threads (the `frontmatter-format` YAML writer, the
 > whole-report structured export, and the finding-location anchors in the visual output)
@@ -330,7 +330,7 @@ only re-serialize into the new key order the next time they are written.
 
 - [plan-2026-05-29-static-html-eval-report.md](plan-2026-05-29-static-html-eval-report.md)
   — the render pipeline this builds on.
-- [plan-2026-05-31-shared-render-components.md](plan-2026-05-31-shared-render-components.md)
+- [plan-2026-05-31-shared-render-components.md](../active/plan-2026-05-31-shared-render-components.md)
   — the shared-component / sync model the panel fix must respect.
 - [frontmatter-format](https://github.com/jlevy/frontmatter-format) — checked out at
   `attic/frontmatter-format` (v0.3.0); `to_yaml_string`, `custom_key_sort`, `fmf_write`.

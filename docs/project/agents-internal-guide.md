@@ -49,7 +49,7 @@ Open the resulting HTML in any modern browser and use the print dialog to save a
 named **variants** — `pprose render --list-variants` shows what’s available; today only
 `interactive` ships (one card + two hover-driven tip panels + theme toggle).
 See
-[plan-2026-05-29-static-html-eval-report.md](specs/active/plan-2026-05-29-static-html-eval-report.md).
+[plan-2026-05-29-static-html-eval-report.md](specs/done/plan-2026-05-29-static-html-eval-report.md).
 
 The card, tip panels, and theme toggle are **shared render components** at
 [tools/render-components/](../../tools/render-components/) — one canonical set of CSS +

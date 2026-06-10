@@ -9,7 +9,9 @@ author: Joshua Levy (github.com/jlevy) with LLM assistance
 
 **Author:** Joshua Levy
 
-**Status:** Draft
+**Status:** Draft — not started as of 2026-06-10 (no eval/report/show pipeline in
+cli.py). Implementation tracked under epic pp-d2j3 (phases pp-f86c, pp-qpa2, pp-3evy)
+plus the metrics-schema chain (pp-pd8t, pp-vusm, pp-h75u, pp-is5n).
 
 ## Overview
 
@@ -43,7 +45,7 @@ clear artifact contract between them, and common end-to-end chains are one flag 
 There are no backward-compatibility constraints.
 The current commands are reorganized into the new model rather than preserved.
 This spec subsumes
-[plan-2026-06-02-eval-output-improvements.md](plan-2026-06-02-eval-output-improvements.md):
+[plan-2026-06-02-eval-output-improvements.md](../done/plan-2026-06-02-eval-output-improvements.md):
 its three threads (the `frontmatter-format` YAML writer, the whole-report structured
 export, and the finding-location anchors in the visual output) are carried forward as
 phases here, generalized so they serve every format rather than one command.
@@ -384,10 +386,10 @@ surface matches the shipped one.
 
 ## References
 
-- [plan-2026-06-02-eval-output-improvements.md](plan-2026-06-02-eval-output-improvements.md)
+- [plan-2026-06-02-eval-output-improvements.md](../done/plan-2026-06-02-eval-output-improvements.md)
   — superseded by this spec; its frontmatter-format writer, structured export, and
   panel-location work are carried forward as Phases 1-3.
-- [plan-2026-05-29-static-html-eval-report.md](plan-2026-05-29-static-html-eval-report.md)
+- [plan-2026-05-29-static-html-eval-report.md](../done/plan-2026-05-29-static-html-eval-report.md)
   — the render pipeline this builds on.
 - [plan-2026-05-31-shared-render-components.md](plan-2026-05-31-shared-render-components.md)
   — the shared-component / sync model the HTML format must respect.
