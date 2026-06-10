@@ -37,6 +37,13 @@ jobs:
       - name: Install all dependencies
         run: uv sync --all-extras
 
+      # Fail fast if the release tag doesn't match the discovery pin baked into the
+      # committed skills (DISCOVERY_VERSION). Only meaningful for tag-driven releases;
+      # a manual workflow_dispatch run carries the publisher's own responsibility.
+      - name: Verify release tag matches baked discovery pin
+        if: github.event_name == 'release'
+        run: uv run python devtools/check_release_version.py "${{ github.ref_name }}"
+
       - name: Run tests
         run: uv run pytest
 

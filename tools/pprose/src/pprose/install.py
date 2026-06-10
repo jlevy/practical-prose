@@ -50,7 +50,9 @@ PPROSE_FORMAT = "f01"
 # Pinned skill bootstrap fallback when an editable/dev pprose is installed. A dev build
 # reports a PEP 440 dev/local segment that was never published to PyPI, so
 # `uvx pprose@<dev-pin>` won't resolve. Bump on each real PyPI release and re-render
-# the committed discovery copies under `skills/` at the repo root.
+# the committed discovery copies under `skills/` at the repo root (`make generate`).
+# Enforced at release time: `devtools/check_release_version.py` (run from publish.yml)
+# fails the publish unless this equals the release tag.
 DISCOVERY_VERSION = "0.1.0"
 
 # Install scopes.
