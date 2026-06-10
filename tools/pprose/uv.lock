@@ -8,6 +8,7 @@ exclude-newer-span = "P7D"
 
 [options.exclude-newer-package]
 flowmark-rs = "2100-01-01T08:00:00Z"
+pprose = "2100-01-01T08:00:00Z"
 flowmark = "2100-01-01T08:00:00Z"
 chopdiff = "2026-06-04T07:00:00Z"
 
