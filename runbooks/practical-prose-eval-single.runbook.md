@@ -217,9 +217,9 @@ If the audit fails, revise scores or violations until consistent.
 
 ## Calibration set
 
-`../tools/pprose/tests/fixtures/` ships a small calibration set with agreed scores and
-rule findings under `pp20v1`, so future agent or human evaluators can be tested for
-drift and self-eval overrating against a fixed reference:
+The [test fixtures directory](../tools/pprose/tests/fixtures/) ships a small calibration
+set with agreed scores and rule findings under `pp20v1`, so future agent or human
+evaluators can be tested for drift and self-eval overrating against a fixed reference:
 
 | Fixture | Artifact | Type | Overall mean | NA dims |
 | --- | --- | --- | ---: | ---: |

@@ -14,12 +14,12 @@ should be reviewable by a human or agent.
 
 ## Principles
 
-These guidelines extend [common-doc-guidelines.md](common-doc-guidelines.md) and
+These guidelines extend `pprose guidelines common-doc-guidelines` and
 operationalize the seven practical-prose principles defined in
-[practical-prose-principles.md](practical-prose-principles.md): **Purposeful**,
+`pprose guidelines practical-prose-principles`: **Purposeful**,
 **Truthful**, **Essential**, **Lucid**, **Verifiable**, **Maintainable**, and
 **Humane**. The rules below turn those principles into prescriptive guidance for the 18
-review dimensions; the companion [practical-prose-rubric.md](practical-prose-rubric.md)
+review dimensions; the companion `pprose guidelines practical-prose-rubric`
 defines how to score a document against the same dimensions.
 
 Practical writing serves a purpose.
@@ -73,10 +73,10 @@ A good practical document does these things; the prescriptive rules below say ho
    positions argued proportionally; key claims tested against alternative interpretive
    lenses (J1–J3).
 7. **Is easy to maintain.** Owner, status, dates, dependencies, and open questions per
-   [common-doc-guidelines.md](common-doc-guidelines.md).
+   `pprose guidelines common-doc-guidelines`.
 
 The 20 sections below give the prescriptive rules; the companion
-[practical-prose-rubric.md](practical-prose-rubric.md) provides the descriptive 0-5
+`pprose guidelines practical-prose-rubric` provides the descriptive 0-5
 scoring anchors. A review-time checklist organized the same way appears at the end of
 this document under *Pre-Publish Self-Audit*.
 
@@ -283,7 +283,7 @@ correct spelling and grammar?
    Use strong language when it carries information, clarifies a distinction, or
    preserves a hard-won idea, and pair it with the citation that earns it on the same
    line. Honor any domain-specific extension list, including
-   [ai-prose-corrections.md](ai-prose-corrections.md), which lists hollow and
+   `pprose guidelines ai-prose-corrections`, which lists hollow and
    marketing-register fingerprints of unedited LLM output that the §4.2 list doesn’t
    catch. Rhetoric is not decoration when it compresses thought; it is decoration when it
    adds only force.
@@ -485,7 +485,7 @@ Clarity) and the markup-validity question (F3 Formatting).
    short and in the same repo.
    Treat the project’s banned-word list as binding, not advisory.
    For practical-prose itself, the binding extension is
-   [ai-prose-corrections.md](ai-prose-corrections.md), which catalogs LLM-register tells
+   `pprose guidelines ai-prose-corrections`, which catalogs LLM-register tells
    and their corrections.
 
 7. **Em-dash discipline.** *(Common agent failure mode.)* Use em dashes only when they
@@ -636,7 +636,7 @@ considered” dimension is broken out as Fairness (J2).
    A correlation that survives the counterfactual is stronger than one that doesn’t; a
    mechanism story that predicts only what already happened is unfalsifiable.
    See the *Failure-Mode Questions* table in
-   [practical-prose-rubric.md](practical-prose-rubric.md) for prompts by claim type.
+   `pprose guidelines practical-prose-rubric` for prompts by claim type.
 
 ### R3. Precision
 
@@ -800,7 +800,7 @@ Specificity is the precondition for source-traceability.
    would change the conclusion.
    Feynman’s first principle: you must not fool yourself, and you are the easiest person
    to fool. See the *Failure-Mode Questions* table in
-   [practical-prose-rubric.md](practical-prose-rubric.md) for claim-type-specific
+   `pprose guidelines practical-prose-rubric` for claim-type-specific
    prompts.
 
 7. **Links serve readers, not only verification.** Beyond citations, two further link
@@ -1148,18 +1148,18 @@ structure depends on.
 
 ## Related Docs
 
-- [../README.md](../README.md): how the practical-prose layers fit together.
-- [practical-prose-principles.md](practical-prose-principles.md): the seven principles
+- ../README.md (`pprose about`): how the practical-prose layers fit together.
+- `pprose guidelines practical-prose-principles`: the seven principles
   these rules derive from.
-- [practical-prose-rubric.md](practical-prose-rubric.md): descriptive 0-5 scoring
+- `pprose guidelines practical-prose-rubric`: descriptive 0-5 scoring
   anchors for the same 20 dimensions.
-- [practical-prose-bibliography.md](practical-prose-bibliography.md): full citations for
+- `pprose guidelines practical-prose-bibliography`: full citations for
   works referenced in these guidelines, with publication details and stable URLs.
-- [practical-prose-metrics.md](practical-prose-metrics.md): quantitative metrics and
+- `pprose guidelines practical-prose-metrics`: quantitative metrics and
   recommended frontmatter schema that operationalize these rules.
-- [common-doc-guidelines.md](common-doc-guidelines.md): general style, organization, and
+- `pprose guidelines common-doc-guidelines`: general style, organization, and
   formatting (the substrate these guidelines extend).
-- [ai-prose-corrections.md](ai-prose-corrections.md): the binding `conventions.md`-style
+- `pprose guidelines ai-prose-corrections`: the binding `conventions.md`-style
   extension that catalogs LLM-register tells and their corrections.
 - Domain-specific `conventions.md` files extend these guidelines with domain-specific
   banned-word lists, confidence-tag conventions, and citation-format requirements.

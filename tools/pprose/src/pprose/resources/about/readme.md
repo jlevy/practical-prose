@@ -79,18 +79,18 @@ agent writing, and visualize quality to sharpen your own awareness.
 Concretely:
 
 1. Guiding [**principles**](#principles-of-quality-in-practical-writing) and
-   [**guidelines**](docs/practical-prose-guidelines.md) for quality in practical writing
+   **guidelines** (`pprose guidelines practical-prose-guidelines`) for quality in practical writing
    for use by agents and humans
 2. Measures of writing quality that include
    [**six areas**](#qualitative-measures-of-writing) (purpose, expression, form,
    reasoning, grounding, and judgment) divided into **20 dimensions**
-3. An [**evaluation rubric**](docs/practical-prose-rubric.md) on how to evaluate text
+3. An **evaluation rubric** (`pprose guidelines practical-prose-rubric`) on how to evaluate text
    according to these dimensions
-4. An automated [**visualization tool**](tools/pprose/) that uses an LLM to evaluate the
+4. An automated [**visualization tool**](https://github.com/jlevy/practical-prose/tree/main/tools/pprose) that uses an LLM to evaluate the
    quality of any text across these dimensions and visualize it
 5. [**Agent skills**](#agent-skills) and a [**CLI**](#tooling) to package all of these
    documents and evaluation tools
-6. A [**bibliography**](docs/practical-prose-bibliography.md) of notable works on
+6. A **bibliography** (`pprose guidelines practical-prose-bibliography`) of notable works on
    practical writing
 
 ### Example Evaluations
@@ -110,8 +110,8 @@ Right: the Apple Media Services Terms—broad in scope and cleanly organized, ye
 several Reasoning and Judgment dimensions N/A: a contract states terms rather than
 arguing or weighing them.
 Both were graded by Claude Opus 4.8; scores depend on the model and vary slightly
-between runs. Source texts are in [example-texts/](example-texts/); see
-[the dev note](docs/project/eval-screenshots.runbook.md) for how these are generated.*
+between runs. Source texts are in [example-texts/](https://github.com/jlevy/practical-prose/tree/main/example-texts); see
+[the dev note](https://github.com/jlevy/practical-prose/blob/main/docs/project/eval-screenshots.runbook.md) for how these are generated.*
 
 ### Is It Mature?
 
@@ -235,9 +235,9 @@ specific qualities or dimensions.
 |  | J3. Robustness | Do key claims survive plausible alternative interpretations? |
 
 Each dimension maps back to one or more principles in
-[practical-prose-principles.md](docs/practical-prose-principles.md); prescriptive rules
-live in [practical-prose-guidelines.md](docs/practical-prose-guidelines.md) and 1-5
-scoring anchors in [practical-prose-rubric.md](docs/practical-prose-rubric.md).
+`pprose guidelines practical-prose-principles`; prescriptive rules
+live in `pprose guidelines practical-prose-guidelines` and 1-5
+scoring anchors in `pprose guidelines practical-prose-rubric`.
 
 ## Layers
 
@@ -246,15 +246,15 @@ Each layer answers a different question.
 
 | Layer | Doc | Answers |
 | --- | --- | --- |
-| **Common** | [common-doc-guidelines.md](docs/common-doc-guidelines.md) | What general document standards do all docs (practical or otherwise) follow? |
-| **Principles** | [practical-prose-principles.md](docs/practical-prose-principles.md) | Why these rules: what seven principles do they descend from? |
-| **Guidelines** | [practical-prose-guidelines.md](docs/practical-prose-guidelines.md) | What should the writer do: prescriptive rules for the 20 dimensions? |
-| **Rubric** | [practical-prose-rubric.md](docs/practical-prose-rubric.md) | How is a document scored: descriptive 1-5 anchors for the same 20 dimensions? |
-| **Genre: Guides** | [writing-practical-guides.md](docs/writing-practical-guides.md) | What does the comprehensive-guide genre additionally demand, and when do those extra rules apply? |
-| **Bibliography** | [practical-prose-bibliography.md](docs/practical-prose-bibliography.md) | Where do these ideas come from: what works ground each tradition? |
-| **Metrics** | [practical-prose-metrics.md](docs/practical-prose-metrics.md) | Which quantitative metrics and qualitative checks map to which dimensions; recommended frontmatter schema. |
-| **Shortcut** | [practical-prose-quick-checklist.md](shortcuts/practical-prose-quick-checklist.md) | One-page pre-publish self-audit across the 20 dimensions. |
-| **Runbook** | [runbooks/](runbooks/) | Operational steps for single-document evals and N-way comparisons. |
+| **Common** | `pprose guidelines common-doc-guidelines` | What general document standards do all docs (practical or otherwise) follow? |
+| **Principles** | `pprose guidelines practical-prose-principles` | Why these rules: what seven principles do they descend from? |
+| **Guidelines** | `pprose guidelines practical-prose-guidelines` | What should the writer do: prescriptive rules for the 20 dimensions? |
+| **Rubric** | `pprose guidelines practical-prose-rubric` | How is a document scored: descriptive 1-5 anchors for the same 20 dimensions? |
+| **Genre: Guides** | `pprose guidelines writing-practical-guides` | What does the comprehensive-guide genre additionally demand, and when do those extra rules apply? |
+| **Bibliography** | `pprose guidelines practical-prose-bibliography` | Where do these ideas come from: what works ground each tradition? |
+| **Metrics** | `pprose guidelines practical-prose-metrics` | Which quantitative metrics and qualitative checks map to which dimensions; recommended frontmatter schema. |
+| **Shortcut** | `pprose shortcut practical-prose-quick-checklist` | One-page pre-publish self-audit across the 20 dimensions. |
+| **Runbook** | `pprose runbook --list` | Operational steps for single-document evals and N-way comparisons. |
 
 The Common layer is the base substrate.
 `common-doc-guidelines.md` captures general organization, structure, style, and
@@ -265,7 +265,7 @@ seven principles and 20 dimensions specific to evaluating practical writing.
 Principles, Guidelines, and Rubric form a tight triple: same seven principles, same 20
 dimensions, same six groups (Purpose, Expression, Form, Reasoning, Grounding, Judgment).
 Genre supplements extend those core layers only where a genre demands more; the first
-one covers [comprehensive practical guides](docs/writing-practical-guides.md), not all
+one covers comprehensive practical guides (`pprose guidelines writing-practical-guides`), not all
 practical documents.
 The bibliography supplies the intellectual basis; the shortcuts and runbooks are how the
 system gets used in practice.
@@ -273,35 +273,35 @@ system gets used in practice.
 ## Where to Start
 
 - **Writing a document and want the rules:**
-  [practical-prose-guidelines.md](docs/practical-prose-guidelines.md).
+  `pprose guidelines practical-prose-guidelines`.
 - **Writing a comprehensive practical guide:**
-  [writing-practical-guides.md](docs/writing-practical-guides.md), including its
+  `pprose guidelines writing-practical-guides`, including its
   groundwork process for scoping the guide before outlining.
 - **Scoring a document and want the anchors:**
-  [practical-prose-rubric.md](docs/practical-prose-rubric.md).
+  `pprose guidelines practical-prose-rubric`.
 - **Running a pre-publish self-audit:**
-  [practical-prose-quick-checklist.md](shortcuts/practical-prose-quick-checklist.md).
-- **Running a formal eval:** the [runbooks/](runbooks/) directory.
+  `pprose shortcut practical-prose-quick-checklist`.
+- **Running a formal eval:** the `pprose runbook --list` directory.
 - **Understanding why a rule exists:** the corresponding principle in
-  [practical-prose-principles.md](docs/practical-prose-principles.md), and the source
-  tradition in [practical-prose-bibliography.md](docs/practical-prose-bibliography.md).
-- **Looking at the tooling:** [tools/pprose/](tools/pprose/) is the installable Python
+  `pprose guidelines practical-prose-principles`, and the source
+  tradition in `pprose guidelines practical-prose-bibliography`.
+- **Looking at the tooling:** [tools/pprose/](https://github.com/jlevy/practical-prose/tree/main/tools/pprose) is the installable Python
   package with the metrics, scoring, and report generators.
 
 ## Agent Skills
 
 This repo can be used directly by modern coding agents through `AGENTS.md` and portable
-Agent Skills under [skills/](skills/). The eval skills use the
+Agent Skills under [skills/](https://github.com/jlevy/practical-prose/tree/main/skills). The eval skills use the
 [`pprose` tooling](#tooling) described below.
 
 | Skill | Kind | Use When |
 | --- | --- | --- |
-| [pprose-common-edit](skills/pprose-common-edit/SKILL.md) | Apply | Tidy, clean up, conform, fix formatting/structure, or add the documentation footer. The basic, universal tier. |
-| [pprose-copy-edit](skills/pprose-copy-edit/SKILL.md) | Apply | Copy edit, proofread, polish, tighten, or line edit: language and formatting (Expression). Superset of common-edit. |
-| [pprose-full-edit](skills/pprose-full-edit/SKILL.md) | Apply | Deep edit across all 20 dimensions; also writes an editorial review (strengths, weaknesses, suggested fixes). Superset of copy-edit; covers audit-only review. |
-| [pprose-review](skills/pprose-review/SKILL.md) | Review | Review, critique, or get a tiered edit plan (what a common edit, copy edit, and full substantive pass would each change) without modifying the document and without scores. Read-only. |
-| [pprose-eval](skills/pprose-eval/SKILL.md) | Evaluate | Score, grade, rubric-check, or measure the quality of one document. |
-| [pprose-compare](skills/pprose-compare/SKILL.md) | Evaluate | Compare drafts, A/B versions, quality-diff documents, or pick a best variant. |
+| pprose-common-edit (`pprose skill pprose-common-edit`) | Apply | Tidy, clean up, conform, fix formatting/structure, or add the documentation footer. The basic, universal tier. |
+| pprose-copy-edit (`pprose skill pprose-copy-edit`) | Apply | Copy edit, proofread, polish, tighten, or line edit: language and formatting (Expression). Superset of common-edit. |
+| pprose-full-edit (`pprose skill pprose-full-edit`) | Apply | Deep edit across all 20 dimensions; also writes an editorial review (strengths, weaknesses, suggested fixes). Superset of copy-edit; covers audit-only review. |
+| pprose-review (`pprose skill pprose-review`) | Review | Review, critique, or get a tiered edit plan (what a common edit, copy edit, and full substantive pass would each change) without modifying the document and without scores. Read-only. |
+| pprose-eval (`pprose skill pprose-eval`) | Evaluate | Score, grade, rubric-check, or measure the quality of one document. |
+| pprose-compare (`pprose skill pprose-compare`) | Evaluate | Compare drafts, A/B versions, quality-diff documents, or pick a best variant. |
 
 Install paths:
 
@@ -321,7 +321,7 @@ wheel, so an installed skill works in any repo with no other files present.
 
 ## Tooling
 
-[tools/pprose/](tools/pprose/) is a standalone modern-Python package (bootstrapped from
+[tools/pprose/](https://github.com/jlevy/practical-prose/tree/main/tools/pprose) is a standalone modern-Python package (bootstrapped from
 [`simple-modern-uv`](https://github.com/jlevy/simple-modern-uv)). The distribution and
 console-script entry point are both `pprose`:
 
@@ -362,7 +362,7 @@ uvx pprose report validate my-doc.eval.md
 
 Code is MIT licensed.
 Content (principles, guidelines, rubric, and other prose) is
-[CC BY 4.0](https://creativecommons.org/licenses/by/4.0/). See [LICENSE](LICENSE) for
+[CC BY 4.0](https://creativecommons.org/licenses/by/4.0/). See [LICENSE](https://github.com/jlevy/practical-prose/blob/main/LICENSE) for
 details.
 
 <!-- This document follows common-doc-guidelines.md.

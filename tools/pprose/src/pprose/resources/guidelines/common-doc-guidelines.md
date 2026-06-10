@@ -164,7 +164,7 @@ Stylistically, emphasize **clarity**, **depth**, **rigor**, and **warmth**.
      “unequivocally,” “massive,” “monumental,” “profound,” “transformational,”
      “seismic,” “paradigm-shifting,” “will revolutionize,” “structurally outmaneuvered,”
      “successfully executing,” or “crushing it.”
-     [ai-prose-corrections.md](ai-prose-corrections.md) extends this list with hollow,
+     `pprose guidelines ai-prose-corrections` extends this list with hollow,
      mechanical, and marketing-register fingerprints of unedited LLM output (the *delve
      / leverage / Furthermore / supercharge* registers); both lists apply.
 

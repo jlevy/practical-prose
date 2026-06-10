@@ -12,7 +12,7 @@ Joshua Levy (github.com/jlevy)
 A descriptive 1-5 rubric for assessing practical writing artifacts (articles, blog
 posts, research reports, design docs, specs, technical papers, decision memos) across
 the 20 dimensions defined in
-[practical-prose-guidelines.md](practical-prose-guidelines.md).
+`pprose guidelines practical-prose-guidelines`.
 
 The rubric is **descriptive** (what a score looks like); the guidelines are
 **prescriptive** (what to write).
@@ -22,12 +22,12 @@ The doc-type list above is a descriptive framing of what this rubric applies to.
 The eval tooling has a separate, narrower tag (`artifact.scope_class`, set via
 `--scope-class` on `pprose report from-metrics`) for density-threshold flagging:
 `status`, `memo`, `brief`, `deep_research`, `design_doc`. See
-[practical-prose-eval-single.runbook.md](../runbooks/practical-prose-eval-single.runbook.md)
+`pprose runbook practical-prose-eval-single`
 for the scope-class table and when to set each value.
 
 ## Alignment with the guidelines
 
-The rubric and [practical-prose-guidelines.md](practical-prose-guidelines.md) define the
+The rubric and `pprose guidelines practical-prose-guidelines` define the
 same 20 dimensions in the same six groups, using the same names and section numbers
 (P1-J3). They are designed as a tight bidirectional map:
 
@@ -1073,7 +1073,7 @@ dimension because it invites subjective evaluation:
 
 This is a check, not a score.
 The general standard guideline’s “Be engaging and warm” rule in
-[common-doc-guidelines.md](common-doc-guidelines.md) is the canonical home for tone
+`pprose guidelines common-doc-guidelines` is the canonical home for tone
 guidance.
 Cite a Tone / Reader Respect concern in an eval’s qualitative section, not as a
 dimension score.
@@ -1082,7 +1082,7 @@ dimension score.
 
 For high-stakes evaluations, four narrower audit passes outperform one broad pass.
 Each pass has a different cognitive load and a different tool stack; the
-[practical-prose-eval-single.runbook.md](../runbooks/practical-prose-eval-single.runbook.md)
+`pprose runbook practical-prose-eval-single`
 operationalizes them.
 
 | Pass | Scope | Primary dimensions | Stack |
@@ -1185,16 +1185,16 @@ The version string is `pp20v1` (20 dimensions across 6 groups).
 
 ## Related docs
 
-- [../README.md](../README.md): how the practical-prose layers fit together.
-- [practical-prose-guidelines.md](practical-prose-guidelines.md): prescriptive rules for
+- ../README.md (`pprose about`): how the practical-prose layers fit together.
+- `pprose guidelines practical-prose-guidelines`: prescriptive rules for
   the same 20 dimensions.
-- [practical-prose-metrics.md](practical-prose-metrics.md): quantitative metrics and
+- `pprose guidelines practical-prose-metrics`: quantitative metrics and
   qualitative checks per dimension; recommended frontmatter schema.
-- [practical-prose-principles.md](practical-prose-principles.md): the seven principles
+- `pprose guidelines practical-prose-principles`: the seven principles
   the dimensions descend from.
-- [practical-prose-eval-single.runbook.md](../runbooks/practical-prose-eval-single.runbook.md):
+- `pprose runbook practical-prose-eval-single`:
   operational steps for a single-document eval.
-- [practical-prose-eval-compare.runbook.md](../runbooks/practical-prose-eval-compare.runbook.md):
+- `pprose runbook practical-prose-eval-compare`:
   operational steps for comparing N evals.
 
 <!-- This document follows common-doc-guidelines.md.

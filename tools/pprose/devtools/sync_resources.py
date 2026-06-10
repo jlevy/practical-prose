@@ -16,6 +16,17 @@ Two flows:
     would silently re-resolve to the latest pprose on every run, bypassing the
     14-day cool-off window — see cli-agent-skill-patterns §6.7).
 
+Link policy (flow 1): the repo-root sources keep ordinary relative links, which
+work on GitHub; the bundled copies are read via `pprose <category> <name>` on
+stdout in arbitrary repos, where relative paths mean nothing. So the sync
+rewrites every Markdown link by where its target lives:
+
+- target is another bundled resource → the `pprose` command that serves it
+  (e.g. `pprose guidelines practical-prose-rubric`);
+- target is a bundled category directory → the `--list` form of its command;
+- target is repo content that is *not* bundled → an absolute GitHub URL;
+- external URLs and same-document `#anchors` → left unchanged.
+
 Run this whenever the canonical docs or the in-package skill bodies change.
 `tests/test_resources_sync.py` fails if either drifts.
 
@@ -26,6 +37,8 @@ Usage:
 
 from __future__ import annotations
 
+import os
+import re
 import sys
 from pathlib import Path
 
@@ -37,6 +50,63 @@ RESOURCES = PKG_DIR / "src" / "pprose" / "resources"
 # their authored source now lives in the wheel at `resources/skills/`, and the repo-root
 # `skills/` directory is a generated discovery surface rendered from those bodies.
 SYNCED_CATEGORIES = ("guidelines", "shortcuts", "runbooks", "about")
+
+GITHUB_BLOB = "https://github.com/jlevy/practical-prose/blob/main"
+GITHUB_TREE = "https://github.com/jlevy/practical-prose/tree/main"
+
+# Bundled source directory (repo-root-relative) → the pprose command that serves
+# its files. This is the single mapping the link rewriter keys off.
+DIR_TO_COMMAND = {
+    "docs": "pprose guidelines",
+    "shortcuts": "pprose shortcut",
+    "runbooks": "pprose runbook",
+}
+
+_LINK_RE = re.compile(r"(!?)\[([^\]]*)\]\(([^)\s]+)\)")
+
+
+def _command_for(rel: Path) -> str | None:
+    """The `pprose` command that serves a bundled repo file, or None if not bundled."""
+    parts = rel.parts
+    if rel == Path("README.md"):
+        return "pprose about"
+    if len(parts) == 3 and parts[0] == "skills" and parts[2] == "SKILL.md":
+        return f"pprose skill {parts[1]}"
+    if len(parts) != 2 or parts[0] not in DIR_TO_COMMAND or rel.suffix != ".md":
+        return None
+    name = rel.name.replace(".runbook.md", ".md").removesuffix(".md")
+    return f"{DIR_TO_COMMAND[parts[0]]} {name}"
+
+
+def _rewrite_links(text: str, src: Path) -> str:
+    """Rewrite Markdown links in a source doc for its bundled (wheel) copy."""
+
+    def repl(m: re.Match[str]) -> str:
+        bang, label, target = m.groups()
+        if target.startswith("#") or re.match(r"^[a-z][a-z0-9+.-]*:", target):
+            return m.group(0)
+        path_part = target.partition("#")[0]
+        resolved = Path(os.path.normpath(src.parent / path_part))
+        try:
+            rel = resolved.relative_to(REPO_ROOT)
+        except ValueError:
+            return m.group(0)
+        if not bang:
+            command = _command_for(rel)
+            if command is not None:
+                # The label usually *is* the target filename; then the command
+                # replaces the whole link. Otherwise keep the prose label.
+                if label.strip("*_` ") == resolved.name:
+                    return f"`{command}`"
+                return f"{label} (`{command}`)"
+            if resolved.is_dir() and rel.as_posix() in DIR_TO_COMMAND:
+                return f"`{DIR_TO_COMMAND[rel.as_posix()]} --list`"
+        if not resolved.exists():
+            return m.group(0)
+        base = GITHUB_TREE if resolved.is_dir() else GITHUB_BLOB
+        return f"{bang}[{label}]({base}/{rel.as_posix()})"
+
+    return _LINK_RE.sub(repl, text)
 
 
 def _synced_plan() -> dict[Path, str]:
@@ -50,24 +120,26 @@ def _synced_plan() -> dict[Path, str]:
     """
     plan: dict[Path, str] = {}
 
+    def bundle(src: Path, dest: Path) -> None:
+        plan[dest] = _rewrite_links(src.read_text(encoding="utf-8"), src)
+
     # /docs/*.md → guidelines (non-recursive; /docs/project/ stays internal).
     for p in sorted((REPO_ROOT / "docs").glob("*.md")):
-        plan[RESOURCES / "guidelines" / p.name] = p.read_text(encoding="utf-8")
+        bundle(p, RESOURCES / "guidelines" / p.name)
 
     # /shortcuts/*.md → shortcuts.
     for p in sorted((REPO_ROOT / "shortcuts").glob("*.md")):
-        plan[RESOURCES / "shortcuts" / p.name] = p.read_text(encoding="utf-8")
+        bundle(p, RESOURCES / "shortcuts" / p.name)
 
     # /runbooks/*.runbook.md → runbooks (drop the `.runbook` infix so the command
     # reads `pprose runbook <name>`).
     for p in sorted((REPO_ROOT / "runbooks").glob("*.md")):
-        dest_name = p.name.replace(".runbook.md", ".md")
-        plan[RESOURCES / "runbooks" / dest_name] = p.read_text(encoding="utf-8")
+        bundle(p, RESOURCES / "runbooks" / p.name.replace(".runbook.md", ".md"))
 
     # README.md → about (the project narrative; surfaced as `pprose about`).
     readme = REPO_ROOT / "README.md"
     if readme.is_file():
-        plan[RESOURCES / "about" / "readme.md"] = readme.read_text(encoding="utf-8")
+        bundle(readme, RESOURCES / "about" / "readme.md")
 
     return plan
 

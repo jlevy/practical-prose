@@ -19,9 +19,9 @@ The deterministic generator is `pprose compare`; this runbook wraps it with the
 alignment audit and the analytical-prose layer the generator cannot produce.
 
 For an exact rendering of the generator’s output shape, see
-`../tools/pprose/tests/fixtures/expected-comparison.md` — the golden output that
-`../tools/pprose/tests/test_eval_compare.py` pins against the six `figma-*.eval.md`
-fixtures.
+[expected-comparison.md](../tools/pprose/tests/fixtures/expected-comparison.md) — the
+golden output that [test_eval_compare.py](../tools/pprose/tests/test_eval_compare.py)
+pins against the six `figma-*.eval.md` fixtures.
 
 ## Inputs and outputs
 
@@ -148,8 +148,7 @@ Aim for falsifiable claims grounded in specific table cells, not generic.
 - One-off comparisons: save alongside the artifacts being compared (one directory per
   topic / eval).
 - Ongoing alignment-regression tracking: pin the expected scores in the single-doc
-  runbook’s regression fixtures (`../tools/pprose/tests/fixtures/`) and cite this
-  report.
+  runbook’s [regression fixtures](../tools/pprose/tests/fixtures/) and cite this report.
 
 ## Alignment audit (before declaring the comparison done)
 

@@ -19,9 +19,9 @@ The deterministic generator is `pprose compare`; this runbook wraps it with the
 alignment audit and the analytical-prose layer the generator cannot produce.
 
 For an exact rendering of the generator’s output shape, see
-`../tools/pprose/tests/fixtures/expected-comparison.md` — the golden output that
-`../tools/pprose/tests/test_eval_compare.py` pins against the six `figma-*.eval.md`
-fixtures.
+[expected-comparison.md](https://github.com/jlevy/practical-prose/blob/main/tools/pprose/tests/fixtures/expected-comparison.md) — the
+golden output that [test_eval_compare.py](https://github.com/jlevy/practical-prose/blob/main/tools/pprose/tests/test_eval_compare.py)
+pins against the six `figma-*.eval.md` fixtures.
 
 ## Inputs and outputs
 
@@ -34,7 +34,7 @@ fixtures.
 
 `pprose` available on the command line and the provider-specific API key set for the
 model you score with (`ANTHROPIC_API_KEY`, `OPENAI_API_KEY`, or `GOOGLE_API_KEY`) — see
-[Tooling](../AGENTS.md#tooling).
+[Tooling](https://github.com/jlevy/practical-prose/blob/main/AGENTS.md).
 Batch eval outputs live under `evals/<round-name>/` at the repo root.
 
 ## Steps
@@ -42,7 +42,7 @@ Batch eval outputs live under `evals/<round-name>/` at the repo root.
 ### 1. Score each artifact
 
 For a one-off run on a single artifact: see
-[practical-prose-eval-single.runbook.md](practical-prose-eval-single.runbook.md).
+`pprose runbook practical-prose-eval-single`.
 
 For a multi-artifact batch (the common case for this runbook), score all artifacts in
 one invocation using the `--batch` flag:
@@ -148,8 +148,7 @@ Aim for falsifiable claims grounded in specific table cells, not generic.
 - One-off comparisons: save alongside the artifacts being compared (one directory per
   topic / eval).
 - Ongoing alignment-regression tracking: pin the expected scores in the single-doc
-  runbook’s regression fixtures (`../tools/pprose/tests/fixtures/`) and cite this
-  report.
+  runbook’s [regression fixtures](https://github.com/jlevy/practical-prose/tree/main/tools/pprose/tests/fixtures) and cite this report.
 
 ## Alignment audit (before declaring the comparison done)
 
@@ -161,15 +160,15 @@ Aim for falsifiable claims grounded in specific table cells, not generic.
 
 ## Related docs
 
-- [practical-prose-eval-single.runbook.md](practical-prose-eval-single.runbook.md):
+- `pprose runbook practical-prose-eval-single`:
   produces the eval reports this runbook consumes.
-- [practical-prose-rubric.md](../docs/practical-prose-rubric.md): per-dimension 1-5
+- `pprose guidelines practical-prose-rubric`: per-dimension 1-5
   anchors (with `NA` / `ERR` sentinels) and scoring rules.
-- [practical-prose-guidelines.md](../docs/practical-prose-guidelines.md): prescriptive
+- `pprose guidelines practical-prose-guidelines`: prescriptive
   rules cited by violations.
-- [eval_compare.py](../tools/pprose/src/pprose/eval_compare.py): the deterministic
+- [eval_compare.py](https://github.com/jlevy/practical-prose/blob/main/tools/pprose/src/pprose/eval_compare.py): the deterministic
   generator.
-- [eval_report.py](../tools/pprose/src/pprose/eval_report.py): schema and validator.
+- [eval_report.py](https://github.com/jlevy/practical-prose/blob/main/tools/pprose/src/pprose/eval_report.py): schema and validator.
 
 <!-- This document follows common-doc-guidelines.md.
 See github.com/jlevy/practical-prose and review guidelines before editing.

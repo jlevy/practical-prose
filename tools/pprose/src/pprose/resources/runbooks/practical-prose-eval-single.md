@@ -35,7 +35,7 @@ For comparing N evaluated artifacts, see `practical-prose-eval-compare.runbook.m
 `pprose` available on the command line and the provider-specific API key set for the
 model you score with: `ANTHROPIC_API_KEY` for `anthropic:` models, `OPENAI_API_KEY` for
 `openai:` models, `GOOGLE_API_KEY` for `google:` models.
-See [Tooling](../AGENTS.md#tooling).
+See [Tooling](https://github.com/jlevy/practical-prose/blob/main/AGENTS.md).
 Batch eval outputs go under `evals/<round-name>/` at the repo root.
 
 ## Steps
@@ -120,7 +120,7 @@ call. Useful flags:
 - `--list-models`: print the suggested model list and exit (no scoring).
 - `--batch`: score multiple eval reports in one invocation:
   `pprose score a.eval.md b.eval.md ... --batch [--max-concurrent 8 --max-rps 4]`. See
-  [practical-prose-eval-compare.runbook.md](practical-prose-eval-compare.runbook.md) for
+  `pprose runbook practical-prose-eval-compare` for
   the typical batch workflow.
 
 **Manual path:**
@@ -217,9 +217,9 @@ If the audit fails, revise scores or violations until consistent.
 
 ## Calibration set
 
-`../tools/pprose/tests/fixtures/` ships a small calibration set with agreed scores and
-rule findings under `pp20v1`, so future agent or human evaluators can be tested for
-drift and self-eval overrating against a fixed reference:
+The [test fixtures directory](https://github.com/jlevy/practical-prose/tree/main/tools/pprose/tests/fixtures) ships a small calibration
+set with agreed scores and rule findings under `pp20v1`, so future agent or human
+evaluators can be tested for drift and self-eval overrating against a fixed reference:
 
 | Fixture | Artifact | Type | Overall mean | NA dims |
 | --- | --- | --- | ---: | ---: |
@@ -249,17 +249,17 @@ change.
 
 ## Related docs
 
-- [practical-prose-rubric.md](../docs/practical-prose-rubric.md): per-dimension 1-5
+- `pprose guidelines practical-prose-rubric`: per-dimension 1-5
   anchors (with `NA` / `ERR` sentinels) and scoring rules.
-- [practical-prose-guidelines.md](../docs/practical-prose-guidelines.md): prescriptive
+- `pprose guidelines practical-prose-guidelines`: prescriptive
   rules cited by `rule_findings`.
-- [practical-prose-eval-compare.runbook.md](practical-prose-eval-compare.runbook.md):
+- `pprose runbook practical-prose-eval-compare`:
   runbook for comparing N evals.
-- [eval_report.py](../tools/pprose/src/pprose/eval_report.py): schema, validator,
+- [eval_report.py](https://github.com/jlevy/practical-prose/blob/main/tools/pprose/src/pprose/eval_report.py): schema, validator,
   `from-metrics` stub generator.
-- [eval_score.py](../tools/pprose/src/pprose/eval_score.py): model-scoring runner that
+- [eval_score.py](https://github.com/jlevy/practical-prose/blob/main/tools/pprose/src/pprose/eval_score.py): model-scoring runner that
   fills `qual`, `qual_reasons`, and `rule_findings`.
-- [metrics.py](../tools/pprose/src/pprose/metrics.py): quantitative metrics tool.
+- [metrics.py](https://github.com/jlevy/practical-prose/blob/main/tools/pprose/src/pprose/metrics.py): quantitative metrics tool.
 
 <!-- This document follows common-doc-guidelines.md.
 See github.com/jlevy/practical-prose and review guidelines before editing.

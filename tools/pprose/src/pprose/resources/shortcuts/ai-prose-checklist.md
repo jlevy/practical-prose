@@ -6,7 +6,7 @@ author: Joshua Levy (github.com/jlevy) with agent assistance
 ---
 # AI-Prose Checklist
 
-The compact digest of [ai-prose-corrections.md](../docs/ai-prose-corrections.md), for
+The compact digest of `pprose guidelines ai-prose-corrections`, for
 loading into a drafting or quick-review context.
 Every rule here is expanded there with corrections, exceptions, and evidence; when a
 rule seems wrong for the genre, check the full catalog’s carve-outs before overriding.

@@ -180,7 +180,7 @@ writing. We list these up front for those looking for a shortlist.
   (2021)[^holloway-editorial-guidance]. Editorial guidance for comprehensive practical
   guides: dual-audience depth, frameworks over answers, attention-brokering, multi-sided
   audiences, and guide groundwork.
-  The direct ancestor of [writing-practical-guides.md](writing-practical-guides.md) and
+  The direct ancestor of `pprose guidelines writing-practical-guides` and
   the origin of the “broker attention helpfully” phrasing in the Lucid principle.
 
 ## Structure, Genre, and Craft
@@ -473,7 +473,7 @@ legal-domain anchors specifically.
 
 Work on the register, vocabulary, and rhetorical fingerprints of LLM-generated prose,
 and the editorial response.
-[ai-prose-corrections.md](ai-prose-corrections.md) is the binding extension that turns
+`pprose guidelines ai-prose-corrections` is the binding extension that turns
 this body of work into a checkable list.
 
 **Empirical and linguistic studies.**
@@ -616,18 +616,18 @@ practitioner rule sheets that would feed such a pack.
 
 ## Related Docs
 
-- [../README.md](../README.md): how the practical-prose layers fit together.
-- [practical-prose-principles.md](practical-prose-principles.md): principles and
+- ../README.md (`pprose about`): how the practical-prose layers fit together.
+- `pprose guidelines practical-prose-principles`: principles and
   intellectual traditions; cites entries from this bibliography by anchor where
   relevant.
-- [practical-prose-guidelines.md](practical-prose-guidelines.md): prescriptive rules
+- `pprose guidelines practical-prose-guidelines`: prescriptive rules
   derived from the principles.
-- [practical-prose-rubric.md](practical-prose-rubric.md): descriptive 0-5 scoring
+- `pprose guidelines practical-prose-rubric`: descriptive 0-5 scoring
   anchors for the 20 dimensions.
-- [ai-prose-corrections.md](ai-prose-corrections.md): binding catalog of LLM-register
+- `pprose guidelines ai-prose-corrections`: binding catalog of LLM-register
   tells and their corrections; turns the *Critique of AI-Authored Prose* section above
   into a checkable list.
-- [common-doc-guidelines.md](common-doc-guidelines.md): general style, organization, and
+- `pprose guidelines common-doc-guidelines`: general style, organization, and
   formatting.
 
 [^aristotle-rhetoric]: Aristotle. *Rhetoric*. Translated by W. Rhys Roberts.

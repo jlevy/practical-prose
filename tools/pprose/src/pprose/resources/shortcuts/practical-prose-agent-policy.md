@@ -7,7 +7,7 @@ author: Joshua Levy (github.com/jlevy) with agent assistance
 # Practical Prose Agent Policy
 
 A one-page priority list for agents drafting practical documents.
-Where the [quick-checklist](practical-prose-quick-checklist.md) is for pre-publish
+Where the quick-checklist (`pprose shortcut practical-prose-quick-checklist`) is for pre-publish
 self-audit, this doc is for generation-time guidance: load it instead of the full
 guidelines (~800 lines) when generating, summarizing, or rewriting prose for a reader
 who will act on it.
@@ -75,20 +75,20 @@ When following a rule would hurt the reader’s ability to understand, decide, d
 or maintain the work, document the deviation (the rule set aside, the reader outcome
 served, the risk introduced) and proceed.
 See the **Justified Deviations** section in
-[practical-prose-rubric.md](../docs/practical-prose-rubric.md).
+`pprose guidelines practical-prose-rubric`.
 
 Local rule compliance is in service of reader outcome, not the other way around.
 
 ## Related artifacts
 
-- [practical-prose-quick-checklist.md](practical-prose-quick-checklist.md): pre-publish
+- `pprose shortcut practical-prose-quick-checklist`: pre-publish
   self-audit for the 20 dimensions.
-- [practical-prose-guidelines.md](../docs/practical-prose-guidelines.md): prescriptive
+- `pprose guidelines practical-prose-guidelines`: prescriptive
   rules, full version (~800 lines).
-- [practical-prose-rubric.md](../docs/practical-prose-rubric.md): scoring anchors,
+- `pprose guidelines practical-prose-rubric`: scoring anchors,
   Justified Deviations, applicability profiles, audit passes, and the Failure-Mode
   Questions table.
-- [practical-prose-metrics.md](../docs/practical-prose-metrics.md): operational metrics
+- `pprose guidelines practical-prose-metrics`: operational metrics
   \+ applicability profiles by `risk_level`.
 
 <!-- This document follows common-doc-guidelines.md.

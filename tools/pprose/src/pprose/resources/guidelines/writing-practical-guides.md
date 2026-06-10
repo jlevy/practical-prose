@@ -8,12 +8,12 @@ guide**—a reference work that helps readers navigate a complex topic, built fo
 recurring use by multiple kinds of readers.
 This is **not** guidance for every practical document.
 Use it when writing a guide; use
-[practical-prose-guidelines.md](practical-prose-guidelines.md) for practical prose
-generally, and [common-doc-guidelines.md](common-doc-guidelines.md) for all
+`pprose guidelines practical-prose-guidelines` for practical prose
+generally, and `pprose guidelines common-doc-guidelines` for all
 documentation.
 
-These guidelines extend [practical-prose-guidelines.md](practical-prose-guidelines.md)
-the way that document extends [common-doc-guidelines.md](common-doc-guidelines.md):
+These guidelines extend `pprose guidelines practical-prose-guidelines`
+the way that document extends `pprose guidelines common-doc-guidelines`:
 everything there still applies; this adds what the guide genre demands.
 They distill years of editorial practice developing long-form guides (at Holloway and
 before), refined in conversations with editors, writers, and expert reviewers.
@@ -487,7 +487,7 @@ respect test of guideline 4):
 
 (The first three are register failures scored under E1 Clarity; the fourth is the Tone /
 Reader Respect check.
-See [practical-prose-guidelines.md](practical-prose-guidelines.md).)
+See `pprose guidelines practical-prose-guidelines`.)
 
 ## Answering Common Objections
 
@@ -545,11 +545,11 @@ provides):
 
 ## Related Docs
 
-- [practical-prose-guidelines.md](practical-prose-guidelines.md): the 20 dimensions all
+- `pprose guidelines practical-prose-guidelines`: the 20 dimensions all
   practical prose follows; this document extends them for the guide genre.
-- [practical-prose-principles.md](practical-prose-principles.md): the seven principles;
+- `pprose guidelines practical-prose-principles`: the seven principles;
   “broker attention helpfully” (guideline 10) descends from Lucid.
-- [practical-prose-bibliography.md](practical-prose-bibliography.md): sources, including
+- `pprose guidelines practical-prose-bibliography`: sources, including
   the Holloway editorial-guidance lineage of this document.
 
 <!-- This document follows common-doc-guidelines.md.

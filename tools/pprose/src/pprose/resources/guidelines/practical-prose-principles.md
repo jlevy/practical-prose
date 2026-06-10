@@ -27,7 +27,7 @@ usability and maintenance, and literary craft for attention to the reader’s ex
 
 The principles here are a compact synthesis of ideas from these traditions.
 For the detailed sources and more context, see
-[the bibliography](practical-prose-bibliography.md).
+the bibliography (`pprose guidelines practical-prose-bibliography`).
 
 ## Why Define Principles?
 
@@ -153,18 +153,18 @@ headings. Each maps to one or more principles.
    dimension but adds visible rigor without making its claims more inspectable,
    accurate, useful, or humane has gamed the metric.
    See “metrics are evidence, not quality” in
-   [practical-prose-rubric.md](practical-prose-rubric.md).
+   `pprose guidelines practical-prose-rubric`.
 
 ## Related Docs
 
-- [../README.md](../README.md): how the practical-prose layers fit together.
-- [practical-prose-guidelines.md](practical-prose-guidelines.md): prescriptive rules
+- ../README.md (`pprose about`): how the practical-prose layers fit together.
+- `pprose guidelines practical-prose-guidelines`: prescriptive rules
   derived from these principles.
-- [practical-prose-rubric.md](practical-prose-rubric.md): descriptive 0-5 scoring
+- `pprose guidelines practical-prose-rubric`: descriptive 0-5 scoring
   anchors that operationalize the dimensions.
-- [practical-prose-bibliography.md](practical-prose-bibliography.md): curated reading
+- `pprose guidelines practical-prose-bibliography`: curated reading
   list for the traditions above.
-- [common-doc-guidelines.md](common-doc-guidelines.md): general style, organization, and
+- `pprose guidelines common-doc-guidelines`: general style, organization, and
   formatting.
 
 <!-- This document follows common-doc-guidelines.md.

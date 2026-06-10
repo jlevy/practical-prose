@@ -7,13 +7,13 @@ author: Joshua Levy (github.com/jlevy) with agent assistance
 # Practical Prose Quick Checklist
 
 A one-page pre-publish self-audit for documents written under
-[practical-prose-guidelines.md](../docs/practical-prose-guidelines.md).
+`pprose guidelines practical-prose-guidelines`.
 Walk the six groups in order.
 For each line: yes / no / NA. If a question is unclear, jump to its dimension in the
 full guidelines (the §-number points there directly).
 
 For generation-time guidance (drafting a doc from scratch), see
-[practical-prose-agent-policy.md](practical-prose-agent-policy.md); this checklist is
+`pprose shortcut practical-prose-agent-policy`; this checklist is
 for pre-publish audit of an already-drafted doc.
 
 **Scope of the audit:**
@@ -132,7 +132,7 @@ separation the structure depends on.
 - As the Lint-pass anchor for high-stakes evaluations.
 
 This checklist stays in sync with the full
-[practical-prose-guidelines.md](../docs/practical-prose-guidelines.md); when the
+`pprose guidelines practical-prose-guidelines`; when the
 guidelines change, update this checklist in the same edit.
 
 <!-- This document follows common-doc-guidelines.md.

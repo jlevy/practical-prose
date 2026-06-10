@@ -25,28 +25,27 @@ substantive judgment.
 ## Metrics by Dimension
 
 For each dimension, the table lists at least one quantitative metric and one qualitative
-check. *“Tooling”* names the operational tool today;
-**scripts/practical_prose_metrics.py** is the deterministic metrics script in this
-directory, **eval_score.py** runs an LLM scorer against the rubric, and **manual**
-denotes a human reviewer.
+check. *“Tooling”* names the operational tool today; **`pprose metrics`** is the
+deterministic metrics command, **`pprose score`** runs an LLM scorer against the rubric,
+and **manual** denotes a human reviewer.
 
 | § | Dimension | Quantitative metric(s) | Qualitative check | Tooling |
 | ---: | --- | --- | --- | --- |
 | 1 | Suitability | Presence of explicit `purpose`, `audience`, `scope` fields (frontmatter); presence of recommendation/findings/milestones section by doc type | Can a target reader say what the doc is for after 30 seconds? | frontmatter check; manual skim test |
 | 2 | Scope | Presence of `scope` and optionally `out_of_scope` fields; count of headings outside declared scope | Does the body honor the declared boundary? | frontmatter check; manual |
 | 3 | Breadth | Count of relevant case classes addressed (out of a domain-specific expected set) | Are the obvious affected areas covered? | manual; SME |
-| 4 | Depth | Count of vague magnitude words (“rapid,” “large”) not paired with quantification; count of endpoints cited where a series exists | Is section depth proportional to section importance? | banned-register lint (metrics.py); manual |
-| 5 | Clarity | Banned-register hits (count and examples; full common-doc-guidelines §4.2 list); pedantic-marker hits (canonicality declarations, word-choice justifications, reading-order instructions); vague-word hits; sentence length distribution; mean and p95 sentence length | Does prose read cleanly aloud; is the document free of self-referential pedantry? | metrics.py; manual |
+| 4 | Depth | Count of vague magnitude words (“rapid,” “large”) not paired with quantification; count of endpoints cited where a series exists | Is section depth proportional to section importance? | banned-register lint (`pprose metrics`); manual |
+| 5 | Clarity | Banned-register hits (count and examples; full common-doc-guidelines §4.2 list); pedantic-marker hits (canonicality declarations, word-choice justifications, reading-order instructions); vague-word hits; sentence length distribution; mean and p95 sentence length | Does prose read cleanly aloud; is the document free of self-referential pedantry? | `pprose metrics`; manual |
 | 6 | Coherence | Paragraph length distribution; presence of stub transitions (“As shown above” without recap) | Does each paragraph have one job; do transitions bridge? | manual; LLM-assist |
-| 7 | Concision | Word count vs target by doc type; repeated n-gram count; low-information paragraph flag; replacement-history phrase hits (regex set: “previously named,” “formerly,” “under the new layout,” “removed,” etc.) | Does removing a section lose information; is replacement history absent outside history-genre exceptions? | metrics.py words/paragraphs; manual cut test |
-| 8 | Organization | Heading-level skip count (h1→h3 without h2); generic-heading hits (“Overview,” “Background,” “Notes,” “Details”); table count and column densities; figure-caption presence; link-target stability (no commit-less URLs to mutable refs) | Are sections sequenced for the task; do tables earn their tabular shape; do headings cleave to subject contours? | metrics.py headings/tables; manual |
+| 7 | Concision | Word count vs target by doc type; repeated n-gram count; low-information paragraph flag; replacement-history phrase hits (regex set: “previously named,” “formerly,” “under the new layout,” “removed,” etc.) | Does removing a section lose information; is replacement history absent outside history-genre exceptions? | `pprose metrics` words/paragraphs; manual cut test |
+| 8 | Organization | Heading-level skip count (h1→h3 without h2); generic-heading hits (“Overview,” “Background,” “Notes,” “Details”); table count and column densities; figure-caption presence; link-target stability (no commit-less URLs to mutable refs) | Are sections sequenced for the task; do tables earn their tabular shape; do headings cleave to subject contours? | `pprose metrics` headings/tables; manual |
 | 9 | Consistency | Acronym casing variance; dialect mixing; date-format variance; parallel-list violations; spaced em-dash count and em-dash density per 1000 words | Does the document follow the chosen style guide; are em dashes used sparingly and in American style? | linter; manual |
-| 10 | Formatting | Markdown lint pass/fail; frontmatter present and valid; footer present | Renders correctly across mediums? | flowmark / md-lint; metrics.py footnote round-trip |
-| 11 | Discipline | Rung-tag count (`[observed]`, `[judged]`, `[interpreted]`, `[implied]`) in audit/eval modes; multi-rung-per-sentence flag | Are observation, judgment, interpretation, and implication worked through in order, each higher rung supported by the prior? | metrics.py bracket tags (audit mode); LLM-assist; manual |
-| 12 | Soundness | `[ASSUMING:]` tag count where assumptions are load-bearing; count of unbridged “signal → outcome” leaps | Are mechanisms named where causation is asserted; is counter-evidence engaged? | metrics.py bracket tags; manual / SME |
+| 10 | Formatting | Markdown lint pass/fail; frontmatter present and valid; footer present | Renders correctly across mediums? | flowmark / md-lint; `pprose metrics` footnote round-trip |
+| 11 | Discipline | Rung-tag count (`[observed]`, `[judged]`, `[interpreted]`, `[implied]`) in audit/eval modes; multi-rung-per-sentence flag | Are observation, judgment, interpretation, and implication worked through in order, each higher rung supported by the prior? | `pprose metrics` bracket tags (audit mode); LLM-assist; manual |
+| 12 | Soundness | `[ASSUMING:]` tag count where assumptions are load-bearing; count of unbridged “signal → outcome” leaps | Are mechanisms named where causation is asserted; is counter-evidence engaged? | `pprose metrics` bracket tags; manual / SME |
 | 13 | Precision | Vague-countable hits (“several,” “various,” “many”); umbrella-term hits (“users,” “latency”) where domain sub-distinctions matter | Is the most specific term the audience can parse used throughout? | banned-register / linter extension; manual |
 | 14 | Parsimony | Count of chains where a shorter sound chain exists (citable fact re-derived without adding inspectability or confidence; weaker warrant where a stronger one is available); count of non-load-bearing rungs flagged within load-bearing chains; per-doc parsimony-gap flag count | For each load-bearing chain, is it the minimum sufficient given its purpose and per-step warrants? | LLM-assist; manual |
-| 15 | Verifiability | % quantitative claims with source pointer; bracket-tag count by type (`[VERIFIED]`, `[UNVERIFIED]`, `[ESTIMATED]`, `[DERIVED:]`, `[ASSUMING:]`); footnote/citation count | Can a competent reader trace claims to evidence without external lookup? | metrics.py bracket tags and footnotes; manual claim audit |
+| 15 | Verifiability | % quantitative claims with source pointer; bracket-tag count by type (`[VERIFIED]`, `[UNVERIFIED]`, `[ESTIMATED]`, `[DERIVED:]`, `[ASSUMING:]`); footnote/citation count | Can a competent reader trace claims to evidence without external lookup? | `pprose metrics` bracket tags and footnotes; manual claim audit |
 | 16 | Factuality | Broken-link rate; stale-source count; numeric discrepancies vs cited source | Do cited sources actually support the claim at the asserted strength? | link checker; manual / SME audit |
 | 17 | Relevance | Count of cited sources flagged as ancillary or tangential to the document’s purpose; count of sections marked as digression/background that load-bear on a headline claim (mislabel); count of unmarked digressions exceeding the length threshold for the doc type | For each source and each section, does it bear on the document’s stated purpose? | LLM-assist; manual |
 | 18 | Calibration | Count of probability claims; count of those with cited base rate; small-sample shrinkage explicit; scenario probabilities sum check | Does claim strength match evidence strength? | LLM-assist; manual |
@@ -68,18 +67,16 @@ fair.
 
 ## Tooling map
 
-- [scripts/practical_prose_metrics.py](../scripts/practical_prose_metrics.py): the
-  deterministic metrics script.
+- `pprose metrics`: the deterministic metrics command.
   Computes headings by depth, link counts (external/internal, by markdown form),
   footnote references and definitions, bracket-tag counts and examples, bare URLs,
   tables, code blocks, banned-register hits (Clarity Rule 4 by default; overridable),
   word/sentence/paragraph/line counts, and page estimate.
-- [scripts/eval_score.py](../scripts/eval_score.py): LLM-based rubric scorer.
-- [scripts/eval_report.py](../scripts/eval_report.py): combines metrics and scores into
-  a single eval report.
-- [scripts/eval_compare.py](../scripts/eval_compare.py): compare N eval reports across
-  versions or variants.
-- [scripts/rubric_schema.yaml](../scripts/rubric_schema.yaml): canonical
+- `pprose score`: LLM-based rubric scorer.
+- `pprose report`: creates, validates, and recomputes eval reports (combining metrics
+  and scores).
+- `pprose compare`: compare N eval reports across versions or variants.
+- [rubric_schema.yaml](../tools/pprose/src/pprose/rubric_schema.yaml): canonical
   machine-readable schema for the 20 dimensions, the six groups, allowed score values,
   and `NA`-eligible dimensions.
 
@@ -172,8 +169,6 @@ See the *Audit passes for high-stakes evals* section in
   anchors. The metrics here serve the rubric; the rubric serves judgment.
 - [practical-prose-guidelines.md](practical-prose-guidelines.md): prescriptive rules
   these metrics flag against.
-- [../scripts/practical_prose_metrics.py](../scripts/practical_prose_metrics.py): the
-  deterministic metrics script.
 - [../runbooks/practical-prose-eval-single.runbook.md](../runbooks/practical-prose-eval-single.runbook.md):
   end-to-end single-document eval procedure.
 

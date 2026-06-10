@@ -9,7 +9,7 @@ github.com/hardikpandya/stop-slop), with moderation noted below.
 
 The reference catalog of LLM-register tells paired with the correction practical prose
 should reach for instead.
-Binding under F2.6 of [practical-prose-guidelines.md](practical-prose-guidelines.md).
+Binding under F2.6 of `pprose guidelines practical-prose-guidelines`.
 
 The catalog has two parts:
 
@@ -20,7 +20,7 @@ The catalog has two parts:
   string matching.
 
 For a compact digest to load into a drafting context, use
-[ai-prose-checklist.md](../shortcuts/ai-prose-checklist.md); this document is the full
+`pprose shortcut ai-prose-checklist`; this document is the full
 reference behind it, with exceptions, evidence, and corrections per entry.
 
 The common-doc-guidelines §4.2 banned-register list catches *overclaim*; E1, E2, and F2
@@ -34,11 +34,11 @@ Most entries have legitimate uses in some genre; the test is whether the word ca
 information for the reader, or fills a slot the LLM was trained to fill.
 
 Supporting evidence is in the *Critique of AI-Authored Prose* section of
-[practical-prose-bibliography.md](practical-prose-bibliography.md).
+`pprose guidelines practical-prose-bibliography`.
 
 ## Use in Practice
 
-1. **Drafting.** Load the [ai-prose-checklist.md](../shortcuts/ai-prose-checklist.md)
+1. **Drafting.** Load the `pprose shortcut ai-prose-checklist`
    digest (or the drafting directives below) into the writing context before any tell
    appears on the page.
 2. **Lint-time check.** A grep pass over the lexical catalog is the cheapest first
@@ -150,7 +150,7 @@ or when the sentence they introduce restates rather than advances.
   implications here are*, *This raises the question*: meta-commentary on what the
   document is about to say.
   (Cross-references E1.3 in
-  [practical-prose-guidelines.md](practical-prose-guidelines.md).) **Correction:** state
+  `pprose guidelines practical-prose-guidelines`.) **Correction:** state
   the perspective, the interest, or the implication directly.
 - *That said*, *With that said*, *Having said that*: throat-clearing before a
   qualification. **Correction:** often the prior claim was overconfident and the *That
@@ -182,7 +182,7 @@ Always cut.
   *Buckle up*: magnitude assertions without evidence.
   **Correction:** cite the magnitude.
   (Cross-references common-doc §4.2 banned register and J1.6 in
-  [practical-prose-guidelines.md](practical-prose-guidelines.md).)
+  `pprose guidelines practical-prose-guidelines`.)
 - *Here’s the part nobody’s talking about*, *What nobody tells you*, *Most people don’t
   realize*, *The dirty secret*: confident claims of insider knowledge.
   **Correction:** drop the framing and state the claim directly.
@@ -214,7 +214,7 @@ descriptive or analytical.
 *This isn’t X. This is Y.* *Not X. Y.* *Less X, more Y.* *Forget X. This is Y.*
 
 One of the highest-frequency AI tells in 2025–2026, governed by
-[E1.5 in practical-prose-guidelines.md](practical-prose-guidelines.md#e1-clarity) (*Earn
+E1.5 in practical-prose-guidelines.md (`pprose guidelines practical-prose-guidelines`) (*Earn
 rhetorical force; cut symmetry-for-its-own-sake*).
 
 **Correction:** if the X-half names a position no one actually holds, drop the X-half
@@ -366,19 +366,19 @@ AI failure modes governed by rules outside this file:
   catalog.
 - The empirical case for structural over lexical rules: Rallapalli et al.
   (2026) and Xia, Stańczak & Roth (EACL 2026) in
-  [practical-prose-bibliography.md](practical-prose-bibliography.md).
+  `pprose guidelines practical-prose-bibliography`.
 
 ## Related Docs
 
-- [ai-prose-checklist.md](../shortcuts/ai-prose-checklist.md): the compact digest of
+- `pprose shortcut ai-prose-checklist`: the compact digest of
   this catalog for loading into a drafting context.
-- [common-doc-guidelines.md](common-doc-guidelines.md): §4.2 holds the
+- `pprose guidelines common-doc-guidelines`: §4.2 holds the
   extravagant-register list.
   The lists here are additive.
-- [practical-prose-guidelines.md](practical-prose-guidelines.md): E1.4 (earned
+- `pprose guidelines practical-prose-guidelines`: E1.4 (earned
   register), E1.5 (cut symmetry-for-its-own-sake), F2.6 (domain conventions are
   binding), F2.7 (em-dash conventions).
-- [practical-prose-bibliography.md](practical-prose-bibliography.md): the *Critique of
+- `pprose guidelines practical-prose-bibliography`: the *Critique of
   AI-Authored Prose* section lists sources on AI register, vocabulary fingerprints, the
   editorial response to LLM output, and open-source tools.
 
