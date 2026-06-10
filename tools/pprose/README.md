@@ -63,6 +63,12 @@ else `uvx pprose@<version>`). Cross-scope coexistence is the supported pattern:
 project-scope skills shadow user-scope skills of the same name in modern agents.
 Run `pprose --help` or `pprose install --help` for full options.
 
+**Upgrading:** new releases can add guidelines, shortcuts, runbooks, and skills.
+Because installed skills pin the version that installed them, a repo picks up additions
+only after you upgrade pprose and re-run install (`uvx pprose@latest install`, or
+`uv tool install --upgrade pprose && pprose install`); re-running refreshes both the
+artifacts and the baked version pin.
+
 `score` requires `ANTHROPIC_API_KEY`; the package auto-loads `.env` and `.env.local`
 from the current directory hierarchy and `$HOME`.
 

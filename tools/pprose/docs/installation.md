@@ -24,3 +24,19 @@ After publication, run Practical Prose without a project install:
 ```shell
 uvx pprose --help
 ```
+
+## Upgrading
+
+New pprose releases can add guidelines, shortcuts, runbooks, and skills.
+Skills installed in a repo by `pprose install` bake in the version that installed them
+(`uvx pprose@<version>`), so a repo keeps serving that release’s bundled docs until you
+upgrade and re-run install:
+
+```shell
+uvx pprose@latest install                          # zero-install
+# or, with a persistent tool install:
+uv tool install --upgrade pprose && pprose install
+```
+
+Re-running install is idempotent: it refreshes the generated artifacts and the version
+pin they bake, and a newer-format artifact is never clobbered by an older pprose.
