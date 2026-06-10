@@ -3,9 +3,9 @@ type: is
 id: is-01kt0wbjcdtg8pyezcwrkhk69j
 title: "Spec: Shared render components — single source of truth"
 kind: epic
-status: open
+status: closed
 priority: 2
-version: 16
+version: 17
 spec_path: docs/project/specs/active/plan-2026-05-31-shared-render-components.md
 labels: []
 dependencies: []
@@ -26,6 +26,8 @@ child_order_hints:
   - is-01kt0wdsdxen1z505jfgq70k2e
   - is-01kt0y0s9skpjt8fytng566npn
 created_at: 2026-06-01T06:01:23.596Z
-updated_at: 2026-06-01T06:30:27.384Z
+updated_at: 2026-06-10T22:17:24.982Z
+closed_at: 2026-06-10T22:17:24.981Z
+close_reason: "Shipped: tools/render-components/ with sync into render_html styles/js _generated/ (sync_render_html_styles.py), variant architecture, and tests/test_workbench_consumes_shared.py guarding single-source-of-truth. No open children. Spec plan-2026-05-31 status updated to implemented-in-substance (its Phase 1 checklist was never ticked; shipped artifacts are authoritative)."
 ---
 Extract the CSS + JS + Jinja partials that draw the Practical Prose visual surfaces into shared components at tools/render-components/, ingested by both the explorations workbench and the pprose render output via an auto-generated mirror. Renderer becomes thin outer page + data shaping; the card and tip panels are JS-built client-side. Phase 1 ships one variant — 'interactive' — and the architecture leaves room for future static-cards / annotated-doc variants. See spec for the full design.
