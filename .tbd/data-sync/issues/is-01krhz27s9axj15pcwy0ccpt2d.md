@@ -3,9 +3,9 @@ type: is
 id: is-01krhz27s9axj15pcwy0ccpt2d
 title: Prepare first pprose PyPI release
 kind: task
-status: open
+status: closed
 priority: 1
-version: 6
+version: 7
 spec_path: tools/docs/project/specs/active/plan-2026-05-13-cross-agent-skills.md
 labels:
   - cross-agent-skills
@@ -15,7 +15,9 @@ dependencies:
     target: is-01krhz2f5wsv5rwkvzz2c6mbaq
 parent_id: is-01krhz0ckjzn0s26wggjjfays1
 created_at: 2026-05-14T00:44:25.257Z
-updated_at: 2026-06-10T00:47:37.394Z
+updated_at: 2026-06-10T03:31:34.478Z
+closed_at: 2026-06-10T03:31:34.477Z
+close_reason: "Released v0.1.0. PR #27 merged; user registered the PyPI trusted publisher (jlevy/practical-prose, publish.yml, env Any); gh release create v0.1.0 triggered publish.yml which passed the discovery-pin guard + tests + build and published to PyPI via OIDC. Verified: 'uvx pprose@0.1.0 --version' -> pprose 0.1.0. (Note: repo's exclude-newer cool-off filters it from default resolution until the 14-day window elapses.)"
 ---
 Cut the first prose-eval package release after the unified CLI entry point is tested, so uvx prose-eval ... resolves without --from. If the PyPI package name changes, keep the package and console script names aligned so uvx <name> ... remains self-documenting.
 
