@@ -114,9 +114,37 @@ Follow this checklist for each new release.
 
    - **Major** (e.g., `v0.6.0` → `v1.0.0`): Breaking changes
 
+5. **Update the CHANGELOG:**
+
+   Move the accumulated entries from `## [Unreleased]` into a new
+   `## [X.Y.Z] - YYYY-MM-DD` section in `CHANGELOG.md`.
+
+6. **Bump the discovery pin to match the tag:**
+
+   Set `DISCOVERY_VERSION` in `src/pprose/install.py` to the new version (no leading
+   `v`), then re-render the committed discovery skills from the repo root:
+
+   ```shell
+   make generate
+   ```
+
+   This step is mandatory.
+   `devtools/check_release_version.py` (run by `publish.yml`) fails the publish unless
+   the release tag equals `DISCOVERY_VERSION`, and `tests/test_resources_sync.py` fails
+   if the committed `skills/` drift from it.
+   The pin backs the `uvx pprose@<version>` zero-install bootstrap, so it must point at
+   the version being published.
+
+7. **Verify the release guard locally before tagging:**
+
+   ```shell
+   cd tools/pprose && uv run python devtools/check_release_version.py vX.Y.Z
+   # → "Release version check OK"
+   ```
+
 #### Create the Release
 
-5. **Generate release notes content:**
+8. **Generate release notes content:**
 
    Review changes since the last release:
 
@@ -131,7 +159,7 @@ Follow this checklist for each new release.
    git diff ${LAST_TAG}..HEAD
    ```
 
-6. **Create the release with `gh`:**
+9. **Create the release with `gh`:**
 
    ```shell
    NEW_TAG="vX.Y.Z"  # Replace with actual version
@@ -154,15 +182,15 @@ Follow this checklist for each new release.
    Alternatively, use `--generate-notes` for GitHub’s auto-generated notes, or
    `--notes-file FILENAME` to read from a file.
 
-7. **Verify the release published successfully:**
+10. **Verify the release published successfully:**
 
-   ```shell
-   # Check the release workflow:
-   gh run list --workflow=publish.yml --limit 1
+    ```shell
+    # Check the release workflow:
+    gh run list --workflow=publish.yml --limit 1
 
-   # Verify on PyPI (may take a minute):
-   # https://pypi.org/project/pprose
-   ```
+    # Verify on PyPI (may take a minute):
+    # https://pypi.org/project/pprose
+    ```
 
 ### Release Notes Format
 

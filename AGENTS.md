@@ -25,7 +25,7 @@ the project narrative, and `pprose skill --list` / `pprose shortcut --list` /
 `pprose guidelines --list` / `pprose runbook --list` for on-demand workflows, playbooks,
 style guides, and procedures.
 
-Run pprose as `pprose <command>` if on PATH, else `uvx pprose@0.1.0 <command>`
+Run pprose as `pprose <command>` if on PATH, else `uvx pprose@0.1.1 <command>`
 (zero-install via uv).
 
 <!-- END PPROSE INTEGRATION -->
