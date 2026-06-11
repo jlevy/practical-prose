@@ -49,9 +49,16 @@ Guide content differs from other nonfiction in several ways:
 A guide is *not*: historical or narrative nonfiction; writing devoted to a single
 thesis; writing primarily for entertainment; or celebrity-oriented writing that is
 mostly of interest because of *who* is writing.
-Nor is it Wikipedia (restricted by policy to consensus facts, where practical or highly
-specific guidance is typically not allowed) or a Q&A site (single answers to specific
-problems, not a comprehensive, trustworthy overview).
+
+Also, while a guide may share facts and details with a Wikipedia article, it should
+*not* imitate Wikipedia’s policies.
+Wikipedia is restricted to consensus facts, bars
+[original research](https://en.wikipedia.org/wiki/Wikipedia:No_original_research),
+including a writer’s own analysis or firsthand expertise, and
+[rejects how-to guidance](https://en.wikipedia.org/wiki/Wikipedia:NOTGUIDE) and
+Q&A-style material. All of these can be appropriate in a practical guide.
+In fact, it is this kind of expert judgment that makes a guide more valuable than a
+Wikipedia article.
 
 ## When These Guidelines Apply
 
@@ -189,6 +196,10 @@ the document type fixes the content (a reference table).
 The priority is to be **helpful, not only factual**. Guides cover many facts, and may
 include foundational sections devoted to facts—but the ultimate goal is to serve the
 reader helpfully, and that determines which facts are relevant.
+This means prioritizing helpfulness over pure neutrality: a strict
+[Wikipedia-style point of view](https://en.wikipedia.org/wiki/Wikipedia:Neutral_point_of_view)
+omits genuinely helpful material that does not fit the bar of consensus facts.
+Alongside the facts, include informed opinions, advice, context, and rationale.
 **Actionable knowledge rests on factual knowledge**: cover the foundations and context
 that will support future learning.
 Having a firm grasp of the mathematics of compound interest is not essential for every
@@ -474,6 +485,24 @@ are necessary for credibility?
 
 ## Voice
 
+A guide’s voice should combine three qualities.
+It helps to imagine an expert and trusted friend sitting with you over coffee: years of
+experience, but the emotional intelligence to remember what it is like to know much
+less.
+
+- **Rigor:** Accurate, precise, logical.
+  Expert review and cited sources.
+  No dumbing down, no hot takes.
+- **Clarity:** Direct and concise.
+  Respect the reader’s intelligence.
+  As simple as possible, but preserve the real complexities of the topic.
+  Many readers want to move up rapidly on
+  [Tim Urban’s scale for understanding complex ideas](https://review.firstround.com/wait-but-whys-tim-urban-on-parsing-and-transmitting-complex-ideas),
+  often from a 2 or 3 to a 7, 8, or 9; write to help them do that as directly as
+  possible.
+- **Warmth:** Genuine; friendliness over stiffness; empathy while preserving clarity.
+  Gentle humor is welcome; avoid jokes that are mean-spirited, offensive, or misleading.
+
 Four voices to avoid (they fail readers in different ways, and all of them fail the
 respect test of guideline 4):
 
@@ -529,8 +558,8 @@ answers.
 
 Guides benefit from a consistent vocabulary of callouts for content that should stand
 out from running prose.
-The semantic categories (render them with whatever admonition mechanism the medium
-provides):
+A few possible semantic categories (render them with whatever admonition mechanism the
+medium provides):
 
 | Category | Use for |
 | --- | --- |
@@ -540,8 +569,15 @@ provides):
 | Controversy | A topic where informed opinion varies significantly |
 | Confusion | A common confusion or misunderstanding, such as confusing terminology |
 | Technical | A technical point (arcane or academic, not essential) |
+| Scientific | An academic or scientific detail or reference |
 | New | New or recent developments |
 | Incomplete | Expansion or improvement needed |
+| Story | A personal anecdote or story |
+| Example | An example or illustration |
+| Resources | Further reading or a list of resources |
+
+The last three mark content *types* rather than warnings, but belong in the same
+consistent callout vocabulary.
 
 ## Related Docs
 
