@@ -43,6 +43,13 @@ terminal and to an agent driving it programmatically.
   `shortcut`, `runbook`, and `skill` — plus a single top-level inventory command.
 - No behavior change for scoring/eval workflows; no new heavyweight dependencies.
 
+**Compatibility stance: this is a hard cut.** pprose is pre-1.0; backward compatibility
+is explicitly *not* a goal.
+Every change here picks the cleanest end state and deletes the old shape outright — no
+aliases, no deprecation windows, no compatibility shims.
+Anything generated (skills, AGENTS.md blocks, bundled doc copies) is regenerated at the
+next release.
+
 ## Non-Goals
 
 - No TUI, spinners, or progress bars (nothing here is long-running except `score`, which
@@ -126,23 +133,27 @@ New small module `pprose/term.py` (stdlib-only):
 
 **3. Listing UX (one obvious way).**
 
+This is a hard cut: pprose is pre-1.0 and we do not preserve backward compatibility.
+Pick the cleanest design and delete the rest; everything regenerates at the next
+release.
+
 - **Rule: no-args lists; an argument prints.** `pprose guidelines` lists all guidelines;
   `pprose guidelines <name>` prints one.
   Same for `shortcut`, `runbook`, `skill`. This is the current de facto behavior — we
   make it the documented contract.
-- `--list` is kept as a hidden, deprecated alias for one release (it appears in
-  published v0.1.x docs, AGENTS.md blocks, and generated skills), then removed.
-  Help text and all docs stop mentioning it now.
+- **Remove `--list` entirely** — from the argparse definitions, every help string, and
+  every doc. No alias, no hidden flag, no deprecation period.
+  If an unregenerated skill from an older release still runs `pprose guidelines --list`,
+  argparse errors cleanly; the fix is reinstalling, which the next release does anyway.
 - New top-level `pprose list` prints the full bundled inventory grouped by kind
   (guidelines, shortcuts, runbooks, skills), one line each: bold name + dim description.
   `pprose list --kind guidelines` filters.
   The per-command no-arg listings remain (they are what the generated skills and
   AGENTS.md route to).
-- Update every surface that mentions `--list`: command help strings, the no-args help
-  epilog, README (Quick Start + Tooling), AGENTS.md block template in `install.py`, the
-  generated-skill preamble, agents-internal-guide, and bundled resource docs that
-  reference `--list` (sync will propagate).
-  The discovery-pin guard means published copies update at the next release.
+- Scrub every surface that mentions `--list`: command help strings, the no-args help
+  epilog, README (Quick Start + Tooling), the AGENTS.md block template in `install.py`,
+  the generated-skill preamble, agents-internal-guide, and any bundled resource docs
+  (the resource sync propagates the doc copies).
 
 ### Components
 
@@ -158,8 +169,8 @@ New small module `pprose/term.py` (stdlib-only):
 ### Phases
 
 **Phase 1 — startup + listing contract (one pass, mostly mechanical):** lazy imports in
-`cli.py`; import-graph and budget tests; no-args-lists contract with `--list`
-hidden-deprecated; `pprose list`; all doc surfaces updated and resynced.
+`cli.py`; import-graph and budget tests; no-args-lists contract with `--list` removed
+outright; `pprose list`; all doc surfaces scrubbed of `--list` and resynced.
 
 **Phase 2 — color layer:** `term.py`, `--color` flag, styled help/listings/errors,
 golden plain-mode tests.
@@ -168,8 +179,6 @@ reviewable on its own.)
 
 ## Risks and Mitigations
 
-- **Published skills/docs reference `--list`** → keep it working (hidden) for ≥ one
-  release; the deprecation note rides the next CHANGELOG.
 - **Lazy imports can hide ImportErrors until a command runs** → the e2e runbook already
   exercises every command; add a smoke test that invokes each command’s `--help`.
 - **Color codes leaking into agent transcripts** → default-off outside TTYs plus
