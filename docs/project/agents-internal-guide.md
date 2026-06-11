@@ -13,6 +13,11 @@ For the always-on root entrypoint, see [/AGENTS.md](../../AGENTS.md).
 For development workflows (build, test, format, lint), see
 [development.md](development.md).
 
+Repo layout notes: planning specs live only under [specs/active/](specs/active/) and
+[specs/done/](specs/done/) (the legacy `tools/docs/` tree was consolidated 2026-06-11).
+The gitignored `attic/` directory holds reference checkouts of other repos (flowmark,
+tbd); their docs and specs belong to those projects, not to this one.
+
 ## Workflows
 
 | User intent | Use | Source |

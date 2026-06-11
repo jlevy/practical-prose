@@ -4,9 +4,11 @@
 
 **Author:** Joshua Levy with agent assistance
 
-**Status:** Draft — ready to start once chopdiff `0.3.1` is released.
-The `0.3.1` DocGraph work (chopdiff PRs
-[#12](https://github.com/jlevy/chopdiff/pull/12),
+**Status:** Ready to start — the chopdiff 0.3.1 precondition is met (released and
+audited; see docs/project/chopdiff-upstream-requests.md for the 0.4.x follow-ups).
+Tracked under epic pp-3hg4 with the metrics-rewrite chain (pp-pd8t and successors).
+Moved from the legacy tools/docs/ specs tree on 2026-06-11. The `0.3.1` DocGraph work
+(chopdiff PRs [#12](https://github.com/jlevy/chopdiff/pull/12),
 [#14](https://github.com/jlevy/chopdiff/pull/14),
 [#15](https://github.com/jlevy/chopdiff/pull/15)) already ships almost everything this
 plan needs — the section tree, per-block heading/link accessors, the structural block

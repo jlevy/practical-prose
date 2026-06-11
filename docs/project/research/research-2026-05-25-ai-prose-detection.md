@@ -864,8 +864,7 @@ for the 2026 corpus.**
 10. **Optionally** compute the structural metrics from step 7 as machine-checkable
     features and expose them in the report.
 
-**For the em-dash policy in
-[feedback_em_dashes.md](../../../../../.claude/projects/-Users-levy-wrk-github-practical-prose/memory/feedback_em_dashes.md):**
+**For the em-dash policy in `feedback_em_dashes.md` (local agent memory note):**
 
 11. Cite Keck 2025 and Freeburg 2026 (with the Altman-citation caveat from `pp-t496`) as
     empirical support; treat the cited per-vendor numbers with the suppression-prompt

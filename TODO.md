@@ -1,17 +1,14 @@
 # TODO
 
-Snapshot of active work as of 2026-06-10. **Canonical tracking is tbd** (`tbd ready` for
+Snapshot of active work as of 2026-06-11. **Canonical tracking is tbd** (`tbd ready` for
 unblocked work, `tbd list` for everything); this file is a periodically refreshed
 orientation map, not a second tracker.
 Planning specs live in [docs/project/specs/active/](docs/project/specs/active/)
-(finished ones move to [done/](docs/project/specs/done/)).
+(finished ones move to [done/](docs/project/specs/done/); the legacy `tools/docs/` tree
+was consolidated here on 2026-06-11).
 
 ## Now (unblocked, highest value)
 
-- **Cut v0.1.1** (pp-ew5z): ship `writing-practical-guides`, the genre-routed skills,
-  and the upgrade docs to published users.
-  Requires bumping the baked discovery pin (`DISCOVERY_VERSION`) to 0.1.1 so the release
-  guard passes.
 - **Reporting CLI redesign** (epic pp-d2j3; spec
   [plan-2026-06-03](docs/project/specs/active/plan-2026-06-03-reporting-cli-redesign.md)):
   the eval → report → show pipeline.
@@ -40,9 +37,10 @@ Planning specs live in [docs/project/specs/active/](docs/project/specs/active/)
 
 - Design-system: generator tests (pp-i4uh); vendor Zod locally instead of esm.sh
   (pp-tfdk).
-- Structural document decomposition for metrics (epic pp-3hg4; chopdiff v0.4.x asks
-  pp-9cmv, pp-tg93, pp-eaa2, pp-4hku; docstring sweep pp-ka9t).
-- Repo org: single specs home; attic cleanup (pp-wlwj).
+- Structural document decomposition for metrics (epic pp-3hg4; spec
+  [plan-2026-05-25](docs/project/specs/active/plan-2026-05-25-structural-document-metrics.md)
+  is ready to start now that chopdiff 0.3.1 shipped; v0.4.x asks pp-9cmv, pp-tg93,
+  pp-eaa2, pp-4hku; docstring sweep pp-ka9t).
 - Eval-screenshot tooling (deferred from the README-cards work): snapshot-fit print CSS
   (pp-2gs0), multi-document side-by-side render (pp-39ce), optional in-package
   `pprose snapshot` (pp-w0oz).
@@ -58,6 +56,11 @@ Planning specs live in [docs/project/specs/active/](docs/project/specs/active/)
 
 ## Recently shipped (context)
 
+- v0.1.1 on PyPI (2026-06-11): writing-practical-guides genre supplement with skill
+  routing, ai-prose consolidation, upgrade-path docs, slimmer wheel.
+- Post-release repo org (2026-06-11): single specs home under docs/project/specs/
+  (legacy tools/docs tree removed), bead spec_paths re-pointed, ghost links fixed,
+  README badges added.
 - v0.1.0 on PyPI (2026-06-10): first release, OIDC trusted publishing, release-tag
   guard.
 - `writing-practical-guides` genre supplement + skill routing; AI-prose corrections

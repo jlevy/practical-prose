@@ -1,5 +1,10 @@
 # Practical Prose
 
+[![PyPI](https://img.shields.io/pypi/v/pprose)](https://pypi.org/project/pprose/)
+[![CI](https://github.com/jlevy/practical-prose/actions/workflows/ci.yml/badge.svg)](https://github.com/jlevy/practical-prose/actions/workflows/ci.yml)
+[![License: MIT](https://img.shields.io/badge/code-MIT-blue.svg)](https://github.com/jlevy/practical-prose/blob/main/LICENSE)
+[![License: CC BY 4.0](https://img.shields.io/badge/content-CC%20BY%204.0-lightgrey.svg)](https://creativecommons.org/licenses/by/4.0/)
+
 ## What Is This Project?
 
 ### Clear Writing Aids Clear Thinking

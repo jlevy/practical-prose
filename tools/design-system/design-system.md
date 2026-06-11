@@ -636,5 +636,5 @@ When proposing palette changes:
   `_dark` palette variants per the convention above.
 - [`tools/pprose/src/pprose/rubric_schema.yaml`](../../pprose/src/pprose/rubric_schema.yaml)
   — defines the group and dimension keys this palette binds to.
-- [`tools/docs/project/specs/active/plan-2026-05-23-rendered-eval-reports.md`](../project/specs/active/plan-2026-05-23-rendered-eval-reports.md)
-  — in-flight plan that will consume this system in the HTML renderer.
+- [`docs/project/specs/done/plan-2026-05-29-static-html-eval-report.md`](../../docs/project/specs/done/plan-2026-05-29-static-html-eval-report.md)
+  — the shipped plan that consumes this system in the HTML renderer (`pprose render`).

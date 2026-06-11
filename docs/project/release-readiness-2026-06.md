@@ -136,6 +136,9 @@ The [e2e runbook](e2e-testing.runbook.md) points back here.
     `research-archive/`). Project specs live in **two** places
     (`docs/project/specs/active` and `tools/docs/project/specs/active`). *Fix: pick one
     specs home, and gitignore or remove `attic/` and loose root drafts before tagging.*
+    **Resolved 2026-06-11:** specs consolidated under `docs/project/specs/{active,done}`
+    and the legacy `tools/docs/` tree removed; `attic/` is gitignored and kept as
+    reference checkouts of other repos (flowmark, tbd).
     Moving the JS tooling (`package.json`/`node_modules`) under `tools/` was considered
     and **deliberately deferred**: lefthook’s git hook discovers its binary by walking
     `<repo-root>/node_modules` (never down into a subdir) and this hook template sources
