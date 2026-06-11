@@ -5,14 +5,16 @@ title: "Phase 1: lazy imports + listing contract + pprose list"
 kind: feature
 status: open
 priority: 1
-version: 2
+version: 4
 spec_path: docs/project/specs/active/plan-2026-06-11-cli-snappiness-color-and-listing.md
 labels: []
 dependencies:
   - type: blocks
     target: is-01ktvstk04s5nr8ywb4p70xph2
+  - type: blocks
+    target: is-01ktvt4rf8wazk9y4h4w033t2h
 parent_id: is-01ktvssrx2tntw63ankhqzk1dq
 created_at: 2026-06-11T16:56:39.436Z
-updated_at: 2026-06-11T16:56:40.609Z
+updated_at: 2026-06-11T17:02:23.265Z
 ---
-Per spec Phase 1: cli.py keeps only stdlib imports at module level (in-function imports per command, textpress pattern); verify reference.py is import-light; import-graph guard test (no pydantic_ai/anthropic/openai/google in 'import pprose.cli') + startup budget test + per-command --help smoke; no-args-lists contract with --list hidden-deprecated for one release; new top-level 'pprose list' inventory grouped by kind; update every doc surface that mentions --list (help strings, README, AGENTS.md template in install.py, skill preamble, agents-internal-guide) and resync.
+Per spec Phase 1 (hard cut, no backward compat): cli.py keeps only stdlib imports at module level (in-function imports per command, textpress pattern); verify reference.py import-light; import-graph guard test (no pydantic_ai/anthropic/openai/google in 'import pprose.cli') + startup budget + per-command --help smoke; no-args-lists contract with --list REMOVED entirely (argparse, help strings, all docs); new top-level 'pprose list' inventory grouped by kind; scrub every --list mention (README, AGENTS.md template in install.py, skill preamble, agents-internal-guide) and resync.
