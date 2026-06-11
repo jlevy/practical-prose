@@ -9,6 +9,11 @@ was consolidated here on 2026-06-11).
 
 ## Now (unblocked, highest value)
 
+- **CLI cleanup: snappiness, color, listing UX** (epic pp-lx2p; spec
+  [plan-2026-06-11](docs/project/specs/active/plan-2026-06-11-cli-snappiness-color-and-listing.md)):
+  fix the ~1.3s `--help` startup via lazy imports (Phase 1, pp-mbh2), then the
+  NO_COLOR/TTY-aware color layer (Phase 2, pp-b7pl). Coordinate with the reporting-CLI
+  redesign below — same files.
 - **Reporting CLI redesign** (epic pp-d2j3; spec
   [plan-2026-06-03](docs/project/specs/active/plan-2026-06-03-reporting-cli-redesign.md)):
   the eval → report → show pipeline.
