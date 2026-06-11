@@ -7,6 +7,21 @@ from git tags by dynamic versioning (see [docs/publishing.md](docs/publishing.md
 
 ## [Unreleased]
 
+### Changed
+
+- **Faster startup.** CLI command targets are imported lazily at dispatch, so
+  `pprose --help`, `--version`, and the reference listings no longer load the eval chain
+  (pydantic_ai + provider SDKs).
+  `import pprose.cli` drops from ~1.16s to ~56ms.
+- **Auto-detected color output.** Help, listings, and errors are styled on an
+  interactive terminal and emitted as plain text when piped, in CI, under `NO_COLOR`, or
+  driven by an agent. A `--color {auto,always,never}` flag overrides detection.
+- **Simpler listing UX (breaking).** The redundant `--list` flag is removed.
+  `pprose guidelines|shortcut|runbook` with no name lists that kind; with a name prints
+  one. `pprose skill` prints the skills overview.
+  New top-level `pprose list` prints the full bundled inventory (guidelines, shortcuts,
+  runbooks, skills), with `--kind` to filter.
+
 ## [0.1.1] - 2026-06-11
 
 Documentation and bundled-resource update; no code-behavior or breaking changes.

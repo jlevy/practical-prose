@@ -67,10 +67,11 @@ or panels look, edit the component file under `tools/render-components/` and re-
 sync script. See
 [plan-2026-05-31-shared-render-components.md](specs/active/plan-2026-05-31-shared-render-components.md).
 
-**Reference** (print bundled docs the agent follows; `--list` to enumerate):
-`pprose guidelines <name>`, `pprose shortcut <name>`, `pprose runbook <name>`,
-`pprose skill <name>`, `pprose about`. The guidelines, shortcuts, runbooks, and rubric
-are bundled in the wheel, so these work in any repo without this source tree.
+**Reference** (print bundled docs the agent follows): `pprose list` for the full
+inventory; `pprose guidelines <name>`, `pprose shortcut <name>`, `pprose runbook <name>`
+print one (omit the name to list that kind); `pprose skill <name>` and `pprose about`.
+The guidelines, shortcuts, runbooks, and rubric are bundled in the wheel, so these work
+in any repo without this source tree.
 
 **Setup**: `pprose install` runs in one of two scopes:
 
