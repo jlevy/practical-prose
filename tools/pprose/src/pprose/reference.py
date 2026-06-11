@@ -9,7 +9,7 @@ from __future__ import annotations
 
 import argparse
 
-from pprose import resources
+from pprose import resources, term
 
 
 def _doc_command(category: str, label: str, argv: list[str] | None) -> int:
@@ -21,7 +21,7 @@ def _doc_command(category: str, label: str, argv: list[str] | None) -> int:
 
     if not args.name:
         for name in resources.list_names(category):
-            print(f"{name}\t{resources.doc_title(category, name)}")
+            print(f"{term.bold(name)}\t{term.dim(resources.doc_title(category, name))}")
         return 0
     try:
         print(resources.read_doc(category, args.name))
@@ -48,9 +48,9 @@ def inventory_main(argv: list[str] | None = None) -> int:
         if i:
             print()
         if not args.kind:
-            print(f"{kind}:")
+            print(term.heading(f"{kind}:"))
         for name in resources.list_names(kind):
-            print(f"  {name}\t{resources.doc_title(kind, name)}")
+            print(f"  {term.bold(name)}\t{term.dim(resources.doc_title(kind, name))}")
     return 0
 
 

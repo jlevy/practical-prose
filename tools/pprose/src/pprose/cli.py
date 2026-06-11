@@ -9,12 +9,15 @@ from contextlib import contextmanager
 from dataclasses import dataclass
 from importlib.metadata import PackageNotFoundError, version
 
-# Keep module-level imports to the standard library only. The subsystems are imported
-# lazily in `_resolve()` at dispatch time so `pprose --help`, `--version`, and the
-# reference listings stay fast: the eval chain (`eval_score`/`eval_compare`) pulls in
-# pydantic_ai and the provider SDKs (~1s of import cost) that help never needs.
+# Keep module-level imports to the standard library and pprose.term (stdlib-only).
+# The subsystems are imported lazily in `_resolve()` at dispatch time so `pprose --help`,
+# `--version`, and the reference listings stay fast: the eval chain
+# (`eval_score`/`eval_compare`) pulls in pydantic_ai and the provider SDKs (~1s of import
+# cost) that help never needs.
+from pprose import term
 
 CommandMain = Callable[[list[str] | None], int]
+COLOR_CHOICES = ("auto", "always", "never")
 
 
 @dataclass(frozen=True)
@@ -102,22 +105,24 @@ def _resolve(target: str) -> CommandMain:
 def _print_help() -> None:
     command_width = max(len(name) for name in COMMANDS)
     lines = [
-        "pprose — Practical Prose evaluation and editing tooling",
+        term.bold("pprose — Practical Prose evaluation and editing tooling"),
         "",
-        "Usage:",
-        f"  {PROGRAM} <command> [args]",
+        term.heading("Usage:"),
+        f"  {term.command(PROGRAM)} <command> [args]",
     ]
     for group in GROUPS:
         lines.append("")
-        lines.append(f"{group}:")
+        lines.append(term.heading(f"{group}:"))
         for name, spec in COMMANDS.items():
             if spec.group == group:
-                lines.append(f"  {name:<{command_width}}  {spec.summary}")
+                pad = " " * (command_width - len(name))
+                lines.append(f"  {term.command(name)}{pad}  {spec.summary}")
     lines.extend(
         [
             "",
             f"Run `{PROGRAM} <command> --help` for command-specific options, "
-            f"`{PROGRAM} --version` for the installed version.",
+            f"`{PROGRAM} --version` for the installed version, "
+            f"`--color auto|always|never` to control styling.",
             "",
             "Getting started:",
             f"  uvx {PROGRAM} install        # install skills into the current project",
@@ -158,8 +163,38 @@ def _version() -> str:
         return "unknown"
 
 
+def _extract_color(args: list[str]) -> tuple[list[str], str | None]:
+    """Pull the global `--color [auto|always|never]` flag out from any position."""
+    override: str | None = None
+    rest: list[str] = []
+    i = 0
+    while i < len(args):
+        arg = args[i]
+        if arg == "--color":
+            override = args[i + 1] if i + 1 < len(args) else ""
+            i += 2
+        elif arg.startswith("--color="):
+            override = arg.split("=", 1)[1]
+            i += 1
+        else:
+            rest.append(arg)
+            i += 1
+    return rest, override
+
+
 def main(argv: list[str] | None = None) -> int:
     args = list(sys.argv[1:] if argv is None else argv)
+
+    args, color_override = _extract_color(args)
+    if color_override is not None and color_override not in COLOR_CHOICES:
+        choices = ", ".join(COLOR_CHOICES)
+        print(
+            term.error("error:") + f" --color must be one of: {choices}",
+            file=sys.stderr,
+        )
+        return 2
+    term.set_enabled(term.use_color(sys.stdout, color_override))
+
     if args and args[0] in {"-h", "--help"}:
         _print_help()
         return 0
@@ -173,7 +208,7 @@ def main(argv: list[str] | None = None) -> int:
     command = args[0]
     spec = COMMANDS.get(command)
     if spec is None:
-        print(f"error: unknown command: {command}", file=sys.stderr)
+        print(term.error("error:") + f" unknown command: {command}", file=sys.stderr)
         _print_help()
         return 2
 
