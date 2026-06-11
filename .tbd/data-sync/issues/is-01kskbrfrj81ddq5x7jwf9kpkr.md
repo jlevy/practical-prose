@@ -5,8 +5,8 @@ title: "[chopdiff v0.4.x] Add Paragraph.heading_level + heading_text"
 kind: task
 status: closed
 priority: 1
-version: 4
-spec_path: tools/docs/project/specs/active/plan-2026-05-25-structural-document-metrics.md
+version: 5
+spec_path: docs/project/specs/active/plan-2026-05-25-structural-document-metrics.md
 labels:
   - cross-repo
 dependencies:
@@ -16,7 +16,7 @@ dependencies:
     target: is-01kskbs2ymzshjbfvnsg1wp8n9
 parent_id: is-01kshh6agcz1skz71dx3ychz3s
 created_at: 2026-05-27T00:01:13.489Z
-updated_at: 2026-06-03T05:04:26.614Z
+updated_at: 2026-06-11T16:21:46.496Z
 closed_at: 2026-06-03T05:04:26.612Z
 close_reason: Shipped in 0.3.1 as Paragraph.heading_level() + heading_title() (methods; 'heading_title' not 'heading_text').
 ---

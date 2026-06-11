@@ -5,13 +5,13 @@ title: Update module docstring; sanity sweep across repo docs with before/after 
 kind: task
 status: closed
 priority: 2
-version: 2
-spec_path: tools/docs/project/specs/active/plan-2026-05-25-structural-document-metrics.md
+version: 3
+spec_path: docs/project/specs/active/plan-2026-05-25-structural-document-metrics.md
 labels: []
 dependencies: []
 parent_id: is-01kshh6agcz1skz71dx3ychz3s
 created_at: 2026-05-26T06:59:01.023Z
-updated_at: 2026-05-26T08:00:23.721Z
+updated_at: 2026-06-11T16:21:46.496Z
 closed_at: 2026-05-26T08:00:23.719Z
 close_reason: "Superseded by spec rewrite 2026-05-26: pprose now depends on chopdiff BlockDoc (jlevy/chopdiff#8). Replaced by a slimmer pprose-only bead set under the same epic pp-3hg4."
 ---

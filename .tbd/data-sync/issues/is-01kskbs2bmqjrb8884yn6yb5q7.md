@@ -5,8 +5,8 @@ title: "[chopdiff v0.4.x] Add TextDoc.section_tree()"
 kind: task
 status: closed
 priority: 1
-version: 3
-spec_path: tools/docs/project/specs/active/plan-2026-05-25-structural-document-metrics.md
+version: 4
+spec_path: docs/project/specs/active/plan-2026-05-25-structural-document-metrics.md
 labels:
   - cross-repo
 dependencies:
@@ -14,7 +14,7 @@ dependencies:
     target: is-01kskbs2ymzshjbfvnsg1wp8n9
 parent_id: is-01kshh6agcz1skz71dx3ychz3s
 created_at: 2026-05-27T00:01:32.531Z
-updated_at: 2026-06-03T05:04:26.872Z
+updated_at: 2026-06-11T16:21:46.496Z
 closed_at: 2026-06-03T05:04:26.871Z
 close_reason: "Shipped in 0.3.1: TextDoc.sections() + toc() + section_size_tree() (the section tree this asked for, under different names)."
 ---

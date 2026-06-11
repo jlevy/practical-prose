@@ -5,8 +5,8 @@ title: Finalize file-level skill design against research
 kind: task
 status: closed
 priority: 2
-version: 12
-spec_path: tools/docs/project/specs/active/plan-2026-05-13-cross-agent-skills.md
+version: 13
+spec_path: docs/project/specs/done/plan-2026-05-13-cross-agent-skills.md
 labels:
   - cross-agent-skills
   - planning
@@ -32,7 +32,7 @@ dependencies:
     target: is-01krhz2f5wsv5rwkvzz2c6mbaq
 parent_id: is-01krhz0ckjzn0s26wggjjfays1
 created_at: 2026-05-14T00:45:07.376Z
-updated_at: 2026-05-14T00:50:51.301Z
+updated_at: 2026-06-11T16:21:45.875Z
 closed_at: 2026-05-14T00:50:51.300Z
 close_reason: Expanded the cross-agent skills spec with file/function-level implementation detail and explicit research-alignment constraints before implementation.
 ---

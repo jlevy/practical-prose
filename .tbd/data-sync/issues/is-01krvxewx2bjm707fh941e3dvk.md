@@ -5,8 +5,8 @@ title: "Spec: pprose score loose ends"
 kind: epic
 status: open
 priority: 2
-version: 12
-spec_path: tools/docs/project/specs/active/plan-2026-05-23-pprose-score-loose-ends.md
+version: 13
+spec_path: null
 labels: []
 dependencies: []
 child_order_hints:
@@ -19,6 +19,6 @@ child_order_hints:
   - is-01krw2m5ams9vjqa024nv638qs
   - is-01krw2m9zbx7t5eatwh9k4je11
 created_at: 2026-05-17T21:28:47.265Z
-updated_at: 2026-05-24T02:49:01.705Z
+updated_at: 2026-06-11T16:21:46.903Z
 ---
 Implement the current-code pprose score cleanup plan in tools/docs/project/specs/active/plan-2026-05-23-pprose-score-loose-ends.md: refresh current model targets around Claude Opus 4.7 and GPT-5.5, preserve existing Anthropic/batch behavior, add a thin target/provider seam, record source-check capability, and reuse existing concurrency for repeat/cross-target calibration.

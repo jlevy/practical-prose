@@ -5,8 +5,8 @@ title: Document skill install and usage surface
 kind: task
 status: closed
 priority: 2
-version: 3
-spec_path: tools/docs/project/specs/active/plan-2026-05-13-cross-agent-skills.md
+version: 4
+spec_path: docs/project/specs/done/plan-2026-05-13-cross-agent-skills.md
 labels:
   - cross-agent-skills
   - docs
@@ -15,7 +15,7 @@ dependencies:
     target: is-01krhz2f5wsv5rwkvzz2c6mbaq
 parent_id: is-01krhz0ckjzn0s26wggjjfays1
 created_at: 2026-05-14T00:44:17.477Z
-updated_at: 2026-05-14T01:06:14.040Z
+updated_at: 2026-06-11T16:21:45.875Z
 closed_at: 2026-05-14T01:06:14.039Z
 close_reason: Updated README with skill descriptions, install paths, and the clean prose-eval command surface.
 ---

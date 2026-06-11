@@ -5,8 +5,8 @@ title: "[chopdiff v0.4.x] Cache per-block marko parse result on Paragraph"
 kind: task
 status: closed
 priority: 1
-version: 7
-spec_path: tools/docs/project/specs/active/plan-2026-05-25-structural-document-metrics.md
+version: 8
+spec_path: docs/project/specs/active/plan-2026-05-25-structural-document-metrics.md
 labels:
   - cross-repo
 dependencies:
@@ -22,7 +22,7 @@ dependencies:
     target: is-01kskbs23rrda0270vpc2wxn7j
 parent_id: is-01kshh6agcz1skz71dx3ychz3s
 created_at: 2026-05-27T00:01:13.219Z
-updated_at: 2026-06-03T05:04:26.363Z
+updated_at: 2026-06-11T16:21:46.496Z
 closed_at: 2026-06-03T05:04:26.362Z
 close_reason: "Shipped in 0.3.1: Paragraph.block_type is a @cached_property and TextDoc.blocks() memoizes the parse on source_text."
 ---

@@ -5,8 +5,8 @@ title: Create content-only Practical Prose skills
 kind: task
 status: closed
 priority: 2
-version: 5
-spec_path: tools/docs/project/specs/active/plan-2026-05-13-cross-agent-skills.md
+version: 6
+spec_path: docs/project/specs/done/plan-2026-05-13-cross-agent-skills.md
 labels:
   - cross-agent-skills
   - docs
@@ -17,7 +17,7 @@ dependencies:
     target: is-01krhz20668axryc1y423xcs5h
 parent_id: is-01krhz0ckjzn0s26wggjjfays1
 created_at: 2026-05-14T00:44:00.558Z
-updated_at: 2026-05-14T01:05:57.551Z
+updated_at: 2026-06-11T16:21:45.875Z
 closed_at: 2026-05-14T01:05:57.550Z
 close_reason: Added portable content-only Practical Prose skills for common guidelines, quick check, and copy edit.
 ---

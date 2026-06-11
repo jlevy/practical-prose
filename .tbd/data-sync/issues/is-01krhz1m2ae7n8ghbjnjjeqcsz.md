@@ -5,8 +5,8 @@ title: Create CLI-backed Practical Prose skills
 kind: task
 status: closed
 priority: 2
-version: 5
-spec_path: tools/docs/project/specs/active/plan-2026-05-13-cross-agent-skills.md
+version: 6
+spec_path: docs/project/specs/done/plan-2026-05-13-cross-agent-skills.md
 labels:
   - cross-agent-skills
   - docs
@@ -18,7 +18,7 @@ dependencies:
     target: is-01krhz20668axryc1y423xcs5h
 parent_id: is-01krhz0ckjzn0s26wggjjfays1
 created_at: 2026-05-14T00:44:05.065Z
-updated_at: 2026-05-14T01:06:03.638Z
+updated_at: 2026-06-11T16:21:45.875Z
 closed_at: 2026-05-14T01:06:03.637Z
 close_reason: Added portable CLI-backed prose-eval and prose-compare skills using the clean uvx prose-eval command surface.
 ---

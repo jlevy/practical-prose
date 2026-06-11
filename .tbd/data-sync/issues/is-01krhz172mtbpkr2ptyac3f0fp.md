@@ -5,8 +5,8 @@ title: Test prose-eval subcommand CLI surface
 kind: task
 status: closed
 priority: 2
-version: 3
-spec_path: tools/docs/project/specs/active/plan-2026-05-13-cross-agent-skills.md
+version: 4
+spec_path: docs/project/specs/done/plan-2026-05-13-cross-agent-skills.md
 labels:
   - cross-agent-skills
   - testing
@@ -15,7 +15,7 @@ dependencies:
     target: is-01krhz27s9axj15pcwy0ccpt2d
 parent_id: is-01krhz0ckjzn0s26wggjjfays1
 created_at: 2026-05-14T00:43:51.763Z
-updated_at: 2026-05-14T00:53:20.771Z
+updated_at: 2026-06-11T16:21:45.875Z
 closed_at: 2026-05-14T00:53:20.770Z
 close_reason: Added focused tests for the unified prose-eval CLI surface and verified the full prose-eval lint/type/test workflow passes.
 ---

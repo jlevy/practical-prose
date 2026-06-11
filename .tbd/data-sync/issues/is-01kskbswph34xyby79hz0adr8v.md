@@ -5,15 +5,15 @@ title: Bump chopdiff pin to v0.4.0; refresh uv.lock
 kind: task
 status: closed
 priority: 1
-version: 3
-spec_path: tools/docs/project/specs/active/plan-2026-05-25-structural-document-metrics.md
+version: 4
+spec_path: docs/project/specs/active/plan-2026-05-25-structural-document-metrics.md
 labels: []
 dependencies:
   - type: blocks
     target: is-01kskbsx1f7fm5cmj1j6hca4qb
 parent_id: is-01kshh6agcz1skz71dx3ychz3s
 created_at: 2026-05-27T00:01:59.497Z
-updated_at: 2026-06-03T05:04:25.815Z
+updated_at: 2026-06-11T16:21:46.496Z
 closed_at: 2026-06-03T05:04:25.810Z
 close_reason: "Done: chopdiff bumped to 0.3.1 in PR (release/v0.1.0-stabilization), uv.lock refreshed, 266 tests pass."
 ---

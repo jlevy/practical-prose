@@ -5,15 +5,15 @@ title: Run cross-agent skill validation
 kind: task
 status: open
 priority: 2
-version: 3
-spec_path: tools/docs/project/specs/active/plan-2026-05-13-cross-agent-skills.md
+version: 5
+spec_path: docs/project/specs/done/plan-2026-05-13-cross-agent-skills.md
 labels:
   - cross-agent-skills
   - validation
 dependencies: []
 parent_id: is-01krhz0ckjzn0s26wggjjfays1
 created_at: 2026-05-14T00:44:32.827Z
-updated_at: 2026-05-14T03:46:46.478Z
+updated_at: 2026-06-11T16:21:46.189Z
 ---
 Manually validate all five skills in Claude Code and Codex CLI: at least three natural-language activation phrasings per skill, end-to-end run on small sample docs, link integrity, and referenced uvx prose-eval commands. Record any trigger wording adjustments needed.
 
