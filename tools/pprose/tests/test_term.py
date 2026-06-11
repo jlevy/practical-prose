@@ -10,7 +10,9 @@ COLOR_ENV = ("NO_COLOR", "FORCE_COLOR", "CI", "TERM")
 
 
 @pytest.fixture(autouse=True)
-def _clean_color_env(monkeypatch: pytest.MonkeyPatch):
+def _clean_color_env(  # pyright: ignore[reportUnusedFunction]
+    monkeypatch: pytest.MonkeyPatch,
+):
     for var in COLOR_ENV:
         monkeypatch.delenv(var, raising=False)
     yield
