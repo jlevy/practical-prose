@@ -33,9 +33,8 @@ pprose compare a.eval.md b.eval.md                 # compare N eval reports
 
 pprose about                                       # the project narrative (bundled README)
 pprose skill                                       # workflow skills overview + routing pointers
-pprose guidelines --list                           # bundled style guides and writing rules
-pprose shortcut --list                             # workflow playbooks the skills invoke
-pprose runbook --list                              # operational procedures (eval, compare)
+pprose list                                        # every bundled guideline, shortcut, runbook, skill
+pprose guidelines <name>                           # print one style guide (no name lists them)
 pprose install                                     # install skills into the current project
 pprose install --global                            # install skills user-wide for every project
 ```

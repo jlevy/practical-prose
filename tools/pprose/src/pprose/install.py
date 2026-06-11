@@ -243,10 +243,10 @@ def _skill_marker() -> str:
 def _bootstrap_line(pin: str) -> str:
     return (
         f"> Run pprose as `pprose <command>` if on PATH, else `uvx pprose@{pin} <command>` "
-        f"(zero-install via uv). Run `pprose --help` for every command, "
-        f"`pprose skill --list` for the other Practical Prose skills, and "
-        f"`pprose shortcut --list` / `pprose guidelines --list` / `pprose runbook --list` "
-        f"for on-demand playbooks, style guides, and procedures."
+        f"(zero-install via uv). Run `pprose --help` for every command, `pprose skill` "
+        f"for the other Practical Prose skills, and `pprose list` for all on-demand "
+        f"playbooks, style guides, and procedures (`pprose shortcut`, `pprose guidelines`, "
+        f"`pprose runbook` each print one by name)."
     )
 
 
@@ -281,9 +281,8 @@ def _print_skill_overview() -> None:
     """Intro paragraph + skill table + routing footer.
 
     The natural entry-point answer to "what does pprose do?" — `pprose skill` (no
-    args) is short enough to skim and points the agent at the deeper resource
-    lists (`pprose guidelines --list`, `pprose shortcut --list`,
-    `pprose runbook --list`) for everything else.
+    args) is short enough to skim and points the agent at the full bundled
+    inventory (`pprose list`) for everything else.
     """
     print(
         "Practical Prose skills are workflow entry points for improving, auditing,\n"
@@ -293,9 +292,10 @@ def _print_skill_overview() -> None:
     _print_skill_table()
     print(
         "\nFor deeper detail, the skills route to:\n"
-        "  pprose guidelines --list   — bundled style guides and writing rules\n"
-        "  pprose shortcut --list     — workflow playbooks the skills invoke\n"
-        "  pprose runbook --list      — operational procedures (eval, compare)\n"
+        "  pprose list      — every bundled guideline, shortcut, runbook, and skill\n"
+        "  pprose guidelines <name>   — a bundled style guide or writing rules\n"
+        "  pprose shortcut <name>     — a workflow playbook the skills invoke\n"
+        "  pprose runbook <name>      — an operational procedure (eval, compare)\n"
         "  pprose about               — the Practical Prose project narrative\n"
     )
 
@@ -303,13 +303,11 @@ def _print_skill_overview() -> None:
 def skill_main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(
         description=(
-            "Print a Practical Prose skill: `pprose skill` for an overview, "
-            "`pprose skill --list` for the terse table, "
-            "`pprose skill <name>` for the full composed SKILL.md."
+            "Print a Practical Prose skill: `pprose skill <name>` for the full composed "
+            "SKILL.md, or `pprose skill` with no name for an overview of all skills."
         )
     )
-    parser.add_argument("name", nargs="?", help="skill name (full SKILL.md)")
-    parser.add_argument("--list", action="store_true", help="terse table only")
+    parser.add_argument("name", nargs="?", help="skill name; omit for an overview")
     args = parser.parse_args(argv)
 
     if args.name:
@@ -317,9 +315,6 @@ def skill_main(argv: list[str] | None = None) -> int:
             print(compose_skill(args.name))
         except FileNotFoundError as exc:
             parser.error(str(exc))
-        return 0
-    if args.list:
-        _print_skill_table()
         return 0
     _print_skill_overview()
     return 0
@@ -331,9 +326,9 @@ def agents_md_block(pin: str | None = None) -> str:
     Minimal by design (it sits in the always-on AGENTS.md context alongside other
     tools' blocks and any hand-authored project content). Carries only the trigger
     description plus pointers at `pprose --help` and the CLI list commands; the
-    per-skill bullet list is gone (run `pprose skill --list` for that). The
-    `format=fNN` field on the BEGIN marker lets a future pprose detect and upgrade
-    older blocks (and refuse to clobber a newer one).
+    per-skill bullet list is gone (run `pprose skill` for that). The `format=fNN`
+    field on the BEGIN marker lets a future pprose detect and upgrade older blocks
+    (and refuse to clobber a newer one).
     """
     pin = pin if pin is not None else pinned_version()
     # Authored as long lines; _flowmark applies the same semantic wrapping the
@@ -348,10 +343,9 @@ def agents_md_block(pin: str | None = None) -> str:
             "practical documents.",
             "",
             "Discover the tool from the CLI itself: `pprose --help` for commands, "
-            "`pprose about` for the project narrative, and `pprose skill --list` / "
-            "`pprose shortcut --list` / `pprose guidelines --list` / "
-            "`pprose runbook --list` for on-demand workflows, playbooks, style guides, "
-            "and procedures.",
+            "`pprose about` for the project narrative, `pprose skill` for the workflow "
+            "skills, and `pprose list` for every on-demand guideline, shortcut, and "
+            "runbook (`pprose guidelines|shortcut|runbook <name>` prints one).",
             "",
             f"Run pprose as `pprose <command>` if on PATH, else `uvx pprose@{pin} "
             "<command>` (zero-install via uv).",

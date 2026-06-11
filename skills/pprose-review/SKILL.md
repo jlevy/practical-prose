@@ -6,9 +6,9 @@ description: Review one practical document and report tiered editorial feedback 
 
 > Run pprose as `pprose <command>` if on PATH, else `uvx pprose@0.1.1 <command>`
 > (zero-install via uv).
-> Run `pprose --help` for every command, `pprose skill --list` for the other Practical
-> Prose skills, and `pprose shortcut --list` / `pprose guidelines --list` /
-> `pprose runbook --list` for on-demand playbooks, style guides, and procedures.
+> Run `pprose --help` for every command, `pprose skill` for the other Practical Prose
+> skills, and `pprose list` for all on-demand playbooks, style guides, and procedures
+> (`pprose shortcut`, `pprose guidelines`, `pprose runbook` each print one by name).
 
 # Review
 

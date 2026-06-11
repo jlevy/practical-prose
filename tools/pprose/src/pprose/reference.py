@@ -13,12 +13,13 @@ from pprose import resources
 
 
 def _doc_command(category: str, label: str, argv: list[str] | None) -> int:
-    parser = argparse.ArgumentParser(description=f"Print a bundled {label}.")
-    parser.add_argument("name", nargs="?", help=f"{label} name (omit with --list)")
-    parser.add_argument("--list", action="store_true", help=f"list available {label}s")
+    parser = argparse.ArgumentParser(
+        description=f"Print a bundled {label} by name, or list them all when run with no name.",
+    )
+    parser.add_argument("name", nargs="?", help=f"{label} name; omit to list all {label}s")
     args = parser.parse_args(argv)
 
-    if args.list or not args.name:
+    if not args.name:
         for name in resources.list_names(category):
             print(f"{name}\t{resources.doc_title(category, name)}")
         return 0
@@ -26,6 +27,30 @@ def _doc_command(category: str, label: str, argv: list[str] | None) -> int:
         print(resources.read_doc(category, args.name))
     except FileNotFoundError as exc:
         parser.error(str(exc))
+    return 0
+
+
+def inventory_main(argv: list[str] | None = None) -> int:
+    """`pprose list`: the full bundled inventory, grouped by kind."""
+    kinds = ("guidelines", "shortcuts", "runbooks", "skills")
+    parser = argparse.ArgumentParser(
+        description="List all bundled guidelines, shortcuts, runbooks, and skills.",
+    )
+    parser.add_argument(
+        "--kind",
+        choices=kinds,
+        help="list only one kind instead of all",
+    )
+    args = parser.parse_args(argv)
+
+    selected = (args.kind,) if args.kind else kinds
+    for i, kind in enumerate(selected):
+        if i:
+            print()
+        if not args.kind:
+            print(f"{kind}:")
+        for name in resources.list_names(kind):
+            print(f"  {name}\t{resources.doc_title(kind, name)}")
     return 0
 
 

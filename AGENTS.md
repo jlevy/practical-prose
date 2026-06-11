@@ -21,9 +21,9 @@ Practical Prose: an evaluation toolkit and editorial workflows for practical doc
 Use when the user asks to improve, audit, score, or compare practical documents.
 
 Discover the tool from the CLI itself: `pprose --help` for commands, `pprose about` for
-the project narrative, and `pprose skill --list` / `pprose shortcut --list` /
-`pprose guidelines --list` / `pprose runbook --list` for on-demand workflows, playbooks,
-style guides, and procedures.
+the project narrative, `pprose skill` for the workflow skills, and `pprose list` for
+every on-demand guideline, shortcut, and runbook
+(`pprose guidelines|shortcut|runbook <name>` prints one).
 
 Run pprose as `pprose <command>` if on PATH, else `uvx pprose@0.1.1 <command>`
 (zero-install via uv).

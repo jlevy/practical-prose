@@ -282,7 +282,9 @@ Divergence means a shared component drifted.
 
 ```bash
 cd tools/pprose
-uv run pprose guidelines --list && uv run pprose shortcut --list && uv run pprose runbook --list && uv run pprose skill --list
+uv run pprose list                          # full bundled inventory, grouped by kind
+uv run pprose guidelines                    # no-arg listing of one kind
+uv run pprose guidelines common-doc-guidelines | head   # print one by name
 uv run pprose about | head
 uv run pprose skill            # no-arg overview
 ```
@@ -318,7 +320,7 @@ Before tagging, smoke-test the local wheel:
 cd tools/pprose && uv build
 uv venv /tmp/whl --python 3.13
 uv pip install --python /tmp/whl dist/pprose-*.whl
-/tmp/whl/bin/pprose guidelines --list   # bundled resources resolve from the wheel
+/tmp/whl/bin/pprose list                # bundled resources resolve from the wheel
 ```
 
 After `gh release create v0.1.0` and a successful `publish.yml` run, from a directory
@@ -327,7 +329,7 @@ After `gh release create v0.1.0` and a successful `publish.yml` run, from a dire
 ```bash
 uvx pprose@0.1.0 --help
 uvx pprose@0.1.0 about
-uvx pprose@0.1.0 guidelines --list
+uvx pprose@0.1.0 list
 cd /tmp/pp-scratch2 && git init && uvx pprose@0.1.0 install   # baked pin must resolve
 ```
 
