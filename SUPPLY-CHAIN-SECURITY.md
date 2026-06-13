@@ -33,7 +33,7 @@ agent or contributor should read before adding or upgrading a dependency.
 ## First-Party Exemption
 
 Packages **maintained by this repo’s author** (the `github.com/jlevy` org, e.g.
-`flowmark` / `flowmark-rs`, `chopdiff`) are **exempt from the 14-day cool-off**. The
+`flowmark` / `flowmark-rs`, `flexdoc`) are **exempt from the 14-day cool-off**. The
 trust basis the cool-off substitutes for is already satisfied: the source is
 author-controlled and auditable, and the published artifact is verified against its git
 tag. First-party deps are still **pinned to an exact version**, and any in-window
@@ -49,15 +49,18 @@ This is a standing exemption, recorded here rather than re-approved per bump.
   `uvx --exclude-newer-package 'flowmark-rs=2026-06-02'`, which overrides the cool-off
   for this one package only and does not touch global uv config.
   Reviewed-by: Joshua Levy.
-- **`chopdiff==0.3.1`**: first-party (see above).
-  Published 2026-06-02; adopted the same day.
-  Pinned exact in [tools/pprose/pyproject.toml](tools/pprose/pyproject.toml).
+- **`flexdoc==0.1.0`**: first-party (see above).
+  Published 2026-06-12; adopted 2026-06-13 while inside the 14-day window.
+  flexdoc is the document-layer subset extracted from `chopdiff` (`TextDoc` →
+  `FlexDoc`); pprose now depends on it directly and **drops `chopdiff`**, since
+  metrics.py used only the document model, not chopdiff’s diff/windowed-transform
+  machinery. Pinned exact in [tools/pprose/pyproject.toml](tools/pprose/pyproject.toml).
   To let a contributor’s global uv `exclude-newer` admit it during resolution, the same
   file carries a per-package, repo-scoped
-  `[tool.uv] exclude-newer-package = { chopdiff = … }`; it caps only chopdiff and never
+  `[tool.uv] exclude-newer-package = { flexdoc = … }`; it caps only flexdoc and never
   relaxes the cool-off for any other dependency.
   CI has no global cutoff and installs it from the committed `uv.lock`. Remove the
-  `exclude-newer-package` entry once 0.3.1 ages out of the window.
+  `exclude-newer-package` entry once 0.1.0 ages out of the window.
   Reviewed-by: Joshua Levy.
 
 ## Known Gap

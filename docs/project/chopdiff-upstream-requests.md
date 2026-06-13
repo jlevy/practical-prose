@@ -1,11 +1,28 @@
 ---
 title: chopdiff upstream feature requests (from pprose metrics work)
-description: The chopdiff API gaps pprose still works around after the 0.3.1 upgrade, filed as issues jlevy/chopdiff#18-#22 for its next release.
+description: The document-model API gaps pprose worked around on chopdiff 0.3.1, filed as jlevy/chopdiff#18-#22. Mostly superseded by the flexdoc 0.1.0 migration; tracked here for the remaining gap and the workaround-removal work.
 date: 2026-06-02
-last_updated: 2026-06-10
-status: active
+last_updated: 2026-06-13
+status: superseded
 ---
 # chopdiff Upstream Feature Requests
+
+> **Update (2026-06-13): superseded by the flexdoc migration.** These were
+> document-model requests, and that model is now the standalone **flexdoc** package
+> (chopdiff’s `TextDoc` became `flexdoc.FlexDoc`). pprose migrated from
+> `chopdiff==0.3.1` to `flexdoc==0.1.0` and dropped chopdiff entirely.
+> flexdoc 0.1.0 already ships four of the five requests below: **#1 `code_info`**, **#2
+> `table_info`**, and **#3 `list_info`** are typed metadata on `flexdoc.docs.Block`
+> (`block.code_info` / `.table_info` / `.list_info`), and **#5 frontmatter isolation**
+> is `FlexDoc.frontmatter` (frontmatter is excluded from `paragraphs` and all prose
+> counts). Only **#4 `NodeKind.footnote_ref`** is still unimplemented and should be
+> refiled against [jlevy/flexdoc](https://github.com/jlevy/flexdoc).
+> 
+> The capabilities exist; pprose has **not yet adopted** them — `metrics.py` still uses
+> its own regex workarounds for code/table/list/footnote counts.
+> Dropping those in favor of flexdoc’s block API is the remaining structural-metrics
+> work (epic `pp-3hg4`). The per-request detail below is preserved as the design record;
+> mentally substitute `FlexDoc` for `TextDoc` and `Block` for `Paragraph`.
 
 After upgrading pprose to **chopdiff 0.3.1**, an audit against the structural-metrics
 plan
@@ -80,10 +97,14 @@ Each maps to a tbd bead (the `pp-…` id) for tracking on the pprose side.
 
 ## Status
 
-All five are now filed upstream as jlevy/chopdiff#18-#22 (2026-06-10). These are tracked
-under the structural-metrics epic (`pp-3hg4`) with the `upstream-chopdiff` label.
-The pprose-side work (`pp-pd8t` and friends) proceeds on the 0.3.1 workarounds and is
-**not** blocked on any of the above.
+All five were filed upstream as jlevy/chopdiff#18-#22 (2026-06-10), tracked under the
+structural-metrics epic (`pp-3hg4`). With the 2026-06-13 migration to **flexdoc 0.1.0**,
+#1, #2, #3, and #5 are satisfied by the library (`Block.code_info` / `.table_info` /
+`.list_info` and `FlexDoc.frontmatter`); #4 (`NodeKind.footnote_ref`) remains and should
+be refiled against jlevy/flexdoc.
+The pprose-side workaround-removal work still proceeds under `pp-3hg4` and is **not**
+blocked — pprose now adapts the accessor names to flexdoc’s block model rather than
+waiting on an upstream release.
 
 <!-- This document follows common-doc-guidelines.md.
 See github.com/jlevy/practical-prose and review guidelines before editing.

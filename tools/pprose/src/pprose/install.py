@@ -216,7 +216,7 @@ def _flowmark(text: str) -> str:
 
     The flags mirror flowmark-rs `--auto` and are verified byte-identical against it
     (see tests/test_install.py::test_generated_skills_are_flowmark_stable). flowmark is
-    a guaranteed dependency (direct, and transitively via chopdiff), so this never
+    a guaranteed dependency (direct, and transitively via flexdoc), so this never
     falls back to unformatted output.
     """
     return reformat_text(text, width=88, semantic=True, cleanups=True, smartquotes=True)

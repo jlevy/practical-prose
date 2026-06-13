@@ -44,8 +44,11 @@ was consolidated here on 2026-06-11).
   (pp-tfdk).
 - Structural document decomposition for metrics (epic pp-3hg4; spec
   [plan-2026-05-25](docs/project/specs/active/plan-2026-05-25-structural-document-metrics.md)
-  is ready to start now that chopdiff 0.3.1 shipped; v0.4.x asks pp-9cmv, pp-tg93,
-  pp-eaa2, pp-4hku; docstring sweep pp-ka9t).
+  is ready to start; the document-model API it needs now ships in flexdoc 0.1.0
+  (`Block.code_info` / `.table_info` / `.list_info`, `FlexDoc.frontmatter`), so pp-9cmv,
+  pp-tg93, pp-eaa2, pp-4hku become workaround-removal against flexdoc rather than
+  waiting on a chopdiff release; only pp-aat4 (footnote-ref NodeKind) is still missing
+  upstream. Docstring sweep pp-ka9t).
 - Eval-screenshot tooling (deferred from the README-cards work): snapshot-fit print CSS
   (pp-2gs0), multi-document side-by-side render (pp-39ce), optional in-package
   `pprose snapshot` (pp-w0oz).

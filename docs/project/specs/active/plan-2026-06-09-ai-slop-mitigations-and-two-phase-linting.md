@@ -87,11 +87,13 @@ Verdict: **adopt its patterns, not new dependencies** — its entire stack
 (chopdiff, pydantic-ai, aiolimiter `gather_limited`) is already in pprose’s dependency
 list.
 
-- **chopdiff `TextDoc` is the document model for the linter.** Already a pprose dep
-  (`chopdiff==0.3.1`). Markdown-aware paragraph/sentence segmentation with *exact source
-  spans* and offset inversion (`sentence_at_offset`, `block_at_offset`) — precisely what
-  Match spans, ±2-sentence verification context, and code-block/frontmatter skipping
-  need. See chopdiff’s `textdoc-spec.md`.
+- **The flexdoc `FlexDoc` document model is the document model for the linter.** Already
+  a pprose dep (`flexdoc==0.1.0`, the standalone document layer extracted from chopdiff;
+  pprose migrated off chopdiff on 2026-06-13). Markdown-aware paragraph/sentence
+  segmentation with *exact source spans* and offset inversion (`sentence_at_offset`,
+  `block_at_offset`) — precisely what Match spans, ±2-sentence verification context, and
+  code-block/frontmatter skipping need.
+  See flexdoc’s `docs/flexdoc-spec.md`.
 - **Per-judgment focused prompts** (leximetry `evaluate_single_metric`): one small Agent
   call per metric, fanned out with `gather_limited` — the proven precedent for phase B’s
   one-call-per-candidate design.
