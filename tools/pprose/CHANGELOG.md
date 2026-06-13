@@ -9,6 +9,14 @@ from git tags by dynamic versioning (see [docs/publishing.md](docs/publishing.md
 
 ### Changed
 
+- **Document model: chopdiff -> flexdoc.** `metrics.py` now uses `flexdoc.FlexDoc` (the
+  standalone document-layer package extracted from chopdiff) instead of
+  `chopdiff.TextDoc`, and `chopdiff` is dropped as a dependency.
+  Word / sentence / paragraph / line counts are byte-identical (the fixture-locked
+  metrics test passes unchanged), and the dependency footprint shrinks since flexdoc
+  omits chopdiff’s diff and windowed-transform machinery, which pprose never used.
+  flexdoc 0.1.0 is admitted under the standing first-party cool-off exemption (see
+  [SUPPLY-CHAIN-SECURITY.md](../../SUPPLY-CHAIN-SECURITY.md)).
 - **Faster startup.** CLI command targets are imported lazily at dispatch, so
   `pprose --help`, `--version`, and the reference listings no longer load the eval chain
   (pydantic_ai + provider SDKs).
