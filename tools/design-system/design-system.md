@@ -9,7 +9,7 @@ eval-report frontmatter, Markdown rollups, static HTML reports, comparison table
 any future renderer (terminal, PDF).
 
 The runtime palette source of truth is
-[`tools/pprose/src/pprose/table_styles.py`](../../pprose/src/pprose/table_styles.py).
+[`tools/pprose/src/pprose/table_styles.py`](../pprose/src/pprose/table_styles.py).
 This document is the human-readable rationale and the canonical color values.
 
 ## Color Policy
@@ -631,10 +631,10 @@ When proposing palette changes:
 
 ## References
 
-- [`tools/pprose/src/pprose/table_styles.py`](../../pprose/src/pprose/table_styles.py) —
+- [`tools/pprose/src/pprose/table_styles.py`](../pprose/src/pprose/table_styles.py) —
   runtime source of truth for the palette; emits `hsl()` and ships both light and
   `_dark` palette variants per the convention above.
-- [`tools/pprose/src/pprose/rubric_schema.yaml`](../../pprose/src/pprose/rubric_schema.yaml)
+- [`tools/pprose/src/pprose/rubric_schema.yaml`](../pprose/src/pprose/rubric_schema.yaml)
   — defines the group and dimension keys this palette binds to.
 - [`docs/project/specs/done/plan-2026-05-29-static-html-eval-report.md`](../../docs/project/specs/done/plan-2026-05-29-static-html-eval-report.md)
   — the shipped plan that consumes this system in the HTML renderer (`pprose render`).

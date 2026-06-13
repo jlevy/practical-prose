@@ -4,10 +4,13 @@
 
 **Author:** Joshua Levy with agent assistance
 
-**Status:** Ready to start — the dependency precondition is met (flexdoc 0.1.0 is
-shipped, pinned, and audited against the published wheel).
-No upstream release is pending for the regex-to-typed-API swaps; the one
-genuinely-blocked item (link-form breakdown) is isolated and called out below.
+**Status:** Blocked (deferred) as of 2026-06-13. A trial migration found that flexdoc
+0.1.0 cannot yet support a clean behavior-preserving swap: empirical testing across the
+repo surfaced two flexdoc bugs and several API gaps (see
+[Blocked on flexdoc 0.1.0](#blocked-on-flexdoc-010-2026-06-13) below), consolidated
+upstream in [jlevy/flexdoc#6](https://github.com/jlevy/flexdoc/issues/6). The regex
+implementation stays until a flexdoc release lands the fixes; resume from the
+regex-to-API mapping table when it does.
 
 > **Relationship to pp-3hg4.** This spec is the focused, do-it-now subset of the larger
 > structural-metrics epic
@@ -24,10 +27,38 @@ genuinely-blocked item (link-form breakdown) is isolated and called out below.
 > See [Relationship to pp-3hg4](#relationship-to-pp-3hg4) for how to track the two
 > together.
 
+## Blocked on flexdoc 0.1.0 (2026-06-13)
+
+A trial migration against flexdoc 0.1.0, tested across all 61 Markdown files in the
+repo, found the “mechanical, behavior-preserving swap gated by the reproducibility test”
+premise does not hold.
+Consolidated upstream as [jlevy/flexdoc#6](https://github.com/jlevy/flexdoc/issues/6);
+pprose tracking beads are pp-bcrw (this migration, blocked), pp-zbzp (bug 1), and
+pp-i23d (bug 2).
+
+- **`collect()` / `node_table()` crash on valid Markdown**
+  (`ValueError: layer nesting violated`) on 2 of 61 docs.
+  It is the only typed path to inline elements (images, footnote refs, code spans), so
+  the inline-node swaps in the mapping table below are blocked.
+- **`sections()` / `toc()` silently drop headings** that `blocks()` finds (4 of 61 docs,
+  including AGENTS.md), so a typed heading-by-level count is unreliable.
+- **`filtered(...).reassemble()` drifts** the link-form and editorial-lint text on 20 of
+  49 prose docs (links inside tables vanish; em dashes appear or disappear from
+  whitespace normalization), so it cannot feed the regexes this spec keeps
+  byte-identical.
+- **API gaps:** no heading-level accessor on `Block`; no link-form discriminator or
+  reference-definition surfacing (flexdoc#5); no inline-code-stripped prose projection.
+
+The one confirmed improvement: `blocks()` counts tables and code blocks more correctly
+than the old regexes (it catches indented and `~~~`-fenced code that `CODE_FENCE_RE`
+missed, and stops counting `#` lines inside those blocks as headings).
+That is a behavior change, not a no-op, so it also waits for the migration proper rather
+than landing piecemeal.
+
 ## Overview
 
-[tools/pprose/src/pprose/metrics.py](../../../../pprose/src/pprose/metrics.py) parses
-each Markdown document twice.
+[tools/pprose/src/pprose/metrics.py](../../../../tools/pprose/src/pprose/metrics.py)
+parses each Markdown document twice.
 Word, sentence, paragraph, and line counts already come from flexdoc
 (`FlexDoc.from_text(...).size(TextUnit.{words,sentences,paragraphs,lines})`).
 **Everything else is hand-rolled regex**: headings (ATX and setext), links by markdown
@@ -230,8 +261,8 @@ Three groups stay regex on purpose:
 
 ### Components
 
-- [tools/pprose/src/pprose/metrics.py](../../../../pprose/src/pprose/metrics.py) — the
-  only code file changed.
+- [tools/pprose/src/pprose/metrics.py](../../../../tools/pprose/src/pprose/metrics.py) —
+  the only code file changed.
   Rebuild `measure()` around one `FlexDoc`; delete `strip_code_and_frontmatter`,
   `count_headings`, and the replaced structural regex constants (`HEADING_RE`,
   `SETEXT_*_RE`, `IMAGE_RE`, `CODE_INLINE_RE`, `FOOTNOTE_REF_RE`, `FOOTNOTE_DEF_RE`,
@@ -280,8 +311,8 @@ Single phase; the swap is mechanical and gated by the reproducibility test.
 ## Testing Strategy
 
 The fixture-locked `TestB14_ReproducibilityRegression`
-([tools/pprose/tests/test_metrics.py](../../../../pprose/tests/test_metrics.py)) is the
-behavior-parity contract.
+([tools/pprose/tests/test_metrics.py](../../../../tools/pprose/tests/test_metrics.py))
+is the behavior-parity contract.
 It compares the full `Metrics` YAML for four fixtures (`all_headings`, `links_mixed`,
 `frontmatter_and_code`, `banned_register`) against pinned expected files and fails
 loudly on any drift.
@@ -398,8 +429,8 @@ the schema rewrite no longer has to also remove regexes.
 
 ## References
 
-- [tools/pprose/src/pprose/metrics.py](../../../../pprose/src/pprose/metrics.py)
-- [tools/pprose/tests/test_metrics.py](../../../../pprose/tests/test_metrics.py) —
+- [tools/pprose/src/pprose/metrics.py](../../../../tools/pprose/src/pprose/metrics.py)
+- [tools/pprose/tests/test_metrics.py](../../../../tools/pprose/tests/test_metrics.py) —
   `TestB14_ReproducibilityRegression` and the re-bless procedure.
 - [plan-2026-05-25-structural-document-metrics.md](plan-2026-05-25-structural-document-metrics.md)
   — the broader pp-3hg4 schema-rewrite epic this cleanup feeds.

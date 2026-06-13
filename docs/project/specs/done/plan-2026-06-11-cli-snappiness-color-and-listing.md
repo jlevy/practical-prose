@@ -5,11 +5,14 @@ author: Joshua Levy (github.com/jlevy) with LLM assistance
 ---
 # Feature: CLI cleanup — startup snappiness, color output, and listing UX
 
-**Date:** 2026-06-11 (last updated 2026-06-11)
+**Date:** 2026-06-11 (last updated 2026-06-13)
 
 **Author:** Joshua Levy with agent assistance
 
-**Status:** Draft
+**Status:** Implemented; merged to main in PR #28 (2026-06-13); part of the pending
+v0.2.0 release. Selective lazy command imports (startup ~1.16s to ~56ms), auto-detected
+color output with `--color {auto,always,never}`, and the listing UX (`--list` removed;
+bare-name listings plus a new top-level `pprose list`) all landed.
 
 ## Overview
 

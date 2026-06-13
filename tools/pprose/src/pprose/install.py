@@ -127,10 +127,7 @@ def _is_within_git_repo(path: Path) -> bool:
     `.git` is a directory in a regular repo and a file in a worktree/submodule, so
     `.exists()` covers both.
     """
-    for p in (path, *path.parents):
-        if (p / ".git").exists():
-            return True
-    return False
+    return any((p / ".git").exists() for p in (path, *path.parents))
 
 
 def _protected_target_reason(path: Path) -> str | None:
