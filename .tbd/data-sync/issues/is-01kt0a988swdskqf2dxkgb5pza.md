@@ -5,8 +5,8 @@ title: Implement render_eval_report() + per-section templates
 kind: task
 status: closed
 priority: 2
-version: 6
-spec_path: docs/project/specs/active/plan-2026-05-29-static-html-eval-report.md
+version: 7
+spec_path: docs/project/specs/done/plan-2026-05-29-static-html-eval-report.md
 labels: []
 dependencies:
   - type: blocks
@@ -19,7 +19,7 @@ dependencies:
     target: is-01kt0a9shf12zsdj7racajn2n7
 parent_id: is-01kt0a89n7vxq8pc32h8htb3kx
 created_at: 2026-06-01T00:45:33.336Z
-updated_at: 2026-06-01T01:17:43.193Z
+updated_at: 2026-06-13T18:38:35.686Z
 closed_at: 2026-06-01T01:17:43.192Z
 close_reason: Implemented in Phase 1; tests pass, lint clean, end-to-end smoke test produces 48KB self-contained HTML
 ---

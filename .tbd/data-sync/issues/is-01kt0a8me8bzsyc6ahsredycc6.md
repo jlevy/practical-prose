@@ -5,8 +5,8 @@ title: Add 'pprose render' subcommand skeleton + render_html package scaffold
 kind: task
 status: closed
 priority: 2
-version: 5
-spec_path: docs/project/specs/active/plan-2026-05-29-static-html-eval-report.md
+version: 6
+spec_path: docs/project/specs/done/plan-2026-05-29-static-html-eval-report.md
 labels: []
 dependencies:
   - type: blocks
@@ -15,7 +15,7 @@ dependencies:
     target: is-01kt0a92st5e3r1p2k9188sx6p
 parent_id: is-01kt0a89n7vxq8pc32h8htb3kx
 created_at: 2026-06-01T00:45:13.031Z
-updated_at: 2026-06-01T01:17:42.382Z
+updated_at: 2026-06-13T18:38:35.686Z
 closed_at: 2026-06-01T01:17:42.381Z
 close_reason: Implemented in Phase 1; tests pass, lint clean, end-to-end smoke test produces 48KB self-contained HTML
 ---

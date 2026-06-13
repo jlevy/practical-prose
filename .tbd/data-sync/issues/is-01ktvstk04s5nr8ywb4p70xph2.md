@@ -5,15 +5,15 @@ title: "Phase 2: term.py color layer + styled output"
 kind: feature
 status: closed
 priority: 2
-version: 3
-spec_path: docs/project/specs/active/plan-2026-06-11-cli-snappiness-color-and-listing.md
+version: 5
+spec_path: docs/project/specs/done/plan-2026-06-11-cli-snappiness-color-and-listing.md
 labels: []
 dependencies:
   - type: blocks
     target: is-01ktvt4rf8wazk9y4h4w033t2h
 parent_id: is-01ktvssrx2tntw63ankhqzk1dq
 created_at: 2026-06-11T16:56:39.684Z
-updated_at: 2026-06-11T17:17:51.334Z
+updated_at: 2026-06-13T18:36:58.053Z
 closed_at: 2026-06-11T17:17:51.333Z
 close_reason: "Implemented pprose/term.py (stdlib-only): use_color precedence (override>NO_COLOR>FORCE_COLOR>CI/dumb/TTY), --color auto|always|never flag, plain-when-disabled style helpers, width clamp. Styled help, listings, errors. Default-off outside TTY keeps agent output byte-stable (14 term tests incl. golden plain/colored). 326 tests pass, lint clean, startup budget + import-graph guard still green."
 ---
