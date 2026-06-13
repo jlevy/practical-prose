@@ -45,9 +45,8 @@ async def gather_limited(
     rate_limiter = AsyncLimiter(max_rps, 1.0)
 
     async def _wrapped(awaitable: Awaitable[T]) -> T:
-        async with semaphore:
-            async with rate_limiter:
-                return await awaitable
+        async with semaphore, rate_limiter:
+            return await awaitable
 
     return await asyncio.gather(
         *(_wrapped(c) for c in coros),

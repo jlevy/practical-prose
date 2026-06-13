@@ -328,10 +328,7 @@ def _bold_indices(
     if max(values) == min(values):
         return set()
 
-    if rule == "max":
-        target = max(values)
-    else:  # min
-        target = min(values)
+    target = max(values) if rule == "max" else min(values)
 
     if mode == "max":
         return {i for i, v in valid if v == target}
