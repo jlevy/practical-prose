@@ -1,6 +1,6 @@
 # Practical Prose Principles
 
-Version: v0.1 (last update 2026-05-11)\
+Version: v0.1 (last update 2026-06-12)\
 Joshua Levy (github.com/jlevy) with agent assistance
 
 ## Definition and Scope
@@ -97,13 +97,14 @@ mind. We choose these:
    understanding or judgment.
    Humane writing is not softness or ornament; it is rigor in service of reader success.
 
-These principles underlie `practical-prose-guidelines.md` and the dimensions used in
-`practical-prose-rubric.md`.
+These principles underlie [practical-prose-guidelines.md](practical-prose-guidelines.md)
+and the dimensions used in [practical-prose-rubric.md](practical-prose-rubric.md).
 
 ## Mapping Principles to Measurable Attributes
 
-`practical-prose-guidelines.md` defines twenty review dimensions grouped under six
-headings. Each maps to one or more principles.
+[practical-prose-guidelines.md](practical-prose-guidelines.md) defines twenty review
+dimensions grouped under six headings.
+Each maps to one or more principles.
 
 | Dimension | Principles |
 | --- | --- |
@@ -160,7 +161,7 @@ headings. Each maps to one or more principles.
 - [../README.md](../README.md): how the practical-prose layers fit together.
 - [practical-prose-guidelines.md](practical-prose-guidelines.md): prescriptive rules
   derived from these principles.
-- [practical-prose-rubric.md](practical-prose-rubric.md): descriptive 0-5 scoring
+- [practical-prose-rubric.md](practical-prose-rubric.md): descriptive 1-5 scoring
   anchors that operationalize the dimensions.
 - [practical-prose-bibliography.md](practical-prose-bibliography.md): curated reading
   list for the traditions above.

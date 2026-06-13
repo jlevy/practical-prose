@@ -63,7 +63,7 @@ uv add package_name@latest
 
 See [uv docs](https://docs.astral.sh/uv/) for details.
 
-## IDE setup
+## IDE Setup
 
 If you use VSCode or a fork like Cursor or Windsurf, you can install the following
 extensions:
@@ -83,3 +83,7 @@ See [publishing.md](publishing.md) for instructions on publishing to PyPI.
 - [uv docs](https://docs.astral.sh/uv/)
 
 - [basedpyright docs](https://docs.basedpyright.com/latest/)
+
+<!-- This document follows common-doc-guidelines.md.
+See github.com/jlevy/practical-prose and review guidelines before editing.
+-->

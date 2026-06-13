@@ -1,6 +1,6 @@
 # Practical Prose Bibliography
 
-Version: v0.1 (last update 2026-05-11)\
+Version: v0.1 (last update 2026-06-12)\
 Joshua Levy (github.com/jlevy), assembled with agent assistance
 
 While not exhaustive, this curated bibliography of notable past and present works on
@@ -622,7 +622,7 @@ practitioner rule sheets that would feed such a pack.
   relevant.
 - `pprose guidelines practical-prose-guidelines`: prescriptive rules
   derived from the principles.
-- `pprose guidelines practical-prose-rubric`: descriptive 0-5 scoring
+- `pprose guidelines practical-prose-rubric`: descriptive 1-5 scoring
   anchors for the 20 dimensions.
 - `pprose guidelines ai-prose-corrections`: binding catalog of LLM-register
   tells and their corrections; turns the *Critique of AI-Authored Prose* section above

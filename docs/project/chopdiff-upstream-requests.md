@@ -16,8 +16,8 @@ in 0.3.1 (PRs #12 / #14 / #15): the cached per-block parse (`Paragraph.block_typ
 `Paragraph.links()` / `TextDoc.links()`, `TextDoc.sections()` with per-section rollups,
 and `TextDoc.toc()` / `section_size_tree()`.
 
-The items below are the **remaining gaps**. None block pprose — each has a pprose-side
-workaround against the block source text — so these are *optional convenience*
+The items below are the **remaining gaps**. None block pprose (each has a pprose-side
+workaround against the block source text), so these are *optional convenience*
 follow-ups for chopdiff.
 Filed against [jlevy/chopdiff](https://github.com/jlevy/chopdiff) on 2026-06-10 (issues
 #18-#22); if accepted, pprose drops the corresponding workaround.
@@ -54,7 +54,7 @@ Each maps to a tbd bead (the `pp-…` id) for tracking on the pprose side.
   `start: int | None`, `max_depth: int`, `item_count: int`.
 - **pprose workaround today:** derive from `block_type` (`list` vs `ordered_list`) plus
   `collect(kinds={list_item})` / `base_blocks()` depths.
-  (Lowest priority — the workaround is clean.)
+  (Lowest priority; the workaround is clean.)
 
 ### 4. `NodeKind.footnote_ref` (typed inline footnote reference) (`pp-aat4`)
 

@@ -20,7 +20,7 @@ strengths, weaknesses, and suggested fixes for the author or other editors.
 
 Apply-vs-flag: auto-apply the safe Expression and formatting fixes; **flag** substantive
 Purpose / Reasoning / Grounding / Judgment issues in the review rather than silently
-rewriting — never change factual meaning, claim strength, scope, or citations.
+rewriting: never change factual meaning, claim strength, scope, or citations.
 
 ## Inputs
 
@@ -30,14 +30,14 @@ rewriting — never change factual meaning, claim strength, scope, or citations.
 
 ## Steps
 
-1. Run `pprose shortcut shortcut-full-edit` — the playbook, including the
+1. Run `pprose shortcut shortcut-full-edit`, the playbook, including the
    editorial-review structure.
 2. Follow it: per-group passes against `pprose guidelines practical-prose-guidelines`,
    apply the safe fixes, flag the substantive ones, and write the editorial review.
 3. If the artifact is a comprehensive practical guide (a reference work helping readers
    navigate a complex topic), also audit against
-   `pprose guidelines writing-practical-guides` — each guideline there carries an
-   applies-when caveat — and fold genre findings into the same passes and review.
+   `pprose guidelines writing-practical-guides` (each guideline there carries an
+   applies-when caveat) and fold genre findings into the same passes and review.
 
 ## Output
 

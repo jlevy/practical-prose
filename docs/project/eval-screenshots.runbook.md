@@ -3,18 +3,18 @@
 The two evaluation cards in the top-level [README.md](../../README.md) live in
 [images/](../../images/):
 
-- `images/as-we-may-think.png` — Vannevar Bush, “As We May Think” (The Atlantic, 1945)
-- `images/apple-media-services-terms.png` — Apple Media Services Terms
+- `images/as-we-may-think.png`: Vannevar Bush, “As We May Think” (The Atlantic, 1945)
+- `images/apple-media-services-terms.png`: Apple Media Services Terms
 
 The **scores** for each card are committed as `.eval.md` files in
 [evals/readme-cards/](../../evals/readme-cards/), and the **PNGs** are rendered from
 those. Scoring (an LLM call) and rendering (look-and-feel) are deliberately separate:
 
 - Change the **look and feel** (design tokens, `print.css`, the card template)?
-  Run **Flow A — Re-render** only.
-  No API call, no score change — the cards just pick up the new styling.
+  Run **Flow A: Re-Render** only.
+  No API call, no score change; the cards just pick up the new styling.
   This is the common case.
-- Want **fresh scores**? Run **Flow B — Re-score** to regenerate the committed
+- Want **fresh scores**? Run **Flow B: Re-Score** to regenerate the committed
   `.eval.md`, then run Flow A to re-render.
 
 This is a development workflow, not part of the shipped package: it shells out to a
@@ -23,17 +23,17 @@ dependencies to `pprose`.
 
 ## Prerequisites
 
-- Google Chrome (headless HTML → PDF) — both flows.
+- Google Chrome (headless HTML → PDF): both flows.
 
-- Poppler (`pdftoppm`) and ImageMagick (`magick`) for PDF → trimmed PNG — both flows:
+- Poppler (`pdftoppm`) and ImageMagick (`magick`) for PDF → trimmed PNG, both flows:
 
   ```bash
   brew install poppler imagemagick
   ```
 
-- An `ANTHROPIC_API_KEY` in `.env` (or the environment) — **Flow B only** (scoring).
+- An `ANTHROPIC_API_KEY` in `.env` (or the environment): **Flow B only** (scoring).
 
-## Flow A — Re-render (look-and-feel changes)
+## Flow A: Re-Render (Look-and-Feel Changes)
 
 Rebuilds the PNGs from the committed `evals/readme-cards/*.eval.md` with the current
 styles. No scoring, so the numbers on the cards do not change.
@@ -64,12 +64,12 @@ The print stylesheet
 ([print.css](../../tools/pprose/src/pprose/render_html/styles/print.css)) forces the
 light theme and hides the theme toggle and hover panels, so the printed page is clean.
 
-## Flow B — Re-score (refresh the numbers)
+## Flow B: Re-Score (Refresh the Numbers)
 
 Regenerates the committed `.eval.md` from the source documents in
 [example-texts/](../../example-texts/), then you run Flow A to re-render.
 Scores depend on the model and vary slightly between runs, so re-scoring will shift the
-numbers — update the README caption to match.
+numbers, update the README caption to match.
 
 ```bash
 #!/usr/bin/env bash
@@ -98,7 +98,7 @@ done
 `--model opus` resolves to the current default (Anthropic Claude Opus).
 `pprose score` occasionally returns a sub-5 score without a matching rule citation,
 which trips the alignment check; `--allow-misaligned` writes the report anyway (fine for
-a demo — the scores are the model’s real assessment).
+a demo; the scores are the model’s real assessment).
 
 ## Notes
 
@@ -110,7 +110,7 @@ a demo — the scores are the model’s real assessment).
   cross-dimension average: `overall_mean` is reductive and not comparable across genres
   (N/A dimensions drop out of any average, so a document that doesn’t engage many
   dimensions can outscore a richer one).
-  The Apple terms, for instance, leave several Reasoning and Judgment dimensions N/A — a
+  The Apple terms, for instance, leave several Reasoning and Judgment dimensions N/A: a
   contract states terms rather than arguing or weighing them.
   See the “Scores are reductive” note in
   [practical-prose-rubric.md](../practical-prose-rubric.md).

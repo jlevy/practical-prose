@@ -37,7 +37,7 @@ common errors—improve agent writing too.
 ### Scope
 
 The focus here is **practical prose**: writing that helps a reader—human or
-agent—understand, decide, do, or verify something.
+agent—understand, decide, do, verify, or maintain something.
 Practical prose includes technical documents, research reports, specifications, memos,
 plans, and other artifacts where value depends on usefulness.
 
@@ -216,6 +216,10 @@ The seven principles below decompose that fit into specific attributes.
 Principles set direction, but when an editor evaluates a piece of writing, they look at
 specific qualities or dimensions.
 
+<!-- The canonical wording of the question column lives in
+docs/practical-prose-guidelines.md (Six Groups, Twenty Dimensions); keep this table and
+the practical-prose-rubric.md copy cell-for-cell identical with it. -->
+
 | Area | Dimension | Question |
 | --- | --- | --- |
 | **Purpose** | P1. Suitability | Does the document give the reader what they need, in the form the task requires? |
@@ -229,14 +233,14 @@ specific qualities or dimensions.
 |  | F2. Consistency | Does the document follow the chosen style guide or house style consistently? |
 |  | F3. Formatting | Is the document visually and syntactically clean in its medium? |
 | **Reasoning** | R1. Discipline | Are observation, judgment, interpretation, and implication worked through in order, with each higher rung supported by the prior? |
-|  | R2. Soundness | Do claims follow from evidence through valid mechanisms? |
+|  | R2. Soundness | Do claims follow from evidence through valid mechanisms and explicit assumptions? |
 |  | R3. Precision | Are claims and terms specified at the right granularity? |
 |  | R4. Parsimony | Is each load-bearing reasoning chain the cleanest, simplest sound argument possible for its conclusion? |
-| **Grounding** | G1. Verifiability | Are claims traceable to sources or calculations? |
-|  | G2. Factuality | Do cited sources support the claims as asserted? |
+| **Grounding** | G1. Verifiability | Are claims traceable to specific sources, observations, calculations, or explicit assumptions? |
+|  | G2. Factuality | Do the verifiable claims hold up when checked against the world? |
 |  | G3. Relevance | Do sources, citations, and reasoning chains bear on the document’s stated purpose? |
 | **Judgment** | J1. Calibration | Does claim strength match evidence strength? |
-|  | J2. Fairness | Are opposing positions argued at proportional evidentiary depth? |
+|  | J2. Fairness | Are opposing positions argued at depth proportional to their plausibility, materiality, and strength? |
 |  | J3. Robustness | Do key claims survive plausible alternative interpretations? |
 
 Each dimension maps back to one or more principles in

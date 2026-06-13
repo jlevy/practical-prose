@@ -1,13 +1,13 @@
 ---
-title: Practical Prose Eval, multi-document comparison runbook
+title: Practical Prose Eval, Multi-Document Comparison Runbook
 description: Operational steps for producing a unified comparison Markdown report from N validated single-doc eval reports.
 date: 2026-05-07
-last_updated: 2026-05-14
+last_reviewed: 2026-06-12
 status: active
 ---
 # Practical Prose Eval, Multi-Document Comparison Runbook
 
-Version: v0.1 (last update 2026-05-14)\
+Version: v0.1 (last update 2026-06-12)\
 Joshua Levy (github.com/jlevy)
 
 ## Purpose
@@ -19,11 +19,11 @@ The deterministic generator is `pprose compare`; this runbook wraps it with the
 alignment audit and the analytical-prose layer the generator cannot produce.
 
 For an exact rendering of the generator’s output shape, see
-[expected-comparison.md](../tools/pprose/tests/fixtures/expected-comparison.md) — the
+[expected-comparison.md](../tools/pprose/tests/fixtures/expected-comparison.md), the
 golden output that [test_eval_compare.py](../tools/pprose/tests/test_eval_compare.py)
 pins against the six `figma-*.eval.md` fixtures.
 
-## Inputs and outputs
+## Inputs and Outputs
 
 - **Input:** N validated `<artifact>.eval.md` files (each produced by
   `practical-prose-eval-single.runbook.md`).
@@ -33,9 +33,10 @@ pins against the six `figma-*.eval.md` fixtures.
 ## Prerequisites
 
 `pprose` available on the command line and the provider-specific API key set for the
-model you score with (`ANTHROPIC_API_KEY`, `OPENAI_API_KEY`, or `GOOGLE_API_KEY`) — see
-[Tooling](../AGENTS.md#tooling).
-Batch eval outputs live under `evals/<round-name>/` at the repo root.
+model you score with (`ANTHROPIC_API_KEY`, `OPENAI_API_KEY`, or `GOOGLE_API_KEY`). In
+the practical-prose repo itself, see
+[agents-internal-guide.md](../docs/project/agents-internal-guide.md) §Tooling; batch
+eval outputs there live under `evals/<round-name>/` at the repo root.
 
 ## Steps
 
@@ -95,14 +96,14 @@ pprose compare \
 
 Flags:
 
-- `--format unified` — single combined table (default; matches the reference shape).
+- `--format unified`: single combined table (default; matches the reference shape).
   Use `--format sections` for per-section drilldowns, `--format both` for both.
-- `--bold-rule max` — bold per-row max(es) when not all artifacts tie (default).
+- `--bold-rule max`: bold per-row max(es) when not all artifacts tie (default).
   Use `--bold-rule materially-different` for a stricter rule (max must be ≥ 1 above the
   median).
-- `--pairs 'from=to' ...` — emit Δ tables for each pair, dimension by dimension, plus
+- `--pairs 'from=to' ...`: emit Δ tables for each pair, dimension by dimension, plus
   mean delta. Useful for “process A → process B” comparisons.
-- `--table-styles` — prepend optional `display.table_styles` frontmatter for browsers
+- `--table-styles`: prepend optional `display.table_styles` frontmatter for browsers
   that support the table-style microformat.
   The table body remains ordinary Markdown; omit this flag when you need byte-for-byte
   plain Markdown output.
@@ -150,7 +151,7 @@ Aim for falsifiable claims grounded in specific table cells, not generic.
 - Ongoing alignment-regression tracking: pin the expected scores in the single-doc
   runbook’s [regression fixtures](../tools/pprose/tests/fixtures/) and cite this report.
 
-## Alignment audit (before declaring the comparison done)
+## Alignment Audit (Before Declaring the Comparison Done)
 
 - [ ] Every input eval report validated.
 - [ ] Generator ran without warnings (including cross-rubric-version warnings).
@@ -158,7 +159,7 @@ Aim for falsifiable claims grounded in specific table cells, not generic.
 - [ ] Analytical prose grounded in specific table cells.
 - [ ] Reproducibility footer includes the exact command.
 
-## Related docs
+## Related Docs
 
 - [practical-prose-eval-single.runbook.md](practical-prose-eval-single.runbook.md):
   produces the eval reports this runbook consumes.

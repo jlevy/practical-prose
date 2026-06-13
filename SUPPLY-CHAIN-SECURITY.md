@@ -23,7 +23,7 @@ agent or contributor should read before adding or upgrading a dependency.
 - **Audit and don’t update for its own sake.** The safest update is the one you skip;
   bump only for a concrete, stated reason.
 
-### Per-ecosystem controls
+### Per-Ecosystem Controls
 
 | Tool | Control in this repo |
 | --- | --- |
@@ -32,7 +32,7 @@ agent or contributor should read before adding or upgrading a dependency.
 
 ## First-Party Exemption
 
-Packages **maintained by this repo’s author** (the `github.com/jlevy` org — e.g.
+Packages **maintained by this repo’s author** (the `github.com/jlevy` org, e.g.
 `flowmark` / `flowmark-rs`, `chopdiff`) are **exempt from the 14-day cool-off**. The
 trust basis the cool-off substitutes for is already satisfied: the source is
 author-controlled and auditable, and the published artifact is verified against its git
@@ -43,18 +43,18 @@ This is a standing exemption, recorded here rather than re-approved per bump.
 
 ## Active Exceptions
 
-- **`flowmark-rs@0.3.1`** — first-party (see above).
+- **`flowmark-rs@0.3.1`**: first-party (see above).
   Published 2026-05-30; adopted 2026-06-02 while inside the 14-day window.
   Applied surgically in the [Makefile](Makefile) via
   `uvx --exclude-newer-package 'flowmark-rs=2026-06-02'`, which overrides the cool-off
   for this one package only and does not touch global uv config.
   Reviewed-by: Joshua Levy.
-- **`chopdiff==0.3.1`** — first-party (see above).
+- **`chopdiff==0.3.1`**: first-party (see above).
   Published 2026-06-02; adopted the same day.
   Pinned exact in [tools/pprose/pyproject.toml](tools/pprose/pyproject.toml).
   To let a contributor’s global uv `exclude-newer` admit it during resolution, the same
   file carries a per-package, repo-scoped
-  `[tool.uv] exclude-newer-package = { chopdiff = … }` — it caps only chopdiff and never
+  `[tool.uv] exclude-newer-package = { chopdiff = … }`; it caps only chopdiff and never
   relaxes the cool-off for any other dependency.
   CI has no global cutoff and installs it from the committed `uv.lock`. Remove the
   `exclude-newer-package` entry once 0.3.1 ages out of the window.
@@ -72,8 +72,8 @@ This is a standing exemption, recorded here rather than re-approved per bump.
 
 ## References
 
-- `tbd guidelines supply-chain-hardening` — the concise cross-ecosystem policy.
-- <https://github.com/jlevy/supply-chain-hardening> — full playbooks, audit script,
+- `tbd guidelines supply-chain-hardening`: the concise cross-ecosystem policy.
+- <https://github.com/jlevy/supply-chain-hardening>: full playbooks, audit script,
   incident watch list, and CI/publish-side hardening.
 
 <!-- This document follows common-doc-guidelines.md.

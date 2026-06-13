@@ -13,7 +13,7 @@ was consolidated here on 2026-06-11).
   [plan-2026-06-11](docs/project/specs/active/plan-2026-06-11-cli-snappiness-color-and-listing.md)):
   fix the ~1.3s `--help` startup via lazy imports (Phase 1, pp-mbh2), then the
   NO_COLOR/TTY-aware color layer (Phase 2, pp-b7pl). Coordinate with the reporting-CLI
-  redesign below — same files.
+  redesign below (same files).
 - **Reporting CLI redesign** (epic pp-d2j3; spec
   [plan-2026-06-03](docs/project/specs/active/plan-2026-06-03-reporting-cli-redesign.md)):
   the eval → report → show pipeline.
@@ -25,7 +25,7 @@ was consolidated here on 2026-06-11).
   `pprose lint`) tracked under pp-ybcx, pp-j9q0, pp-gy7z, pp-65cs, pp-lik1, pp-3kb6,
   pp-ggui, pp-twg4.
 
-## Quality and reliability
+## Quality and Reliability
 
 - **Scoring reliability** (pp-aim6): run-to-run variance (±1 on ~6 dims between
   identical runs) and the stubborn sub-5-without-citation alignment miss; consider
@@ -38,7 +38,7 @@ was consolidated here on 2026-06-11).
 - **Cross-agent skill validation** (pp-flf2, epic pp-mpo1): manual activation checks in
   Claude Code and Codex CLI against the published package.
 
-## Tooling debt
+## Tooling Debt
 
 - Design-system: generator tests (pp-i4uh); vendor Zod locally instead of esm.sh
   (pp-tfdk).
@@ -50,7 +50,7 @@ was consolidated here on 2026-06-11).
   (pp-2gs0), multi-document side-by-side render (pp-39ce), optional in-package
   `pprose snapshot` (pp-w0oz).
 
-## README / docs follow-ups
+## README and Docs Follow-Ups
 
 - Remaining README revision drafts A-E (LLM-as-judge paragraph, positioning section,
   Age-of-AI consolidation, Where-to-Start fold, hero placement) await per-draft approval
@@ -59,7 +59,7 @@ was consolidated here on 2026-06-11).
 - After material README changes, regenerate the example-evaluation cards per
   [docs/project/eval-screenshots.runbook.md](docs/project/eval-screenshots.runbook.md).
 
-## Recently shipped (context)
+## Recently Shipped (Context)
 
 - v0.1.1 on PyPI (2026-06-11): writing-practical-guides genre supplement with skill
   routing, ai-prose consolidation, upgrade-path docs, slimmer wheel.
@@ -71,3 +71,7 @@ was consolidated here on 2026-06-11).
 - `writing-practical-guides` genre supplement + skill routing; AI-prose corrections
   consolidation; design-system and baseline-evals runbook unbundled from the wheel.
 - Calibration pass on the example evals (epic pp-a65z; one follow-up open: pp-aim6).
+
+<!-- This document follows common-doc-guidelines.md.
+See github.com/jlevy/practical-prose and review guidelines before editing.
+-->

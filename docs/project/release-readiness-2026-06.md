@@ -1,6 +1,6 @@
 ---
 title: pprose First-Release Readiness Review (2026-06)
-description: A snapshot assessment of how well-organized pprose is for a first public release — what works, the ranked risks to clear, and what should become automated tests.
+description: A snapshot assessment of how well-organized pprose is for a first public release: what works, the ranked risks to clear, and what should become automated tests.
 date: 2026-06-02
 last_updated: 2026-06-09
 status: active
@@ -65,7 +65,7 @@ steps: register the PyPI trusted publisher (pending-publisher, one-time), then
 `gh release create v0.1.0`, which tags and triggers `publish.yml`. `DISCOVERY_VERSION`
 is already `0.1.0`, so the new guard passes for this release.
 
-The remaining open children of the hardening epic (`pp-28l5`) — `pp-5zgc` (Playwright
+The remaining open children of the hardening epic (`pp-28l5`), `pp-5zgc` (Playwright
 visual smoke), `pp-3g59` (SUGGESTED_MODELS drift note), `pp-wlwj` (repo org / `attic/`)
 — are the D-tier deferred-polish items below and do not block v0.1.0.
 
@@ -143,7 +143,7 @@ The [e2e runbook](e2e-testing.runbook.md) points back here.
     and **deliberately deferred**: lefthook’s git hook discovers its binary by walking
     `<repo-root>/node_modules` (never down into a subdir) and this hook template sources
     no rc file, so a full move would break hook discovery or force a second root
-    `package.json` — more clutter, not less.
+    `package.json`: more clutter, not less.
     `package.json`/`node_modules` are kept at the root as git-hook infrastructure;
     `biome.json` stays beside them so biome resolves its config from the same root.
 
@@ -185,41 +185,39 @@ The rapid-fix beads from this review are already done (epic `pp-28l5`, landed in
 
 **A. Release gate (must land for v0.1.0)**
 
-- `pp-wgmr` — Prepare first pprose PyPI release (tag `v0.1.0`, register the trusted
+- `pp-wgmr`: Prepare first pprose PyPI release (tag `v0.1.0`, register the trusted
   publisher). Everything `uvx pprose@0.1.0` depends on this; see risk #1.
 
-**B. Stabilization set (low-risk; land before tagging)** — under `pp-28l5` unless noted:
+**B. Stabilization set (low-risk; land before tagging)**, under `pp-28l5` unless noted:
 
-- `pp-0hqc` — CI workflow running `make lint-check` (drift + lint gate)
-- `pp-yane` — CI `uv build` + install-from-wheel smoke (catches wheel-packaging
+- `pp-0hqc`: CI workflow running `make lint-check` (drift + lint gate)
+- `pp-yane`: CI `uv build` + install-from-wheel smoke (catches wheel-packaging
   regressions)
-- `pp-le8y` — golden test: `compare --format by-doc` (only untested output shape)
-- `pp-urta` — golden tests: `metrics` CLI argv path + `--banned-words-file`
-- `pp-n57s` — integration: `compute-derived --in-place` idempotency + `compare` draft
+- `pp-le8y`: golden test: `compare --format by-doc` (only untested output shape)
+- `pp-urta`: golden tests: `metrics` CLI argv path + `--banned-words-file`
+- `pp-n57s`: integration: `compute-derived --in-place` idempotency + `compare` draft
   rejection
-- `pp-6l39` — test: `score --batch` partial-failure isolation (zero coverage today)
-- `pp-sd3z` — fix-or-remove `render --format folder` (ships dead sidecar files)
-- `pp-lpun` — generate print.css light tokens from design-system.yaml (silent-drift
-  risk)
+- `pp-6l39`: test: `score --batch` partial-failure isolation (zero coverage today)
+- `pp-sd3z`: fix-or-remove `render --format folder` (ships dead sidecar files)
+- `pp-lpun`: generate print.css light tokens from design-system.yaml (silent-drift risk)
 
 **C. Deferred to v0.2.0 (in-flight features; shipping mid-flight risks instability)**
 
-- `pp-ph3e` epic — Eval output improvements (frontmatter-format `.eval.md` YAML +
+- `pp-ph3e` epic: Eval output improvements (frontmatter-format `.eval.md` YAML +
   `pprose show` + HTML location anchors).
   Changes the serialization; defer so v0.1.0 ships a stable format.
-- `pp-3hg4` epic + the chopdiff v0.4.x cluster — structural-metrics rewrite on a
+- `pp-3hg4` epic and the chopdiff v0.4.x cluster: structural-metrics rewrite on a
   not-yet-released chopdiff 0.4.0 (cross-repo, large).
-- `pp-h780` epic — pprose score loose ends (provider adapters, source-check modes,
+- `pp-h780` epic: pprose score loose ends (provider adapters, source-check modes,
   multi-run executor).
 
-**D. Defer (polish / niceties)** — design-system: `pp-i4uh`, `pp-tfdk`, `pp-asi7`,
+**D. Defer (polish / niceties)**: design-system: `pp-i4uh`, `pp-tfdk`, `pp-asi7`,
 `pp-fzlx`, `pp-hssa`; plus `pp-5zgc` (Playwright visual smoke), `pp-3g59`
 (SUGGESTED_MODELS drift note), `pp-wlwj` (repo org / `attic/`), `pp-olqf` (lefthook
 onboarding message).
 
-**Near-complete epics (close once verified):** `pp-ict2` (shared render components — no
-open children) and `pp-rdnm` (Visual 9B — only `pp-kmv5` manual print verification
-left).
+**Near-complete epics (close once verified):** `pp-ict2` (shared render components; no
+open children) and `pp-rdnm` (Visual 9B; only `pp-kmv5` manual print verification left).
 
 <!-- This document follows common-doc-guidelines.md.
 See github.com/jlevy/practical-prose and review guidelines before editing.

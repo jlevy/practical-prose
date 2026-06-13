@@ -40,3 +40,7 @@ uv tool install --upgrade pprose && pprose install
 
 Re-running install is idempotent: it refreshes the generated artifacts and the version
 pin they bake, and a newer-format artifact is never clobbered by an older pprose.
+
+<!-- This document follows common-doc-guidelines.md.
+See github.com/jlevy/practical-prose and review guidelines before editing.
+-->

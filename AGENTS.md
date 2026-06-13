@@ -1,7 +1,7 @@
 # Practical Prose: Agent Guide
 
 Practical Prose is a reference system and evaluation toolkit for writing that helps a
-reader understand, decide, do, or verify something.
+reader understand, decide, do, verify, or maintain something.
 Use it when the user asks to improve, audit, score, or compare practical documents.
 
 For project-wide authoring principles, run
@@ -57,3 +57,7 @@ Auto-format Markdown with `flowmark` for clean, semantic git diffs.
 - Python build (library / newest patch): `uvx --from flowmark==0.7.2 flowmark`.
 
 <!-- END FLOWMARK INTEGRATION -->
+
+<!-- This document follows common-doc-guidelines.md.
+See github.com/jlevy/practical-prose and review guidelines before editing.
+-->

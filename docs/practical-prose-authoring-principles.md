@@ -28,6 +28,11 @@ Essential, Lucid, Verifiable, Maintainable, Humane) and the 20 dimensions of
 Reach for the longer documents when you need the underlying definitions; reach for this
 list when you need the standing operating rules.
 
+The same eight principles, ordered by drafting priority and annotated with the
+dimensions each enforces, are the shortcut
+[practical-prose-agent-policy.md](../shortcuts/practical-prose-agent-policy.md); the two
+lists must stay in sync, so update both in the same edit.
+
 <!-- This document follows common-doc-guidelines.md.
 See github.com/jlevy/practical-prose and review guidelines before editing.
 -->

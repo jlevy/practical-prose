@@ -1,6 +1,6 @@
 # Development
 
-## One-time setup
+## One-Time Setup
 
 ```bash
 make install         # uv sync + npm install
@@ -8,17 +8,17 @@ make hooks-install   # installs lefthook git pre-commit + pre-push hooks
 ```
 
 `uv` is the Python tool runner ([astral.sh/uv](https://docs.astral.sh/uv/)). Node is
-required for the JS toolchain (Biome + lefthook).
+required for the JS toolchain (Biome and lefthook).
 Bun is **not** required.
 
-## Daily commands
+## Daily Commands
 
 ```bash
 make format       # auto-format Markdown with flowmark-rs (canonical sources)
 make generate     # regenerate derivatives (design system + vendored pprose resources)
 make lint         # auto-fix: format + lint Python + JS
 make test         # run pprose tests
-make lint-check   # CI-mode lint: read-only, fails on any drift — what CI runs
+make lint-check   # CI-mode lint: read-only, fails on any drift (what CI runs)
 make default      # install + format + generate + lint + test (the daily loop)
 ```
 
@@ -30,8 +30,8 @@ make default      # install + format + generate + lint + test (the daily loop)
 | JS / CSS / HTML / JSON | `biome format` | `biome check` | — |
 | Markdown | `flowmark-rs` | — | — |
 
-Versions are pinned exactly in `tools/pprose/pyproject.toml` + `tools/pprose/uv.lock`
-(Python), `package.json` + `package-lock.json` (JS), the PEP 723 header of
+Versions are pinned exactly in `tools/pprose/pyproject.toml` and `tools/pprose/uv.lock`
+(Python), `package.json` and `package-lock.json` (JS), the PEP 723 header of
 `tools/design-system/generate.py` (the design-system generator’s two deps), and the
 `FLOWMARK` variable at the top of the `Makefile` (the Markdown formatter fetched via
 `uvx`). `make install` uses `npm ci` so the JS toolchain comes from the lockfile, not a
@@ -40,8 +40,8 @@ fresh resolve. All layers follow the
 no dependency upgrade lands until the published version is at least 14 days old, to give
 the ecosystem time to surface supply-chain compromises.
 
-[Biome](https://biomejs.dev) is a single binary that replaces prettier + eslint for the
-JS/CSS/HTML/JSON side.
+[Biome](https://biomejs.dev) is a single binary that replaces prettier and eslint for
+the JS/CSS/HTML/JSON side.
 The config is `biome.json` at the repo root.
 
 [ruff](https://docs.astral.sh/ruff/) handles both formatting and linting for Python.
@@ -51,7 +51,7 @@ consistent.
 
 [flowmark-rs](https://github.com/jlevy/flowmark) auto-formats every tracked Markdown
 file in the repo (semantic line breaks, smart quotes, safe cleanups).
-`make format` is the single invocation — both the Makefile and the `format-markdown`
+`make format` is the single invocation: both the Makefile and the `format-markdown`
 pre-commit hook call it, so behavior is identical locally and at commit time.
 
 Flowmark formats canonical *sources* only; *generated* and *vendored* Markdown is listed
@@ -71,7 +71,7 @@ Anything already in `.gitignore` is skipped automatically.
 the generator check + tests at push time.
 The config is `lefthook.yml`.
 
-## The design system
+## The Design System
 
 [`tools/design-system/design-system.yaml`](tools/design-system/design-system.yaml) is
 the single source of truth for surfaces, group palette, dimension palette, score ramp,
@@ -87,13 +87,13 @@ and icon mapping.
 | `tools/pprose/src/pprose/_generated/design_system.py` | The Python runtime (consumed by `table_styles.py`) |
 
 **All four generated files are checked in.** This keeps the repo zero-build for
-consumers: clone, open an HTML page, run pprose — no `npm run build` step required.
+consumers: clone, open an HTML page, run pprose, with no `npm run build` step required.
 
 CI verifies the checked-in copies match the YAML via `make generate-check`. The
 pre-commit hook re-runs the generator when anything under `tools/design-system/` is
 staged and stages the refreshed outputs alongside your edit.
 
-## Vendored resources in the pprose package
+## Vendored Resources in the pprose Package
 
 The pprose wheel must work standalone in any repo, so canonical Markdown under `docs/`,
 `runbooks/`, `shortcuts/`, and `skills/` is mirrored into
@@ -107,7 +107,7 @@ under `docs/`, `runbooks/`, `shortcuts/`, or `skills/*/SKILL.md` is staged, and 
 pre-push `resources-sync-check` (plus `tools/pprose/tests/test_resources_sync.py`) fails
 on any drift.
 
-## The pre-commit / pre-push contract
+## The Pre-Commit and Pre-Push Contract
 
 Pre-commit (per staged file):
 
@@ -124,23 +124,23 @@ Pre-commit (per staged file):
 
 Pre-push (whole repo):
 
-1. **`generate.py --check`** — fails if any design-system derivative is stale.
-2. **`sync_resources.py --check`** — fails if any pprose resource mirror is stale.
-3. **`pytest`** — fails on any regression.
+1. **`generate.py --check`**: fails if any design-system derivative is stale.
+2. **`sync_resources.py --check`**: fails if any pprose resource mirror is stale.
+3. **`pytest`**: fails on any regression.
 
 Bypass with `git commit --no-verify` only for genuine emergencies (broken tooling,
 etc.). Don’t ship that to a PR.
 
-## Repository layout
+## Repository Layout
 
 ```
 tools/
 ├── design-system/              ← production runtime (YAML → JS / CSS / Python)
 ├── pprose/                     ← the Python package (eval CLI + library)
-├── explorations/               ← design-only experiments (HTML + design-tool JS)
-└── docs/                       ← project docs
+├── render-components/          ← shared card/panel/toggle CSS + JS + Jinja partials
+└── explorations/               ← design-only experiments (HTML + design-tool JS)
 ```
 
 <!-- This document follows common-doc-guidelines.md.
-Review guidelines before editing.
+See github.com/jlevy/practical-prose and review guidelines before editing.
 -->

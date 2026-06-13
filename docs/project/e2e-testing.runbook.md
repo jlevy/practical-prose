@@ -28,7 +28,7 @@ Where a manual check here could become an automated test instead, it is flagged 
 > Steps in Phase B make **live, paid** LLM calls, and Phase E needs a **published**
 > release. Read the cost and ordering notes before running them.
 
-## What the automated tests already lock (do not re-test by hand)
+## What the Automated Tests Already Lock (Do Not Re-Test by Hand)
 
 `uv run pytest` (266+ tests) already covers, and these need **no** manual repetition:
 
@@ -68,17 +68,17 @@ Run `uv run pytest` first; if it is red, stop and fix that before manual testing
 
 All commands below assume the repo root as the working directory unless shown otherwise.
 
-## Test order
+## Test Order
 
 Validate in dependency order so each surface’s output feeds the next, and the cheap,
 deterministic, offline core comes before the costly external surfaces:
 
-1. Phase A — deterministic CLI (no key, no network, no browser): `metrics` → `report` →
+1. Phase A, deterministic CLI (no key, no network, no browser): `metrics` → `report` →
    `compare`.
-2. Phase B — LLM scoring (real key, paid): `score`.
-3. Phase C — HTML render + visual review (browser).
-4. Phase D — reference + install (local `uv run`).
-5. Phase E — zero-install + publish (real network/PyPI; only after a real release
+2. Phase B, LLM scoring (real key, paid): `score`.
+3. Phase C, HTML render and visual review (browser).
+4. Phase D, reference and install (local `uv run`).
+5. Phase E, zero-install and publish (real network/PyPI; only after a real release
    exists).
 
 Phase E is the **release gate**, not a routine step: most of it is impossible until
@@ -86,7 +86,7 @@ Phase E is the **release gate**, not a routine step: most of it is impossible un
 
 * * *
 
-## Phase A — Deterministic CLI (no key, no network)
+## Phase A: Deterministic CLI (No Key, No Network)
 
 These are fully offline.
 The automated tests exercise the underlying functions; the gaps below are the CLI argv
@@ -150,7 +150,7 @@ uv run pprose compare tests/fixtures/figma-ddog-r1.eval.md tests/fixtures/figma-
 uv run pprose compare tests/fixtures/rev1-net.eval.md tests/fixtures/rev2-net.eval.md --pairs rev1-net=rev2-net
 ```
 
-`by-doc` has **no golden/shape test** — eyeball: one section per doc, a per-doc header
+`by-doc` has **no golden/shape test**. Eyeball: one section per doc, a per-doc header
 line (Source / Scope / Overall mean / Rubric / Model / Eval date), group + overall
 means, a numbered Violations list matching `rule_findings`, and Quant/Derived tables.
 
@@ -165,13 +165,13 @@ uv run pprose compare /tmp/smoke.eval.md tests/fixtures/rev1-net.eval.md --allow
 
 * * *
 
-## Phase B — LLM scoring (real API key, paid)
+## Phase B: LLM Scoring (Real API Key, Paid)
 
 > [!WARNING]
 > **Cost and the dotenv gotcha.** `.env` and `.env.local` are auto-loaded from the cwd
 > hierarchy **and** `$HOME`, with later files overriding earlier.
 > So `pprose score` can make a real, billable call as soon as any reachable dotenv
-> defines the key — `env -u ANTHROPIC_API_KEY ...` does **not** prevent it.
+> defines the key; `env -u ANTHROPIC_API_KEY ...` does **not** prevent it.
 > The default model is the flagship Opus (most expensive).
 > Use a cheap alias and a tiny artifact for smoke tests.
 
@@ -225,7 +225,7 @@ drift if the overall-mean gap is >0.5 or any dimension gap is >1.
 
 * * *
 
-## Phase C — HTML render + visual review (browser)
+## Phase C: HTML Render and Visual Review (Browser)
 
 The Python side only shapes JSON; all DOM is built client-side by the shared `bi-card`,
 `tip-panels`, and `theme-toggle` components.
@@ -259,8 +259,8 @@ Open `/tmp/pprose-sample.html` in **Chrome and Safari** and confirm each item:
 - [ ] **Responsive:** dragging the window across ~1152px (72rem) reflows the two panels
   from side-by-side to stacked, with no overflow/clipping.
 - [ ] **Fonts:** online, Source Sans 3 (chrome) + Noto Serif (body) load from jsdelivr;
-  **offline (or blocking jsdelivr)** the fallback stack still looks acceptable — the
-  page must not be broken without the CDN.
+  **offline (or blocking jsdelivr)** the fallback stack still looks acceptable; the page
+  must not be broken without the CDN.
 - [ ] **Sentinels:** render a fixture containing NA and ERR scores (craft one if needed)
   and confirm NA shows grey, ERR shows red, numeric scores show graduated weight.
 
@@ -278,7 +278,7 @@ Divergence means a shared component drifted.
 
 * * *
 
-## Phase D — Reference + install (local)
+## Phase D: Reference and Install (Local)
 
 ```bash
 cd tools/pprose
@@ -309,7 +309,7 @@ Confirm by eye:
 
 * * *
 
-## Phase E — Zero-install + publish (post-release; network/PyPI)
+## Phase E: Zero-Install and Publish (Post-Release; Network/PyPI)
 
 Only possible **after** a real release exists.
 See [release risks](#release-risks-to-clear-first) first.
@@ -341,7 +341,7 @@ cd /tmp/pp-scratch2 && git init && uvx pprose@0.1.0 install   # baked pin must r
 
 * * *
 
-## Final human sign-off
+## Final Human Sign-Off
 
 - [ ] `uv run pytest` green; `make lint-check` clean at the repo root.
 - [ ] Phase A deterministic checks pass (incl.
@@ -354,7 +354,7 @@ cd /tmp/pp-scratch2 && git init && uvx pprose@0.1.0 install   # baked pin must r
 - [ ] Phase E (post-publish): `uvx pprose@<ver>` resolves and installs; a live agent
   ingests the skills.
 
-## Release risks to clear first
+## Release Risks to Clear First
 
 These were surfaced by the readiness review and block or complicate a first release; see
 also [release-readiness-2026-06.md](release-readiness-2026-06.md) for the full ranked
@@ -372,7 +372,7 @@ list:
 6. **License metadata says MIT-only** though the wheel bundles CC-BY prose.
 7. No `pprose --version`, no CHANGELOG; `detect_kind()` swallows all exceptions.
 
-## Candidates to automate
+## Candidates to Automate
 
 Prefer converting these manual checks to tests (golden where possible) rather than
 relying on the runbook:
@@ -390,7 +390,7 @@ relying on the runbook:
   including a sentinel (NA/ERR) fixture, to anchor the otherwise fully-manual visual
   contract.
 
-## Related docs
+## Related Docs
 
 - [practical-prose-eval-single.runbook.md](../../runbooks/practical-prose-eval-single.runbook.md):
   the single-document eval workflow (calibration set lives here).

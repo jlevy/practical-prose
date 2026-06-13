@@ -14,10 +14,10 @@ description: Apply the common Markdown documentation guidelines to any document;
 
 This is the basic, universal edit tier (an apply skill: it may modify the target
 document). It applies only the common documentation guidelines (read them with
-`pprose guidelines common-doc-guidelines`) — organization, structure, writing style,
-Markdown formatting, links, headings, lists, frontmatter, and footer — so it is safe for
-almost any Markdown document, workflow, or repo, whether or not it is a Practical Prose
-artifact.
+`pprose guidelines common-doc-guidelines`): organization, structure, writing style,
+Markdown formatting, links, headings, lists, frontmatter, and footer.
+It is safe for almost any Markdown document, workflow, or repo, whether or not it is a
+Practical Prose artifact.
 
 For a deeper language-and-formatting pass (the Expression and Form dimensions) use
 `pprose-copy-edit`; for a full all-dimension editorial pass use `pprose-full-edit`. Each

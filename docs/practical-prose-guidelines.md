@@ -1,14 +1,14 @@
 # Practical Prose Guidelines
 
-Version: v0.1 (last update 2026-05-11)\
+Version: v0.2 (last update 2026-06-12)\
 Joshua Levy (github.com/jlevy) with agent assistance
 
 The *Practical Prose Guidelines* are prescriptive rules for practical documents such as
 articles, practical blog posts, research reports, design documents, specifications,
 technical papers, and decision memos.
 
-The `practical-prose-rubric.md` document can be used to score documents on these
-measures of quality.
+The companion [practical-prose-rubric.md](practical-prose-rubric.md) can be used to
+score documents on these measures of quality.
 Every scoring failure there should map to a specific rule here, and every rule here
 should be reviewable by a human or agent.
 
@@ -18,15 +18,21 @@ These guidelines extend [common-doc-guidelines.md](common-doc-guidelines.md) and
 operationalize the seven practical-prose principles defined in
 [practical-prose-principles.md](practical-prose-principles.md): **Purposeful**,
 **Truthful**, **Essential**, **Lucid**, **Verifiable**, **Maintainable**, and
-**Humane**. The rules below turn those principles into prescriptive guidance for the 18
+**Humane**. The rules below turn those principles into prescriptive guidance for the 20
 review dimensions; the companion [practical-prose-rubric.md](practical-prose-rubric.md)
 defines how to score a document against the same dimensions.
+Throughout these documents, individual rules are cited as `<dimension>.<rule>`: E1.5 is
+rule 5 under E1 Clarity.
 
 Practical writing serves a purpose.
 Anything that adds distance between the reader and that purpose without adding necessary
 context, evidence, or maintainability is friction.
 
 ## Six Groups, Twenty Dimensions
+
+<!-- This table is the canonical wording of the 20 dimension questions. The same table
+appears in README.md and practical-prose-rubric.md; keep all three cell-for-cell
+identical. -->
 
 | Group | Dimension | Question it answers |
 | --- | --- | --- |
@@ -44,11 +50,11 @@ context, evidence, or maintainability is friction.
 |  | R2. Soundness | Do claims follow from evidence through valid mechanisms and explicit assumptions? |
 |  | R3. Precision | Are claims and terms specified at the right granularity? |
 |  | R4. Parsimony | Is each load-bearing reasoning chain the cleanest, simplest sound argument possible for its conclusion? |
-| **Grounding** | G1. Verifiability | Are claims traceable to specific sources, observations, or calculations? |
-|  | G2. Factuality | Are the verifiable claims true and supported by cited evidence? |
+| **Grounding** | G1. Verifiability | Are claims traceable to specific sources, observations, calculations, or explicit assumptions? |
+|  | G2. Factuality | Do the verifiable claims hold up when checked against the world? |
 |  | G3. Relevance | Do sources, citations, and reasoning chains bear on the document’s stated purpose? |
 | **Judgment** | J1. Calibration | Does claim strength match evidence strength? |
-|  | J2. Fairness | Are opposing positions argued at depth proportional to their plausibility and strength? |
+|  | J2. Fairness | Are opposing positions argued at depth proportional to their plausibility, materiality, and strength? |
 |  | J3. Robustness | Do key claims survive plausible alternative interpretations? |
 
 ## In Brief
@@ -76,7 +82,7 @@ A good practical document does these things; the prescriptive rules below say ho
    [common-doc-guidelines.md](common-doc-guidelines.md).
 
 The 20 sections below give the prescriptive rules; the companion
-[practical-prose-rubric.md](practical-prose-rubric.md) provides the descriptive 0-5
+[practical-prose-rubric.md](practical-prose-rubric.md) provides the descriptive 1-5
 scoring anchors. A review-time checklist organized the same way appears at the end of
 this document under *Pre-Publish Self-Audit*.
 
@@ -87,7 +93,7 @@ The table below shows how its clauses relate to this layer:
 
 | common-doc-guidelines clause | Where it applies |
 | --- | --- |
-| P1 Organizing Documentation (rapid orientation, filenames, ownership/audience/cadence) | Cross-document only; not scored by this rubric |
+| §1 Organizing Documentation (rapid orientation, filenames, ownership/audience/cadence) | Cross-document only; not scored by the rubric |
 | §2.1 Explain motivations and background | Absorbed under P1 Suitability and the Humane principle |
 | §2.2 Give context gradually and efficiently | Absorbed into P1 Suitability rule 7 (summary-then-link) |
 | §2.3 Keep details close (docstrings, YAML descriptions) | Cross-artifact co-location; not scored |
@@ -100,8 +106,8 @@ The table below shows how its clauses relate to this layer:
 | §4.1 Respect reader’s intelligence | Absorbed under the Humane principle and P1 Suitability / P4 Depth |
 | §4.2 Banned extravagant words list | Canonical list lives in common-doc-guidelines; referenced from E1 Clarity rule 4 |
 | §4.3 Cut pompousness, meta-commentary, pedantry | Absorbed into E1 Clarity rules 3 and 6 |
-| E1 Em-dash discipline | Absorbed into F2 Consistency rule 7 |
-| E2 Guideline Footer | Operational marker; not scored by this rubric |
+| §5 Formatting (em-dash discipline) | Absorbed into F2 Consistency rule 7 |
+| §6 Guideline Footer | Operational marker; not scored by the rubric |
 
 ## Purpose Dimensions
 
@@ -381,9 +387,9 @@ clear and the document coheres.
 
 ## Form Dimensions
 
-Form covers the document as a structured artifact — arrangement, style discipline, and
-markup — as distinct from the sentence- and paragraph-level language of the Expression
-dimensions. These three descend from the Maintainable principle.
+Form covers the document as a structured artifact (arrangement, style discipline, and
+markup) as distinct from the sentence- and paragraph-level language of the Expression
+dimensions. These three descend from the Lucid and Maintainable principles.
 
 ### F1. Organization
 
@@ -494,7 +500,7 @@ Clarity) and the markup-validity question (F3 Formatting).
    (“context—like this”), not spaced (“context — like this”). Spaced em-dash overuse
    marks unedited agent prose; the convention applies even when the author finds the
    spaced variant readable.
-   (Cross-references common-doc-guidelines E1.)
+   (Cross-references common-doc-guidelines §5 Formatting.)
 
 ### F3. Formatting
 
@@ -686,7 +692,9 @@ the conclusion requires.
 Parsimony presupposes Soundness (R2): when a step is unsound, a longer sound chain would
 do less damage to the conclusion, so the chain as written cannot be the most
 parsimonious sound argument.
-When Soundness fails materially on the headline claims, Parsimony is scored 0.
+When Soundness is NA or ERR, Parsimony inherits the same sentinel; a low Soundness score
+still leaves Parsimony scored 1-5 on whatever sound chains remain (see *Cross-Dimension
+Cascades* in [practical-prose-rubric.md](practical-prose-rubric.md)).
 
 Distinguished from neighbors:
 
@@ -1126,32 +1134,19 @@ Single-pass authoring trying to do both at once produces predictable failures:
 arithmetic gets sloppy, citations get vague, language drifts toward register that
 overstates the evidence.
 
-For higher-stakes audits, four narrower passes outperform one broad pass; each pass has
-a different cognitive load and a different tool stack:
-
-1. **Lint pass.** Headings, links, banned-register words, vague magnitude words, missing
-   captions, table shape, frontmatter schema, footer placement.
-   Largely deterministic; can be tool-driven.
-2. **Claim audit.** Every quantitative claim against its cited source; calculations
-   redone; rounding/aggregation/derivation disclosed.
-3. **Reasoning audit.** Assumptions surfaced; mechanisms named; counter-evidence
-   engaged; robustness against alternative lenses.
-4. **Purpose audit.** Output shape vs task shape; scope declared and matched; main
-   answer recoverable from a skim; reader task completion.
-
-The pass separation is **required** for high-stakes documents (audits, decision memos,
-external research, security advisories), **recommended** for standard internal docs, and
-**optional** for low-stakes drafts and operational notes where a single review pass fits
-the risk. Where the discipline applies, do not combine passes; running them in parallel
-by the same agent in the same context loses the cognitive separation that the four-pass
-structure depends on.
+For higher-stakes audits, four narrower passes (lint, claim audit, reasoning audit,
+purpose audit) outperform one broad pass; each has a different cognitive load and a
+different tool stack.
+The *Audit Passes for High-Stakes Evals* section of
+[practical-prose-rubric.md](practical-prose-rubric.md) defines the four passes, the
+dimensions each covers, and when the separation is required rather than optional.
 
 ## Related Docs
 
 - [../README.md](../README.md): how the practical-prose layers fit together.
 - [practical-prose-principles.md](practical-prose-principles.md): the seven principles
   these rules derive from.
-- [practical-prose-rubric.md](practical-prose-rubric.md): descriptive 0-5 scoring
+- [practical-prose-rubric.md](practical-prose-rubric.md): descriptive 1-5 scoring
   anchors for the same 20 dimensions.
 - [practical-prose-bibliography.md](practical-prose-bibliography.md): full citations for
   works referenced in these guidelines, with publication details and stable URLs.

@@ -1,9 +1,9 @@
 ---
-title: Practical Prose — Agent Guide (Internal)
-description: Repo-internal agent reference: this-repo workflows table, tooling layout, and visual-design notes. Not bundled into the pprose CLI (see /docs/ for public docs).
+title: "Practical Prose: Agent Guide (Internal)"
+description: "Repo-internal agent reference: this-repo workflows table, tooling layout, and visual-design notes. Not bundled into the pprose CLI (see /docs/ for public docs)."
 author: Joshua Levy (github.com/jlevy) with LLM assistance
 ---
-# Practical Prose — Agent Guide (Internal)
+# Practical Prose: Agent Guide (Internal)
 
 This document is **internal to the practical-prose repo**. It holds material an agent
 working on *this* repo needs but that doesn’t belong in the public pprose CLI surface
@@ -14,9 +14,9 @@ For development workflows (build, test, format, lint), see
 [development.md](development.md).
 
 Repo layout notes: planning specs live only under [specs/active/](specs/active/) and
-[specs/done/](specs/done/) (the legacy `tools/docs/` tree was consolidated 2026-06-11).
-The gitignored `attic/` directory holds reference checkouts of other repos (flowmark,
-tbd); their docs and specs belong to those projects, not to this one.
+[specs/done/](specs/done/). The gitignored `attic/` directory holds reference checkouts
+of other repos (flowmark, tbd); their docs and specs belong to those projects, not to
+this one.
 
 ## Workflows
 
@@ -45,22 +45,21 @@ uvx pprose <command> ...
 `pprose compare`, `pprose render`.
 
 `pprose render <doc.eval.md>` emits a clean, print-friendly static HTML page from an
-eval report — single self-contained file by default.
-It is the canonical shareable artifact for a single-doc eval.
+eval report, a single self-contained file by default.
+It is the shareable artifact for a single-doc eval.
 Pair it with `pprose score <doc.md> --render-html` to score and render in one shot; the
 two are composable primitives.
 Open the resulting HTML in any modern browser and use the print dialog to save as PDF
 (Letter by default; `--page-size a4` for A4). The page is built from a small set of
-named **variants** — `pprose render --list-variants` shows what’s available; today only
-`interactive` ships (one card + two hover-driven tip panels + theme toggle).
+named **variants**; `pprose render --list-variants` shows what’s available, and today
+only `interactive` ships (one card, two hover-driven tip panels, and a theme toggle).
 See
 [plan-2026-05-29-static-html-eval-report.md](specs/done/plan-2026-05-29-static-html-eval-report.md).
 
 The card, tip panels, and theme toggle are **shared render components** at
-[tools/render-components/](../../tools/render-components/) — one canonical set of CSS +
-JavaScript + Jinja partials consumed by both the explorations playground and the
-`pprose render` pipeline.
-The CSS and JS lifted into the wheel are mirrored verbatim by
+[tools/render-components/](../../tools/render-components/): one set of CSS, JavaScript,
+and Jinja partials consumed by both the explorations playground and the `pprose render`
+pipeline. The CSS and JS lifted into the wheel are mirrored verbatim by
 `tools/pprose/devtools/sync_render_html_styles.py`; CI fails on drift via
 `tests/test_render_html.py::test_sync_render_html_styles_in_sync`. To edit how the card
 or panels look, edit the component file under `tools/render-components/` and re-run the
@@ -88,7 +87,7 @@ Outside an unambiguous project context (`$HOME`, a non-git directory), `--projec
 Every generated artifact carries a `format=fNN` stamp; re-running install is idempotent
 and a newer-format artifact is never clobbered by an older pprose.
 Each generated skill bakes in a pinned, local-first invocation: `pprose` if on PATH,
-else `uvx pprose@<version>` (the version that ran install — a trusted pin, never an
+else `uvx pprose@<version>` (the version that ran install: a trusted pin, never an
 unpinned runner), else they tell the user to install uv or pprose.
 Pass `--surfaces=portable,claude,agents-md` to select install destinations within the
 chosen scope.

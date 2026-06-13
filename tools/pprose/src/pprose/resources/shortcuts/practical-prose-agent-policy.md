@@ -9,21 +9,26 @@ author: Joshua Levy (github.com/jlevy) with agent assistance
 A one-page priority list for agents drafting practical documents.
 Where the quick-checklist (`pprose shortcut practical-prose-quick-checklist`) is for pre-publish
 self-audit, this doc is for generation-time guidance: load it instead of the full
-guidelines (~800 lines) when generating, summarizing, or rewriting prose for a reader
+guidelines (~1,200 lines) when generating, summarizing, or rewriting prose for a reader
 who will act on it.
+
+The eight priorities are the eight rules of
+`pprose guidelines practical-prose-authoring-principles`,
+ordered for drafting and annotated with the dimensions each enforces; the two lists must
+stay in sync, so update both in the same edit.
 
 The order matters. When two priorities conflict, the earlier one wins.
 
-## Priority order
+## Priority Order
 
 1. **Answer the reader’s task.** State the question, decision, plan, or audience need
    the document serves; make the main output recoverable from a skim of intro plus
    headings; name the reader burden the document removes.
-   (P1 Suitability, §1.6 reader-burden.)
+   (P1 Suitability, P1.6 reader-burden.)
 
-2. **State scope and main output early.** Name what the document covers, and name what
-   its evidence in scope is not competent to conclude.
-   (P2 Scope, §2.5 claim-boundary.)
+2. **State scope and claim boundaries early.** Name what the document covers, and name
+   what its evidence in scope is not competent to conclude.
+   (P2 Scope, P2.5 claim-boundary.)
 
 3. **Keep evidence, inference, and recommendation distinct, and the chain short.**
    Observation, judgment, interpretation, and implication on separate rungs.
@@ -63,13 +68,13 @@ The order matters. When two priorities conflict, the earlier one wins.
    Default to the Standard profile; mark dimensions NA when they genuinely don’t apply.
    (J2 Fairness, J3 Robustness; metrics §Applicability Profiles.)
 
-8. **Mark unknowns rather than inventing support.** `[UNVERIFIED]`, `[ASSUMING: ...]`,
-   or an explicit “I don’t know” line is preferable to a fluent fabrication.
+8. **Mark unknowns instead of inventing support.** `[UNVERIFIED]`, `[ASSUMING: ...]`, or
+   an explicit “I don’t know” line is preferable to a fluent fabrication.
    Confidence without cowardice runs in both directions: don’t hedge on strong evidence,
    but don’t fabricate on weak evidence either.
-   (§18.6 confidence without cowardice; the Humane principle: trust before polish.)
+   (J1.6 confidence without cowardice; the Humane principle: trust before polish.)
 
-## When the rules conflict with reader outcome
+## When the Rules Conflict with Reader Outcome
 
 When following a rule would hurt the reader’s ability to understand, decide, do, verify,
 or maintain the work, document the deviation (the rule set aside, the reader outcome
@@ -79,17 +84,19 @@ See the **Justified Deviations** section in
 
 Local rule compliance is in service of reader outcome, not the other way around.
 
-## Related artifacts
+## Related Docs
 
+- `pprose guidelines practical-prose-authoring-principles`:
+  the same eight rules in their compact, unannotated form.
 - `pprose shortcut practical-prose-quick-checklist`: pre-publish
   self-audit for the 20 dimensions.
 - `pprose guidelines practical-prose-guidelines`: prescriptive
-  rules, full version (~800 lines).
+  rules, full version (~1,200 lines).
 - `pprose guidelines practical-prose-rubric`: scoring anchors,
   Justified Deviations, applicability profiles, audit passes, and the Failure-Mode
   Questions table.
 - `pprose guidelines practical-prose-metrics`: operational metrics
-  \+ applicability profiles by `risk_level`.
+  and applicability profiles by `risk_level`.
 
 <!-- This document follows common-doc-guidelines.md.
 See github.com/jlevy/practical-prose and review guidelines before editing.

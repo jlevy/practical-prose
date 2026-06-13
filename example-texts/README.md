@@ -16,3 +16,7 @@ satisfy this repo’s style guide.
 Each file includes source, rights, retrieval, selection, and conversion notes in
 frontmatter.
 Source images, icons, navigation, and page chrome are intentionally omitted.
+
+<!-- This document follows common-doc-guidelines.md.
+See github.com/jlevy/practical-prose and review guidelines before editing.
+-->

@@ -6,11 +6,11 @@ status: active
 ---
 # Practical Prose Metrics and Frontmatter
 
-Version: v0.1 (last update 2026-05-11)\
+Version: v0.1 (last update 2026-06-12)\
 Joshua Levy (github.com/jlevy) with agent assistance
 
 An operational appendix to the practical-prose system.
-The [rubric](practical-prose-rubric.md) is the descriptive 0-5 instrument; this doc
+The [rubric](practical-prose-rubric.md) is the descriptive 1-5 instrument; this doc
 gathers the **quantitative metrics** and **qualitative checks** that operationalize each
 dimension, and the **recommended frontmatter schema** that lets agents apply the
 guidelines consistently.
@@ -49,7 +49,7 @@ and **manual** denotes a human reviewer.
 | 16 | Factuality | Broken-link rate; stale-source count; numeric discrepancies vs cited source | Do cited sources actually support the claim at the asserted strength? | link checker; manual / SME audit |
 | 17 | Relevance | Count of cited sources flagged as ancillary or tangential to the document’s purpose; count of sections marked as digression/background that load-bear on a headline claim (mislabel); count of unmarked digressions exceeding the length threshold for the doc type | For each source and each section, does it bear on the document’s stated purpose? | LLM-assist; manual |
 | 18 | Calibration | Count of probability claims; count of those with cited base rate; small-sample shrinkage explicit; scenario probabilities sum check | Does claim strength match evidence strength? | LLM-assist; manual |
-| 19 | Fairness | Opposing-vs-supporting paragraph count *(flag only; see note below)*; depth asymmetry ratio; risk-inventory class coverage | Are opposing positions argued at proportional evidentiary depth? | LLM-assist; manual / SME |
+| 19 | Fairness | Opposing-vs-supporting paragraph count *(flag only; see note below)*; depth asymmetry ratio; risk-inventory class coverage | Are opposing positions argued at depth proportional to their plausibility, materiality, and strength? | LLM-assist; manual / SME |
 | 20 | Robustness | Count of explicit interpretive-lens statements; count of alternative-lens tests | Do key claims survive plausible alternative interpretations? | manual; LLM-assist |
 
 Most rows have a deterministic component and a judgment component.
@@ -60,12 +60,12 @@ notice.
 **Note on J2 Fairness.** The opposing-vs-supporting paragraph count and depth-ratio
 metrics are review flags, not measures of fairness.
 The guidelines define fairness as proportional representation by plausibility,
-materiality, and evidence strength (§19.1), not equal airtime.
+materiality, and evidence strength (J2.1), not equal airtime.
 Symmetric paragraph counts can be a sign of false balance, not fairness; treat the count
 as a prompt to inspect the underlying evidence, never as proof that the document is
 fair.
 
-## Tooling map
+## Tooling Map
 
 - `pprose metrics`: the deterministic metrics command.
   Computes headings by depth, link counts (external/internal, by markdown form),
@@ -132,7 +132,7 @@ The profiles below tell agents and reviewers which dimensions are *required*,
 | --- | --- | --- | --- | --- |
 | **Low-stakes note** (status update, standup, brief progress note) | `low` | P1 Suitability, E1 Clarity, E3 Concision, F3 Formatting | G1 Verifiability only for material claims | G3 Relevance, R1-R4 (Discipline, Soundness, Precision, Parsimony), J1-J3 (Calibration, Fairness, Robustness) |
 | **Standard internal doc** (memo, brief, internal report) | `standard` | All Purpose (P1-P4); all Expression (E1-E3); all Form (F1-F3); G1 Verifiability; G2 Factuality; R2 Soundness | G3 Relevance, R1 Discipline, R4 Parsimony, J1 Calibration, J2 Fairness, J3 Robustness when the doc makes those kinds of claims | R3 Precision unless terminology is contested |
-| **Decision memo / audit / deep research** | `high` | All 20 unless explicitly NA | Four-pass audit (lint / claim / reasoning / purpose; see [rubric](practical-prose-rubric.md) §Audit passes for high-stakes evals) | None by default; NA only when explicitly stated and justified |
+| **Decision memo / audit / deep research** | `high` | All 20 unless explicitly NA | Four-pass audit (lint / claim / reasoning / purpose; see [rubric](practical-prose-rubric.md) §Audit Passes for High-Stakes Evals) | None by default; NA only when explicitly stated and justified |
 | **Reference / runbook** | `standard` (override) | P1 Suitability, P2 Scope, F1 Organization, F3 Formatting, R3 Precision; plus the Maintainable principle | G1-G3 if the reference cites sources or makes verifiable claims; E2 Coherence on extended explanations | J2 Fairness, J3 Robustness unless interpretive claims appear |
 
 Two operational notes:
@@ -140,18 +140,18 @@ Two operational notes:
 - **Default is Standard.** When in doubt, score the Standard profile.
   Promoting a document to High requires high-stakes content (binding decisions, audits,
   external research) or an explicit `risk_level: high` setting.
-- **NA is honest, not lazy.** A reference doc with no probability claims should mark R3
-  Calibration NA, not score it 0; aggregating zeros for genuinely-not-applicable
-  dimensions punishes the profile rather than the document.
+- **NA is honest, not lazy.** A reference doc with no probability claims should mark J1
+  Calibration NA, not force a numeric score; NA dimensions are excluded from any mean,
+  so genuinely-not-applicable dimensions never drag down the rollup.
 
 The profiles do not override the alignment property: any score 1-4 still requires a
 matching violation citation under that dimension.
 They only tell the reviewer which dimensions to engage at all.
 
-## How metrics interact with the rubric
+## How Metrics Interact with the Rubric
 
 Quantitative metrics are not scores.
-A banned-register hit is a candidate flag, not a E1 Clarity violation: the reviewer may
+A banned-register hit is a candidate flag, not an E1 Clarity violation: the reviewer may
 accept the hit if the word is earned by an inline citation.
 A `[VERIFIED]` tag without a paired source pointer is a G1 Verifiability flag, not a
 hard fail: the reviewer may accept if the source is in the surrounding paragraph.
@@ -159,13 +159,13 @@ hard fail: the reviewer may accept if the source is in the surrounding paragraph
 The lint pass uses metrics to catch defects deterministically.
 The remaining three passes (claim audit, reasoning audit, purpose audit) use judgment
 that metrics cannot substitute for.
-See the *Audit passes for high-stakes evals* section in
+See the *Audit Passes for High-Stakes Evals* section in
 [practical-prose-rubric.md](practical-prose-rubric.md).
 
 ## Related Docs
 
 - [../README.md](../README.md): how the practical-prose layers fit together.
-- [practical-prose-rubric.md](practical-prose-rubric.md): descriptive 0-5 scoring
+- [practical-prose-rubric.md](practical-prose-rubric.md): descriptive 1-5 scoring
   anchors. The metrics here serve the rubric; the rubric serves judgment.
 - [practical-prose-guidelines.md](practical-prose-guidelines.md): prescriptive rules
   these metrics flag against.
