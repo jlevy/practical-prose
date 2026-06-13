@@ -57,8 +57,8 @@ than landing piecemeal.
 
 ## Overview
 
-[tools/pprose/src/pprose/metrics.py](../../../../pprose/src/pprose/metrics.py) parses
-each Markdown document twice.
+[tools/pprose/src/pprose/metrics.py](../../../../tools/pprose/src/pprose/metrics.py)
+parses each Markdown document twice.
 Word, sentence, paragraph, and line counts already come from flexdoc
 (`FlexDoc.from_text(...).size(TextUnit.{words,sentences,paragraphs,lines})`).
 **Everything else is hand-rolled regex**: headings (ATX and setext), links by markdown
@@ -261,8 +261,8 @@ Three groups stay regex on purpose:
 
 ### Components
 
-- [tools/pprose/src/pprose/metrics.py](../../../../pprose/src/pprose/metrics.py) — the
-  only code file changed.
+- [tools/pprose/src/pprose/metrics.py](../../../../tools/pprose/src/pprose/metrics.py) —
+  the only code file changed.
   Rebuild `measure()` around one `FlexDoc`; delete `strip_code_and_frontmatter`,
   `count_headings`, and the replaced structural regex constants (`HEADING_RE`,
   `SETEXT_*_RE`, `IMAGE_RE`, `CODE_INLINE_RE`, `FOOTNOTE_REF_RE`, `FOOTNOTE_DEF_RE`,
@@ -311,8 +311,8 @@ Single phase; the swap is mechanical and gated by the reproducibility test.
 ## Testing Strategy
 
 The fixture-locked `TestB14_ReproducibilityRegression`
-([tools/pprose/tests/test_metrics.py](../../../../pprose/tests/test_metrics.py)) is the
-behavior-parity contract.
+([tools/pprose/tests/test_metrics.py](../../../../tools/pprose/tests/test_metrics.py))
+is the behavior-parity contract.
 It compares the full `Metrics` YAML for four fixtures (`all_headings`, `links_mixed`,
 `frontmatter_and_code`, `banned_register`) against pinned expected files and fails
 loudly on any drift.
@@ -429,8 +429,8 @@ the schema rewrite no longer has to also remove regexes.
 
 ## References
 
-- [tools/pprose/src/pprose/metrics.py](../../../../pprose/src/pprose/metrics.py)
-- [tools/pprose/tests/test_metrics.py](../../../../pprose/tests/test_metrics.py) —
+- [tools/pprose/src/pprose/metrics.py](../../../../tools/pprose/src/pprose/metrics.py)
+- [tools/pprose/tests/test_metrics.py](../../../../tools/pprose/tests/test_metrics.py) —
   `TestB14_ReproducibilityRegression` and the re-bless procedure.
 - [plan-2026-05-25-structural-document-metrics.md](plan-2026-05-25-structural-document-metrics.md)
   — the broader pp-3hg4 schema-rewrite epic this cleanup feeds.

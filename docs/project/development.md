@@ -73,9 +73,9 @@ The config is `lefthook.yml`.
 
 ## The Design System
 
-[`tools/design-system/design-system.yaml`](tools/design-system/design-system.yaml) is
-the single source of truth for surfaces, group palette, dimension palette, score ramp,
-and icon mapping.
+[`tools/design-system/design-system.yaml`](../../tools/design-system/design-system.yaml)
+is the single source of truth for surfaces, group palette, dimension palette, score
+ramp, and icon mapping.
 
 `generate.py` validates the YAML through Pydantic and emits four derivatives:
 

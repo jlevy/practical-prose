@@ -11,15 +11,23 @@
 > `flexdoc.docs.Block`. The “Still missing in 0.3.1” gaps are now **all closed**:
 > `Block.code_info` / `.table_info` / `.list_info` and `FlexDoc.frontmatter` ship in
 > flexdoc 0.1.0, and `NodeKind.footnote_ref` is a typed inline node reachable via
-> `doc.collect(kinds={NodeKind.footnote_ref}, recursive=True)`. So this phase is pure
-> workaround-removal against a dependency we already ship — nothing waits on an upstream
-> release. See [chopdiff-upstream-requests.md](../../chopdiff-upstream-requests.md) for
-> the per-item status; the chopdiff API references below are preserved as the original
+> `doc.collect(kinds={NodeKind.footnote_ref}, recursive=True)`. The APIs exist, but a
+> trial migration found flexdoc 0.1.0 bugs that block the swap (see the Status note and
+> [jlevy/flexdoc#6](https://github.com/jlevy/flexdoc/issues/6)): `collect()` crashes on
+> some valid Markdown, so the footnote-ref call above is not yet safe.
+> This phase is deferred until a flexdoc release lands the fixes.
+> See [chopdiff-upstream-requests.md](../../chopdiff-upstream-requests.md) for the
+> per-item status; the chopdiff API references below are preserved as the original
 > design record.
 
-**Status:** Ready to start — the document-model precondition is met (now via **flexdoc
-0.1.0**; originally chopdiff 0.3.1, released and audited; see
-docs/project/chopdiff-upstream-requests.md for the per-item status).
+**Status:** Blocked (deferred) as of 2026-06-13. The document-model precondition exists
+(now via **flexdoc 0.1.0**; originally chopdiff 0.3.1), but a trial migration found
+flexdoc 0.1.0 bugs that block the typed-API swap (`collect()` / `node_table()` crash on
+valid Markdown; `sections()` / `toc()` drop headings `blocks()` finds), consolidated
+upstream as [jlevy/flexdoc#6](https://github.com/jlevy/flexdoc/issues/6). The
+behavior-preserving subset is the deferred
+[plan-2026-06-13-metrics-flexdoc-workaround-removal.md](plan-2026-06-13-metrics-flexdoc-workaround-removal.md#blocked-on-flexdoc-010-2026-06-13).
+See docs/project/chopdiff-upstream-requests.md for the per-item history.
 Tracked under epic pp-3hg4 with the metrics-rewrite chain (pp-pd8t and successors).
 Moved from the legacy tools/docs/ specs tree on 2026-06-11. The `0.3.1` DocGraph work
 (chopdiff PRs [#12](https://github.com/jlevy/chopdiff/pull/12),
@@ -34,9 +42,9 @@ See [What chopdiff 0.3.1 already gives us](#what-chopdiff-031-already-gives-us) 
 ## Overview
 
 Replace the regex + plain-text pipeline in
-[tools/pprose/src/pprose/metrics.py](../../../../pprose/src/pprose/metrics.py) with a
-single Markdown parse that produces a typed structural decomposition of the document,
-then derive every quantitative metric from that decomposition rather than from
+[tools/pprose/src/pprose/metrics.py](../../../../tools/pprose/src/pprose/metrics.py)
+with a single Markdown parse that produces a typed structural decomposition of the
+document, then derive every quantitative metric from that decomposition rather than from
 independent regex sweeps.
 
 **The Markdown parse happens exactly once, in chopdiff.** As of chopdiff `0.3.1` the
@@ -68,7 +76,7 @@ well-defined prose-only counts that exclude heading text, table cells, and code.
 Today those numbers silently include heading text and table content, which inflates
 sentence counts for heading-dense or table-dense documents and destabilizes
 `words_per_sentence` / `sentences_per_paragraph` density ratios in
-[eval_report.py](../../../../pprose/src/pprose/eval_report.py).
+[eval_report.py](../../../../tools/pprose/src/pprose/eval_report.py).
 
 There are no external consumers of pprose yet, so the existing `Metrics` field names
 (`sentences`, `paragraphs`, `headings_total`, `*_hits`, …) are renamed outright with no
@@ -140,7 +148,7 @@ Every count field uses the `*_count` convention.
    footnotes, bracket tags, tables, code blocks, bare URLs, and various lint patterns.
 2. **Plain-text counting** via `chopdiff.docs.TextDoc`, after stripping YAML
    frontmatter, fenced code, and inline code via
-   [strip_code_and_frontmatter](../../../../pprose/src/pprose/metrics.py#L265).
+   [strip_code_and_frontmatter](../../../../tools/pprose/src/pprose/metrics.py#L265).
 
 The plain-text pipeline has no Markdown awareness.
 Headings, table cells, blockquote text, list-item text, and paragraph text all flow
@@ -245,10 +253,10 @@ way.
 
 - `eval_report.py` computes `words_per_sentence`, `words_per_paragraph`, and
   `sentences_per_paragraph` from the size block
-  ([eval_report.py:635-642](../../../../pprose/src/pprose/eval_report.py#L635-L642)).
+  ([eval_report.py:635-642](../../../../tools/pprose/src/pprose/eval_report.py#L635-L642)).
   These switch to the new prose-only numerators and denominators.
 - `eval_compare.py` surfaces those derived ratios
-  ([eval_compare.py:120-274](../../../../pprose/src/pprose/eval_compare.py#L120-L274)).
+  ([eval_compare.py:120-274](../../../../tools/pprose/src/pprose/eval_compare.py#L120-L274)).
   Column lambdas need to read the renamed fields.
 - Tests in `tools/pprose/tests/test_metrics.py`, `test_eval_report.py`,
   `test_eval_compare.py`, and `test_cli.py` reference current numbers and field names
@@ -305,15 +313,15 @@ It lands as one focused PR:
 
 ### Components
 
-- [tools/pprose/src/pprose/metrics.py](../../../../pprose/src/pprose/metrics.py) —
+- [tools/pprose/src/pprose/metrics.py](../../../../tools/pprose/src/pprose/metrics.py) —
   refactored to the `*_count` schema; `Metrics.from_text_doc`. No new pprose modules;
   the outline walk and distribution computation are private helpers inside `metrics.py`.
-- [tools/pprose/src/pprose/eval_report.py](../../../../pprose/src/pprose/eval_report.py)
+- [tools/pprose/src/pprose/eval_report.py](../../../../tools/pprose/src/pprose/eval_report.py)
   — minor: field renames; density math unchanged.
-- [tools/pprose/src/pprose/eval_compare.py](../../../../pprose/src/pprose/eval_compare.py)
+- [tools/pprose/src/pprose/eval_compare.py](../../../../tools/pprose/src/pprose/eval_compare.py)
   — minor: column lambdas read new field names.
-- [tools/pprose/pyproject.toml](../../../../pprose/pyproject.toml) — bump `chopdiff` pin
-  to 0.3.1.
+- [tools/pprose/pyproject.toml](../../../../tools/pprose/pyproject.toml) — bump
+  `chopdiff` pin to 0.3.1.
 - Tests in `tools/pprose/tests/`.
 
 ### Prose inclusion rules
@@ -651,8 +659,8 @@ Blocked on chopdiff `0.3.1` being released.
 
 ## References
 
-- [tools/pprose/src/pprose/metrics.py](../../../../pprose/src/pprose/metrics.py)
-- [tools/pprose/src/pprose/eval_report.py](../../../../pprose/src/pprose/eval_report.py)
+- [tools/pprose/src/pprose/metrics.py](../../../../tools/pprose/src/pprose/metrics.py)
+- [tools/pprose/src/pprose/eval_report.py](../../../../tools/pprose/src/pprose/eval_report.py)
 - [chopdiff v0.3.0 changelog](https://github.com/jlevy/chopdiff/blob/main/CHANGELOG.md)
 - [jlevy/chopdiff#7](https://github.com/jlevy/chopdiff/pull/7) — `BlockType` +
   `iter_blocks` / `filtered` (shipped in v0.3.0)

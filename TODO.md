@@ -1,6 +1,6 @@
 # TODO
 
-Snapshot of active work as of 2026-06-11. **Canonical tracking is tbd** (`tbd ready` for
+Snapshot of active work as of 2026-06-13. **Canonical tracking is tbd** (`tbd ready` for
 unblocked work, `tbd list` for everything); this file is a periodically refreshed
 orientation map, not a second tracker.
 Planning specs live in [docs/project/specs/active/](docs/project/specs/active/)
@@ -9,11 +9,6 @@ was consolidated here on 2026-06-11).
 
 ## Now (unblocked, highest value)
 
-- **CLI cleanup: snappiness, color, listing UX** (epic pp-lx2p; spec
-  [plan-2026-06-11](docs/project/specs/active/plan-2026-06-11-cli-snappiness-color-and-listing.md)):
-  fix the ~1.3s `--help` startup via lazy imports (Phase 1, pp-mbh2), then the
-  NO_COLOR/TTY-aware color layer (Phase 2, pp-b7pl). Coordinate with the reporting-CLI
-  redesign below (same files).
 - **Reporting CLI redesign** (epic pp-d2j3; spec
   [plan-2026-06-03](docs/project/specs/active/plan-2026-06-03-reporting-cli-redesign.md)):
   the eval → report → show pipeline.
@@ -43,13 +38,14 @@ was consolidated here on 2026-06-11).
 - Design-system: generator tests (pp-i4uh); vendor Zod locally instead of esm.sh
   (pp-tfdk).
 - Structural document decomposition for metrics (epic pp-3hg4; spec
-  [plan-2026-05-25](docs/project/specs/active/plan-2026-05-25-structural-document-metrics.md)
-  is ready to start; the document-model API it needs ships in full in flexdoc 0.1.0
-  (`Block.code_info` / `.table_info` / `.list_info`, `FlexDoc.frontmatter`, and
-  `NodeKind.footnote_ref` via `collect(recursive=True)`), so pp-9cmv, pp-tg93, pp-eaa2,
-  pp-4hku, pp-aat4 are all workaround-removal against a dependency we already ship, with
-  nothing left blocked on an upstream release.
-  Docstring sweep pp-ka9t).
+  [plan-2026-05-25](docs/project/specs/active/plan-2026-05-25-structural-document-metrics.md)):
+  **blocked on flexdoc 0.1.0 bugs** (jlevy/flexdoc#6). A trial migration found
+  `collect()` / `node_table()` crash on valid Markdown and `sections()` / `toc()` drop
+  headings, so the typed-API swap waits for a flexdoc release; the behavior-preserving
+  subset is the deferred
+  [plan-2026-06-13](docs/project/specs/active/plan-2026-06-13-metrics-flexdoc-workaround-removal.md).
+  The five chopdiff upstream beads (pp-9cmv, pp-tg93, pp-eaa2, pp-4hku, pp-aat4) are
+  closed since flexdoc ships the APIs; docstring sweep pp-ka9t.
 - Eval-screenshot tooling (deferred from the README-cards work): snapshot-fit print CSS
   (pp-2gs0), multi-document side-by-side render (pp-39ce), optional in-package
   `pprose snapshot` (pp-w0oz).
@@ -65,6 +61,10 @@ was consolidated here on 2026-06-11).
 
 ## Recently Shipped (Context)
 
+- v0.2.0 release prep merged to main (2026-06-13, PR #28; tag/PyPI release pending): CLI
+  revamp (lazy-import startup ~1.16s to ~56ms, auto-detected color, `pprose list`;
+  `--list` removed), chopdiff -> flexdoc 0.1.0 migration, and a v0.2 editorial pass
+  across the bundled guideline suite.
 - v0.1.1 on PyPI (2026-06-11): writing-practical-guides genre supplement with skill
   routing, ai-prose consolidation, upgrade-path docs, slimmer wheel.
 - Post-release repo org (2026-06-11): single specs home under docs/project/specs/
