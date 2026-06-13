@@ -9,7 +9,8 @@ author: Joshua Levy (github.com/jlevy) with agent assistance
 
 **Author:** Joshua Levy
 
-**Status:** Implemented (all three phases)
+**Status:** Implemented (all three phases).
+Moved from the legacy tools/docs/ specs tree on 2026-06-11
 
 ## Overview
 
@@ -86,8 +87,7 @@ independent and re-pays the full input-token cost for the ~99K invariant portion
 | F5 | ~23 min/doc → 4h for a 12-doc batch. **This spec addresses this.** |
 | F6 | `claude` CLI subprocess can hang indefinitely. **This spec addresses this.** |
 
-Full details:
-[evals/self-eval-v0.1/findings.md](../../../../evals/self-eval-v0.1/findings.md).
+Full details: [evals/self-eval-v0.1/findings.md](../../../../evals/baselines/).
 
 ### Approaches considered
 
@@ -431,11 +431,10 @@ Our equivalent: a small `_load_env_files()` helper that walks `cwd` and home for
 
 - [attic/simple-modern-uv/](../../../../attic/simple-modern-uv/) — the copier template
   used by Phase 0.
-- [evals/self-eval-v0.1/findings.md](../../../../evals/self-eval-v0.1/findings.md) —
-  F1–F6 friction log.
+- [evals/self-eval-v0.1/findings.md](../../../../evals/baselines/) — F1–F6 friction log.
 - [tools/prose-eval/src/prose_eval/eval_score.py](../../../../tools/prose-eval/src/prose_eval/eval_score.py)
   — the file being relocated and rewritten.
-- [tools/prose-eval/src/prose_eval/prompts/eval-rubric-score.md](../../../../tools/prose-eval/src/prose_eval/prompts/eval-rubric-score.md)
+- [tools/prose-eval/src/prose_eval/prompts/eval-rubric-score.md](../../../../tools/pprose/src/pprose/prompts/eval-rubric-score.md)
   — the prompt template that becomes the cached block.
 - [runbooks/practical-prose-eval-single.runbook.md](../../../../runbooks/practical-prose-eval-single.runbook.md)
   — the runbook to update.

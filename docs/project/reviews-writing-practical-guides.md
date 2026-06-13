@@ -10,8 +10,8 @@ and the checked-out Holloway source document from
 The requested scope was to adapt older Holloway guide-writing guidance into Practical
 Prose and make clear that the result is guidance for writing comprehensive practical
 guides, not all practical documents.
-I edited the guide supplement directly, added a package runbook for groundwork, and
-flagged remaining judgment calls below.
+I edited the guide supplement directly, folded the groundwork research protocol into it
+as a Groundwork section, and flagged remaining judgment calls below.
 
 Note: the user-referenced path `docs/project/holloway-editorial-guidance.review.md` does
 not exist in this checkout.
@@ -53,19 +53,20 @@ The current equivalent appears to be
 - **Keep the guide supplement out of common-doc-guidelines.** The most memorable guide
   rules are tempting to globalize, but several would harm procedures, specs, and
   decision memos.
-- **Consider a future shortcut for guide drafting.** The new runbook handles pre-writing
-  research. A later shortcut could route agents through groundwork, outline, guide draft,
-  and expert review.
+- **Consider a future shortcut for guide drafting.** The guide’s Groundwork section
+  handles pre-writing research.
+  A later shortcut could route agents through groundwork, outline, guide draft, and
+  expert review.
 
 ## Edits Applied
 
 - Retitled and opened the guide supplement as guidance for **comprehensive practical
   guides**, not all practical prose.
-- Added a groundwork/review-input section for consulting across diverse experience and
-  expertise.
-- Added `runbooks/practical-guide-groundwork.runbook.md`.
-- Updated README routing so the guide supplement and groundwork runbook are
-  discoverable.
+- Folded the groundwork research protocol into the guide supplement as a Groundwork
+  section (scope, entry scenarios, audiences, significance, questions, terminology,
+  controversy), including a review-input subsection for consulting across diverse
+  experience and expertise, rather than a standalone runbook as originally planned.
+- Updated README routing so the guide supplement is discoverable.
 - Merged reusable Holloway link and voice guidance into
   `docs/practical-prose-guidelines.md`.
 - Added the Holloway source to `docs/practical-prose-bibliography.md`.

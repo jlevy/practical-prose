@@ -33,9 +33,8 @@ pprose compare a.eval.md b.eval.md                 # compare N eval reports
 
 pprose about                                       # the project narrative (bundled README)
 pprose skill                                       # workflow skills overview + routing pointers
-pprose guidelines --list                           # bundled style guides and writing rules
-pprose shortcut --list                             # workflow playbooks the skills invoke
-pprose runbook --list                              # operational procedures (eval, compare)
+pprose list                                        # every bundled guideline, shortcut, runbook, skill
+pprose guidelines <name>                           # print one style guide (no name lists them)
 pprose install                                     # install skills into the current project
 pprose install --global                            # install skills user-wide for every project
 ```
@@ -50,7 +49,7 @@ pprose install --global                            # install skills user-wide fo
   Skips `~/.codex/AGENTS.md` so the global instruction file stays user-authored.
 
 Outside an unambiguous project context (`$HOME`, a non-git directory), `--project` or
-`--global` must be passed explicitly — no silent default.
+`--global` must be passed explicitly; there is no silent default.
 `$HOME` is always refused under `--project`; use `--global` for a user-wide install.
 Pass `--surfaces=portable,claude,agents-md` (or `--surfaces=all`, the default) to select
 install destinations within the chosen scope, or `--pin <version>` to override the
@@ -72,7 +71,7 @@ artifacts and the baked version pin.
 `score` requires `ANTHROPIC_API_KEY`; the package auto-loads `.env` and `.env.local`
 from the current directory hierarchy and `$HOME`.
 
-## Project docs
+## Project Docs
 
 - Installing uv and Python: [installation.md](docs/installation.md)
 - Development workflows: [development.md](docs/development.md)
@@ -85,3 +84,7 @@ The wheel also bundles practical-prose **content** (the guidelines, rubric, runb
 and other prose under `resources/`), which is licensed under Creative Commons
 Attribution 4.0 ([CC BY 4.0](https://creativecommons.org/licenses/by/4.0/)). See the
 [repository LICENSE](https://github.com/jlevy/practical-prose/blob/main/LICENSE).
+
+<!-- This document follows common-doc-guidelines.md.
+See github.com/jlevy/practical-prose and review guidelines before editing.
+-->

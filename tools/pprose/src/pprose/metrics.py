@@ -36,10 +36,10 @@ Counts (all per-document):
     flags only, since these can be appropriate at a section's outermost level.
   - Words, sentences, paragraphs, lines (prose-only — YAML frontmatter, fenced code
     blocks, and inline code are stripped before counting; sentence splitting via flowmark
-    heuristic through chopdiff)
+    heuristic through flexdoc)
   - Pages, computed at 275 words/page (configurable via --words-per-page)
 
-Word/sentence/paragraph counts use chopdiff's TextDoc, which uses
+Word/sentence/paragraph counts use flexdoc's FlexDoc, which uses
 flowmark.split_sentences_regex for sentence boundaries.
 
 Known limitations:
@@ -75,7 +75,7 @@ from dataclasses import asdict, dataclass, field
 from pathlib import Path
 
 import yaml
-from chopdiff.docs import TextDoc, TextUnit
+from flexdoc import FlexDoc, TextUnit
 
 WORDS_PER_PAGE = 275
 
@@ -329,7 +329,7 @@ def measure(
     generic_heading_matches = GENERIC_HEADING_RE.findall(structural)
     generic_heading_examples = sorted({m.strip() for m in generic_heading_matches})[:10]
 
-    doc = TextDoc.from_text(structural)
+    doc = FlexDoc.from_text(structural)
     words = doc.size(TextUnit.words)
     sentences = doc.size(TextUnit.sentences)
     paragraphs = doc.size(TextUnit.paragraphs)

@@ -2,8 +2,8 @@
 
 ## Scope and context
 
-- **Document:** [README.md](README.md), the root document of the Practical Prose
-  project, reviewed at the post-v0.1.0 state (Quick Start under the intro, Example
+- **Document:** [README.md](../../../README.md), the root document of the Practical
+  Prose project, reviewed at the post-v0.1.0 state (Quick Start under the intro, Example
   Evaluations cards, published-package install paths).
 - **Purpose:** orient a new reader, motivate the project, and route to the principles,
   guidelines, rubric, skills, and `pprose` tooling.

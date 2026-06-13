@@ -10,7 +10,7 @@ A one-page pre-publish self-audit for documents written under
 `pprose guidelines practical-prose-guidelines`.
 Walk the six groups in order.
 For each line: yes / no / NA. If a question is unclear, jump to its dimension in the
-full guidelines (the §-number points there directly).
+full guidelines (rule codes like R2.8 name the dimension section and rule number there).
 
 For generation-time guidance (drafting a doc from scratch), see
 `pprose shortcut practical-prose-agent-policy`; this checklist is
@@ -22,18 +22,20 @@ for pre-publish audit of an already-drafted doc.
   / E3 / F3; standard internal docs audit Purpose, Expression, Grounding, and R2
   Soundness; decision memos / audits / deep research audit all 20; reference / runbook
   docs focus on P1 / P2 / F1 / F3 / R3 and the Maintainable principle.
-  See `practical-prose-metrics.md` §Applicability Profiles.
+  See `pprose guidelines practical-prose-metrics` §Applicability
+  Profiles.
 - A scored rule miss can be a **justified deviation** instead of a defect, if you
   document the rule set aside, the reader outcome served, and the risk introduced.
-  See *Justified Deviations* in `practical-prose-rubric.md`.
+  See *Justified Deviations* in
+  `pprose guidelines practical-prose-rubric`.
 
 ## Purpose (P1-P4)
 
 - [ ] **P1 Suitability:** Is the task named?
   Does the output shape (recommendation, findings, milestones, …) fit the task?
-  Is the reader burden the document removes named (§1.6)?
+  Is the reader burden the document removes named (P1.6)?
 - [ ] **P2 Scope:** Is the scope declared at the opening, and does the body honor it?
-  Is what the document is *not competent to conclude* named (§2.5)?
+  Is what the document is *not competent to conclude* named (P2.5)?
 - [ ] **P3 Breadth:** Within scope, are the relevant case classes, prior work, and
   standard sources present?
 - [ ] **P4 Depth:** Do the sections the document’s purpose depends on get more detail
@@ -68,7 +70,7 @@ for pre-publish audit of an already-drafted doc.
   Assumptions surfaced?
   Counter-evidence engaged?
   Counterfactual test for causal claims: would we expect to see something different if
-  the explanation were wrong (§12.8)?
+  the explanation were wrong (R2.8)?
 - [ ] **R3 Precision:** Most specific term the audience can parse used?
   Umbrella terms avoided where sub-distinctions matter?
 - [ ] **R4 Parsimony:** Each load-bearing reasoning chain the minimum sufficient sound
@@ -81,7 +83,7 @@ for pre-publish audit of an already-drafted doc.
 - [ ] **G1 Verifiability:** Every quantitative claim source-traceable at the
   stakes-appropriate bar?
   Confidence tags paired with sources?
-  For central claims, is what would invalidate them named (§15.5)?
+  For central claims, is what would invalidate them named (G1.6)?
 - [ ] **G2 Factuality:** Cited sources support the claim at the asserted strength?
   Numbers match sources, or rounding disclosed?
 - [ ] **G3 Relevance:** Every cited source and every section bears on the document’s
@@ -93,13 +95,13 @@ for pre-publish audit of an already-drafted doc.
 
 - [ ] **J1 Calibration:** Probability claims anchored in base rates?
   Scenario probabilities sum to 100%? Confidence without cowardice: no mushy hedging on
-  strong evidence (§18.6)?
+  strong evidence (J1.6)?
 - [ ] **J2 Fairness:** Opposing positions engaged at proportional depth, with any
   asymmetry declared?
 - [ ] **J3 Robustness:** Key claims tested against the most-threatening alternative
   interpretation? Lens-dependent claims surfaced as findings?
 
-## Audit-pass operationalization
+## The Four Audit Passes
 
 If the document is high-stakes, run the four audit passes separately rather than one
 broad pass:
@@ -123,7 +125,7 @@ Where the discipline applies, do not combine passes.
 Running them in parallel by the same agent in the same context loses the cognitive
 separation the structure depends on.
 
-## When to use this checklist
+## When to Use This Checklist
 
 - Before publishing any practical-prose document (decision memo, audit, research report,
   spec, design doc, technical paper).

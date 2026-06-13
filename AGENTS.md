@@ -1,7 +1,7 @@
 # Practical Prose: Agent Guide
 
 Practical Prose is a reference system and evaluation toolkit for writing that helps a
-reader understand, decide, do, or verify something.
+reader understand, decide, do, verify, or maintain something.
 Use it when the user asks to improve, audit, score, or compare practical documents.
 
 For project-wide authoring principles, run
@@ -21,11 +21,11 @@ Practical Prose: an evaluation toolkit and editorial workflows for practical doc
 Use when the user asks to improve, audit, score, or compare practical documents.
 
 Discover the tool from the CLI itself: `pprose --help` for commands, `pprose about` for
-the project narrative, and `pprose skill --list` / `pprose shortcut --list` /
-`pprose guidelines --list` / `pprose runbook --list` for on-demand workflows, playbooks,
-style guides, and procedures.
+the project narrative, `pprose skill` for the workflow skills, and `pprose list` for
+every on-demand guideline, shortcut, and runbook
+(`pprose guidelines|shortcut|runbook <name>` prints one).
 
-Run pprose as `pprose <command>` if on PATH, else `uvx pprose@0.1.1 <command>`
+Run pprose as `pprose <command>` if on PATH, else `uvx pprose@0.2.0 <command>`
 (zero-install via uv).
 
 <!-- END PPROSE INTEGRATION -->
@@ -57,3 +57,7 @@ Auto-format Markdown with `flowmark` for clean, semantic git diffs.
 - Python build (library / newest patch): `uvx --from flowmark==0.7.2 flowmark`.
 
 <!-- END FLOWMARK INTEGRATION -->
+
+<!-- This document follows common-doc-guidelines.md.
+See github.com/jlevy/practical-prose and review guidelines before editing.
+-->

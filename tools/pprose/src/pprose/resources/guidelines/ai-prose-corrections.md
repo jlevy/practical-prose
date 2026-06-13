@@ -1,6 +1,6 @@
 # AI-Prose Corrections
 
-Version: v0.2 (last update 2026-06-09)\
+Version: v0.2 (last update 2026-06-12)\
 Joshua Levy (github.com/jlevy) with agent assistance.
 Several structural patterns adapted from Hardik Pandya’s *stop-slop* (MIT,
 github.com/hardikpandya/stop-slop), with moderation noted below.
@@ -236,9 +236,9 @@ correction.
 Inanimate things performing human verbs.
 AI register favors this because it avoids naming the actor.
 
-- *the complaint becomes a fix* — the complaint did nothing; someone fixed it.
-- *the decision emerges* — decisions don’t emerge; someone decides.
-- *the data tells us* — data sits there; someone reads it and concludes.
+- *the complaint becomes a fix*: the complaint did nothing; someone fixed it.
+- *the decision emerges*: decisions don’t emerge; someone decides.
+- *the data tells us*: data sits there; someone reads it and concludes.
 - *the culture shifts*, *the conversation moves toward*, *the market rewards*.
 
 **Correction:** name the human.
@@ -249,7 +249,7 @@ abstractions.
 
 ### Negative Listing
 
-Listing what something is *not* before revealing what it *is* — a rhetorical striptease.
+Listing what something is *not* before revealing what it *is*: a rhetorical striptease.
 
 - *Not a X. Not a Y. A Z.*
 - *It wasn’t X. It wasn’t Y. It was Z.*
@@ -306,7 +306,7 @@ Sentences that assert importance without naming the specific thing.
 - *The implications are significant.*
 - *The stakes are high.*
 
-**Correction:** replace with the specific reason, implication, or stake — or cut.
+**Correction:** replace with the specific reason, implication, or stake, or cut.
 (Cross-references E1.1 vague-magnitude rules.)
 
 ### Telling Instead of Showing
@@ -365,7 +365,7 @@ AI failure modes governed by rules outside this file:
 - **Wikipedia, *Signs of AI writing*** (CC-BY-SA-4.0): corroborating community-curated
   catalog.
 - The empirical case for structural over lexical rules: Rallapalli et al.
-  (2026) and Xia, Stańczak & Roth (EACL 2026) in
+  (2026) and Xia, Stańczak, and Roth (EACL 2026) in
   `pprose guidelines practical-prose-bibliography`.
 
 ## Related Docs
@@ -383,5 +383,5 @@ AI failure modes governed by rules outside this file:
   editorial response to LLM output, and open-source tools.
 
 <!-- This document follows common-doc-guidelines.md.
-Review guidelines before editing.
+See github.com/jlevy/practical-prose and review guidelines before editing.
 -->

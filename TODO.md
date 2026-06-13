@@ -1,17 +1,19 @@
 # TODO
 
-Snapshot of active work as of 2026-06-10. **Canonical tracking is tbd** (`tbd ready` for
+Snapshot of active work as of 2026-06-11. **Canonical tracking is tbd** (`tbd ready` for
 unblocked work, `tbd list` for everything); this file is a periodically refreshed
 orientation map, not a second tracker.
 Planning specs live in [docs/project/specs/active/](docs/project/specs/active/)
-(finished ones move to [done/](docs/project/specs/done/)).
+(finished ones move to [done/](docs/project/specs/done/); the legacy `tools/docs/` tree
+was consolidated here on 2026-06-11).
 
 ## Now (unblocked, highest value)
 
-- **Cut v0.1.1** (pp-ew5z): ship `writing-practical-guides`, the genre-routed skills,
-  and the upgrade docs to published users.
-  Requires bumping the baked discovery pin (`DISCOVERY_VERSION`) to 0.1.1 so the release
-  guard passes.
+- **CLI cleanup: snappiness, color, listing UX** (epic pp-lx2p; spec
+  [plan-2026-06-11](docs/project/specs/active/plan-2026-06-11-cli-snappiness-color-and-listing.md)):
+  fix the ~1.3s `--help` startup via lazy imports (Phase 1, pp-mbh2), then the
+  NO_COLOR/TTY-aware color layer (Phase 2, pp-b7pl). Coordinate with the reporting-CLI
+  redesign below (same files).
 - **Reporting CLI redesign** (epic pp-d2j3; spec
   [plan-2026-06-03](docs/project/specs/active/plan-2026-06-03-reporting-cli-redesign.md)):
   the eval → report → show pipeline.
@@ -23,7 +25,7 @@ Planning specs live in [docs/project/specs/active/](docs/project/specs/active/)
   `pprose lint`) tracked under pp-ybcx, pp-j9q0, pp-gy7z, pp-65cs, pp-lik1, pp-3kb6,
   pp-ggui, pp-twg4.
 
-## Quality and reliability
+## Quality and Reliability
 
 - **Scoring reliability** (pp-aim6): run-to-run variance (±1 on ~6 dims between
   identical runs) and the stubborn sub-5-without-citation alignment miss; consider
@@ -36,18 +38,23 @@ Planning specs live in [docs/project/specs/active/](docs/project/specs/active/)
 - **Cross-agent skill validation** (pp-flf2, epic pp-mpo1): manual activation checks in
   Claude Code and Codex CLI against the published package.
 
-## Tooling debt
+## Tooling Debt
 
 - Design-system: generator tests (pp-i4uh); vendor Zod locally instead of esm.sh
   (pp-tfdk).
-- Structural document decomposition for metrics (epic pp-3hg4; chopdiff v0.4.x asks
-  pp-9cmv, pp-tg93, pp-eaa2, pp-4hku; docstring sweep pp-ka9t).
-- Repo org: single specs home; attic cleanup (pp-wlwj).
+- Structural document decomposition for metrics (epic pp-3hg4; spec
+  [plan-2026-05-25](docs/project/specs/active/plan-2026-05-25-structural-document-metrics.md)
+  is ready to start; the document-model API it needs ships in full in flexdoc 0.1.0
+  (`Block.code_info` / `.table_info` / `.list_info`, `FlexDoc.frontmatter`, and
+  `NodeKind.footnote_ref` via `collect(recursive=True)`), so pp-9cmv, pp-tg93, pp-eaa2,
+  pp-4hku, pp-aat4 are all workaround-removal against a dependency we already ship, with
+  nothing left blocked on an upstream release.
+  Docstring sweep pp-ka9t).
 - Eval-screenshot tooling (deferred from the README-cards work): snapshot-fit print CSS
   (pp-2gs0), multi-document side-by-side render (pp-39ce), optional in-package
   `pprose snapshot` (pp-w0oz).
 
-## README / docs follow-ups
+## README and Docs Follow-Ups
 
 - Remaining README revision drafts A-E (LLM-as-judge paragraph, positioning section,
   Age-of-AI consolidation, Where-to-Start fold, hero placement) await per-draft approval
@@ -56,10 +63,19 @@ Planning specs live in [docs/project/specs/active/](docs/project/specs/active/)
 - After material README changes, regenerate the example-evaluation cards per
   [docs/project/eval-screenshots.runbook.md](docs/project/eval-screenshots.runbook.md).
 
-## Recently shipped (context)
+## Recently Shipped (Context)
 
+- v0.1.1 on PyPI (2026-06-11): writing-practical-guides genre supplement with skill
+  routing, ai-prose consolidation, upgrade-path docs, slimmer wheel.
+- Post-release repo org (2026-06-11): single specs home under docs/project/specs/
+  (legacy tools/docs tree removed), bead spec_paths re-pointed, ghost links fixed,
+  README badges added.
 - v0.1.0 on PyPI (2026-06-10): first release, OIDC trusted publishing, release-tag
   guard.
 - `writing-practical-guides` genre supplement + skill routing; AI-prose corrections
   consolidation; design-system and baseline-evals runbook unbundled from the wheel.
 - Calibration pass on the example evals (epic pp-a65z; one follow-up open: pp-aim6).
+
+<!-- This document follows common-doc-guidelines.md.
+See github.com/jlevy/practical-prose and review guidelines before editing.
+-->

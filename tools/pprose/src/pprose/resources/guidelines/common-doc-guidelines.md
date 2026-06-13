@@ -1,6 +1,6 @@
 # Common Documentation Guidelines
 
-Version: v0.2 (last update 2026-06-09)\
+Version: v0.3 (last update 2026-06-12)\
 Joshua Levy (github.com/jlevy)
 
 ## Purpose
@@ -12,7 +12,7 @@ code, text files, and documentation.
 See the [Practical Prose](https://github.com/jlevy/practical-prose) repository for more
 extensive guidelines and context.
 
-## Organizing Documentation
+## 1. Organizing Documentation
 
 1. **Organize documents for rapid orientation**
 
@@ -59,7 +59,7 @@ extensive guidelines and context.
    - Documents should be organized in a way that is compatible with typical update
      processes.
 
-## Structuring Documents
+## 2. Structuring Documents
 
 1. **Explain motivations and background**
 
@@ -106,7 +106,7 @@ extensive guidelines and context.
      the prior shape”). The test is whether the history serves the reader’s task or
      simply records the author’s path.
 
-## Writing Style
+## 3. Writing Style
 
 Stylistically, emphasize **clarity**, **depth**, **rigor**, and **warmth**.
 
@@ -139,10 +139,8 @@ Stylistically, emphasize **clarity**, **depth**, **rigor**, and **warmth**.
    - Avoid unnecessary coldness, blame, condescension, or opacity when writing for
      humans. For agent-facing documents, the equivalent is directness, explicit context,
      and absence of performative fluff.
-     `practical-prose-rubric.md` cites this as a Tone / Reader Respect contextual
-     modifier rather than a scored dimension.
 
-## Effective Communication
+## 4. Effective Communication
 
 1. **Respect the reader’s intelligence**
 
@@ -186,7 +184,7 @@ Stylistically, emphasize **clarity**, **depth**, **rigor**, and **warmth**.
    - Cut acronyms and jargon unless they serve a clear purpose.
    - When technical terms or jargon are used, define them or reference their definition.
 
-## Formatting
+## 5. Formatting
 
 > Block quotes like this should be used for meta-instructions, quotes, and epigraphs.
 
@@ -221,7 +219,7 @@ Stylistically, emphasize **clarity**, **depth**, **rigor**, and **warmth**.
   `##` headings (as in this document).
   For H3 `###` and H4 `####`, title case is optional but should be applied consistently.
 
-## Guideline Footer
+## 6. Guideline Footer
 
 Documents governed by these guidelines should include a footer that says “This document
 follows common-doc-guidelines.md.

@@ -8,7 +8,7 @@ This is an apply skill: it may modify the target document.
 It is a **superset of `pprose-common-edit`**: it applies the common documentation
 substrate *and* the Expression and Form dimensions (E1–E3 and F1–F3: clarity, coherence,
 concision, organization, consistency, formatting) of the Practical Prose guidelines.
-It stops short of the substantive dimensions — for a full all-dimension editorial pass
+It stops short of the substantive dimensions; for a full all-dimension editorial pass
 that also writes an editorial review, use `pprose-full-edit`.
 
 ## Inputs

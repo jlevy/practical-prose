@@ -59,5 +59,5 @@ Follow CMOS hyphenation: no *-ly* adverb hyphens; hyphenate compound modifiers b
 noun, not after.
 
 <!-- This document follows common-doc-guidelines.md.
-Review guidelines before editing.
+See github.com/jlevy/practical-prose and review guidelines before editing.
 -->

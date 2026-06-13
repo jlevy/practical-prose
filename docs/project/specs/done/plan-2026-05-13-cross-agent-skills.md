@@ -4,7 +4,10 @@
 
 **Author:** Joshua Levy with agent assistance
 
-**Status:** Draft
+**Status:** Implemented (install scopes/surfaces, the six pprose skills, AGENTS.md
+block, and the v0.1.0/v0.1.1 PyPI releases).
+Residual: manual cross-agent activation validation, tracked as pp-flf2 (epic pp-mpo1).
+Moved from the legacy tools/docs/ specs tree on 2026-06-11.
 
 ## Overview
 
@@ -459,19 +462,19 @@ Rollback is `git revert` of the PR; no migrations, no external state.
 
 ## References
 
-- [shortcuts/practical-prose-agent-policy.md](../../../../../shortcuts/practical-prose-agent-policy.md):
+- [shortcuts/practical-prose-agent-policy.md](../../../../shortcuts/practical-prose-agent-policy.md):
   source for the AGENTS.md principles section.
-- [common-doc-guidelines.md](../../../../../docs/common-doc-guidelines.md): source for
-  the `prose-apply-common-guidelines` skill.
-- [shortcuts/shortcut-copy-edit.md](../../../../../shortcuts/shortcut-copy-edit.md):
-  source for the `prose-copy-edit` skill.
-- [shortcuts/practical-prose-quick-checklist.md](../../../../../shortcuts/practical-prose-quick-checklist.md):
+- [common-doc-guidelines.md](../../../../docs/common-doc-guidelines.md): source for the
+  `prose-apply-common-guidelines` skill.
+- [shortcuts/shortcut-copy-edit.md](../../../../shortcuts/shortcut-copy-edit.md): source
+  for the `prose-copy-edit` skill.
+- [shortcuts/practical-prose-quick-checklist.md](../../../../shortcuts/practical-prose-quick-checklist.md):
   source for the `prose-quick-check` skill.
-- [runbooks/practical-prose-eval-single.runbook.md](../../../../../runbooks/practical-prose-eval-single.runbook.md):
+- [runbooks/practical-prose-eval-single.runbook.md](../../../../runbooks/practical-prose-eval-single.runbook.md):
   source for the `prose-eval` skill.
-- [runbooks/practical-prose-eval-compare.runbook.md](../../../../../runbooks/practical-prose-eval-compare.runbook.md):
+- [runbooks/practical-prose-eval-compare.runbook.md](../../../../runbooks/practical-prose-eval-compare.runbook.md):
   source for the `prose-compare` skill.
-- [tools/prose-eval/docs/publishing.md](../../../../../tools/prose-eval/docs/publishing.md):
+- [tools/prose-eval/docs/publishing.md](../../../../tools/pprose/docs/publishing.md):
   PyPI publishing flow for the CLI.
 - [Agent Skills open standard](https://agentskills.io/home) and
   [AGENTS.md spec](https://agents.md/).

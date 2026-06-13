@@ -6,7 +6,7 @@ status: active
 ---
 # Practical Prose Rubric
 
-Version: v0.1 (rubric: `pp20v1`, last update 2026-05-24)\
+Version: v0.2 (rubric: `pp20v1`, last update 2026-06-12)\
 Joshua Levy (github.com/jlevy)
 
 A descriptive 1-5 rubric for assessing practical writing artifacts (articles, blog
@@ -25,7 +25,7 @@ The eval tooling has a separate, narrower tag (`artifact.scope_class`, set via
 `pprose runbook practical-prose-eval-single`
 for the scope-class table and when to set each value.
 
-## Alignment with the guidelines
+## Alignment with the Guidelines
 
 The rubric and `pprose guidelines practical-prose-guidelines` define the
 same 20 dimensions in the same six groups, using the same names and section numbers
@@ -55,10 +55,10 @@ same 20 dimensions in the same six groups, using the same names and section numb
   truncated, an upstream tool failed, the assigned model refused, etc.). See the
   decision tree below.
 
-Numeric scores are always 1-5: there is no 0. One meaning per value — numeric scores are
-*quality*, ERR is *process*, NA is *out of scope* — keeps the scoring prompt, the
-per-dim anchors, and the rollup all aligned, and stops a single 0 from being read as
-both a low quality verdict and a silent excluded-from-mean sentinel.
+Numeric scores are always 1-5: there is no 0. One meaning per value (numeric scores are
+*quality*, ERR is *process*, NA is *out of scope*) keeps the scoring prompt, the per-dim
+anchors, and the rollup all aligned, and stops a single 0 from being read as both a low
+quality verdict and a silent excluded-from-mean sentinel.
 As a side benefit, numeric scores are always truthy, so `if score: ...` cannot
 accidentally treat an unscored dimension as a quality-zero swing.
 
@@ -76,7 +76,7 @@ and the deviation is documented (see *Justified deviations* below).
 The rubric is a strong instrument for catching avoidable defects; it is not a substitute
 for asking whether the document worked.
 
-### Decision tree: NA, ERR, or 1-5?
+### Decision Tree: NA, ERR, or 1-5?
 
 This decision tree is binding.
 Apply the questions in order and stop at the first “yes”.
@@ -135,11 +135,11 @@ separately in `na_dimensions` and `err_dimensions`) rather than treated as zero,
 lightweight artifacts are not penalized for not needing every dimension and unscored
 dimensions do not silently distort the rollup.
 
-### Cross-dimension cascades
+### Cross-Dimension Cascades
 
 A few dimensions are defined in terms of another (the *prereq*): you can’t score the
 dependent dimension without scoring the prereq first.
-The cascade rule is uniform — NA carries NA, ERR carries ERR, and 1-5 carries 1-5:
+The cascade rule is uniform: NA carries NA, ERR carries ERR, and 1-5 carries 1-5.
 
 | Prereq → Dependent | NA cascade | ERR cascade | 1-5 prereq |
 | --- | --- | --- | --- |
@@ -149,8 +149,8 @@ The cascade rule is uniform — NA carries NA, ERR carries ERR, and 1-5 carries 
 
 Read this as: when a prereq lands on a sentinel (NA or ERR), the dependent dimension
 inherits the same sentinel.
-A *low* prereq score (1 or 2) is not a cascade trigger — the dependent dimension is
-still scored on its own anchors, and the reason may cite the upstream weakness.
+A *low* prereq score (1 or 2) is not a cascade trigger: the dependent dimension is still
+scored on its own anchors, and the reason may cite the upstream weakness.
 Cascades exist because the dependent dimension’s question literally cannot be asked
 without its prereq’s basis (no verifiable claims → nothing to fact-check; no stated
 purpose → no target for relevance; no sound chain → no chain to be parsimonious about).
@@ -177,6 +177,10 @@ are not justified.
 
 ## Dimensions
 
+<!-- The canonical wording of the question column lives in
+practical-prose-guidelines.md (Six Groups, Twenty Dimensions); keep this table and the
+README.md copy cell-for-cell identical with it. -->
+
 | # | Group | Dimension | Question |
 | ---: | --- | --- | --- |
 | 1 | Purpose | Suitability | Does the document give the reader what they need, in the form the task requires? |
@@ -190,17 +194,17 @@ are not justified.
 | 9 |  | Consistency | Does the document follow the chosen style guide or house style consistently? |
 | 10 |  | Formatting | Is the document visually and syntactically clean in its medium? |
 | 11 | Reasoning | Discipline | Are observation, judgment, interpretation, and implication worked through in order, with each higher rung supported by the prior? |
-| 12 |  | Soundness | Do claims follow from evidence through valid mechanisms? |
+| 12 |  | Soundness | Do claims follow from evidence through valid mechanisms and explicit assumptions? |
 | 13 |  | Precision | Are claims and terms specified at the right granularity? |
 | 14 |  | Parsimony | Is each load-bearing reasoning chain the cleanest, simplest sound argument possible for its conclusion? |
-| 15 | Grounding | Verifiability | Are claims traceable to sources or calculations? |
-| 16 |  | Factuality | Do cited sources support the claims as asserted? |
+| 15 | Grounding | Verifiability | Are claims traceable to specific sources, observations, calculations, or explicit assumptions? |
+| 16 |  | Factuality | Do the verifiable claims hold up when checked against the world? |
 | 17 |  | Relevance | Do sources, citations, and reasoning chains bear on the document’s stated purpose? |
 | 18 | Judgment | Calibration | Does claim strength match evidence strength? |
-| 19 |  | Fairness | Are opposing positions argued at proportional evidentiary depth? |
+| 19 |  | Fairness | Are opposing positions argued at depth proportional to their plausibility, materiality, and strength? |
 | 20 |  | Robustness | Do key claims survive plausible alternative interpretations? |
 
-## How to score
+## How to Score
 
 For each dimension, assign either an integer 1-5, `NA`, or `ERR`, plus a brief
 parenthetical reason.
@@ -216,18 +220,18 @@ parenthetical reason.
 - For any score below 5, cite at least one specific guideline rule the document missed.
 - For any score-5, no violation should be cite-able for that dimension.
 
-### How the strict alignment rule interacts with the score-4 anchor
+### How the Strict Alignment Rule Interacts with the Score-4 Anchor
 
 The strict rule says: any single clear violation of a guideline rule drops the score
 *below* 5. That rule is essential to the rubric’s bidirectional map with the guidelines
 and is not negotiable.
-It does **not** say minor slips collapse the score to
-1. The score-4 anchor catches exactly the “one or two minor isolated slips” case;
-   multiple slips or one severe slip that affects the document’s central claims push to
-   3 or lower. Read the strict rule and the score-4 anchor together: the strict rule is
-   the ceiling, the anchors below describe what the document actually looks like.
+It does **not** say minor slips collapse the score to the bottom anchor: the score-4
+anchor catches exactly the “one or two minor isolated slips” case, and multiple slips or
+one severe slip that affects the document’s central claims push to 3 or lower.
+Read the strict rule and the score-4 anchor together: the strict rule is the ceiling,
+the anchors below describe what the document actually looks like.
 
-### Primary vs secondary dimension for overlapping defects
+### Primary vs. Secondary Dimension for Overlapping Defects
 
 Some defects can be cited under more than one dimension.
 To keep reports comparable between reviewers, cite under the **primary** dimension; a
@@ -259,7 +263,7 @@ Suggested primary assignments:
 | One-sided argument with no counter-evidence engaged | J2 Fairness | J1 Calibration |
 | Key claim brittle under a different reasonable interpretive lens | J3 Robustness | J2 Fairness |
 
-### Output format
+### Output Format
 
 `SCORE (REASON)`, matching the regex `(NA|ERR|[1-5]) \(.*?\)`. Cite line numbers,
 section names, or quoted phrases in the reason where relevant.
@@ -281,7 +285,7 @@ NA (No probability, forecast, confidence, or uncertainty claims are made; the ta
 file-organization audit that does not call for calibration.)
 ```
 
-## Score anchors by dimension
+## Score Anchors by Dimension
 
 ### Purpose
 
@@ -456,8 +460,8 @@ clear.
 
 Arrangement, style discipline, and markup: the document as a structured artifact rather
 than as prose. Distinct from Expression (sentence- and paragraph-level language), these
-three dimensions descend from the Maintainable principle — they govern how a reader
-navigates and how the document survives editing.
+three dimensions descend from the Lucid and Maintainable principles: they govern how a
+reader navigates and how the document survives editing.
 
 #### F1. Organization
 
@@ -684,8 +688,8 @@ the conclusion requires.
 Parsimony presupposes Soundness (R2). When a step is unsound, a longer sound chain would
 do less damage to the conclusion, so the chain as written cannot be the most
 parsimonious sound argument.
-The Soundness → Parsimony cascade (see the rubric front matter) carries NA and ERR
-through cleanly; a low Soundness score (1-2) still leaves Parsimony scorable 1-5 on
+The Soundness → Parsimony cascade (see *Cross-Dimension Cascades* above) carries NA and
+ERR through cleanly; a low Soundness score (1-2) still leaves Parsimony scorable 1-5 on
 whatever sound chains remain.
 
 Parsimony differs from E3 Concision (prose-level economy: words and paragraphs), from G3
@@ -696,13 +700,13 @@ sufficient?
 
 - **NA:** Not applicable.
   Either the document makes no inferential claims (pure reference data, raw
-  measurements, a glossary, or a structured form — no reasoning chain whose minimality
+  measurements, a glossary, or a structured form: no reasoning chain whose minimality
   could be evaluated), **or** Soundness is NA and the cascade applies (Parsimony NA
-  follows Soundness NA; see *Cross-dimension cascades* in the rubric front matter).
+  follows Soundness NA; see *Cross-Dimension Cascades* above).
 
 - **ERR:** Cannot assess (process failure; re-run the eval).
   Either a procedural failure prevents scoring, **or** Soundness is ERR and the cascade
-  applies (Parsimony ERR follows Soundness ERR — Parsimony is defined as the cleanest
+  applies (Parsimony ERR follows Soundness ERR: Parsimony is defined as the cleanest
   *sound* chain, so an unscored Soundness leaves nothing to be parsimonious about).
   A low Soundness score (1-2) is not an ERR trigger; in that case Parsimony is still
   scored 1-5 on whatever sound chains remain, and the reason may cite the upstream
@@ -782,7 +786,7 @@ operational notes only require sources for material claims.
   kind.
 
 - **ERR:** Cannot assess (process failure; re-run the eval).
-  Reserve for genuine procedural failures — the document is truncated mid-claim, an
+  Reserve for genuine procedural failures: the document is truncated mid-claim, an
   upstream tool failed, the assigned model refused to score this dimension.
   If the document makes verifiable assertions and simply omits sources, that is a
   quality verdict (score 1-4 with rule citations), not ERR.
@@ -806,7 +810,7 @@ operational notes only require sources for material claims.
 - **5:** Every verifiable claim in the document is *easily verifiable*: stated
   specifically enough to be checkable, and traceable to evidence the reader can reach at
   appropriate effort for the document’s stakes.
-  Quantitative and high- stakes claims have specific pointers (URL, document ID, page or
+  Quantitative and high-stakes claims have specific pointers (URL, document ID, page or
   section number, commit SHA). Lower-stakes material claims state their basis (a named
   primary observation, a clearly attributed source, or an inline derivation).
   Confidence tags pair with source pointers; derived facts show the calculation inline
@@ -871,8 +875,8 @@ penalize the document for them.
 - **NA:** Not applicable.
   The document makes no verifiable assertions at all (see G1 Verifiability NA for the
   engagement test). Factuality engages on the same set of claims Verifiability engages
-  on, so Factuality follows Verifiability’s NA verdict (see *Cross-dimension cascades*
-  in the rubric front matter).
+  on, so Factuality follows Verifiability’s NA verdict (see *Cross-Dimension Cascades*
+  above).
 
 - **ERR:** Cannot assess (process failure; re-run the eval).
   Either the document attempts at least one verifiable assertion but the claim is
@@ -932,14 +936,14 @@ sections rather than words and paragraphs.
 
 - **NA:** Not applicable.
   Either the document makes no inferential claims and cites no sources (pure reference
-  data, raw measurements, a glossary, or a structured form — no audit trail to evaluate
+  data, raw measurements, a glossary, or a structured form: no audit trail to evaluate
   for relevance), **or** Suitability is NA and the cascade applies (Relevance NA follows
-  Suitability NA; see *Cross-dimension cascades* in the rubric front matter).
+  Suitability NA; see *Cross-Dimension Cascades* above).
 
 - **ERR:** Cannot assess (process failure; re-run the eval).
   Either a procedural failure prevents scoring (truncated artifact, tool failure),
   **or** Suitability is ERR and the cascade applies (Relevance ERR follows Suitability
-  ERR — without a known purpose, the relevance question has no target).
+  ERR: without a known purpose, the relevance question has no target).
   A low Suitability score (1-2) is not an ERR trigger; in that case Relevance is still
   scored 1-5 against whatever purpose the document does state, and the reason may cite
   the upstream Suitability weakness.
@@ -1060,7 +1064,7 @@ Robustness asks the further question: granting the evidence and the framing, wou
   depth; lens-dependent claims surfaced as findings rather than elided; sensitivity to
   interpretive frame stated alongside sensitivity to data perturbations.
 
-## Contextual modifier: Tone / Reader Respect
+## Contextual Modifier: Tone / Reader Respect
 
 The 20 dimensions above are the scored axes.
 For human-facing documents, one further quality is worth checking but is not scored as a
@@ -1078,7 +1082,7 @@ guidance.
 Cite a Tone / Reader Respect concern in an eval’s qualitative section, not as a
 dimension score.
 
-## Audit passes for high-stakes evals
+## Audit Passes for High-Stakes Evals
 
 For high-stakes evaluations, four narrower audit passes outperform one broad pass.
 Each pass has a different cognitive load and a different tool stack; the
@@ -1087,7 +1091,7 @@ operationalizes them.
 
 | Pass | Scope | Primary dimensions | Stack |
 | --- | --- | --- | --- |
-| Lint | Surface defects | F1 Organization, F2 Consistency, F3 Formatting, E1 Clarity (banned-register and vague-word checks) | `practical_prose_metrics.py`, linters, deterministic checks |
+| Lint | Surface defects | F1 Organization, F2 Consistency, F3 Formatting, E1 Clarity (banned-register and vague-word checks) | `pprose metrics`, linters, deterministic checks |
 | Claim audit | Every quantitative claim against its cited source | G1 Verifiability, G2 Factuality | Source lookups, calculation re-runs |
 | Reasoning audit | Mechanisms, assumptions, counter-evidence, alternative lenses | R1 Discipline, R2 Soundness, J2 Fairness, J3 Robustness | Subject-matter expert or fresh-context agent |
 | Purpose audit | Output shape vs task shape; scope; skim-recoverability | P1 Suitability, P2 Scope, P3 Breadth, P4 Depth | Reader simulation; subject-matter expert |
@@ -1120,13 +1124,13 @@ the reader has acted on them.
 
 Cross-references to the guidelines:
 
-- **Factual** and **AI-generated** rows operationalize §15.5 Verifiability ("name what
+- **Factual** and **AI-generated** rows operationalize G1.6 Verifiability ("name what
   would invalidate the claim").
-- **Causal** row operationalizes §12.8 Soundness (the counterfactual test).
-- **Quantitative** row operationalizes §16.2 Factuality (rounding/aggregation/unit
+- **Causal** row operationalizes R2.8 Soundness (the counterfactual test).
+- **Quantitative** row operationalizes G2.3 Factuality (rounding/aggregation/unit
   conversion disclosure).
 - **Forecast** row operationalizes J1 Calibration (base-rate anchoring).
-- **Recommendation** row operationalizes §12.3 Soundness (surface unstated assumptions)
+- **Recommendation** row operationalizes R2.3 Soundness (surface unstated assumptions)
   and J3 Robustness (test against alternative interpretive lens).
 - **Summary** row operationalizes P1 Suitability and P4 Depth (what the document doesn’t
   do; section depth matches importance).
@@ -1145,7 +1149,8 @@ invoke live in the guidelines.
   claims more inspectable, accurate, useful, or humane.
   Once rules become rubrics, agents and humans both tend to optimize the rubric; this
   clause exists to push back on that drift.
-  See the Humane principle in `practical-prose-principles.md` for the underlying
+  See the Humane principle in
+  `pprose guidelines practical-prose-principles` for the underlying
   framing.
 - **Self-eval overrates.** When the author scores their own artifact, scores skew high.
   External rubric passes (by a different agent or human) are more reliable for
@@ -1163,8 +1168,8 @@ invoke live in the guidelines.
 ## Versioning
 
 Current revision: **`pp20v1`**. Eval YAMLs produced under it set
-`metadata.rubric_version: pp20v1`. The `from-metrics` subcommand of
-`../scripts/eval_report.py` writes this automatically.
+`metadata.rubric_version: pp20v1`. `pprose report from-metrics` writes this
+automatically.
 
 The rubric is still under active development; `pp20v1` is a pre-release definition that
 is still being refined in place rather than a frozen release.
@@ -1181,9 +1186,9 @@ The six groups are **Purpose**, **Expression** (Clarity, Coherence, Concision), 
 (Organization, Consistency, Formatting), **Reasoning**, **Grounding**, and **Judgment**.
 The version string is `pp20v1` (20 dimensions across 6 groups).
 
-`../scripts/eval_compare.py` warns when comparing across rubric versions.
+`pprose compare` warns when comparing across rubric versions.
 
-## Related docs
+## Related Docs
 
 - ../README.md (`pprose about`): how the practical-prose layers fit together.
 - `pprose guidelines practical-prose-guidelines`: prescriptive rules for

@@ -45,11 +45,14 @@ dependencies = [
     "aiolimiter>=1.2",
     # First-party (github.com/jlevy); pinned exact and adopted inside the 14-day window
     # under the standing first-party cool-off exemption (see SUPPLY-CHAIN-SECURITY.md).
-    "chopdiff==0.3.1",
+    # flexdoc is the document-layer subset extracted from chopdiff (TextDoc -> FlexDoc);
+    # metrics.py uses only FlexDoc/TextUnit, so we depend on flexdoc and drop chopdiff
+    # (no diff/windowed-transform machinery, smaller dependency footprint).
+    "flexdoc==0.1.0",
     # Formats generated Markdown (composed SKILL.md, the AGENTS.md block) so generation
     # is idempotent under the repo's flowmark pre-commit hook. Already resolved
-    # transitively via chopdiff; declared directly since install.py imports it.
-    "flowmark>=0.6.5",
+    # transitively via flexdoc; declared directly since install.py imports it.
+    "flowmark>=0.7.1",
     "jinja2>=3.1",
     "pydantic>=2.0",
     # Provider-agnostic LLM client. Pinned (not >=) to honor the 14-day cool-off
@@ -232,7 +235,7 @@ norecursedirs = []
 filterwarnings = []
 
 [tool.uv]
-# First-party cool-off exemption (see SUPPLY-CHAIN-SECURITY.md): admit chopdiff past the
+# First-party cool-off exemption (see SUPPLY-CHAIN-SECURITY.md): admit flexdoc past the
 # contributor's global `exclude-newer` cutoff. Per-package + repo-scoped — it never
-# relaxes the cool-off for any other dependency. Remove once 0.3.1 ages out of the window.
-exclude-newer-package = { chopdiff = "2026-06-03" }
+# relaxes the cool-off for any other dependency. Remove once 0.1.0 ages out of the window.
+exclude-newer-package = { flexdoc = "2026-06-13" }

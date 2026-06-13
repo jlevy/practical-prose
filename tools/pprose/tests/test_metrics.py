@@ -294,7 +294,7 @@ class TestB1_BannedRegister:
 # B14: reproducibility regression for metrics output
 # ---------------------------------------------------------------------------
 #
-# Fixture-locked metrics YAML: when chopdiff/flowmark or our own heuristics
+# Fixture-locked metrics YAML: when flexdoc/flowmark or our own heuristics
 # change behavior, this test fails loudly so the maintainer must either bless
 # the new output or pin the upstream version.
 #

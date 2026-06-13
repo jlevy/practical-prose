@@ -1,13 +1,13 @@
 ---
-title: Practical Prose Eval, single-document runbook
+title: Practical Prose Eval, Single-Document Runbook
 description: End-to-end operational steps for evaluating one practical writing artifact and producing a validated pprose report.
 date: 2026-05-07
-last_updated: 2026-05-14
+last_reviewed: 2026-06-12
 status: active
 ---
 # Practical Prose Eval, Single-Document Runbook
 
-Version: v0.1 (last update 2026-05-14)\
+Version: v0.1 (last update 2026-06-12)\
 Joshua Levy (github.com/jlevy)
 
 ## Purpose
@@ -17,16 +17,19 @@ quantitative metrics, score the 20 qualitative dimensions, cite guideline-rule f
 (the `violations` view is the subset that lowered the score), produce a validated
 `<artifact>.eval.md` report.
 
-The substance of *how* to score lives in `practical-prose-rubric.md` (anchors per
-dimension, alignment principle, output format); this runbook covers what commands to
-run, in what order, with what verification.
+The substance of *how* to score lives in
+[practical-prose-rubric.md](../docs/practical-prose-rubric.md) (anchors per dimension,
+alignment principle, output format); this runbook covers what commands to run, in what
+order, with what verification.
 
-For comparing N evaluated artifacts, see `practical-prose-eval-compare.runbook.md`.
+For comparing N evaluated artifacts, see
+[practical-prose-eval-compare.runbook.md](practical-prose-eval-compare.runbook.md).
 
-## Inputs and outputs
+## Inputs and Outputs
 
-- **Input:** one Markdown artifact, the rubric (`practical-prose-rubric.md`), and the
-  prescriptive guidelines (`practical-prose-guidelines.md`).
+- **Input:** one Markdown artifact, the rubric
+  ([practical-prose-rubric.md](../docs/practical-prose-rubric.md)), and the prescriptive
+  guidelines ([practical-prose-guidelines.md](../docs/practical-prose-guidelines.md)).
 - **Output:** one `<artifact-name>.eval.md` validated against the schema in
   `pprose report` (`EvalReport`).
 
@@ -35,8 +38,9 @@ For comparing N evaluated artifacts, see `practical-prose-eval-compare.runbook.m
 `pprose` available on the command line and the provider-specific API key set for the
 model you score with: `ANTHROPIC_API_KEY` for `anthropic:` models, `OPENAI_API_KEY` for
 `openai:` models, `GOOGLE_API_KEY` for `google:` models.
-See [Tooling](../AGENTS.md#tooling).
-Batch eval outputs go under `evals/<round-name>/` at the repo root.
+In the practical-prose repo itself, see
+[agents-internal-guide.md](../docs/project/agents-internal-guide.md) §Tooling; batch
+eval outputs there go under `evals/<round-name>/` at the repo root.
 
 ## Steps
 
@@ -114,7 +118,7 @@ call. Useful flags:
 - `--out path`: write the filled eval report to a different file.
 - `--model <name>`: **required.** Pydantic AI model spec.
   Accepts short aliases (`opus`, `sonnet`, `haiku`, `gpt`, `gpt-mini`, `gemini`, ...) or
-  a provider- prefixed string (`anthropic:claude-opus-4-8`, `openai:gpt-5.5`,
+  a provider-prefixed string (`anthropic:claude-opus-4-8`, `openai:gpt-5.5`,
   `google:gemini-3.5-flash`). Run `pprose score --list-models` for the full suggested
   set; any other Pydantic AI model string is accepted too.
 - `--list-models`: print the suggested model list and exit (no scoring).
@@ -133,7 +137,7 @@ the eval report.
 `NA` is reserved for dimensions the artifact’s task genuinely does not require.
 For example, Calibration on a document that makes no probability or forecast claims, or
 Fairness on a reference doc that surfaces no opposing positions.
-`ERR` is reserved for procedural failures — the artifact is truncated mid-claim, an
+`ERR` is reserved for procedural failures: the artifact is truncated mid-claim, an
 upstream tool failed, the assigned model refused to score the dimension.
 Do not use ERR to register a quality complaint; an attempted-but-empty dimension is a
 score of 1 with a rule citation, not ERR.
@@ -206,7 +210,7 @@ pprose compare path/to/artifact.eval.md --format unified
 
 This produces a 1-column “comparison” against just the one artifact.
 
-## Alignment audit (before declaring the eval done)
+## Alignment Audit (Before Declaring the Eval Done)
 
 - [ ] Every dimension scored below 5 has at least one violation cited.
 - [ ] Every score-5, `NA`, and `ERR` has no violation in the read pass.
@@ -215,7 +219,7 @@ This produces a 1-column “comparison” against just the one artifact.
 
 If the audit fails, revise scores or violations until consistent.
 
-## Calibration set
+## Calibration Set
 
 The [test fixtures directory](../tools/pprose/tests/fixtures/) ships a small calibration
 set with agreed scores and rule findings under `pp20v1`, so future agent or human
@@ -247,7 +251,7 @@ Bump the calibration set whenever the rubric is bumped (`practical-prose-rubric.
 Re-score each fixture, update the table above, and commit together with the rubric
 change.
 
-## Related docs
+## Related Docs
 
 - [practical-prose-rubric.md](../docs/practical-prose-rubric.md): per-dimension 1-5
   anchors (with `NA` / `ERR` sentinels) and scoring rules.

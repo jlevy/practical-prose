@@ -1,12 +1,28 @@
 # Feature: Structural Document Decomposition for pprose Metrics
 
-**Date:** 2026-05-25 (last updated 2026-06-02)
+**Date:** 2026-05-25 (last updated 2026-06-13)
 
 **Author:** Joshua Levy with agent assistance
 
-**Status:** Draft — ready to start once chopdiff `0.3.1` is released.
-The `0.3.1` DocGraph work (chopdiff PRs
-[#12](https://github.com/jlevy/chopdiff/pull/12),
+> **Migration note (2026-06-13).** pprose moved off chopdiff onto **flexdoc 0.1.0**, the
+> standalone document-layer package extracted from chopdiff.
+> Throughout this spec, read `chopdiff.TextDoc` as `flexdoc.FlexDoc` and the typed
+> accessors that this plan placed on chopdiff’s `Paragraph` as living on
+> `flexdoc.docs.Block`. The “Still missing in 0.3.1” gaps are now **all closed**:
+> `Block.code_info` / `.table_info` / `.list_info` and `FlexDoc.frontmatter` ship in
+> flexdoc 0.1.0, and `NodeKind.footnote_ref` is a typed inline node reachable via
+> `doc.collect(kinds={NodeKind.footnote_ref}, recursive=True)`. So this phase is pure
+> workaround-removal against a dependency we already ship — nothing waits on an upstream
+> release. See [chopdiff-upstream-requests.md](../../chopdiff-upstream-requests.md) for
+> the per-item status; the chopdiff API references below are preserved as the original
+> design record.
+
+**Status:** Ready to start — the document-model precondition is met (now via **flexdoc
+0.1.0**; originally chopdiff 0.3.1, released and audited; see
+docs/project/chopdiff-upstream-requests.md for the per-item status).
+Tracked under epic pp-3hg4 with the metrics-rewrite chain (pp-pd8t and successors).
+Moved from the legacy tools/docs/ specs tree on 2026-06-11. The `0.3.1` DocGraph work
+(chopdiff PRs [#12](https://github.com/jlevy/chopdiff/pull/12),
 [#14](https://github.com/jlevy/chopdiff/pull/14),
 [#15](https://github.com/jlevy/chopdiff/pull/15)) already ships almost everything this
 plan needs — the section tree, per-block heading/link accessors, the structural block

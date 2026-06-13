@@ -152,5 +152,5 @@ jobs:
       - name: Smoke-test the installed CLI (bundled resources resolve)
         run: |
           /tmp/wheeltest/bin/pprose --help
-          /tmp/wheeltest/bin/pprose guidelines --list
+          /tmp/wheeltest/bin/pprose list
           /tmp/wheeltest/bin/pprose about | head -n 5

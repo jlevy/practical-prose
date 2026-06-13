@@ -80,7 +80,7 @@ def test_resources_missing_name_lists_valid():
 
 
 def test_guidelines_and_shortcut_subcommands(capsys: pytest.CaptureFixture[str]):
-    assert cli.main(["guidelines", "--list"]) == 0
+    assert cli.main(["guidelines"]) == 0  # no name lists them
     assert "common-doc-guidelines" in capsys.readouterr().out
 
     assert cli.main(["shortcut", "shortcut-full-edit"]) == 0
@@ -120,15 +120,9 @@ def test_skill_compose_has_format_stamp_and_bootstrap(capsys: pytest.CaptureFixt
     assert "surface=" not in out
 
 
-def test_skill_list_outputs_terse_table(capsys: pytest.CaptureFixture[str]):
-    """`pprose skill --list` stays terse: `name\\tdescription` per row, no intro."""
-    assert cli.main(["skill", "--list"]) == 0
-    out = capsys.readouterr().out
-    for name in resources.list_names("skills"):
-        assert name in out
-    # Terse table — no intro paragraph or routing footer.
-    assert "Practical Prose skills are" not in out
-    assert "pprose guidelines --list" not in out
+def test_skill_list_flag_removed(capsys: pytest.CaptureFixture[str]):
+    """`--list` was removed (hard cut); `pprose skill --list` is now a usage error."""
+    assert cli.main(["skill", "--list"]) == 2
 
 
 def test_skill_no_args_prints_overview(capsys: pytest.CaptureFixture[str]):
@@ -140,10 +134,9 @@ def test_skill_no_args_prints_overview(capsys: pytest.CaptureFixture[str]):
     # All skill names listed.
     for name in resources.list_names("skills"):
         assert name in out
-    # Routing footer mentions the other resource list commands.
-    assert "pprose guidelines --list" in out
-    assert "pprose shortcut --list" in out
-    assert "pprose runbook --list" in out
+    # Routing footer points at the unified inventory, not the removed --list flag.
+    assert "pprose list" in out
+    assert "--list" not in out
 
 
 def test_compose_skill_is_deterministic():

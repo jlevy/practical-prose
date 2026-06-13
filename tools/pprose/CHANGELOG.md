@@ -7,6 +7,37 @@ from git tags by dynamic versioning (see [docs/publishing.md](docs/publishing.md
 
 ## [Unreleased]
 
+### Changed
+
+- **Document model: chopdiff -> flexdoc.** `metrics.py` now uses `flexdoc.FlexDoc` (the
+  standalone document-layer package extracted from chopdiff) instead of
+  `chopdiff.TextDoc`, and `chopdiff` is dropped as a dependency.
+  Word / sentence / paragraph / line counts are byte-identical (the fixture-locked
+  metrics test passes unchanged), and the dependency footprint shrinks since flexdoc
+  omits chopdiff’s diff and windowed-transform machinery, which pprose never used.
+  flexdoc 0.1.0 is admitted under the standing first-party cool-off exemption (see
+  [SUPPLY-CHAIN-SECURITY.md](../../SUPPLY-CHAIN-SECURITY.md)).
+- **Faster startup.** CLI command targets are imported lazily at dispatch, so
+  `pprose --help`, `--version`, and the reference listings no longer load the eval chain
+  (pydantic_ai + provider SDKs).
+  `import pprose.cli` drops from ~1.16s to ~56ms.
+- **Auto-detected color output.** Help, listings, and errors are styled on an
+  interactive terminal and emitted as plain text when piped, in CI, under `NO_COLOR`, or
+  driven by an agent. A `--color {auto,always,never}` flag overrides detection.
+- **Simpler listing UX (breaking).** The redundant `--list` flag is removed.
+  `pprose guidelines|shortcut|runbook` with no name lists that kind; with a name prints
+  one. `pprose skill` prints the skills overview.
+  New top-level `pprose list` prints the full bundled inventory (guidelines, shortcuts,
+  runbooks, skills), with `--kind` to filter.
+- **Bundled guidelines: v0.2 editorial pass.** A language-and-consistency pass across
+  the shipped guideline suite (practical-prose guidelines / rubric / metrics /
+  principles / authoring-principles, common-doc-guidelines, ai-prose-corrections): Title
+  Case section headings, house-style punctuation (spaced-em-dash removal), and tightened
+  wording, including small rubric question refinements (e.g. Soundness now names
+  explicit assumptions).
+  The rubric id `pp20v1` is unchanged, and the guidelines / rubric / README dimension
+  table stays cell-for-cell aligned.
+
 ## [0.1.1] - 2026-06-11
 
 Documentation and bundled-resource update; no code-behavior or breaking changes.
