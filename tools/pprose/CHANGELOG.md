@@ -29,6 +29,14 @@ from git tags by dynamic versioning (see [docs/publishing.md](docs/publishing.md
   one. `pprose skill` prints the skills overview.
   New top-level `pprose list` prints the full bundled inventory (guidelines, shortcuts,
   runbooks, skills), with `--kind` to filter.
+- **Bundled guidelines: v0.2 editorial pass.** A language-and-consistency pass across
+  the shipped guideline suite (practical-prose guidelines / rubric / metrics /
+  principles / authoring-principles, common-doc-guidelines, ai-prose-corrections): Title
+  Case section headings, house-style punctuation (spaced-em-dash removal), and tightened
+  wording, including small rubric question refinements (e.g. Soundness now names
+  explicit assumptions).
+  The rubric id `pp20v1` is unchanged, and the guidelines / rubric / README dimension
+  table stays cell-for-cell aligned.
 
 ## [0.1.1] - 2026-06-11
 
