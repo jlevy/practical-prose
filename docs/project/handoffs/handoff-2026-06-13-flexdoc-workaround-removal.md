@@ -1,5 +1,16 @@
 # Handoff: metrics regex -> flexdoc workaround removal (2026-06-13)
 
+> **Status update (2026-06-13): BLOCKED on flexdoc 0.1.0; migration deferred.** A trial
+> migration found flexdoc 0.1.0 is not yet a clean drop-in: `collect()`/`node_table()`
+> crash on valid Markdown (blocking typed inline-element access), `sections()`/`toc()`
+> drop headings that `blocks()` finds, and `filtered(...).reassemble()` drifts the
+> link/lint text on real docs.
+> All consolidated upstream as
+> [jlevy/flexdoc#6](https://github.com/jlevy/flexdoc/issues/6); see the spec’s
+> [Blocked on flexdoc 0.1.0](../specs/active/plan-2026-06-13-metrics-flexdoc-workaround-removal.md#blocked-on-flexdoc-010-2026-06-13)
+> section. The regex implementation stays until a flexdoc release lands the fixes.
+> The guidance below applies once it does.
+
 **Task:** Implement the behavior-preserving cleanup that replaces the hand-rolled regex
 parsing in pprose’s metrics with flexdoc 0.1.0’s typed document model.
 pprose has already migrated off chopdiff onto flexdoc; this is the follow-on “drop the
