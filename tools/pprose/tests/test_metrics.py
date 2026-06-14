@@ -108,7 +108,7 @@ class TestP1_4_SetextHeadings:
 
 
 # ---------------------------------------------------------------------------
-# P1-6: REF_LINK_DEF_RE tightened
+# P1-6: reference-definition detection (now via flexdoc typed link forms)
 # ---------------------------------------------------------------------------
 
 
@@ -178,9 +178,10 @@ class TestP2_10_WordsPerPage:
 class TestFootnotes:
     def test_footnote_refs(self):
         m = _measure("footnotes.md")
-        # [^1], [^long-note], [^3] in text = 3 refs
-        # Plus [^1]:, [^long-note]:, [^3]: in defs also match the ref pattern = 6 total
-        assert m.footnote_references == 6
+        # [^1], [^long-note], [^3] in body text = 3 true inline references. flexdoc's typed
+        # footnote_ref nodes count only those; the old regex also matched the [^id]: lines
+        # of the definitions and double-counted to 6 (this typed count is the fix).
+        assert m.footnote_references == 3
 
     def test_footnote_defs(self):
         m = _measure("footnotes.md")

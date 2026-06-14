@@ -4,13 +4,14 @@
 
 **Author:** Joshua Levy with agent assistance
 
-**Status:** Blocked (deferred) as of 2026-06-13. A trial migration found that flexdoc
-0.1.0 cannot yet support a clean behavior-preserving swap: empirical testing across the
-repo surfaced two flexdoc bugs and several API gaps (see
-[Blocked on flexdoc 0.1.0](#blocked-on-flexdoc-010-2026-06-13) below), consolidated
-upstream in [jlevy/flexdoc#6](https://github.com/jlevy/flexdoc/issues/6). The regex
-implementation stays until a flexdoc release lands the fixes; resume from the
-regex-to-API mapping table when it does.
+**Status:** Implemented (2026-06-14) against flexdoc 0.2.0. The two flexdoc bugs and the
+API gaps that blocked this were fixed upstream
+([jlevy/flexdoc#7](https://github.com/jlevy/flexdoc/pull/7), resolving
+[#6](https://github.com/jlevy/flexdoc/issues/6) and the #5 link-form gaps).
+metrics.py now derives headings, links-by-form, images, footnotes, tables, and code
+blocks from flexdoc’s typed model and runs editorial lint over `prose_text()`; the size
+path is preserved byte-identical.
+Closes pp-bcrw. See [Resolved in flexdoc 0.2.0](#resolved-in-flexdoc-020) below.
 
 > **Relationship to pp-3hg4.** This spec is the focused, do-it-now subset of the larger
 > structural-metrics epic
@@ -27,33 +28,39 @@ regex-to-API mapping table when it does.
 > See [Relationship to pp-3hg4](#relationship-to-pp-3hg4) for how to track the two
 > together.
 
-## Blocked on flexdoc 0.1.0 (2026-06-13)
+## Resolved in flexdoc 0.2.0
 
-A trial migration against flexdoc 0.1.0, tested across all 61 Markdown files in the
-repo, found the “mechanical, behavior-preserving swap gated by the reproducibility test”
-premise does not hold.
-Consolidated upstream as [jlevy/flexdoc#6](https://github.com/jlevy/flexdoc/issues/6);
-pprose tracking beads are pp-bcrw (this migration, blocked), pp-zbzp (bug 1), and
-pp-i23d (bug 2).
+The initial trial against flexdoc 0.1.0 (2026-06-13) found the swap could not be done
+cleanly: `collect()` / `node_table()` crashed on valid Markdown, `sections()` / `toc()`
+dropped headings, `filtered().reassemble()` drifted the lint/link text, and there was no
+heading-level accessor, link-form discriminator, or inline-code-stripped prose
+projection. These were consolidated upstream as
+[jlevy/flexdoc#6](https://github.com/jlevy/flexdoc/issues/6) and fixed in **flexdoc
+0.2.0** ([PR #7](https://github.com/jlevy/flexdoc/pull/7)): scoped per-block inline
+discovery, block-derived sections, `Block.heading_level`, typed `Link.link_form` plus
+`reference_definition`, `images()`, and `FlexDoc.prose_text(include_tables=…)`.
 
-- **`collect()` / `node_table()` crash on valid Markdown**
-  (`ValueError: layer nesting violated`) on 2 of 61 docs.
-  It is the only typed path to inline elements (images, footnote refs, code spans), so
-  the inline-node swaps in the mapping table below are blocked.
-- **`sections()` / `toc()` silently drop headings** that `blocks()` finds (4 of 61 docs,
-  including AGENTS.md), so a typed heading-by-level count is unreliable.
-- **`filtered(...).reassemble()` drifts** the link-form and editorial-lint text on 20 of
-  49 prose docs (links inside tables vanish; em dashes appear or disappear from
-  whitespace normalization), so it cannot feed the regexes this spec keeps
-  byte-identical.
-- **API gaps:** no heading-level accessor on `Block`; no link-form discriminator or
-  reference-definition surfacing (flexdoc#5); no inline-code-stripped prose projection.
+What landed in pprose (2026-06-14), behavior-preserving except where typed parsing is
+strictly more correct:
 
-The one confirmed improvement: `blocks()` counts tables and code blocks more correctly
-than the old regexes (it catches indented and `~~~`-fenced code that `CODE_FENCE_RE`
-missed, and stops counting `#` lines inside those blocks as headings).
-That is a behavior change, not a no-op, so it also waits for the migration proper rather
-than landing piecemeal.
+- Headings by depth from `Block.heading_level` (excludes `#` lines inside code blocks;
+  resolves setext without phantom-HR false positives).
+- Link-form metrics from `Link.link_form` (inline / autolink / reference / bare URL),
+  `links(link_forms={reference_definition})`, and `images()`; external/internal via
+  `classify_url` over the resolved URLs.
+- Tables, code blocks (fenced or indented), and footnote definitions from the typed
+  block tree; footnote references from `collect({footnote_ref})` (the old regex
+  double-counted `[^id]:` definition lines: 6 -> 3).
+- Editorial lint (bracket tags, banned register, em-dash, replacement-history,
+  pedantic-marker) over `prose_text(include_tables=True)`; generic-heading over real
+  heading titles.
+- Size counts (words / sentences / paragraphs / lines) kept on the historical
+  `strip_code_and_frontmatter` text, so they do not drift.
+
+Re-blessed fixtures: `links_mixed` (`bare_urls` 2 -> 0; the reference-definition URLs
+the old regex miscounted as bare are now typed `reference_definition`) and the
+`footnotes` ref-count assertion (6 -> 3). All 326 tests, basedpyright, and lint pass; 0
+crashes across every Markdown file in the repo.
 
 ## Overview
 

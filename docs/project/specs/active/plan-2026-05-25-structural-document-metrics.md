@@ -11,22 +11,23 @@
 > `flexdoc.docs.Block`. The “Still missing in 0.3.1” gaps are now **all closed**:
 > `Block.code_info` / `.table_info` / `.list_info` and `FlexDoc.frontmatter` ship in
 > flexdoc 0.1.0, and `NodeKind.footnote_ref` is a typed inline node reachable via
-> `doc.collect(kinds={NodeKind.footnote_ref}, recursive=True)`. The APIs exist, but a
-> trial migration found flexdoc 0.1.0 bugs that block the swap (see the Status note and
-> [jlevy/flexdoc#6](https://github.com/jlevy/flexdoc/issues/6)): `collect()` crashes on
-> some valid Markdown, so the footnote-ref call above is not yet safe.
-> This phase is deferred until a flexdoc release lands the fixes.
+> `doc.collect(kinds={NodeKind.footnote_ref})`. The flexdoc 0.1.0 bugs that initially
+> blocked the swap were fixed in **flexdoc 0.2.0**
+> ([jlevy/flexdoc#7](https://github.com/jlevy/flexdoc/pull/7)), and the
+> behavior-preserving workaround-removal subset has landed (see Status); what remains in
+> this epic is the schema rewrite.
 > See [chopdiff-upstream-requests.md](../../chopdiff-upstream-requests.md) for the
 > per-item status; the chopdiff API references below are preserved as the original
 > design record.
 
-**Status:** Blocked (deferred) as of 2026-06-13. The document-model precondition exists
-(now via **flexdoc 0.1.0**; originally chopdiff 0.3.1), but a trial migration found
-flexdoc 0.1.0 bugs that block the typed-API swap (`collect()` / `node_table()` crash on
-valid Markdown; `sections()` / `toc()` drop headings `blocks()` finds), consolidated
-upstream as [jlevy/flexdoc#6](https://github.com/jlevy/flexdoc/issues/6). The
-behavior-preserving subset is the deferred
-[plan-2026-06-13-metrics-flexdoc-workaround-removal.md](plan-2026-06-13-metrics-flexdoc-workaround-removal.md#blocked-on-flexdoc-010-2026-06-13).
+**Status:** Ready (precondition met) as of 2026-06-14. The document model is now
+**flexdoc 0.2.0**, which fixed the bugs that blocked the typed swap
+([jlevy/flexdoc#7](https://github.com/jlevy/flexdoc/pull/7)). The behavior-preserving
+workaround-removal subset has shipped (archived
+[plan-2026-06-13-metrics-flexdoc-workaround-removal.md](../done/plan-2026-06-13-metrics-flexdoc-workaround-removal.md#resolved-in-flexdoc-020),
+pp-bcrw). What remains in this epic is the schema rewrite: `*_count` field renames,
+prose-only count semantics, the heading-outline artifact, distribution percentiles, and
+matching eval_report.py / eval_compare.py changes (pp-pd8t and successors).
 See docs/project/chopdiff-upstream-requests.md for the per-item history.
 Tracked under epic pp-3hg4 with the metrics-rewrite chain (pp-pd8t and successors).
 Moved from the legacy tools/docs/ specs tree on 2026-06-11. The `0.3.1` DocGraph work

@@ -15,8 +15,8 @@ Counts (all per-document):
   - Bracket tags: ALL-CAPS bracket tags (e.g. [VERIFIED], [DERIVED]) — heuristic,
     inspect the examples list to distinguish citations from markers like [TBD]/[OPTIONAL]
   - Bare URLs: plain https?:// URLs in prose not wrapped in markdown link syntax
-  - Tables: count of markdown tables (detected via separator rows)
-  - Code blocks: count of fenced code blocks in the raw document
+  - Tables: count of markdown tables (from the parser's typed block tree)
+  - Code blocks: count of code blocks, fenced or indented (from the typed block tree)
   - Banned-register hits: prose occurrences of strong-register / advocacy-register
     words from the canonical common-doc-guidelines §4.2 list referenced by
     practical-prose-guidelines.md E1 Clarity rule 4 (e.g. incontrovertibly, monumental,
@@ -31,7 +31,7 @@ Counts (all per-document):
   - Pedantic-marker hits: prose occurrences of canonicality declarations and
     word-choice / reading-order justifications ("the canonical X", "we use the term Y
     because", "start with section"). E1 Clarity rule 6.
-  - Generic-heading hits: ATX headings whose entire text is a single generic word
+  - Generic-heading hits: headings whose entire title is a single generic word
     ("Overview", "Background", "Notes", "Details", "Misc"). F1 Organization rule 9 —
     flags only, since these can be appropriate at a section's outermost level.
   - Words, sentences, paragraphs, lines (prose-only — YAML frontmatter, fenced code
@@ -39,18 +39,16 @@ Counts (all per-document):
     heuristic through flexdoc)
   - Pages, computed at 275 words/page (configurable via --words-per-page)
 
-Word/sentence/paragraph counts use flexdoc's FlexDoc, which uses
-flowmark.split_sentences_regex for sentence boundaries.
+Structural counts (headings, links by form, images, footnotes, tables, code blocks)
+come from flexdoc's typed document model, not regex. Word/sentence/paragraph counts use
+flexdoc's FlexDoc over prose-only text, which uses flowmark.split_sentences_regex for
+sentence boundaries. The editorial-lint patterns (bracket tags, banned register,
+em-dash, replacement-history, pedantic-marker) run over `FlexDoc.prose_text()`: a
+prose-only projection with inline code dropped and links/images unwrapped to their text.
 
 Known limitations:
   - HTML links (<a href="...">) are not counted — markdown-syntax links only.
-  - Reference-link definitions require a URL-shaped target (https://, /, ./, ../);
-    fragment-only targets like `[id]: #anchor` are not counted.
   - Bracket-tag matching is a heuristic (ALL-CAPS inside []), not a parser.
-  - Setext heading detection (`Title\n===` for h1, `Title\n---` for h2) treats any
-    `===` or `---` line under non-empty text as a heading. A horizontal rule of
-    matching characters under regular prose will count as a phantom h1/h2; the repo
-    style uses `* * *` for HRs to avoid this.
   - Banned-register matching is a literal word-boundary check; mentions and use
     are not distinguished (a doc that quotes "monumental" as an example of a banned
     word still gets a hit). Inspect the examples list to triage.
@@ -75,26 +73,20 @@ from dataclasses import asdict, dataclass, field
 from pathlib import Path
 
 import yaml
-from flexdoc import FlexDoc, TextUnit
+from flexdoc import BlockType, FlexDoc, NodeKind, TextUnit
+from flexdoc.docs import Link, LinkForm
 
 WORDS_PER_PAGE = 275
 
-HEADING_RE = re.compile(r"^(#{1,6})\s+\S", re.MULTILINE)
-SETEXT_H1_RE = re.compile(r"^[^\n]+\n={3,}\s*$", re.MULTILINE)
-SETEXT_H2_RE = re.compile(r"^[^\n]+\n-{3,}\s*$", re.MULTILINE)
-INLINE_LINK_RE = re.compile(r"(?<!!)\[([^\]\n]+)\]\(([^)\n]+)\)")
-IMAGE_RE = re.compile(r"!\[([^\]\n]*)\]\(([^)\n]+)\)")
-AUTOLINK_RE = re.compile(r"<(https?://[^>\s]+)>")
-REF_LINK_DEF_RE = re.compile(
-    r"^\[([^\]^\n][^\]\n]*)\]:\s*((?:https?://|/|\.\.?/)\S+)", re.MULTILINE
-)
-REF_LINK_USE_RE = re.compile(r"(?<!!)\[([^\]\n]+)\]\[([^\]\n]+)\]")
-FOOTNOTE_REF_RE = re.compile(r"\[\^([^\]\n]+)\]")
-FOOTNOTE_DEF_RE = re.compile(r"^\[\^([^\]\n]+)\]:", re.MULTILINE)
+# ALL-CAPS bracket-tag heuristic (e.g. [VERIFIED], [TBD]); a register marker, not a
+# Markdown construct, so it stays a regex run over the prose-only text.
 BRACKET_TAG_RE = re.compile(r"\[([A-Z][A-Z0-9_ -]{1,30})\]")
 
-BARE_URL_RE = re.compile(r"(?<![(<\[])https?://[^\s)>\]]+")
-TABLE_SEP_RE = re.compile(r"^\|[\s:|-]+\|\s*$", re.MULTILINE)
+# Frontmatter + code stripping, retained only for the size path: word / sentence /
+# paragraph / line counts are computed over prose-only text (frontmatter, fenced code,
+# and inline code excluded) and must stay byte-identical to the historical counts. Every
+# structural element COUNT (headings, links, images, footnotes, tables, code blocks) now
+# comes from flexdoc's typed model instead of regex (see `measure`).
 CODE_FENCE_RE = re.compile(r"^```[\s\S]*?^```", re.MULTILINE)
 CODE_INLINE_RE = re.compile(r"`[^`\n]+`")
 FRONTMATTER_RE = re.compile(r"\A---\n.*?\n---\n", re.DOTALL)
@@ -164,10 +156,9 @@ GENERIC_HEADING_WORDS = (
     "Other",
     "Additional Information",
 )
-GENERIC_HEADING_RE = re.compile(
-    r"^#{1,6}\s+(?:" + "|".join(re.escape(w) for w in GENERIC_HEADING_WORDS) + r")\s*$",
-    re.MULTILINE | re.IGNORECASE,
-)
+# Matched against real heading titles (from flexdoc's typed headings), not a regex over
+# raw `#` lines, so only actual headings are checked.
+GENERIC_HEADING_SET = frozenset(w.lower() for w in GENERIC_HEADING_WORDS)
 
 EXTERNAL_SCHEMES = ("http://", "https://", "ftp://", "ftps://", "mailto:", "tel:")
 
@@ -269,71 +260,79 @@ def strip_code_and_frontmatter(text: str) -> str:
     return text
 
 
-def count_headings(text: str) -> dict[str, int]:
-    counts = {f"h{i}": 0 for i in range(1, 7)}
-    for m in HEADING_RE.finditer(text):
-        counts[f"h{len(m.group(1))}"] += 1
-    counts["h1"] += len(SETEXT_H1_RE.findall(text))
-    counts["h2"] += len(SETEXT_H2_RE.findall(text))
-    return counts
-
-
 def measure(
     file_path: Path,
     words_per_page: int = WORDS_PER_PAGE,
     banned_re: re.Pattern[str] | None = None,
 ) -> Metrics:
     raw = file_path.read_text(encoding="utf-8")
-    structural = strip_code_and_frontmatter(raw)
     banned_re = banned_re if banned_re is not None else DEFAULT_BANNED_RE
 
-    headings = count_headings(structural)
+    # One typed parse drives every structural metric. flexdoc isolates frontmatter as a
+    # non-content region, so blocks / links / collected nodes already exclude it.
+    doc = FlexDoc.from_text(raw)
+    blocks = doc.blocks()
 
-    inline_links = INLINE_LINK_RE.findall(structural)
-    images = IMAGE_RE.findall(structural)
-    autolinks = AUTOLINK_RE.findall(structural)
-    ref_defs = REF_LINK_DEF_RE.findall(structural)
-    ref_uses = REF_LINK_USE_RE.findall(structural)
-    footnote_refs = FOOTNOTE_REF_RE.findall(structural)
-    footnote_defs = FOOTNOTE_DEF_RE.findall(structural)
+    # Headings by depth (and generic-heading flags) from the typed heading blocks: this
+    # excludes `#` lines inside code blocks and resolves setext headings, so there are no
+    # phantom-HR or in-code false positives.
+    headings = {f"h{i}": 0 for i in range(1, 7)}
+    generic_headings: list[str] = []
+    for b in blocks:
+        if b.type is not BlockType.heading:
+            continue
+        level = b.heading_level
+        if level is not None and 1 <= level <= 6:
+            headings[f"h{level}"] += 1
+        title = (b.heading_info.title if b.heading_info else "").strip()
+        if title.lower() in GENERIC_HEADING_SET:
+            generic_headings.append(title)
+    generic_heading_examples = sorted(set(generic_headings))[:10]
 
-    ref_def_url_by_id = {ref_id.strip().lower(): url for ref_id, url in ref_defs}
-    inline_classes = [classify_url(url) for _, url in inline_links]
-    autolink_classes = ["external"] * len(autolinks)
-    ref_use_classes = [
-        classify_url(ref_def_url_by_id.get(ref_id.strip().lower(), "")) for _, ref_id in ref_uses
-    ]
-    all_link_classes = inline_classes + autolink_classes + ref_use_classes
-    links_external = sum(1 for c in all_link_classes if c == "external")
-    links_internal = sum(1 for c in all_link_classes if c == "internal")
+    # Links by typed form. Reference-use links resolve to their target URL, so the
+    # external/internal split is a direct `classify_url` over each counted link.
+    by_form: dict[LinkForm, list[Link]] = {}
+    for link in doc.links():
+        by_form.setdefault(link.link_form, []).append(link)
+    inline_links = by_form.get(LinkForm.inline, [])
+    autolinks = by_form.get(LinkForm.autolink, [])
+    ref_uses = by_form.get(LinkForm.reference, [])
+    bare_url_links = by_form.get(LinkForm.bare_url, [])
+    ref_defs = doc.links(link_forms={LinkForm.reference_definition})
+    images = doc.images()
 
-    bracket_tag_matches = BRACKET_TAG_RE.findall(structural)
+    counted_links = inline_links + autolinks + ref_uses
+    links_external = sum(1 for link in counted_links if classify_url(link.url) == "external")
+    links_internal = sum(1 for link in counted_links if classify_url(link.url) == "internal")
+
+    # Block-level structure, typed: catches indented and tilde-fenced code the old regex
+    # missed, and counts only real table / footnote-definition blocks.
+    tables = sum(1 for b in blocks if b.type is BlockType.table)
+    code_blocks = sum(1 for b in blocks if b.type is BlockType.code)
+    footnote_definitions = sum(1 for b in blocks if b.type is BlockType.footnote)
+    footnote_references = len(doc.collect(kinds={NodeKind.footnote_ref}))
+
+    # Editorial lint runs over the prose-only projection: inline code dropped, links and
+    # images unwrapped to their text, frontmatter and code blocks excluded, tables kept.
+    prose = doc.prose_text(include_tables=True)
+    bracket_tag_matches = BRACKET_TAG_RE.findall(prose)
     tag_examples = sorted(set(bracket_tag_matches))[:10]
-
-    bare_urls = BARE_URL_RE.findall(structural)
-    tables = len(TABLE_SEP_RE.findall(raw))
-    code_blocks = len(CODE_FENCE_RE.findall(raw))
-
-    banned_matches = banned_re.findall(structural)
+    banned_matches = banned_re.findall(prose)
     banned_examples = sorted({m.lower() for m in banned_matches})[:10]
-
-    spaced_em_dashes = SPACED_EM_DASH_RE.findall(structural)
-    em_dashes_total = len(EM_DASH_RE.findall(structural))
-
-    replacement_history_matches = REPLACEMENT_HISTORY_RE.findall(structural)
+    spaced_em_dashes = SPACED_EM_DASH_RE.findall(prose)
+    em_dashes_total = len(EM_DASH_RE.findall(prose))
+    replacement_history_matches = REPLACEMENT_HISTORY_RE.findall(prose)
     replacement_history_examples = sorted({m.lower() for m in replacement_history_matches})[:10]
-
-    pedantic_marker_matches = PEDANTIC_MARKER_RE.findall(structural)
+    pedantic_marker_matches = PEDANTIC_MARKER_RE.findall(prose)
     pedantic_marker_examples = sorted({m.lower() for m in pedantic_marker_matches})[:10]
 
-    generic_heading_matches = GENERIC_HEADING_RE.findall(structural)
-    generic_heading_examples = sorted({m.strip() for m in generic_heading_matches})[:10]
-
-    doc = FlexDoc.from_text(structural)
-    words = doc.size(TextUnit.words)
-    sentences = doc.size(TextUnit.sentences)
-    paragraphs = doc.size(TextUnit.paragraphs)
-    lines = doc.size(TextUnit.lines)
+    # Size counts stay on the historical prose-only text (frontmatter + fenced and inline
+    # code stripped) so word / sentence / paragraph / line counts do not drift.
+    size_doc = FlexDoc.from_text(strip_code_and_frontmatter(raw))
+    words = size_doc.size(TextUnit.words)
+    sentences = size_doc.size(TextUnit.sentences)
+    paragraphs = size_doc.size(TextUnit.paragraphs)
+    lines = size_doc.size(TextUnit.lines)
     pages = round(words / words_per_page, 1)
     em_dash_density = round(em_dashes_total * 1000.0 / words, 2) if words else 0.0
 
@@ -343,17 +342,17 @@ def measure(
         headings_total=sum(headings.values()),
         links_external=links_external,
         links_internal=links_internal,
-        links_total=len(inline_links) + len(autolinks) + len(ref_uses),
+        links_total=len(counted_links),
         links_inline=len(inline_links),
         links_autolink=len(autolinks),
         links_reference_use=len(ref_uses),
         links_reference_definitions=len(ref_defs),
         images=len(images),
-        footnote_references=len(footnote_refs),
-        footnote_definitions=len(footnote_defs),
+        footnote_references=footnote_references,
+        footnote_definitions=footnote_definitions,
         bracket_tags=len(bracket_tag_matches),
         bracket_tag_examples=tag_examples,
-        bare_urls=len(bare_urls),
+        bare_urls=len(bare_url_links),
         tables=tables,
         code_blocks=code_blocks,
         banned_register_hits=len(banned_matches),
@@ -365,7 +364,7 @@ def measure(
         replacement_history_examples=replacement_history_examples,
         pedantic_marker_hits=len(pedantic_marker_matches),
         pedantic_marker_examples=pedantic_marker_examples,
-        generic_heading_hits=len(generic_heading_matches),
+        generic_heading_hits=len(generic_headings),
         generic_heading_examples=generic_heading_examples,
         words=words,
         sentences=sentences,
