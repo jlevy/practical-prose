@@ -34,17 +34,19 @@ Counts (all per-document):
   - Generic-heading hits: headings whose entire title is a single generic word
     ("Overview", "Background", "Notes", "Details", "Misc"). F1 Organization rule 9 —
     flags only, since these can be appropriate at a section's outermost level.
-  - Words, sentences, paragraphs, lines (prose-only — YAML frontmatter, fenced code
-    blocks, and inline code are stripped before counting; sentence splitting via flowmark
-    heuristic through flexdoc)
+  - Words, sentences, paragraphs, lines (prose-only via flexdoc's `prose_text()`: YAML
+    frontmatter, code blocks, and inline code excluded, links/images unwrapped to their
+    text, tables kept; sentence splitting via the flowmark heuristic through flexdoc)
   - Pages, computed at 275 words/page (configurable via --words-per-page)
 
 Structural counts (headings, links by form, images, footnotes, tables, code blocks)
-come from flexdoc's typed document model, not regex. Word/sentence/paragraph counts use
-flexdoc's FlexDoc over prose-only text, which uses flowmark.split_sentences_regex for
-sentence boundaries. The editorial-lint patterns (bracket tags, banned register,
-em-dash, replacement-history, pedantic-marker) run over `FlexDoc.prose_text()`: a
-prose-only projection with inline code dropped and links/images unwrapped to their text.
+come from flexdoc's typed document model, not regex. Size counts (words / sentences /
+paragraphs / lines) are computed over the same `FlexDoc.prose_text()` projection the
+editorial-lint patterns (bracket tags, banned register, em-dash, replacement-history,
+pedantic-marker) run over, so sizes and lint hits share one consistent prose scope.
+`prose_text()` drops inline code, unwraps links/images to their text, and excludes
+frontmatter and code blocks (tables kept); sentence boundaries use
+flowmark.split_sentences_regex through flexdoc.
 
 Known limitations:
   - HTML links (<a href="...">) are not counted — markdown-syntax links only.
@@ -81,15 +83,6 @@ WORDS_PER_PAGE = 275
 # ALL-CAPS bracket-tag heuristic (e.g. [VERIFIED], [TBD]); a register marker, not a
 # Markdown construct, so it stays a regex run over the prose-only text.
 BRACKET_TAG_RE = re.compile(r"\[([A-Z][A-Z0-9_ -]{1,30})\]")
-
-# Frontmatter + code stripping, retained only for the size path: word / sentence /
-# paragraph / line counts are computed over prose-only text (frontmatter, fenced code,
-# and inline code excluded) and must stay byte-identical to the historical counts. Every
-# structural element COUNT (headings, links, images, footnotes, tables, code blocks) now
-# comes from flexdoc's typed model instead of regex (see `measure`).
-CODE_FENCE_RE = re.compile(r"^```[\s\S]*?^```", re.MULTILINE)
-CODE_INLINE_RE = re.compile(r"`[^`\n]+`")
-FRONTMATTER_RE = re.compile(r"\A---\n.*?\n---\n", re.DOTALL)
 
 EM_DASH = "—"
 SPACED_EM_DASH_RE = re.compile(r" — ")
@@ -253,13 +246,6 @@ class Metrics:
     pages: float = 0.0
 
 
-def strip_code_and_frontmatter(text: str) -> str:
-    text = FRONTMATTER_RE.sub("", text)
-    text = CODE_FENCE_RE.sub("", text)
-    text = CODE_INLINE_RE.sub("", text)
-    return text
-
-
 def measure(
     file_path: Path,
     words_per_page: int = WORDS_PER_PAGE,
@@ -326,9 +312,11 @@ def measure(
     pedantic_marker_matches = PEDANTIC_MARKER_RE.findall(prose)
     pedantic_marker_examples = sorted({m.lower() for m in pedantic_marker_matches})[:10]
 
-    # Size counts stay on the historical prose-only text (frontmatter + fenced and inline
-    # code stripped) so word / sentence / paragraph / line counts do not drift.
-    size_doc = FlexDoc.from_text(strip_code_and_frontmatter(raw))
+    # Size counts are computed over the same prose-only projection as the lint patterns,
+    # so word / sentence / paragraph / line counts and the lint hits share one consistent
+    # scope (frontmatter, code blocks, and inline code excluded; links/images unwrapped;
+    # tables kept). flexdoc sizes a parsed document, so reparse the prose text.
+    size_doc = FlexDoc.from_text(prose)
     words = size_doc.size(TextUnit.words)
     sentences = size_doc.size(TextUnit.sentences)
     paragraphs = size_doc.size(TextUnit.paragraphs)

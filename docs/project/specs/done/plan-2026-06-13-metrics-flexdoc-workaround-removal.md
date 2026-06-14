@@ -9,8 +9,8 @@ API gaps that blocked this were fixed upstream
 ([jlevy/flexdoc#7](https://github.com/jlevy/flexdoc/pull/7), resolving
 [#6](https://github.com/jlevy/flexdoc/issues/6) and the #5 link-form gaps).
 metrics.py now derives headings, links-by-form, images, footnotes, tables, and code
-blocks from flexdoc’s typed model and runs editorial lint over `prose_text()`; the size
-path is preserved byte-identical.
+blocks from flexdoc’s typed model and runs editorial lint and size counts over one
+consistent `prose_text()` projection.
 Closes pp-bcrw. See [Resolved in flexdoc 0.2.0](#resolved-in-flexdoc-020) below.
 
 > **Relationship to pp-3hg4.** This spec is the focused, do-it-now subset of the larger
@@ -54,8 +54,12 @@ strictly more correct:
 - Editorial lint (bracket tags, banned register, em-dash, replacement-history,
   pedantic-marker) over `prose_text(include_tables=True)`; generic-heading over real
   heading titles.
-- Size counts (words / sentences / paragraphs / lines) kept on the historical
-  `strip_code_and_frontmatter` text, so they do not drift.
+- Size counts (words / sentences / paragraphs / lines) computed over the same
+  `prose_text(include_tables=True)` projection as the lint patterns, so sizes and lint
+  share one consistent prose scope.
+  A few counts shift slightly versus the old strip-based path (link URLs and inline code
+  are no longer counted as prose words); a future flexdoc release may add configurable
+  counting scopes ([jlevy/flexdoc#8](https://github.com/jlevy/flexdoc/issues/8)).
 
 Re-blessed fixtures: `links_mixed` (`bare_urls` 2 -> 0; the reference-definition URLs
 the old regex miscounted as bare are now typed `reference_definition`) and the

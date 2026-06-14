@@ -28,13 +28,19 @@ class TestP0_1_ProseExclusion:
         assert m.words < 50, f"Code block inflated word count: {m.words}"
 
     def test_frontmatter_excluded_from_word_count(self):
-        _measure("frontmatter_and_code.md")
-        # Frontmatter has 'title', 'description', etc. — those words must not count.
-        # The word "frontmatter" appears only in the YAML block.
-        stripped = pwm.strip_code_and_frontmatter(
-            (FIXTURES / "frontmatter_and_code.md").read_text()
-        )
-        assert "frontmatter" not in stripped.lower()
+        # Frontmatter words must not count: a doc with a multi-word YAML block and a
+        # four-word body should report exactly four words (flexdoc isolates frontmatter).
+        import tempfile
+
+        text = "---\ntitle: Long Frontmatter Title String\n---\n\nalpha beta gamma delta\n"
+        with tempfile.NamedTemporaryFile("w", suffix=".md", delete=False, encoding="utf-8") as f:
+            f.write(text)
+            tmp = Path(f.name)
+        try:
+            m = pwm.measure(tmp)
+            assert m.words == 4, f"frontmatter leaked into word count: {m.words}"
+        finally:
+            tmp.unlink()
 
     def test_empty_doc(self):
         m = _measure("empty.md")
