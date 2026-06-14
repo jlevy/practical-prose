@@ -28,13 +28,19 @@ class TestP0_1_ProseExclusion:
         assert m.words < 50, f"Code block inflated word count: {m.words}"
 
     def test_frontmatter_excluded_from_word_count(self):
-        _measure("frontmatter_and_code.md")
-        # Frontmatter has 'title', 'description', etc. — those words must not count.
-        # The word "frontmatter" appears only in the YAML block.
-        stripped = pwm.strip_code_and_frontmatter(
-            (FIXTURES / "frontmatter_and_code.md").read_text()
-        )
-        assert "frontmatter" not in stripped.lower()
+        # Frontmatter words must not count: a doc with a multi-word YAML block and a
+        # four-word body should report exactly four words (flexdoc isolates frontmatter).
+        import tempfile
+
+        text = "---\ntitle: Long Frontmatter Title String\n---\n\nalpha beta gamma delta\n"
+        with tempfile.NamedTemporaryFile("w", suffix=".md", delete=False, encoding="utf-8") as f:
+            f.write(text)
+            tmp = Path(f.name)
+        try:
+            m = pwm.measure(tmp)
+            assert m.words == 4, f"frontmatter leaked into word count: {m.words}"
+        finally:
+            tmp.unlink()
 
     def test_empty_doc(self):
         m = _measure("empty.md")
@@ -108,7 +114,7 @@ class TestP1_4_SetextHeadings:
 
 
 # ---------------------------------------------------------------------------
-# P1-6: REF_LINK_DEF_RE tightened
+# P1-6: reference-definition detection (now via flexdoc typed link forms)
 # ---------------------------------------------------------------------------
 
 
@@ -178,9 +184,10 @@ class TestP2_10_WordsPerPage:
 class TestFootnotes:
     def test_footnote_refs(self):
         m = _measure("footnotes.md")
-        # [^1], [^long-note], [^3] in text = 3 refs
-        # Plus [^1]:, [^long-note]:, [^3]: in defs also match the ref pattern = 6 total
-        assert m.footnote_references == 6
+        # [^1], [^long-note], [^3] in body text = 3 true inline references. flexdoc's typed
+        # footnote_ref nodes count only those; the old regex also matched the [^id]: lines
+        # of the definitions and double-counted to 6 (this typed count is the fix).
+        assert m.footnote_references == 3
 
     def test_footnote_defs(self):
         m = _measure("footnotes.md")

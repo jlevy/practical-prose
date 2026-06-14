@@ -528,7 +528,7 @@ rule_findings:
    implementation aside is tangential to the scoring rubric and could be cut without
    losing reader-needed content.
    *Location:* `"As a side benefit, numeric scores are always truthy, so `if score:
-   ...` cannot"` Alignment with the guidelines.
+   …` cannot"` Alignment with the guidelines.
 2. **Formatting** (rule 6) *[partial]* — An escaped-period source artifact ('5.') leaks
    into the rendered tiebreak prose where a list-number got split across lines.
    *Location:* `"5\. ("No problems found because there’s nothing to check""` Tiebreaks.

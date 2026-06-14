@@ -1,15 +1,13 @@
 # Handoff: metrics regex -> flexdoc workaround removal (2026-06-13)
 
-> **Status update (2026-06-13): BLOCKED on flexdoc 0.1.0; migration deferred.** A trial
-> migration found flexdoc 0.1.0 is not yet a clean drop-in: `collect()`/`node_table()`
-> crash on valid Markdown (blocking typed inline-element access), `sections()`/`toc()`
-> drop headings that `blocks()` finds, and `filtered(...).reassemble()` drifts the
-> link/lint text on real docs.
-> All consolidated upstream as
-> [jlevy/flexdoc#6](https://github.com/jlevy/flexdoc/issues/6); see the spec’s
-> [Blocked on flexdoc 0.1.0](../specs/active/plan-2026-06-13-metrics-flexdoc-workaround-removal.md#blocked-on-flexdoc-010-2026-06-13)
-> section. The regex implementation stays until a flexdoc release lands the fixes.
-> The guidance below applies once it does.
+> **Status update (2026-06-14): DONE — implemented against flexdoc 0.2.0.** The flexdoc
+> 0.1.0 blockers (node_table crash, sections/toc heading loss, lint/link text drift)
+> were fixed upstream in flexdoc 0.2.0
+> ([PR #7](https://github.com/jlevy/flexdoc/pull/7), resolving
+> [#6](https://github.com/jlevy/flexdoc/issues/6)). metrics.py was migrated to the typed
+> APIs; see the now-archived spec
+> [plan-2026-06-13-metrics-flexdoc-workaround-removal.md](../specs/done/plan-2026-06-13-metrics-flexdoc-workaround-removal.md#resolved-in-flexdoc-020).
+> Closed as pp-bcrw. This handoff is retained for historical context.
 
 **Task:** Implement the behavior-preserving cleanup that replaces the hand-rolled regex
 parsing in pprose’s metrics with flexdoc 0.1.0’s typed document model.
@@ -17,7 +15,7 @@ pprose has already migrated off chopdiff onto flexdoc; this is the follow-on “
 now-unnecessary workarounds” work.
 
 **Spec (read first):**
-[docs/project/specs/active/plan-2026-06-13-metrics-flexdoc-workaround-removal.md](../specs/active/plan-2026-06-13-metrics-flexdoc-workaround-removal.md)
+[docs/project/specs/done/plan-2026-06-13-metrics-flexdoc-workaround-removal.md](../specs/done/plan-2026-06-13-metrics-flexdoc-workaround-removal.md)
 — has the full regex -> flexdoc-API mapping table, the “what stays regex and why”
 section, the parity/testing contract, and the risk list.
 The broader schema rewrite it is a subset of is

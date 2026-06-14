@@ -48,7 +48,7 @@ dependencies = [
     # flexdoc is the document-layer subset extracted from chopdiff (TextDoc -> FlexDoc);
     # metrics.py uses only FlexDoc/TextUnit, so we depend on flexdoc and drop chopdiff
     # (no diff/windowed-transform machinery, smaller dependency footprint).
-    "flexdoc==0.1.0",
+    "flexdoc==0.2.0",
     # Formats generated Markdown (composed SKILL.md, the AGENTS.md block) so generation
     # is idempotent under the repo's flowmark pre-commit hook. Already resolved
     # transitively via flexdoc; declared directly since install.py imports it.
@@ -237,5 +237,5 @@ filterwarnings = []
 [tool.uv]
 # First-party cool-off exemption (see SUPPLY-CHAIN-SECURITY.md): admit flexdoc past the
 # contributor's global `exclude-newer` cutoff. Per-package + repo-scoped — it never
-# relaxes the cool-off for any other dependency. Remove once 0.1.0 ages out of the window.
-exclude-newer-package = { flexdoc = "2026-06-13" }
+# relaxes the cool-off for any other dependency. Remove once 0.2.0 ages out of the window.
+exclude-newer-package = { flexdoc = "2026-06-15" }

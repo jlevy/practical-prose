@@ -39,13 +39,12 @@ was consolidated here on 2026-06-11).
   (pp-tfdk).
 - Structural document decomposition for metrics (epic pp-3hg4; spec
   [plan-2026-05-25](docs/project/specs/active/plan-2026-05-25-structural-document-metrics.md)):
-  **blocked on flexdoc 0.1.0 bugs** (jlevy/flexdoc#6). A trial migration found
-  `collect()` / `node_table()` crash on valid Markdown and `sections()` / `toc()` drop
-  headings, so the typed-API swap waits for a flexdoc release; the behavior-preserving
-  subset is the deferred
-  [plan-2026-06-13](docs/project/specs/active/plan-2026-06-13-metrics-flexdoc-workaround-removal.md).
-  The five chopdiff upstream beads (pp-9cmv, pp-tg93, pp-eaa2, pp-4hku, pp-aat4) are
-  closed since flexdoc ships the APIs; docstring sweep pp-ka9t.
+  the behavior-preserving regex->flexdoc workaround removal **shipped** on flexdoc 0.2.0
+  (pp-bcrw; archived spec
+  [plan-2026-06-13](docs/project/specs/done/plan-2026-06-13-metrics-flexdoc-workaround-removal.md)).
+  Remaining is the schema rewrite (`*_count` renames, prose-only count semantics,
+  heading outline, distributions, eval_report/eval_compare updates) under pp-pd8t and
+  successors; docstring sweep pp-ka9t.
 - Eval-screenshot tooling (deferred from the README-cards work): snapshot-fit print CSS
   (pp-2gs0), multi-document side-by-side render (pp-39ce), optional in-package
   `pprose snapshot` (pp-w0oz).

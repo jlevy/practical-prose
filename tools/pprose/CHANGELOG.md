@@ -15,8 +15,20 @@ from git tags by dynamic versioning (see [docs/publishing.md](docs/publishing.md
   Word / sentence / paragraph / line counts are byte-identical (the fixture-locked
   metrics test passes unchanged), and the dependency footprint shrinks since flexdoc
   omits chopdiff’s diff and windowed-transform machinery, which pprose never used.
-  flexdoc 0.1.0 is admitted under the standing first-party cool-off exemption (see
+  flexdoc is admitted under the standing first-party cool-off exemption (see
   [SUPPLY-CHAIN-SECURITY.md](../../SUPPLY-CHAIN-SECURITY.md)).
+- **Typed metrics on flexdoc 0.2.0.** `metrics.py` now derives every structural count
+  from flexdoc’s typed document model instead of hand-rolled regex: headings by depth
+  (`Block.heading_level`), links by form (`Link.link_form` plus reference definitions),
+  images, footnotes, tables, and code blocks.
+  Editorial lint **and** word / sentence / paragraph / line counts now run over one
+  consistent prose projection, `FlexDoc.prose_text(include_tables=True)`, so a few size
+  counts shift slightly (link URLs and inline code are no longer counted as prose
+  words). A future flexdoc release may offer configurable counting scopes
+  ([jlevy/flexdoc#8](https://github.com/jlevy/flexdoc/issues/8)). A few counts are now
+  more correct: footnote references no longer double-count definition lines, headings
+  inside code blocks are excluded, indented and `~~~`-fenced code blocks are counted,
+  and reference-definition URLs are no longer miscounted as bare URLs.
 - **Faster startup.** CLI command targets are imported lazily at dispatch, so
   `pprose --help`, `--version`, and the reference listings no longer load the eval chain
   (pydantic_ai + provider SDKs).

@@ -19,7 +19,7 @@
   footnote_definitions: 0
   bracket_tags: 0
   bracket_tag_examples: []
-  bare_urls: 2
+  bare_urls: 0
   tables: 0
   code_blocks: 0
   banned_register_hits: 0
@@ -33,8 +33,8 @@
   pedantic_marker_examples: []
   generic_heading_hits: 0
   generic_heading_examples: []
-  words: 31
-  sentences: 8
-  paragraphs: 8
-  lines: 15
+  words: 26
+  sentences: 6
+  paragraphs: 6
+  lines: 11
   pages: 0.1
