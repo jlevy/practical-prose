@@ -3,9 +3,9 @@ type: is
 id: is-01kv02fkc0h7fhcjp1ptg0fhrk
 title: "[flexdoc 0.1.0] collect()/node_table crashes on valid markdown (layer nesting violated)"
 kind: bug
-status: open
+status: closed
 priority: 2
-version: 3
+version: 4
 spec_path: docs/project/specs/active/plan-2026-05-25-structural-document-metrics.md
 labels:
   - upstream-flexdoc
@@ -17,6 +17,8 @@ dependencies:
     target: is-01kv01wyqcvnjrwzp5096t3d43
 parent_id: is-01kshh6agcz1skz71dx3ychz3s
 created_at: 2026-06-13T08:44:54.527Z
-updated_at: 2026-06-13T18:36:09.391Z
+updated_at: 2026-06-14T02:13:58.838Z
+closed_at: 2026-06-14T02:13:58.837Z
+close_reason: "Fixed in flexdoc 0.2.0 (PR jlevy/flexdoc#7): inline discovery scoped per leaf block; verified 0 crashes across all repo docs."
 ---
 FlexDoc.collect()/node_table() raises ValueError: 'layer nesting violated: markdown node ... not within parent ...' on 2 of 61 real repo docs (docs/project/specs/active/plan-2026-05-25-structural-document-metrics.md and docs/project/specs/done/plan-2026-05-12-eval-scoring-rearchitecture.md). Because collect() is the only typed path to images/footnote_refs/code_spans, metrics.py cannot safely swap those off regex until fixed. blocks()/sections()/toc()/links()/filtered() do NOT use node_table and are robust. File upstream against jlevy/flexdoc.
