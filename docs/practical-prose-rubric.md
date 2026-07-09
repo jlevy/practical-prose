@@ -1089,12 +1089,19 @@ Each pass has a different cognitive load and a different tool stack; the
 [practical-prose-eval-single.runbook.md](../runbooks/practical-prose-eval-single.runbook.md)
 operationalizes them.
 
-| Pass | Scope | Primary dimensions | Stack |
+The table is the canonical, complete assignment: every dimension belongs to exactly one
+pass (the pass with primary responsibility for scoring it; a defect that could be cited
+under two dimensions still follows the primary/secondary table above).
+The quick-checklist and the full-edit shortcut follow this mapping; the full-edit
+workflow additionally splits an Expression *editing* pass out of the read-through
+because it applies E1-E3 fixes rather than scoring them.
+
+| Pass | Scope | Dimensions | Stack |
 | --- | --- | --- | --- |
-| Lint | Surface defects | F1 Organization, F2 Consistency, F3 Formatting, E1 Clarity (banned-register and vague-word checks) | `pprose metrics`, linters, deterministic checks |
-| Claim audit | Every quantitative claim against its cited source | G1 Verifiability, G2 Factuality | Source lookups, calculation re-runs |
-| Reasoning audit | Mechanisms, assumptions, counter-evidence, alternative lenses | R1 Discipline, R2 Soundness, J2 Fairness, J3 Robustness | Subject-matter expert or fresh-context agent |
-| Purpose audit | Output shape vs task shape; scope; skim-recoverability | P1 Suitability, P2 Scope, P3 Breadth, P4 Depth | Reader simulation; subject-matter expert |
+| Lint | Surface defects | E1 Clarity (banned-register and vague-word checks), F1 Organization, F2 Consistency, F3 Formatting | `pprose metrics`, linters, deterministic checks |
+| Claim audit | Every quantitative claim against its cited source; every source on-task | G1 Verifiability, G2 Factuality, G3 Relevance | Source lookups, calculation re-runs |
+| Reasoning audit | Mechanisms, assumptions, counter-evidence, calibration, alternative lenses | R1 Discipline, R2 Soundness, R3 Precision, R4 Parsimony, J1 Calibration, J2 Fairness, J3 Robustness | Subject-matter expert or fresh-context agent |
+| Purpose audit | Output shape vs task shape; scope; skim-recoverability and flow | P1 Suitability, P2 Scope, P3 Breadth, P4 Depth, E2 Coherence, E3 Concision | Reader simulation; subject-matter expert |
 
 The pass separation is **required** for high-stakes documents (audits, decision memos,
 external research, security advisories), **recommended** for standard internal docs, and

@@ -32,12 +32,13 @@ Three things need the maintainer soonest:
 
 1. **Publish v0.2.0** — every committed skill and AGENTS.md falls back to
    `uvx pprose@0.2.0`, which does not exist on PyPI (pp-jcou).
-2. **Re-lock `uv.lock` from a clean environment** — the committed lock embeds personal
-   global uv settings, so CI silently re-resolved dependencies on every run until this
-   branch pinned installs with `UV_FROZEN` (pp-ft60).
-3. **Decide the canonical four-pass mapping** (pp-fx6c) — the remaining open
-   self-application policy; the frontmatter policy was resolved on this branch (finding
-   6, pp-2wdi closed).
+2. ~~Re-lock `uv.lock` from a clean environment~~ — resolved on this branch: the lock is
+   now environment-neutral (same resolved versions, personal `[options]` stripped) and
+   CI gates on `uv lock --check` in addition to `UV_FROZEN` installs (finding 2, pp-ft60
+   closed).
+3. ~~Decide the open self-application policies~~ — both resolved on this branch: the
+   frontmatter policy (finding 6, pp-2wdi closed) and the canonical four-pass mapping
+   (finding 4, pp-fx6c closed).
 
 Clear fixes were applied on this branch in three commits (see *Fixed on This Branch*);
 everything else is a bead, listed with IDs throughout and gathered at the end.
@@ -129,38 +130,44 @@ release machinery is ready (publish.yml, the `check_release_version.py` tag guar
 release-readiness-2026-06.md).
 Cut the release, or re-pin the committed copies to a published version until then.
 
-### 2. `uv.lock` embeds personal global settings; CI never installed from it (pp-ft60, P2)
+### 2. `uv.lock` embedded personal global settings; CI never installed from it (pp-ft60, P2 — resolved on this branch)
 
-The committed lock’s `[options]` block records `exclude-newer-span = "P7D"` and
+The committed lock’s `[options]` block recorded `exclude-newer-span = "P7D"` and
 per-package `2100-01-01` sentinels — the maintainer’s global `~/.config/uv/uv.toml`
 leaking into the artifact.
-Any environment without those globals (CI, every contributor) considers the lock stale:
+Any environment without those globals (CI, every contributor) considered the lock stale:
 uv prints “Ignoring existing lockfile due to removal of timestamp cutoff” and silently
 re-resolves.
 Observed effect in this review: a plain `uv sync` upgraded 57 packages (e.g.
-anthropic 0.102.0 → 0.116.0). CI’s `uv sync --all-extras` has therefore been testing
+anthropic 0.102.0 → 0.116.0). CI’s `uv sync --all-extras` had therefore been testing
 freshly resolved dependencies on every run — not the lock — which also bypasses the
 14-day cool-off the repo is careful about everywhere else.
 
-`UV_FROZEN` (this branch) makes installs actually frozen.
-The remaining work: re-lock from a clean environment (or commit the intended resolution
-policy repo-scoped, e.g. a versioned `uv.toml`, using full timestamps) so every
-environment resolves identically; then CI can also gain a `uv lock --check` staleness
-gate, which today would fail for the wrong reason.
+**Resolution applied:** installs were frozen with `UV_FROZEN` (first commit), and the
+`[options]` block is now stripped from the lock — every resolved version is
+byte-identical to what was reviewed; only the environment-specific settings are gone —
+so `uv lock --check` passes in a clean environment.
+CI gained a staleness gate that runs `uv lock --check` and fails if an `[options]` block
+ever reappears, and SUPPLY-CHAIN-SECURITY.md documents the invariant (the lock stays
+environment-neutral; re-lock with `uv lock --no-config`; the cool-off is enforced at
+upgrade time by dated-pin review, not resolver config).
+pp-ft60 is closed.
 
-### 3. The tag metric can’t see the tags the guidelines recommend (pp-hdc0, P2)
+### 3. The tag metric couldn’t see the tags the guidelines recommend (pp-hdc0, P2 — resolved on this branch)
 
-`BRACKET_TAG_RE` matches only ALL-CAPS, colon-less tags.
+`BRACKET_TAG_RE` matched only ALL-CAPS, colon-less tags.
 But the guidelines’ own recommended conventions are `[ASSUMING: ...]` and
 `[DERIVED: 89.6 / 614.5 = 14.6%]` (G1.4, R2.3) and the lowercase rung tags `[observed]`
 / `[judged]` / `[interpreted]` / `[implied]` (R1.4). A document following the guidelines
-to the letter reports zero bracket tags.
-The docs now disclose this; the right fix is in the tool: count by tag mnemonic (prefix
-before a colon), case-normalize the four rung tags, update the golden fixtures.
-Not applied here because the goldens pin current behavior and the change deserves its
-own reviewed diff.
+to the letter reported zero bracket tags.
 
-### 4. The four-pass audit mapping disagrees across the triple (pp-fx6c, P2)
+**Resolution applied:** the metric now counts colon-suffixed confidence tags by their
+mnemonic and exactly the four lowercase rung tags (other lowercase or mixed-case bracket
+text is still not a tag; links are unaffected because the prose projection unwraps
+them). Fixture and tests extended; the four pinned golden YAMLs were verified unchanged.
+pp-hdc0 is closed.
+
+### 4. The four-pass audit mapping disagreed across the triple (pp-fx6c, P2 — resolved on this branch)
 
 Three docs describe the lint / claim / reasoning / purpose audit passes with three
 different dimension assignments:
@@ -171,11 +178,21 @@ different dimension assignments:
 | quick-checklist §Four Audit Passes | R1, R2, **R4**, J2, J3 | G1, G2 | P1-P4 | E2, E3, R3, G3, J1 |
 | shortcut-full-edit §Procedure | R1-R4, J2, J3 | G1, G2, **G3** | P1-P4, **J1** | — (adds a 5th Expression pass for E1-E3) |
 
-The rubric’s table says “Primary dimensions”, so non-exhaustiveness is defensible, but
+The rubric’s table said “Primary dimensions”, so non-exhaustiveness was defensible, but
 the three should not disagree where they overlap, and J1 Calibration under the *purpose*
-audit (full-edit) is hard to defend — claim-strength-vs-evidence fits the reasoning or
-claim audit. Recommend: make the rubric’s table the canonical complete mapping (all 20
-assigned), then align the checklist and shortcut to it.
+audit (full-edit) was hard to defend — claim-strength-vs-evidence fits the reasoning
+audit.
+
+**Resolution applied:** the rubric’s table is now the canonical complete mapping, with
+every dimension assigned to exactly one pass: Lint = E1 (deterministic checks) + F1-F3;
+Claim audit = G1-G3; Reasoning audit = R1-R4 + J1-J3; Purpose audit = P1-P4 + E2-E3
+(reader-simulation: spine, flow, every section earning its place).
+The quick-checklist matches it, and the full-edit shortcut now notes that its separate
+Expression pass exists because it *applies* E1-E3 fixes rather than scoring them, with
+J1 moved to its reasoning audit.
+pp-fx6c is closed; the mapping choice for J1 (reasoning over claim audit, keeping the
+Judgment group together with the counter-evidence and lens work) is recorded here as the
+deciding rationale.
 
 ### 5. Baseline evals predate the docs they evaluate (pp-wuap, P2)
 
@@ -292,7 +309,8 @@ describe? Verdict per group, on the doc suite as a whole:
   Concision vs. Relevance; Discipline vs.
   Soundness; the NA/ERR decision tree and cascades) are the best part of the suite: they
   do the disambiguation work most rubrics skip.
-  The four-pass mapping inconsistency (finding 4) is the one seam.
+  The four-pass mapping inconsistency (finding 4) was the one seam, now closed with a
+  canonical complete assignment.
 - **Grounding — good.** The bibliography is real and specific (verified spot-wise
   against arXiv, PyPI, GitHub); two cited-but-missing entries and one wrong author are
   fixed. The docs’ claims about their own tooling were the weak spot (five distinct
@@ -327,26 +345,24 @@ scope:
 
 ## Open Questions for the Maintainer
 
-1. Where should J1 Calibration live in the canonical four-pass mapping?
-   (pp-fx6c)
-2. Should `dominant` stay in the default banned list now that it is documented, move to
+1. Should `dominant` stay in the default banned list now that it is documented, move to
    a domain extension list, or gain an “earned when descriptive” carve-out?
    Its presence means the bibliography will always carry ~14 expected hits.
-3. Counter-examples in quotes vs.
+2. Counter-examples in quotes vs.
    inline code: is the typography change acceptable to make the docs lint-clean?
    (pp-5m0m)
-4. When does `pp20v1` freeze?
+3. When does `pp20v1` freeze?
    The rubric says it is refined in place; consumers pinning eval behavior (and the new
    schema sync test) would benefit from a stated freeze trigger, even a rough one.
 
 ## Bead Index
 
-Filed this review: pp-jcou (P1, release), pp-ft60 (P2, lockfile), pp-hdc0 (P2, tag
-metric), pp-fx6c (P2, four-pass mapping), pp-wuap (P2, baselines), pp-j3ot (P3, rule
-numbering), pp-2wdi (P3, frontmatter — closed on this branch), pp-5m0m (P3,
-mention-vs-use), pp-jhs9 (P3, CONTRIBUTING/SECURITY), pp-abb7 (P3, a11y), pp-186c (P3,
-self-lint CI), pp-t733 (P3, README map).
-Pre-existing beads referenced: pp-aim6, pp-5zgc.
+Filed this review: pp-jcou (P1, release), pp-ft60 (P2, lockfile — closed on this
+branch), pp-hdc0 (P2, tag metric — closed on this branch), pp-fx6c (P2, four-pass
+mapping — closed on this branch), pp-wuap (P2, baselines), pp-j3ot (P3, rule numbering),
+pp-2wdi (P3, frontmatter — closed on this branch), pp-5m0m (P3, mention-vs-use), pp-jhs9
+(P3, CONTRIBUTING/SECURITY), pp-abb7 (P3, a11y), pp-186c (P3, self-lint CI), pp-t733
+(P3, README map). Pre-existing beads referenced: pp-aim6, pp-5zgc.
 
 <!-- This document follows common-doc-guidelines.md.
 See github.com/jlevy/practical-prose and review guidelines before editing.

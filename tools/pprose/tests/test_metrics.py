@@ -57,8 +57,24 @@ class TestP0_1_ProseExclusion:
 class TestP0_2_BracketTags:
     def test_bracket_tags_in_prose_counted(self):
         m = _measure("bracket_tags_in_code.md")
-        # Prose has [VERIFIED], [DERIVED], [UNVERIFIED] = 3 tags
-        assert m.bracket_tags == 3
+        # Prose has [VERIFIED], [DERIVED], [UNVERIFIED] = 3 plain caps tags,
+        # [ASSUMING: ...] and [DERIVED: ...] colon forms (counted by mnemonic),
+        # and the four rung tags [observed]/[judged]/[interpreted]/[implied] = 9 total
+        assert m.bracket_tags == 9
+
+    def test_colon_tags_counted_by_mnemonic(self):
+        m = _measure("bracket_tags_in_code.md")
+        # [ASSUMING: base rates hold] counts as its mnemonic, detail dropped
+        assert "ASSUMING" in m.bracket_tag_examples
+        assert not any(ex.startswith("ASSUMING:") for ex in m.bracket_tag_examples)
+
+    def test_rung_tags_counted_and_only_the_four(self):
+        m = _measure("bracket_tags_in_code.md")
+        for rung in ("observed", "judged", "interpreted", "implied"):
+            assert rung in m.bracket_tag_examples
+        # Mixed case and arbitrary lowercase bracket text are not tags
+        assert "Observed" not in m.bracket_tag_examples
+        assert "placeholder" not in m.bracket_tag_examples
 
     def test_bracket_tags_in_code_excluded(self):
         m = _measure("bracket_tags_in_code.md")

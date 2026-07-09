@@ -12,8 +12,11 @@ Counts (all per-document):
     breakdown by markdown form (inline, autolink, reference-use, reference-definition,
     image)
   - Footnotes: references, definitions
-  - Bracket tags: ALL-CAPS bracket tags (e.g. [VERIFIED], [DERIVED]) — heuristic,
-    inspect the examples list to distinguish citations from markers like [TBD]/[OPTIONAL]
+  - Bracket tags: ALL-CAPS bracket tags with or without a colon-suffixed detail
+    (e.g. [VERIFIED], [ASSUMING: rates hold] — counted by the mnemonic before the
+    colon), plus the four lowercase rung tags from guidelines R1.4 ([observed],
+    [judged], [interpreted], [implied]) — heuristic, inspect the examples list to
+    distinguish citations from markers like [TBD]/[OPTIONAL]
   - Bare URLs: plain https?:// URLs in prose not wrapped in markdown link syntax
   - Tables: count of markdown tables (from the parser's typed block tree)
   - Code blocks: count of code blocks, fenced or indented (from the typed block tree)
@@ -82,7 +85,16 @@ WORDS_PER_PAGE = 275
 
 # ALL-CAPS bracket-tag heuristic (e.g. [VERIFIED], [TBD]); a register marker, not a
 # Markdown construct, so it stays a regex run over the prose-only text.
-BRACKET_TAG_RE = re.compile(r"\[([A-Z][A-Z0-9_ -]{1,30})\]")
+# Bracket tags come in two documented families (see practical-prose-guidelines.md):
+#   - ALL-CAPS confidence tags, with or without a colon-suffixed detail: [VERIFIED],
+#     [ASSUMING: rates hold], [DERIVED: 89.6 / 614.5 = 14.6%] (G1.4, R2.3). Counted by
+#     the mnemonic before the colon.
+#   - The four lowercase ladder-of-inference rung tags from R1.4: [observed], [judged],
+#     [interpreted], [implied]. Other lowercase bracket text is not a tag.
+BRACKET_TAG_RE = re.compile(
+    r"\[([A-Z][A-Z0-9_ -]{1,30})(?::[^\]\n]{0,200})?\]"
+    r"|\[(observed|judged|interpreted|implied)\]"
+)
 
 EM_DASH = "—"
 SPACED_EM_DASH_RE = re.compile(r" — ")
@@ -301,7 +313,7 @@ def measure(
     # Editorial lint runs over the prose-only projection: inline code dropped, links and
     # images unwrapped to their text, frontmatter and code blocks excluded, tables kept.
     prose = doc.prose_text(include_tables=True)
-    bracket_tag_matches = BRACKET_TAG_RE.findall(prose)
+    bracket_tag_matches = [m.group(1) or m.group(2) for m in BRACKET_TAG_RE.finditer(prose)]
     tag_examples = sorted(set(bracket_tag_matches))[:10]
     banned_matches = banned_re.findall(prose)
     banned_examples = sorted({m.lower() for m in banned_matches})[:10]

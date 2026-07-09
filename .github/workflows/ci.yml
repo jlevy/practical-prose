@@ -67,6 +67,19 @@ jobs:
       #   with:
       #     python-version: ${{ matrix.python-version }}
 
+      # Staleness gate: fails if uv.lock no longer satisfies pyproject.toml, or if a
+      # re-lock re-embedded environment-specific [options] (the lock must stay
+      # environment-neutral; see SUPPLY-CHAIN-SECURITY.md). `env -u`: UV_FROZEN maps
+      # to `uv lock --check-exists`, which conflicts with `--check`.
+      - name: Verify lockfile is up to date and environment-neutral
+        run: |
+          env -u UV_FROZEN uv lock --check
+          if grep -q '^\[options\]' uv.lock; then
+            echo "uv.lock carries an [options] block (environment-specific resolution"
+            echo "settings leaked into the lock); re-lock with: uv lock --no-config"
+            exit 1
+          fi
+
       - name: Install all dependencies
         run: uv sync --all-extras
 

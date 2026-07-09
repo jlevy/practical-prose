@@ -72,11 +72,11 @@ fair.
 - `pprose metrics`: the deterministic metrics command.
   Computes headings by depth, link counts (external/internal, by markdown form),
   footnote references and definitions, bracket-tag counts and examples (ALL-CAPS forms
-  like `[VERIFIED]`; lowercase rung tags and colon-suffixed forms like `[ASSUMING: ...]`
-  are not counted), bare URLs, tables, code blocks, banned-register hits (the
-  common-doc-guidelines §4.2 list plus `dominant`, an advocacy-register extension;
-  override the whole list with `--banned-words-file`), word/sentence/paragraph/line
-  counts, and page estimate.
+  like `[VERIFIED]`, colon-suffixed forms like `[ASSUMING: ...]` counted by their
+  mnemonic, and the four lowercase rung tags from guidelines R1.4), bare URLs, tables,
+  code blocks, banned-register hits (the common-doc-guidelines §4.2 list plus
+  `dominant`, an advocacy-register extension; override the whole list with
+  `--banned-words-file`), word/sentence/paragraph/line counts, and page estimate.
 - `pprose score`: LLM-based rubric scorer.
 - `pprose report`: creates, validates, and recomputes eval reports (combining metrics
   and scores).

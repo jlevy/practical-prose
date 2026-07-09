@@ -22,6 +22,12 @@ from git tags by dynamic versioning (see [docs/publishing.md](docs/publishing.md
   so the two cannot drift silently.
 - Human metrics output labels the page estimate “wpp” (words per page), matching the
   compare and render surfaces; it previously said “wpm”.
+- **Bracket-tag counting covers the documented tag conventions.** The metric matched
+  only ALL-CAPS colon-less tags, so the guidelines’ own recommended forms were
+  invisible: colon-suffixed confidence tags (`[ASSUMING: ...]`, `[DERIVED: ...]`,
+  counted by their mnemonic) and the four lowercase ladder-of-inference rung tags
+  (`[observed]`, `[judged]`, `[interpreted]`, `[implied]`) are now counted.
+  Other lowercase or mixed-case bracket text is still not a tag.
 
 ### Changed
 

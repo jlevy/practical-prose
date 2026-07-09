@@ -27,8 +27,18 @@ agent or contributor should read before adding or upgrading a dependency.
 
 | Tool | Control in this repo |
 | --- | --- |
-| uv (Python, `tools/pprose`) | `uv.lock` committed; pins with cool-off comments; the contributor’s global `~/.config/uv/uv.toml` carries `exclude-newer`. |
+| uv (Python, `tools/pprose`) | `uv.lock` committed and **environment-neutral** (see below); CI installs with `UV_FROZEN` and gates on `uv lock --check`; pins with cool-off comments; the contributor’s global `~/.config/uv/uv.toml` carries `exclude-newer`. |
 | npm (JS tooling, `tools/`) | `package-lock.json` committed; CI uses `npm ci`; cool-off enforced at upgrade time via `npm-check-updates --cooldown 14` and `npm view <pkg> time.<ver>`. |
+
+**The lockfile must stay environment-neutral.** A `uv lock` run under a global
+`exclude-newer` config embeds that machine’s resolution settings as an `[options]` block
+in `uv.lock`; any environment *without* those settings (CI, other contributors) then
+treats the lock as stale, and a plain `uv sync` silently re-resolves instead of
+installing what was reviewed.
+CI therefore installs with `UV_FROZEN` and fails if the lock is stale or carries an
+`[options]` block. When re-locking (dependency bumps), run `uv lock --no-config` so
+personal global settings stay out of the committed lock; the cool-off is enforced at
+upgrade time by the dated-pin review practice above, not by resolver config.
 
 ## First-Party Exemption
 

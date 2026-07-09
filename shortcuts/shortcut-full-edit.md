@@ -38,23 +38,26 @@ adds the substantive dimensions and produces an editorial review.
    questions and applicability-by-risk-level, use
    `pprose shortcut practical-prose-quick-checklist`.
 
-2. **Run the passes by group** (the four audit passes in
+2. **Run the passes by group** (the canonical four audit passes in
    `pprose shortcut practical-prose-quick-checklist` §The Four Audit Passes, required
-   for high-stakes docs; keep them separate):
-   - **Lint pass:** F1 Organization, F2 Consistency, F3 Formatting, E1 banned-register
-     and vague-word checks, plus the lexical catalog in
+   for high-stakes docs; keep them separate.
+   This edit workflow splits an Expression *editing* pass out of the read-through
+   because E1-E3 fixes are auto-applied here rather than scored):
+   - **Lint pass:** E1 banned-register and vague-word checks, F1 Organization, F2
+     Consistency, F3 Formatting, plus the lexical catalog in
      `pprose guidelines ai-prose-corrections`. Use `pprose metrics`. *Auto-apply.*
    - **Expression pass:** E1-E3 clarity, coherence, concision, plus the structural
      patterns and attention flags in `pprose guidelines ai-prose-corrections` (false
      agency, negative listing, fragments, adverb density).
      *Auto-apply.*
-   - **Reasoning audit:** R1-R4, J2 Fairness, J3 Robustness: assumptions, mechanisms,
-     counter-evidence, parsimony, alternative lenses.
-     *Flag.*
+   - **Reasoning audit:** R1-R4, J1 Calibration, J2 Fairness, J3 Robustness:
+     assumptions, mechanisms, counter-evidence, parsimony, calibration, alternative
+     lenses. *Flag.*
    - **Claim audit:** G1 Verifiability, G2 Factuality, G3 Relevance: every quantitative
      claim against its cited source; re-run calculations.
      *Flag.*
-   - **Purpose audit:** P1-P4, J1 Calibration: output shape vs.
+   - **Purpose audit:** P1-P4 (with E2 Coherence and E3 Concision covered in the
+     Expression pass above): output shape vs.
      task, scope, skim-recoverability.
      *Flag structural moves; apply small reorders.*
 
