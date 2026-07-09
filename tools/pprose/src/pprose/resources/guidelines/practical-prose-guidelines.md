@@ -1,3 +1,9 @@
+---
+title: Practical Prose Guidelines
+description: Prescriptive rules for practical documents across the 20 review dimensions in six groups; the authoring companion to the descriptive practical-prose-rubric.md.
+date: 2026-05-12
+status: active
+---
 # Practical Prose Guidelines
 
 Version: v0.2 (last update 2026-06-12)\

@@ -1,6 +1,8 @@
 ---
 title: Practical Prose Quick Checklist
 description: Single-page pre-publish self-audit covering the 20 practical-prose dimensions in six short groups; for use when the full guidelines are too long to load
+date: 2026-05-12
+status: active
 category: documentation
 author: Joshua Levy (github.com/jlevy) with agent assistance
 ---

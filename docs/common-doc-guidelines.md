@@ -1,3 +1,9 @@
+---
+title: Common Documentation Guidelines
+description: Brief, general guidelines for humans and agents writing and organizing code, text files, and documentation; the base substrate the practical-prose layers extend.
+date: 2026-05-13
+status: active
+---
 # Common Documentation Guidelines
 
 Version: v0.3 (last update 2026-06-12)\

@@ -1,3 +1,9 @@
+---
+title: AI-Prose Corrections
+description: Reference catalog of LLM-register tells (lexical entries, structural patterns, and density flags) paired with corrections; binding under F2.6 of the practical-prose guidelines.
+date: 2026-05-25
+status: active
+---
 # AI-Prose Corrections
 
 Version: v0.2 (last update 2026-06-12)\

@@ -35,8 +35,9 @@ Three things need the maintainer soonest:
 2. **Re-lock `uv.lock` from a clean environment** — the committed lock embeds personal
    global uv settings, so CI silently re-resolved dependencies on every run until this
    branch pinned installs with `UV_FROZEN` (pp-ft60).
-3. **Decide the open self-application policies** — frontmatter for the repo’s own docs
-   (pp-2wdi) and the canonical four-pass mapping (pp-fx6c).
+3. **Decide the canonical four-pass mapping** (pp-fx6c) — the remaining open
+   self-application policy; the frontmatter policy was resolved on this branch (finding
+   6, pp-2wdi closed).
 
 Clear fixes were applied on this branch in three commits (see *Fixed on This Branch*);
 everything else is a bead, listed with IDs throughout and gathered at the end.
@@ -185,23 +186,23 @@ The quant blocks (word counts, lint hits) no longer describe the current files.
 Regenerate per the baseline-evals runbook after this branch merges, and re-check the
 calibration table pinned in the single-doc runbook (guidelines-self ≈ 4.1 overall).
 
-### 6. Frontmatter: the repo doesn’t follow its own recommended schema (pp-2wdi, P3)
+### 6. Frontmatter: the repo didn’t follow its own recommended schema (pp-2wdi, P3 — resolved on this branch)
 
 practical-prose-metrics.md declares `title`, `description`, `date`, `status` as
-**Required**. The repo’s own durable docs sit in three tiers:
+**Required**, but the repo’s own durable docs sat in three tiers: none (guidelines,
+principles, common-doc, bibliography, writing-practical-guides, ai-prose-corrections),
+partial (`title`/`description`/`category`/`author` but no `date`/`status`: all six
+shortcuts, authoring-principles), and full (rubric, metrics, both runbooks).
 
-- **None:** guidelines, principles, common-doc, bibliography, writing-practical-guides,
-  ai-prose-corrections, README, TODO, SUPPLY-CHAIN-SECURITY.
-- **Partial** (`title`/`description`/`category`/`author`; no `date`/`status`): all six
-  shortcuts, authoring-principles.
-- **Full:** rubric, metrics, both runbooks (the runbooks even carry `last_reviewed`).
-
-Two metadata conventions also coexist: YAML frontmatter and the
-`Version: v0.x (last update ...)` byline.
-Either adopt the minimum four fields on every durable doc (this review doc demonstrates
-the full recommended set), or scope the schema explicitly ("applies to evaluated
-artifacts, not this repo’s reference docs") — both resolve the F2-level inconsistency;
-the current state is neither.
+**Resolution applied:** the required four fields are now present on every reference doc,
+shortcut, and runbook (`date` taken from each file’s first git commit;
+`status: active`). Repo-root operational files (README, TODO, SUPPLY-CHAIN-SECURITY,
+AGENTS) are explicitly exempted in the metrics doc’s schema section — GitHub renders
+README frontmatter as a literal table, and AGENTS.md is partly generated — and keep the
+version byline instead.
+The `Version: v0.x` byline remains as a complementary convention on the reference docs,
+matching the rubric’s existing practice.
+pp-2wdi is closed.
 
 ### 7. Mention vs. use: the docs flag their own linter (pp-5m0m, P3)
 
@@ -286,7 +287,7 @@ describe? Verdict per group, on the doc suite as a whole:
 - **Form — good, now better.** The dimension tables were verified identical; heading
   hierarchies are clean; footers are now complete; the genuine misses (generic “Notes”
   heading, dialect drift, two shorthand contradictions about what copy-edit covers) are
-  fixed. The open item is policy, not craft: frontmatter (finding 6).
+  fixed, and the frontmatter policy is now decided and applied (finding 6).
 - **Reasoning — exemplary.** The dimension-boundary paragraphs (Parsimony vs.
   Concision vs. Relevance; Discipline vs.
   Soundness; the NA/ERR decision tree and cascades) are the best part of the suite: they
@@ -326,18 +327,15 @@ scope:
 
 ## Open Questions for the Maintainer
 
-1. Frontmatter policy: adopt the required-four everywhere, or scope the schema to
-   evaluated artifacts?
-   (pp-2wdi; this doc uses the full set as a trial.)
-2. Where should J1 Calibration live in the canonical four-pass mapping?
+1. Where should J1 Calibration live in the canonical four-pass mapping?
    (pp-fx6c)
-3. Should `dominant` stay in the default banned list now that it is documented, move to
+2. Should `dominant` stay in the default banned list now that it is documented, move to
    a domain extension list, or gain an “earned when descriptive” carve-out?
    Its presence means the bibliography will always carry ~14 expected hits.
-4. Counter-examples in quotes vs.
+3. Counter-examples in quotes vs.
    inline code: is the typography change acceptable to make the docs lint-clean?
    (pp-5m0m)
-5. When does `pp20v1` freeze?
+4. When does `pp20v1` freeze?
    The rubric says it is refined in place; consumers pinning eval behavior (and the new
    schema sync test) would benefit from a stated freeze trigger, even a rough one.
 
@@ -345,9 +343,10 @@ scope:
 
 Filed this review: pp-jcou (P1, release), pp-ft60 (P2, lockfile), pp-hdc0 (P2, tag
 metric), pp-fx6c (P2, four-pass mapping), pp-wuap (P2, baselines), pp-j3ot (P3, rule
-numbering), pp-2wdi (P3, frontmatter), pp-5m0m (P3, mention-vs-use), pp-jhs9 (P3,
-CONTRIBUTING/SECURITY), pp-abb7 (P3, a11y), pp-186c (P3, self-lint CI), pp-t733 (P3,
-README map). Pre-existing beads referenced: pp-aim6, pp-5zgc.
+numbering), pp-2wdi (P3, frontmatter — closed on this branch), pp-5m0m (P3,
+mention-vs-use), pp-jhs9 (P3, CONTRIBUTING/SECURITY), pp-abb7 (P3, a11y), pp-186c (P3,
+self-lint CI), pp-t733 (P3, README map).
+Pre-existing beads referenced: pp-aim6, pp-5zgc.
 
 <!-- This document follows common-doc-guidelines.md.
 See github.com/jlevy/practical-prose and review guidelines before editing.

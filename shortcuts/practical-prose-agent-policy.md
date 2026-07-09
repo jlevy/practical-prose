@@ -1,6 +1,8 @@
 ---
 title: Practical Prose Agent Policy
 description: One-page generation-time priority list for agents drafting practical prose; the operational companion to the pre-publish quick-checklist.
+date: 2026-05-12
+status: active
 category: documentation
 author: Joshua Levy (github.com/jlevy) with agent assistance
 ---

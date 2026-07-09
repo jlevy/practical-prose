@@ -1,6 +1,8 @@
 ---
 title: Copy Edit Document
 description: Language-and-formatting edit pass covering the common documentation substrate plus the Expression and Form dimensions (E1-E3, F1-F3); track and fix all issues with available task tooling
+date: 2026-05-12
+status: active
 category: documentation
 author: Joshua Levy (github.com/jlevy) with agent assistance
 ---

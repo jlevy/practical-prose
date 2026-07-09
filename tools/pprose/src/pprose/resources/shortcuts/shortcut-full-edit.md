@@ -1,6 +1,8 @@
 ---
 title: Full Edit Document
 description: Deep editorial pass across all 20 Practical Prose dimensions; apply the safe fixes, flag substantive issues, and write an editorial-review side document
+date: 2026-05-23
+status: active
 category: documentation
 author: Joshua Levy (github.com/jlevy) with agent assistance
 ---

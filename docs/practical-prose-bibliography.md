@@ -1,3 +1,9 @@
+---
+title: Practical Prose Bibliography
+description: Curated bibliography of notable works on practical writing, organized by tradition, with full citations and stable URLs; the intellectual basis for the principles and guidelines.
+date: 2026-05-12
+status: active
+---
 # Practical Prose Bibliography
 
 Version: v0.1 (last update 2026-06-12)\

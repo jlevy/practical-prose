@@ -99,6 +99,12 @@ reports themselves), the following frontmatter fields help agents apply the guid
 consistently. Required fields are minimum viable; recommended fields make the document
 agent-evaluable; optional fields apply when their condition is relevant.
 
+This repo’s own reference docs, shortcuts, and runbooks carry at least the required four
+fields. Repo-root operational files (README.md, TODO.md, SUPPLY-CHAIN-SECURITY.md,
+AGENTS.md) are exempt: GitHub renders README frontmatter as a literal table, and
+AGENTS.md is partly generated; those files carry a version byline or rely on git
+metadata instead.
+
 | Field | Status | Type | Meaning |
 | --- | --- | --- | --- |
 | `title` | Required | string | Display title. |
