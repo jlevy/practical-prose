@@ -5,7 +5,23 @@ The format loosely follows [Keep a Changelog](https://keepachangelog.com/), and 
 project aims to follow [semantic versioning](https://semver.org/). Versions are produced
 from git tags by dynamic versioning (see [docs/publishing.md](docs/publishing.md)).
 
-## [Unreleased]
+## [0.2.0] - 2026-07-09
+
+### Fixed
+
+- **`pprose score --render-html` worked again.** The composition path still called the
+  folder-mode API removed from `pprose render` in v0.1.0, so the flag crashed on every
+  invocation before rendering anything.
+  It now renders the single-file page, and a regression test covers the score→render
+  composition.
+- **`rubric_schema.yaml` re-aligned with the v0.2 guidelines.** Five dimension questions
+  were stale (notably Factuality’s corroboration-driven wording and Verifiability’s “or
+  explicit assumptions”), and G1 was missing rule 7 (“Links serve readers”), so a scorer
+  citing G1.7 failed alignment validation.
+  A new sync test pins the schema’s questions and rule counts to the bundled guidelines
+  so the two cannot drift silently.
+- Human metrics output labels the page estimate “wpp” (words per page), matching the
+  compare and render surfaces; it previously said “wpm”.
 
 ### Changed
 
@@ -49,6 +65,17 @@ from git tags by dynamic versioning (see [docs/publishing.md](docs/publishing.md
   explicit assumptions).
   The rubric id `pp20v1` is unchanged, and the guidelines / rubric / README dimension
   table stays cell-for-cell aligned.
+- **Bundled docs: 2026-07 review pass.** All bundled reference docs and shortcuts now
+  carry the recommended-schema required frontmatter (`title`, `description`, `date`,
+  `status`); the metrics doc describes today’s `pprose metrics` capabilities exactly
+  (including the `dominant` banned-register extension and the ALL-CAPS-only bracket-tag
+  matcher); the rubric’s “Notes” section is renamed “Limits of Scores”; the bibliography
+  adds Rallapalli et al.
+  (2026) and Xia, Stańczak, and Roth (EACL 2026) and corrects the write-good author;
+  American-spelling normalization per F2.1.
+- **Packaging and CI hygiene.** Removed the expired `[tool.uv] exclude-newer-package`
+  flexdoc bridge (it also never parsed: uv requires a full RFC 3339 timestamp); CI and
+  publish workflows now install strictly from the committed lockfile via `UV_FROZEN`.
 
 ## [0.1.1] - 2026-06-11
 
