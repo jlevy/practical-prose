@@ -680,3 +680,7 @@ Blocked on chopdiff `0.3.1` being released.
   — possible future splitter
 - [pragmatic_segmenter (Ruby)](https://github.com/diasks2/pragmatic_segmenter) —
   algorithm behind pysbd
+
+<!-- This document follows common-doc-guidelines.md.
+See github.com/jlevy/practical-prose and review guidelines before editing.
+-->

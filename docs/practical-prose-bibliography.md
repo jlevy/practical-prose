@@ -3,8 +3,8 @@
 Version: v0.1 (last update 2026-06-12)\
 Joshua Levy (github.com/jlevy), assembled with agent assistance
 
-While not exhaustive, this curated bibliography of notable past and present works on
-practical writing covers many notable works in English.
+While not exhaustive, this curated bibliography covers many notable past and present
+works on practical writing in English.
 
 Within each section, entries are ordered roughly by publication date.
 Entries carry a bibliographic note with author, title, publisher, year, and a stable URL
@@ -56,8 +56,8 @@ It should be supplemented when working in:
 
 ## Essential Modern Works
 
-A few works have disproportionately shaped modern thinking on modern, practical English
-writing. We list these up front for those looking for a shortlist.
+A few works have disproportionately shaped modern thinking on practical English writing.
+We list these up front for those looking for a shortlist.
 (Each appears again in its thematic section below with full citation.)
 
 1. **Orwell, “Politics and the English Language”** (1946). The founding modern
@@ -133,7 +133,7 @@ writing. We list these up front for those looking for a shortlist.
   Part 2 (ISO 24495-2:2025) covers legal writing; subsequent parts of the ISO 24495
   family are in development or publication workflow as of 2026: Part 3 (science
   writing), Part 4 (organizational implementation, ISO/DIS), and Part 5 (information
-  design, ISO/WD). Consult the ISO catalogue for current status.
+  design, ISO/WD). Consult the ISO catalog for current status.
 
 ## Reader Cognition and Sentence Craft
 
@@ -327,7 +327,7 @@ navigate, link, and update reliably.
   language, and use of AI tools alongside the traditional citation, mechanics, and
   manuscript-preparation content.
 - **EQUATOR Network**[^equator]. The umbrella initiative ("Enhancing the QUAlity and
-  Transparency Of health Research") cataloguing reporting guidelines for the health
+  Transparency Of health Research") cataloging reporting guidelines for the health
   sciences. Maintains a searchable library of 600+ guidelines (CONSORT, PRISMA, STROBE,
   ARRIVE, CARE, SPIRIT, and others) and pairs each with checklists, flow diagrams, and
   examples.
@@ -492,6 +492,20 @@ this body of work into a checkable list.
   (2024)[^juzek-ward-delve]. Tests and rules out architecture, algorithm, and
   training-data explanations, locating the cause of LLM lexical tells in RLHF feedback
   rather than the training corpus.
+- **Rallapalli et al., “Interpretable Stylistic Variation in Human and LLM Writing
+  Across Genres, Models, and Decoding Strategies”** (2026)[^rallapalli-stylistic].
+  Syntactic characterization of LLM register: 67 Biber linguistic features measured
+  across 11 LLMs, 8 genres, and 4 decoding strategies.
+  Finds nominalizations, that-clauses as subject, and past participial clauses among the
+  most LLM-overused features, and that genre effects overwhelm author-type effects, so a
+  lexical tell list calibrated on one corpus mis-fires elsewhere.
+- **Xia, Stańczak, and Roth, “Explaining Generalization of AI-Generated Text Detectors
+  Through Linguistic Analysis”** (EACL 2026)[^xia-detector-generalization]. Benchmarks
+  detector generalization across 6 prompting strategies, 7 LLMs, and 4 domains; finds
+  passive-voice ratio and short-sentence ratio the most reliably cross-domain features.
+  With Rallapalli et al., the empirical case that structural patterns outlast vocabulary
+  lists (the split [ai-prose-corrections.md](ai-prose-corrections.md) is organized
+  around).
 
 **Style criticism and conceptual frames.**
 
@@ -1038,6 +1052,17 @@ practitioner rule sheets that would feed such a pack.
     arXiv preprint arXiv:2412.11385, December 16, 2024.
     <https://arxiv.org/abs/2412.11385>.
 
+[^rallapalli-stylistic]: Rallapalli, Swati, Shannon Gallagher, Ronald Yurko, Tyler
+    Brooks, Chuck Loughin, Michele Sezgin, and Violet Turri.
+    “Interpretable Stylistic Variation in Human and LLM Writing Across Genres, Models,
+    and Decoding Strategies.”
+    arXiv preprint arXiv:2604.14111, April 15, 2026. <https://arxiv.org/abs/2604.14111>.
+
+[^xia-detector-generalization]: Xia, Yuxi, Kinga Stańczak, and Benjamin Roth.
+    “Explaining Generalization of AI-Generated Text Detectors Through Linguistic
+    Analysis.” EACL 2026. arXiv preprint arXiv:2601.07974, January 12, 2026.
+    <https://arxiv.org/abs/2601.07974>.
+
 [^chiang-blurry-jpeg]: Chiang, Ted. “ChatGPT Is a Blurry JPEG of the Web.”
     *The New Yorker*, February 9, 2023.
     <https://www.newyorker.com/tech/annals-of-technology/chatgpt-is-a-blurry-jpeg-of-the-web>.
@@ -1110,7 +1135,7 @@ practitioner rule sheets that would feed such a pack.
 [^vale]: Errata AI. *Vale*. GitHub.
     MIT. <https://github.com/errata-ai/vale>.
 
-[^write-good]: Ford, Brett. *write-good*. GitHub.
+[^write-good]: Ford, Brian. *write-good*. GitHub.
     MIT. <https://github.com/btford/write-good>.
 
 [^alex]: *alex: Catch insensitive, inconsiderate writing*. GitHub.

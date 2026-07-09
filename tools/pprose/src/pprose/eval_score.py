@@ -901,12 +901,6 @@ def main(argv: list[str] | None = None) -> int:
         default="interactive",
         help="Page-layout variant for --render-html (default: interactive).",
     )
-    parser.add_argument(
-        "--render-format",
-        choices=("single", "folder"),
-        default="single",
-        help="Output format for --render-html (default: single).",
-    )
     args = parser.parse_args(argv)
 
     if args.list_models:
@@ -1021,7 +1015,6 @@ def main(argv: list[str] | None = None) -> int:
 def _render_after_score(eval_md_path: Path, args) -> None:
     """Compose `pprose score` + `pprose render` — render the just-written report."""
     # Imported lazily so importing eval_score doesn't import Jinja2.
-    from pprose.render_html.inliner import write_folder_assets
     from pprose.render_html.renderer import RenderOpts, render_eval_report
 
     report = EvalReport.from_eval_md(eval_md_path)
@@ -1029,14 +1022,11 @@ def _render_after_score(eval_md_path: Path, args) -> None:
         page_size=args.render_page_size,
         variant=args.render_variant,
         pprose_version=_pprose_version(),
-        folder_mode=(args.render_format == "folder"),
     )
     html = render_eval_report(report, opts)
     out_html = _render_output_path(eval_md_path)
     out_html.parent.mkdir(parents=True, exist_ok=True)
     out_html.write_text(html, encoding="utf-8")
-    if opts.folder_mode:
-        write_folder_assets(out_html.parent)
     print(f"OK: wrote {out_html}", file=sys.stderr)
 
 

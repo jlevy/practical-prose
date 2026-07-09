@@ -375,7 +375,7 @@ def format_human(m: Metrics) -> str:
 Size:
   Words           {m.words:>8,}      Sentences       {m.sentences:>8,}
   Paragraphs      {m.paragraphs:>8,}      Lines           {m.lines:>8,}
-  Pages (275 wpm) {m.pages:>8.1f}
+  Pages (275 wpp) {m.pages:>8.1f}
 
 Headings:
   h1  {h["h1"]:>4}    h2  {h["h2"]:>4}    h3  {h["h3"]:>4}

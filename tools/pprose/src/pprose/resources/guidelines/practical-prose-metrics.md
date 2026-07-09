@@ -34,8 +34,8 @@ and **manual** denotes a human reviewer.
 | 1 | Suitability | Presence of explicit `purpose`, `audience`, `scope` fields (frontmatter); presence of recommendation/findings/milestones section by doc type | Can a target reader say what the doc is for after 30 seconds? | frontmatter check; manual skim test |
 | 2 | Scope | Presence of `scope` and optionally `out_of_scope` fields; count of headings outside declared scope | Does the body honor the declared boundary? | frontmatter check; manual |
 | 3 | Breadth | Count of relevant case classes addressed (out of a domain-specific expected set) | Are the obvious affected areas covered? | manual; SME |
-| 4 | Depth | Count of vague magnitude words (“rapid,” “large”) not paired with quantification; count of endpoints cited where a series exists | Is section depth proportional to section importance? | banned-register lint (`pprose metrics`); manual |
-| 5 | Clarity | Banned-register hits (count and examples; full common-doc-guidelines §4.2 list); pedantic-marker hits (canonicality declarations, word-choice justifications, reading-order instructions); vague-word hits; sentence length distribution; mean and p95 sentence length | Does prose read cleanly aloud; is the document free of self-referential pedantry? | `pprose metrics`; manual |
+| 4 | Depth | Count of vague magnitude words (“rapid,” “large”) not paired with quantification; count of endpoints cited where a series exists | Is section depth proportional to section importance? | manual; LLM-assist |
+| 5 | Clarity | Banned-register hits (count and examples; full common-doc-guidelines §4.2 list); pedantic-marker hits (canonicality declarations, word-choice justifications, reading-order instructions); vague-word hits; sentence length distribution; mean and p95 sentence length | Does prose read cleanly aloud; is the document free of self-referential pedantry? | `pprose metrics` (banned-register and pedantic-marker hits); manual for the rest |
 | 6 | Coherence | Paragraph length distribution; presence of stub transitions (“As shown above” without recap) | Does each paragraph have one job; do transitions bridge? | manual; LLM-assist |
 | 7 | Concision | Word count vs target by doc type; repeated n-gram count; low-information paragraph flag; replacement-history phrase hits (regex set: “previously named,” “formerly,” “under the new layout,” “removed,” etc.) | Does removing a section lose information; is replacement history absent outside history-genre exceptions? | `pprose metrics` words/paragraphs; manual cut test |
 | 8 | Organization | Heading-level skip count (h1→h3 without h2); generic-heading hits (“Overview,” “Background,” “Notes,” “Details”); table count and column densities; figure-caption presence; link-target stability (no commit-less URLs to mutable refs) | Are sections sequenced for the task; do tables earn their tabular shape; do headings cleave to subject contours? | `pprose metrics` headings/tables; manual |
@@ -55,7 +55,9 @@ and **manual** denotes a human reviewer.
 Most rows have a deterministic component and a judgment component.
 The deterministic component runs in CI and catches regressions cheaply; the judgment
 component runs at review time and catches substantive failures the lint will never
-notice.
+notice. Where a row lists several quantitative metrics, `pprose metrics` computes only
+the subset named in the *Tooling Map* below; the rest are review-time checks (some are
+tracked for the planned `pprose lint`).
 
 **Note on J2 Fairness.** The opposing-vs-supporting paragraph count and depth-ratio
 metrics are review flags, not measures of fairness.
@@ -69,9 +71,12 @@ fair.
 
 - `pprose metrics`: the deterministic metrics command.
   Computes headings by depth, link counts (external/internal, by markdown form),
-  footnote references and definitions, bracket-tag counts and examples, bare URLs,
-  tables, code blocks, banned-register hits (Clarity Rule 4 by default; overridable),
-  word/sentence/paragraph/line counts, and page estimate.
+  footnote references and definitions, bracket-tag counts and examples (ALL-CAPS forms
+  like `[VERIFIED]`; lowercase rung tags and colon-suffixed forms like `[ASSUMING: ...]`
+  are not counted), bare URLs, tables, code blocks, banned-register hits (the
+  common-doc-guidelines §4.2 list plus `dominant`, an advocacy-register extension;
+  override the whole list with `--banned-words-file`), word/sentence/paragraph/line
+  counts, and page estimate.
 - `pprose score`: LLM-based rubric scorer.
 - `pprose report`: creates, validates, and recomputes eval reports (combining metrics
   and scores).

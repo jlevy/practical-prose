@@ -233,9 +233,3 @@ testpaths = [
 ]
 norecursedirs = []
 filterwarnings = []
-
-[tool.uv]
-# First-party cool-off exemption (see SUPPLY-CHAIN-SECURITY.md): admit flexdoc past the
-# contributor's global `exclude-newer` cutoff. Per-package + repo-scoped — it never
-# relaxes the cool-off for any other dependency. Remove once 0.2.0 ages out of the window.
-exclude-newer-package = { flexdoc = "2026-06-15" }

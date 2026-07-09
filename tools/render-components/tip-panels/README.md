@@ -42,3 +42,7 @@ off `.is-empty` to hide chrome when there’s nothing to show.
 
 CSS + JS extracted verbatim from
 [tools/explorations/visual-design/dimension-visualizations.html](../../explorations/visual-design/dimension-visualizations.html).
+
+<!-- This document follows common-doc-guidelines.md.
+See github.com/jlevy/practical-prose and review guidelines before editing.
+-->

@@ -443,3 +443,7 @@ Our equivalent: a small `_load_env_files()` helper that walks `cwd` and home for
 - The metaproc `runpool` subsystem — surveyed; rejected as overkill for this use case
   (process-pool orchestration vs.
   async I/O).
+
+<!-- This document follows common-doc-guidelines.md.
+See github.com/jlevy/practical-prose and review guidelines before editing.
+-->

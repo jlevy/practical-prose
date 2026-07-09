@@ -15,7 +15,7 @@ Closes pp-bcrw. See [Resolved in flexdoc 0.2.0](#resolved-in-flexdoc-020) below.
 
 > **Relationship to pp-3hg4.** This spec is the focused, do-it-now subset of the larger
 > structural-metrics epic
-> [plan-2026-05-25-structural-document-metrics.md](plan-2026-05-25-structural-document-metrics.md)
+> [plan-2026-05-25-structural-document-metrics.md](../active/plan-2026-05-25-structural-document-metrics.md)
 > (epic `pp-3hg4`). That epic is a **schema rewrite**: new `*_count` field names, a
 > heading-outline artifact, prose-only `sentence_count` / `paragraph_count` semantics,
 > distribution percentiles, and matching `eval_report.py` / `eval_compare.py` changes.
@@ -120,7 +120,7 @@ percentiles. Those stay in pp-3hg4.
   They read the current field names and this cleanup does not rename anything, so they
   are untouched.
 - The planned two-phase linter
-  ([plan-2026-06-09-ai-slop-mitigations-and-two-phase-linting.md](plan-2026-06-09-ai-slop-mitigations-and-two-phase-linting.md)).
+  ([plan-2026-06-09-ai-slop-mitigations-and-two-phase-linting.md](../active/plan-2026-06-09-ai-slop-mitigations-and-two-phase-linting.md)).
   flexdoc’s exact offsets enable a better linter, but building it is separate work.
 - Any new CLI flag, output format, or human-readable layout change.
 - Resolving the link-form gap by adopting coarser link counts.
@@ -433,7 +433,7 @@ the schema rewrite no longer has to also remove regexes.
 - `eval_report.py` density-math and `eval_compare.py` column changes — pp-3hg4 (this
   cleanup renames nothing, so they are untouched).
 - The planned two-phase linter — its own spec
-  ([plan-2026-06-09-ai-slop-mitigations-and-two-phase-linting.md](plan-2026-06-09-ai-slop-mitigations-and-two-phase-linting.md)).
+  ([plan-2026-06-09-ai-slop-mitigations-and-two-phase-linting.md](../active/plan-2026-06-09-ai-slop-mitigations-and-two-phase-linting.md)).
 - Surfacing `code_info` / `table_info` / `list_info` substructure as new metric fields —
   the typed objects are available, but exposing them is a pp-3hg4 addition.
 - Adopting a coarse single `link_count` — deferred to the flexdoc#5 decision.
@@ -443,7 +443,7 @@ the schema rewrite no longer has to also remove regexes.
 - [tools/pprose/src/pprose/metrics.py](../../../../tools/pprose/src/pprose/metrics.py)
 - [tools/pprose/tests/test_metrics.py](../../../../tools/pprose/tests/test_metrics.py) —
   `TestB14_ReproducibilityRegression` and the re-bless procedure.
-- [plan-2026-05-25-structural-document-metrics.md](plan-2026-05-25-structural-document-metrics.md)
+- [plan-2026-05-25-structural-document-metrics.md](../active/plan-2026-05-25-structural-document-metrics.md)
   — the broader pp-3hg4 schema-rewrite epic this cleanup feeds.
 - [chopdiff-upstream-requests.md](../../chopdiff-upstream-requests.md) — superseded
   per-capability history; flexdoc 0.1.0 satisfies all five chopdiff requests.

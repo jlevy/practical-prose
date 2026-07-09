@@ -7,7 +7,7 @@ author: Joshua Levy (github.com/jlevy) with agent assistance
 # Copy-Edit Shortcut
 
 A language-and-formatting pass: the common documentation substrate plus the Expression
-dimensions of the Practical Prose guidelines.
+and Form dimensions of the Practical Prose guidelines.
 It is a superset of common-edit and stops short of the substantive dimensions (use the
 full-edit playbook for those).
 

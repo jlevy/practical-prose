@@ -334,8 +334,9 @@ wheel, so an installed skill works in any repo with no other files present.
 [`simple-modern-uv`](https://github.com/jlevy/simple-modern-uv)). The distribution and
 console-script entry point are both `pprose`:
 
-- `pprose metrics`: deterministic metrics over a document (banned-register hits,
-  vague-word counts, link validity, frontmatter presence, etc.).
+- `pprose metrics`: deterministic metrics over a document (banned-register and other
+  editorial-lint hits; heading, link, footnote, table, and code-block counts; word and
+  sentence counts and a page estimate).
 - `pprose score`: score a document against the rubric via Pydantic AI (Anthropic,
   OpenAI, or Google; `--model` required); Anthropic runs reuse a cached
   rubric+guidelines block, and `--batch` runs N artifacts in parallel.

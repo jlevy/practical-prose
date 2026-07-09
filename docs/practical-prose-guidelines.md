@@ -886,9 +886,9 @@ the audit.
 7. **Calibrated uncertainty satisfies Factuality; uncalibrated certainty fails it.**
    When a claim cannot be corroborated from available evidence, the document
    acknowledges this explicitly and states the basis on which the claim is made anyway.
-   A speculative claim labelled speculative, with its basis stated, is factually
-   correct. An unhedged claim made as if it were settled, where the evidence does not
-   settle it, is a Factuality defect, even if the claim happens to be true.
+   A speculative claim labeled speculative, with its basis stated, is factually correct.
+   An unhedged claim made as if it were settled, where the evidence does not settle it,
+   is a Factuality defect, even if the claim happens to be true.
 
 ### G3. Relevance
 
@@ -1085,9 +1085,9 @@ interpretive frame that a competent reader would dispute.
    precision than the underlying calibration supports.
    Ranges are more honest than point estimates without anchors.
 
-5. **Confirmation conditions labelled as falsification.** “If X happens, the claim
-   holds” is a confirmation condition; the falsification condition is “if not-X happens,
-   the claim fails.” The two are not interchangeable.
+5. **Confirmation conditions labeled as falsification.** “If X happens, the claim holds”
+   is a confirmation condition; the falsification condition is “if not-X happens, the
+   claim fails.” The two are not interchangeable.
 
 ## Pre-Publish Self-Audit
 

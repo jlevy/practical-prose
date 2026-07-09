@@ -28,8 +28,9 @@ uv tool install pprose
 ```bash
 pprose metrics doc.md                              # deterministic metrics for a document
 pprose report from-metrics doc.md --out doc.eval.md  # build an eval report stub
-pprose score doc.eval.md                           # qualitative rubric scoring (Anthropic SDK)
+pprose score doc.eval.md --model opus              # LLM rubric scoring (Anthropic, OpenAI, or Google)
 pprose compare a.eval.md b.eval.md                 # compare N eval reports
+pprose render doc.eval.md                          # render an eval report as static HTML
 
 pprose about                                       # the project narrative (bundled README)
 pprose skill                                       # workflow skills overview + routing pointers
@@ -68,7 +69,8 @@ only after you upgrade pprose and re-run install (`uvx pprose@latest install`, o
 `uv tool install --upgrade pprose && pprose install`); re-running refreshes both the
 artifacts and the baked version pin.
 
-`score` requires `ANTHROPIC_API_KEY`; the package auto-loads `.env` and `.env.local`
+`score` requires the API key for the chosen provider (`ANTHROPIC_API_KEY`,
+`OPENAI_API_KEY`, or `GOOGLE_API_KEY`); the package auto-loads `.env` and `.env.local`
 from the current directory hierarchy and `$HOME`.
 
 ## Project Docs

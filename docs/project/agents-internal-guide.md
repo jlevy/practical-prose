@@ -74,7 +74,7 @@ in any repo without this source tree.
 
 **Setup**: `pprose install` runs in one of two scopes:
 
-- `--project` (default when cwd is inside a git repo) writes the five Practical Prose
+- `--project` (default when cwd is inside a git repo) writes the six Practical Prose
   skills into `<repo>/.agents/skills/` (Codex, Gemini CLI, pi) and
   `<repo>/.claude/skills/` (Claude Code), plus a marker-bounded `pprose` block in
   `<repo>/AGENTS.md`.
@@ -99,7 +99,8 @@ cd tools/pprose
 uv run pprose <command> ...
 ```
 
-`score` requires `ANTHROPIC_API_KEY`; the package auto-loads `.env` and `.env.local`
+`score` requires the API key for the chosen provider (`ANTHROPIC_API_KEY`,
+`OPENAI_API_KEY`, or `GOOGLE_API_KEY`); the package auto-loads `.env` and `.env.local`
 from the current directory hierarchy and `$HOME`.
 
 ## Visual Design

@@ -49,19 +49,20 @@ This is a standing exemption, recorded here rather than re-approved per bump.
   `uvx --exclude-newer-package 'flowmark-rs=2026-06-02'`, which overrides the cool-off
   for this one package only and does not touch global uv config.
   Reviewed-by: Joshua Levy.
-- **`flexdoc==0.1.0`**: first-party (see above).
-  Published 2026-06-12; adopted 2026-06-13 while inside the 14-day window.
-  flexdoc is the document-layer subset extracted from `chopdiff` (`TextDoc` →
-  `FlexDoc`); pprose now depends on it directly and **drops `chopdiff`**, since
-  metrics.py used only the document model, not chopdiff’s diff/windowed-transform
-  machinery. Pinned exact in [tools/pprose/pyproject.toml](tools/pprose/pyproject.toml).
-  To let a contributor’s global uv `exclude-newer` admit it during resolution, the same
-  file carries a per-package, repo-scoped
-  `[tool.uv] exclude-newer-package = { flexdoc = … }`; it caps only flexdoc and never
-  relaxes the cool-off for any other dependency.
-  CI has no global cutoff and installs it from the committed `uv.lock`. Remove the
-  `exclude-newer-package` entry once 0.1.0 ages out of the window.
-  Reviewed-by: Joshua Levy.
+- **`flexdoc==0.2.0`**: first-party (see above).
+  Published 2026-06-14 (UTC); adopted the same day in PR #30, inside the 14-day window
+  (0.1.0 was adopted the same way on 2026-06-13). flexdoc is the document-layer subset
+  extracted from `chopdiff` (`TextDoc` → `FlexDoc`); pprose depends on it directly and
+  not on `chopdiff`, since metrics.py uses only the document model, not chopdiff’s
+  diff/windowed-transform machinery.
+  Pinned exact in [tools/pprose/pyproject.toml](tools/pprose/pyproject.toml).
+  The in-window `[tool.uv] exclude-newer-package` bridge was removed once 0.2.0 aged out
+  of the window (2026-06-28). For any future in-window first-party adoption, note the
+  value must be a full RFC 3339 timestamp (`{ pkg = "2026-06-15T00:00:00Z" }`): uv (as
+  of 0.8.17) rejects date-only values in `pyproject.toml` with only a warning and then
+  ignores the whole `[tool.uv]` table, so the bridge silently never applies.
+  CI has no global cutoff and installs from the committed `uv.lock`. Reviewed-by: Joshua
+  Levy.
 
 ## Known Gap
 

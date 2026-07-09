@@ -266,3 +266,31 @@ def test_print_css_palette_tokens_match_generated_light_theme() -> None:
         "print.css palette drifted from the generated light theme; regenerate the "
         f"design system and resync print.css: {mismatches}"
     )
+
+
+# ─── `pprose score --render-html` composition path ───────────────────────────
+
+
+def test_render_after_score_writes_html(tmp_path: Path) -> None:
+    """The score→render composition renders a written report as a single HTML file.
+
+    Regression guard: the v0.1.0 removal of `render --format folder` (pp-sd3z)
+    left `_render_after_score` calling the removed folder-mode API, so
+    `pprose score --render-html` crashed before rendering anything.
+    """
+    import argparse
+
+    from pprose.eval_score import _render_after_score
+
+    eval_md = tmp_path / "rev1-net.eval.md"
+    eval_md.write_text(
+        (FIXTURES / "rev1-net.eval.md").read_text(encoding="utf-8"), encoding="utf-8"
+    )
+    args = argparse.Namespace(render_page_size="letter", render_variant="interactive")
+
+    _render_after_score(eval_md, args)
+
+    out_html = tmp_path / "rev1-net.eval.html"
+    assert out_html.is_file()
+    text = out_html.read_text(encoding="utf-8")
+    assert "<!doctype html>" in text.lower()

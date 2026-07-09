@@ -892,7 +892,7 @@ penalize the document for them.
   anything that reads as a fact but is detached from a source or supporting logic (a
   fabricated statistic, an invented specific) counts here even when no source is cited.
   Multiple claims that the reviewer cannot corroborate or refute despite reasonable
-  effort, with no acknowledgement in the document that they are uncorroborated.
+  effort, with no acknowledgment in the document that they are uncorroborated.
 
 - **2:** Several claims overstate, paraphrase past the source, or cannot be corroborated
   at the asserted strength.
@@ -964,7 +964,7 @@ sections rather than words and paragraphs.
 - **4:** Score-5 mostly satisfied with one or two minor slips: a few sources or notes
   are a bit of a stretch (cited for completeness, or surfacing as digressions) but
   remain loosely relevant.
-  Background sections, when present, are signalled as background.
+  Background sections, when present, are signaled as background.
 
 - **5:** Every cited source and every line of reasoning is relevant to the document’s
   purpose; nothing can be removed without lowering the quality of the work.
@@ -1021,7 +1021,7 @@ and the document says why) is not.
   in numbers and the case against is anchored in scenarios (or vice versa) without
   explanation.
 - **3:** Multiple fairness failures: notable depth asymmetry between opposing positions
-  with no explanation, counterintuitive findings skewed without acknowledgement,
+  with no explanation, counterintuitive findings skewed without acknowledgment,
   falsification conditions absent or confused with confirmation conditions, or a risk
   inventory underweighted on multiple classes.
 - **4:** Score-5 mostly satisfied with one or two minor slips: opposing-case depth
@@ -1050,10 +1050,10 @@ Robustness asks the further question: granting the evidence and the framing, wou
   The document makes no interpretive judgments (a pure reference, a literal log).
 - **ERR:** Cannot assess (process failure; re-run the eval).
   Content missing.
-- **1:** Single interpretive lens applied without acknowledgement; alternative readings
+- **1:** Single interpretive lens applied without acknowledgment; alternative readings
   not considered; key claims presented as if the framing were obvious.
 - **2:** Alternative interpretation noted in passing but not engaged.
-  Claim would flip under a reasonable alternative lens; no acknowledgement.
+  Claim would flip under a reasonable alternative lens; no acknowledgment.
 - **3:** Multiple interpretive lenses surfaced but tested unevenly.
   Most-threatening alternative not engaged at the same depth as the chosen reading.
 - **4:** Score-5 mostly satisfied with one or two minor slips: most-threatening
@@ -1140,7 +1140,7 @@ Cross-references to the guidelines:
 These are diagnostic prompts for evaluators, not new rules for writers; the rules they
 invoke live in the guidelines.
 
-## Notes
+## Limits of Scores
 
 - **Metrics are evidence, not quality.** Quantitative metrics and rubric scores can
   reveal risks, but no metric is a substitute for reader value, factual support, and

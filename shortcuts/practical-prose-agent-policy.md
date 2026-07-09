@@ -60,7 +60,7 @@ The order matters. When two priorities conflict, the earlier one wins.
    more citations, more caveats, more structure, more words does not make a document
    better; it makes it more compliant.
    Cut anything that advances no purpose.
-   (E3 Concision; rubric §Notes “metrics are evidence, not quality”.)
+   (E3 Concision; rubric §Limits of Scores “metrics are evidence, not quality”.)
 
 7. **Apply fairness and robustness only when the task involves disputed or interpretive
    claims.** Skipping these on a reference doc or status note is not a failure; forcing
