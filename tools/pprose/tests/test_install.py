@@ -484,5 +484,5 @@ def test_discovery_skills_match_committed_repo_root():
         assert committed.is_file(), f"discovery copy missing: {committed}"
         assert committed.read_text(encoding="utf-8") == rendered, (
             f"discovery copy drift: {committed.relative_to(repo_root)}; "
-            f"run `uv run python devtools/sync_resources.py`"
+            f"run `make generate` from the repository root"
         )

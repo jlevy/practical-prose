@@ -23,7 +23,7 @@ rewrites every Markdown link by where its target lives:
 
 - target is another bundled resource → the `pprose` command that serves it
   (e.g. `pprose guidelines practical-prose-rubric`);
-- target is a bundled category directory → the `--list` form of its command;
+- target is a bundled category directory → the bare command that lists that category;
 - target is repo content that is *not* bundled → an absolute GitHub URL;
 - external URLs and same-document `#anchors` → left unchanged.
 
@@ -31,8 +31,8 @@ Run this whenever the canonical docs or the in-package skill bodies change.
 `tests/test_resources_sync.py` fails if either drifts.
 
 Usage:
-  uv run python devtools/sync_resources.py            # sync everything
-  uv run python devtools/sync_resources.py --check     # exit 1 if out of sync
+  make generate        # from the repository root: sync everything
+  make generate-check  # from the repository root: exit 1 if out of sync
 """
 
 from __future__ import annotations
@@ -100,7 +100,7 @@ def _rewrite_links(text: str, src: Path) -> str:
                     return f"`{command}`"
                 return f"{label} (`{command}`)"
             if resolved.is_dir() and rel.as_posix() in DIR_TO_COMMAND:
-                return f"`{DIR_TO_COMMAND[rel.as_posix()]} --list`"
+                return f"`{DIR_TO_COMMAND[rel.as_posix()]}`"
         if not resolved.exists():
             return m.group(0)
         base = GITHUB_TREE if resolved.is_dir() else GITHUB_BLOB
@@ -211,7 +211,7 @@ def main(argv: list[str] | None = None) -> int:
         if drift:
             print(
                 "resources/discovery skills out of sync; "
-                "run `uv run python devtools/sync_resources.py`:"
+                "run `make generate` from the repository root:"
             )
             for d in drift:
                 print(f"  {d}")

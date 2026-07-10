@@ -43,3 +43,7 @@ The `mountSurfaceToggle` half stays in the workbench’s local `lib/` since the
 `pprose render` surface only uses the white surface scheme.
 
 CSS lifted from the explorations file’s `<style>` block.
+
+<!-- This document follows common-doc-guidelines.md.
+See github.com/jlevy/practical-prose and review guidelines before editing.
+-->

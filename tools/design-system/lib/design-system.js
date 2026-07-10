@@ -12,7 +12,7 @@
  * when adding fields.
  *
  * Source of truth: ../design-system.yaml
- * Regenerate the _generated/* files with: uv run --script tools/design-system/generate.py
+ * Regenerate the _generated/* files with: make generate
  */
 
 import { z } from "https://esm.sh/zod@3.23.8";

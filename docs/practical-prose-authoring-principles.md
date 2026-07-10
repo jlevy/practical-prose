@@ -1,6 +1,8 @@
 ---
 title: Practical Prose Authoring Principles
 description: Eight short rules an agent or author can apply when generating, summarizing, or rewriting practical prose
+date: 2026-06-02
+status: active
 author: Joshua Levy (github.com/jlevy) with LLM assistance
 ---
 # Practical Prose Authoring Principles

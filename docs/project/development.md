@@ -3,7 +3,7 @@
 ## One-Time Setup
 
 ```bash
-make install         # uv sync + npm install
+make install         # locked uv sync + npm ci
 make hooks-install   # installs lefthook git pre-commit + pre-push hooks
 ```
 
@@ -30,15 +30,17 @@ make default      # install + format + generate + lint + test (the daily loop)
 | JS / CSS / HTML / JSON | `biome format` | `biome check` | — |
 | Markdown | `flowmark-rs` | — | — |
 
-Versions are pinned exactly in `tools/pprose/pyproject.toml` and `tools/pprose/uv.lock`
-(Python), `package.json` and `package-lock.json` (JS), the PEP 723 header of
-`tools/design-system/generate.py` (the design-system generator’s two deps), and the
-`FLOWMARK` variable at the top of the `Makefile` (the Markdown formatter fetched via
-`uvx`). `make install` uses `npm ci` so the JS toolchain comes from the lockfile, not a
-fresh resolve. All layers follow the
+Runtime and development versions resolve through `tools/pprose/uv.lock`; isolated build
+tools resolve through the hashed `tools/pprose/build-constraints.txt`; JS tools resolve
+through `package-lock.json`; and the `FLOWMARK` variable at the top of the `Makefile`
+exact-pins the Markdown formatter fetched via `uvx`. Routine Makefile commands ignore
+personal uv configuration and fail on lock drift, while `make install` uses `npm ci` for
+the JS toolchain. All layers follow the
 [14-day package-age rule](https://github.com/jlevy/tbd/blob/main/docs/guidelines/bun-monorepo-patterns.md#supply-chain-mitigation):
 no dependency upgrade lands until the published version is at least 14 days old, to give
 the ecosystem time to surface supply-chain compromises.
+See [SUPPLY-CHAIN-SECURITY.md](../../SUPPLY-CHAIN-SECURITY.md) for the two-pass re-lock
+procedure and build-constraint update command.
 
 [Biome](https://biomejs.dev) is a single binary that replaces prettier and eslint for
 the JS/CSS/HTML/JSON side.

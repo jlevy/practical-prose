@@ -24,10 +24,14 @@
 
 SHELL := /bin/bash
 
+ROOT := $(CURDIR)
+# Routine project commands ignore personal uv config and fail on lock drift. Isolated
+# builds use the reviewed, hashed build-dependency closure.
+UV := env UV_NO_CONFIG=1 UV_LOCKED=1 \
+      UV_BUILD_CONSTRAINT=$(ROOT)/tools/pprose/build-constraints.txt uv
 # Ruff lives in the pprose venv (tools/pprose declares it as a dev dep).
 # Wrap it so the top-level lint targets can use it on files outside that tree.
-RUFF := cd tools/pprose && uv run ruff
-ROOT := $(CURDIR)
+RUFF := cd tools/pprose && $(UV) run --no-sync ruff
 
 .DEFAULT_GOAL := default
 .PHONY: default install hooks-install \
@@ -53,7 +57,7 @@ default: install format generate lint test
 ## ─────────────── Install ───────────────
 
 install:
-	cd tools/pprose && uv sync --all-extras
+	cd tools/pprose && $(UV) sync --all-extras
 	npm ci --silent
 
 hooks-install: install
@@ -67,13 +71,13 @@ hooks-install: install
 #      runbooks/, shortcuts/, skills/) from their canonical sources
 # Both are checked in; consumers should not need a build step.
 generate:
-	uv run --script tools/design-system/generate.py
-	cd tools/pprose && uv run python devtools/sync_resources.py
+	$(UV) run --no-sync --project tools/pprose python tools/design-system/generate.py
+	cd tools/pprose && $(UV) run --no-sync python devtools/sync_resources.py
 
 # Verify checked-in derivatives match their sources; fails on any drift.
 generate-check:
-	uv run --script tools/design-system/generate.py --check
-	cd tools/pprose && uv run python devtools/sync_resources.py --check
+	$(UV) run --no-sync --project tools/pprose python tools/design-system/generate.py --check
+	cd tools/pprose && $(UV) run --no-sync python devtools/sync_resources.py --check
 
 ## ─────────────── Format (Markdown) ───────────────
 
@@ -122,7 +126,7 @@ lint-js-check:
 ## ─────────────── Test ───────────────
 
 test:
-	cd tools/pprose && uv run pytest
+	cd tools/pprose && $(UV) run --no-sync pytest
 
 ## ─────────────── Clean ───────────────
 

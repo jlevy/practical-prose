@@ -1,6 +1,8 @@
 ---
 title: Review Document
 description: Read-only tiered editorial review; report what a common edit, a copy edit, and a full substantive pass would each change, with no edits to the source and no numeric scores
+date: 2026-06-09
+status: active
 category: documentation
 author: Joshua Levy (github.com/jlevy) with agent assistance
 ---

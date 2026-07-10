@@ -12,6 +12,10 @@ author: Joshua Levy (github.com/jlevy) with agent assistance
 **Status:** Implemented (all three phases).
 Moved from the legacy tools/docs/ specs tree on 2026-06-11
 
+> [!NOTE]
+> This plan preserves the pre-rename `tools/prose-eval` paths in its implementation
+> history. The current package lives under `tools/pprose`.
+
 ## Overview
 
 Restructure the eval tooling currently living as inline-uv-script files under `scripts/`
@@ -432,10 +436,10 @@ Our equivalent: a small `_load_env_files()` helper that walks `cwd` and home for
 - [attic/simple-modern-uv/](../../../../attic/simple-modern-uv/) — the copier template
   used by Phase 0.
 - [evals/self-eval-v0.1/findings.md](../../../../evals/baselines/) — F1–F6 friction log.
-- [tools/prose-eval/src/prose_eval/eval_score.py](../../../../tools/prose-eval/src/prose_eval/eval_score.py)
-  — the file being relocated and rewritten.
-- [tools/prose-eval/src/prose_eval/prompts/eval-rubric-score.md](../../../../tools/pprose/src/pprose/prompts/eval-rubric-score.md)
-  — the prompt template that becomes the cached block.
+- [tools/pprose/src/pprose/eval_score.py](../../../../tools/pprose/src/pprose/eval_score.py)
+  — the resulting scorer implementation.
+- [tools/pprose/src/pprose/prompts/eval-rubric-score.md](../../../../tools/pprose/src/pprose/prompts/eval-rubric-score.md)
+  — the prompt template used as the cached block.
 - [runbooks/practical-prose-eval-single.runbook.md](../../../../runbooks/practical-prose-eval-single.runbook.md)
   — the runbook to update.
 - The `gather_limited` primitive in the leximetry codebase
@@ -443,3 +447,7 @@ Our equivalent: a small `_load_env_files()` helper that walks `cwd` and home for
 - The metaproc `runpool` subsystem — surveyed; rejected as overkill for this use case
   (process-pool orchestration vs.
   async I/O).
+
+<!-- This document follows common-doc-guidelines.md.
+See github.com/jlevy/practical-prose and review guidelines before editing.
+-->

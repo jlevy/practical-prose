@@ -306,7 +306,7 @@ Agent Skills under [skills/](skills/). The eval skills use the
 | Skill | Kind | Use When |
 | --- | --- | --- |
 | [pprose-common-edit](skills/pprose-common-edit/SKILL.md) | Apply | Tidy, clean up, conform, fix formatting/structure, or add the documentation footer. The basic, universal tier. |
-| [pprose-copy-edit](skills/pprose-copy-edit/SKILL.md) | Apply | Copy edit, proofread, polish, tighten, or line edit: language and formatting (Expression). Superset of common-edit. |
+| [pprose-copy-edit](skills/pprose-copy-edit/SKILL.md) | Apply | Copy edit, proofread, polish, tighten, or line edit: language and formatting (Expression and Form). Superset of common-edit. |
 | [pprose-full-edit](skills/pprose-full-edit/SKILL.md) | Apply | Deep edit across all 20 dimensions; also writes an editorial review (strengths, weaknesses, suggested fixes). Superset of copy-edit; covers audit-only review. |
 | [pprose-review](skills/pprose-review/SKILL.md) | Review | Review, critique, or get a tiered edit plan (what a common edit, copy edit, and full substantive pass would each change) without modifying the document and without scores. Read-only. |
 | [pprose-eval](skills/pprose-eval/SKILL.md) | Evaluate | Score, grade, rubric-check, or measure the quality of one document. |
@@ -334,8 +334,9 @@ wheel, so an installed skill works in any repo with no other files present.
 [`simple-modern-uv`](https://github.com/jlevy/simple-modern-uv)). The distribution and
 console-script entry point are both `pprose`:
 
-- `pprose metrics`: deterministic metrics over a document (banned-register hits,
-  vague-word counts, link validity, frontmatter presence, etc.).
+- `pprose metrics`: deterministic metrics over a document (banned-register and other
+  editorial-lint hits; heading, link, footnote, table, and code-block counts; word and
+  sentence counts and a page estimate).
 - `pprose score`: score a document against the rubric via Pydantic AI (Anthropic,
   OpenAI, or Google; `--model` required); Anthropic runs reuse a cached
   rubric+guidelines block, and `--batch` runs N artifacts in parallel.
@@ -344,10 +345,10 @@ console-script entry point are both `pprose`:
 - `pprose compare`: compare N eval reports across versions or variants.
 
 It also bundles the guidelines, shortcuts, runbooks, and rubric and serves them as
-reference subcommands (`pprose guidelines|shortcut|runbook|skill <name>`, `--list` to
-enumerate), so the skills work in any repo.
-Every artifact `pprose install` generates carries a `format=fNN surface=…` stamp, so
-re-running install is idempotent and a newer-format artifact is never clobbered by an
+reference subcommands (`pprose guidelines|shortcut|runbook <name>`; omit the name to
+list one kind, or use `pprose list` for the full inventory), so the skills work in any
+repo. Every artifact `pprose install` generates carries a `format=fNN surface=…` stamp,
+so re-running install is idempotent and a newer-format artifact is never clobbered by an
 older pprose. Each generated skill references pprose with a pinned, local-first
 invocation (`pprose` if on PATH, else `uvx pprose@<version>`—the trusted version that
 ran install—else a message telling the user to install uv or pprose).

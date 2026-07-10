@@ -6,22 +6,27 @@
 
 .PHONY: default install lint test upgrade build clean
 
-default: install lint test 
+UV := env UV_NO_CONFIG=1 UV_LOCKED=1 \
+      UV_BUILD_CONSTRAINT=$(CURDIR)/build-constraints.txt uv
+
+default: install lint test
 
 install:
-	uv sync --all-extras
+	$(UV) sync --all-extras
 
 lint:
-	uv run python devtools/lint.py
+	$(UV) run --no-sync python devtools/lint.py
 
 test:
-	uv run pytest
+	$(UV) run --no-sync pytest
 
 upgrade:
-	uv sync --upgrade --all-extras --dev
+	uv lock --no-config --upgrade --exclude-newer '14 days'
+	uv lock --no-config
+	$(UV) sync --all-extras
 
 build:
-	uv build
+	$(UV) build --no-config --build-constraint build-constraints.txt --require-hashes --clear
 
 clean:
 	-rm -rf dist/

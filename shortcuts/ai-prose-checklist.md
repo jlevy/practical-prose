@@ -1,6 +1,8 @@
 ---
 title: AI-Prose Checklist
 description: Compact drafting and review digest of the AI-prose corrections catalog; load into any writing context to suppress common LLM-register tells
+date: 2026-06-10
+status: active
 category: documentation
 author: Joshua Levy (github.com/jlevy) with agent assistance
 ---

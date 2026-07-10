@@ -1,6 +1,8 @@
 ---
 title: Practical Prose Quick Checklist
 description: Single-page pre-publish self-audit covering the 20 practical-prose dimensions in six short groups; for use when the full guidelines are too long to load
+date: 2026-05-12
+status: active
 category: documentation
 author: Joshua Levy (github.com/jlevy) with agent assistance
 ---
@@ -80,8 +82,9 @@ for pre-publish audit of an already-drafted doc.
 
 ## Grounding (G1-G3)
 
-- [ ] **G1 Verifiability:** Every quantitative claim source-traceable at the
-  stakes-appropriate bar?
+- [ ] **G1 Verifiability:** Every material, verifiable claim traceable to the best
+  available evidence at the stakes-appropriate bar?
+  Quantitative calculations re-run?
   Confidence tags paired with sources?
   For central claims, is what would invalidate them named (G1.6)?
 - [ ] **G2 Factuality:** Cited sources support the claim at the asserted strength?
@@ -106,18 +109,23 @@ for pre-publish audit of an already-drafted doc.
 If the document is high-stakes, run the four audit passes separately rather than one
 broad pass:
 
-1. **Lint pass:** Cosmetic / deterministic: F1 Organization, F2 Consistency, F3
-   Formatting, E1 banned-register and vague-word checks.
+1. **Lint pass:** Cosmetic / deterministic: E1 banned-register and vague-word checks, F1
+   Organization, F2 Consistency, F3 Formatting.
    Use `pprose metrics`.
-2. **Claim audit:** Every quantitative claim against its cited source.
-   G1 Verifiability, G2 Factuality.
-   Re-run calculations.
+2. **Claim audit:** Every material, verifiable claim against the best available
+   evidence; every source on-task.
+   G1 Verifiability, G2 Factuality, G3 Relevance.
+   Re-run quantitative calculations.
 3. **Reasoning audit:** Assumptions, mechanisms, counter-evidence, parsimony,
-   alternative lenses. R1 Discipline, R2 Soundness, R4 Parsimony, J2 Fairness, J3
-   Robustness. Best with a fresh-context agent.
-4. **Purpose audit:** Output shape vs task shape; scope; skim-recoverability.
-   P1 Suitability, P2 Scope, P3 Breadth, P4 Depth.
+   calibration, alternative lenses.
+   R1 Discipline, R2 Soundness, R3 Precision, R4 Parsimony, J1 Calibration, J2 Fairness,
+   J3 Robustness. Best with a fresh-context agent.
+4. **Purpose audit:** Output shape vs task shape; scope; skim-recoverability and flow.
+   P1 Suitability, P2 Scope, P3 Breadth, P4 Depth, E2 Coherence, E3 Concision.
    Best with a reader simulation.
+
+(This matches the canonical complete mapping in the rubric’s *Audit Passes for
+High-Stakes Evals* table: every dimension belongs to exactly one pass.)
 
 The pass separation is **required** for high-stakes documents, **recommended** for
 standard internal docs, and **optional** for low-stakes drafts.

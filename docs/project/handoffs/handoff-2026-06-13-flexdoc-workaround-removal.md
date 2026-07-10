@@ -111,3 +111,7 @@ Run `uv run pytest` (full suite was 326 green before this work) and
   no setup needed beyond `uv sync`.
 - The superseded design history (per-capability) is in
   [docs/project/chopdiff-upstream-requests.md](../chopdiff-upstream-requests.md).
+
+<!-- This document follows common-doc-guidelines.md.
+See github.com/jlevy/practical-prose and review guidelines before editing.
+-->

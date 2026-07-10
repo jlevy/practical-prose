@@ -76,3 +76,7 @@ The workbench links to these files via `<link>` and `<script src>`; the `pprose 
 pipeline mirrors them into its wheel via the sync script.
 Edit the workbench file, then re-run
 `uv run python tools/pprose/devtools/sync_render_html_styles.py`.
+
+<!-- This document follows common-doc-guidelines.md.
+See github.com/jlevy/practical-prose and review guidelines before editing.
+-->

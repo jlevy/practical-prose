@@ -13,13 +13,13 @@ Then
 
 ## Basic Developer Workflows
 
-The `Makefile` simply offers shortcuts to `uv` commands for developer convenience.
-(For clarity, GitHub Actions don’t use the Makefile and just call `uv` directly.)
+The `Makefile` offers the supported `uv` workflows for local development.
+Routine commands ignore personal uv configuration, reject lock drift, and use the hashed
+build constraints. GitHub Actions enforce the same contract directly.
 
 ```shell
 # First, install all dependencies and set up your virtual environment.
-# This simply runs `uv sync --all-extras` to install all packages,
-# including dev dependencies and optional dependencies.
+# Installs the committed runtime/development lock without re-resolving it.
 make install
 
 # Run uv sync, lint, and test:
@@ -40,28 +40,30 @@ make clean
 # Upgrade dependencies to compatible versions:
 make upgrade
 
-# To run tests by hand:
-uv run pytest   # all tests
-uv run pytest -s tests/test_metrics.py  # one file, showing outputs
+# To run tests by hand without syncing:
+UV_NO_CONFIG=1 UV_LOCKED=1 uv run --no-sync pytest
+UV_NO_CONFIG=1 UV_LOCKED=1 uv run --no-sync pytest -s tests/test_metrics.py
 
 # Build and install current dev executables, to let you use your dev copies
 # as local tools:
 uv tool install --editable .
 
 # Dependency management directly with uv:
-# Add a new dependency:
-uv add package_name
-# Add a development dependency:
-uv add --dev package_name
-# Update to latest compatible versions (including dependencies on git repos):
-uv sync --upgrade
-# Update a specific package:
-uv lock --upgrade-package package_name
-# Update dependencies on a package:
-uv add package_name@latest
+# After verifying the exact version clears the 14-day rule, add a dependency:
+uv add 'package_name==X.Y.Z'
+# Add an exact development dependency:
+uv add --dev 'package_name==X.Y.Z'
+# Re-lock after changing a dependency declaration. The first pass applies the
+# 14-day gate; the second removes environment-specific resolver metadata while
+# preserving the reviewed selections:
+uv lock --no-config --exclude-newer '14 days'
+uv lock --no-config
+# Update one package by changing its exact declaration, then run the two passes above.
 ```
 
-See [uv docs](https://docs.astral.sh/uv/) for details.
+Review every dependency and hash change before the second pass.
+See [SUPPLY-CHAIN-SECURITY.md](../../../SUPPLY-CHAIN-SECURITY.md) and the
+[uv docs](https://docs.astral.sh/uv/) for details.
 
 ## IDE Setup
 

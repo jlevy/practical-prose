@@ -158,8 +158,8 @@ through `TextDoc` as one undifferentiated stream.
 ### What chopdiff 0.3.1 already gives us
 
 The `0.3.1` DocGraph work (PRs #12 / #14 / #15) lands most of what this plan needs.
-Verified against [attic/chopdiff](../../../../../attic/chopdiff) and the canonical
-source at `~/wrk/kmd/chopdiff`:
+Verified against [attic/chopdiff](../../../../attic/chopdiff) and the
+[upstream chopdiff repository](https://github.com/jlevy/chopdiff):
 
 - `BlockType` enum — now
   `paragraph, heading, list, ordered_list, list_item, table, code, blockquote, html, footnote, thematic_break`
@@ -674,9 +674,13 @@ Blocked on chopdiff `0.3.1` being released.
   link-span recovery (shipped in 0.3.1) paragraph splitting (shipped in v0.3.0)
 - [jlevy/chopdiff#8](https://github.com/jlevy/chopdiff/pull/8) — `BlockDoc` plan spec
   (effectively realized as the DocGraph node model in #12)
-- [attic/chopdiff/src/chopdiff/docs/text_doc.py](../../../../../attic/chopdiff/src/chopdiff/docs/text_doc.py)
-- [attic/flowmark/src/flowmark/linewrapping/sentence_split_regex.py](../../../../../attic/flowmark/src/flowmark/linewrapping/sentence_split_regex.py)
+- [attic/chopdiff/src/chopdiff/docs/text_doc.py](../../../../attic/chopdiff/src/chopdiff/docs/text_doc.py)
+- [attic/flowmark/src/flowmark/linewrapping/sentence_split_regex.py](../../../../attic/flowmark/src/flowmark/linewrapping/sentence_split_regex.py)
 - [pysbd (Python Sentence Boundary Disambiguation)](https://github.com/nipunsadvilkar/pySBD)
   — possible future splitter
 - [pragmatic_segmenter (Ruby)](https://github.com/diasks2/pragmatic_segmenter) —
   algorithm behind pysbd
+
+<!-- This document follows common-doc-guidelines.md.
+See github.com/jlevy/practical-prose and review guidelines before editing.
+-->

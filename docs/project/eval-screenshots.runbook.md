@@ -23,6 +23,8 @@ dependencies to `pprose`.
 
 ## Prerequisites
 
+- Project dependencies installed with `make install` from the repository root.
+
 - Google Chrome (headless HTML → PDF): both flows.
 
 - Poppler (`pdftoppm`) and ImageMagick (`magick`) for PDF → trimmed PNG, both flows:
@@ -38,8 +40,7 @@ dependencies to `pprose`.
 Rebuilds the PNGs from the committed `evals/readme-cards/*.eval.md` with the current
 styles. No scoring, so the numbers on the cards do not change.
 Run this after editing the design system, `print.css`, or the card template (regenerate
-the design tokens first with `uv run python tools/design-system/generate.py` if you
-changed `design-system.yaml`).
+the design tokens first with `make generate` if you changed `design-system.yaml`).
 
 ```bash
 #!/usr/bin/env bash
@@ -48,9 +49,11 @@ REPO="$(git rev-parse --show-toplevel)"
 CHROME="/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"
 WORK="$(mktemp -d)"
 cd "$REPO"
+export UV_NO_CONFIG=1 UV_LOCKED=1
+export UV_BUILD_CONSTRAINT="$REPO/tools/pprose/build-constraints.txt"
 
 for stem in as-we-may-think apple-media-services-terms; do
-  uv run --project tools/pprose pprose render "evals/readme-cards/$stem.eval.md" \
+  uv run --no-sync --project tools/pprose pprose render "evals/readme-cards/$stem.eval.md" \
     -o "$WORK/$stem.html"
   "$CHROME" --headless=new --disable-gpu --no-pdf-header-footer \
     --virtual-time-budget=3000 --print-to-pdf="$WORK/$stem.pdf" "file://$WORK/$stem.html"
@@ -76,8 +79,12 @@ numbers, update the README caption to match.
 set -euo pipefail
 REPO="$(git rev-parse --show-toplevel)"
 cd "$REPO"
-set -a; source .env; set +a   # ANTHROPIC_API_KEY
-PP() { uv run --project tools/pprose pprose "$@"; }
+if [[ -f .env ]]; then
+  set -a; source .env; set +a   # ANTHROPIC_API_KEY
+fi
+export UV_NO_CONFIG=1 UV_LOCKED=1
+export UV_BUILD_CONSTRAINT="$REPO/tools/pprose/build-constraints.txt"
+PP() { uv run --no-sync --project tools/pprose pprose "$@"; }
 
 # label|source-path|stem
 DOCS=(
@@ -95,12 +102,12 @@ done
 # Now run Flow A to re-render the PNGs from the refreshed .eval.md.
 ```
 
-`--model opus` resolves to the current default (Anthropic Claude Opus).
+`--model opus` selects the current flagship Anthropic Claude Opus alias.
 `pprose score` occasionally returns a sub-5 score without a matching rule citation,
 which trips the alignment check; `--allow-misaligned` writes the report anyway (fine for
 a demo; the scores are the model’s real assessment).
 
-## Notes
+## Output Interpretation
 
 - The captured PNGs are about 1100 × 1635 px at 200 dpi.
   To regenerate at a different resolution, change `-r 200` in `pdftoppm`.

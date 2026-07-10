@@ -1,6 +1,8 @@
 ---
 title: Practical Prose Agent Policy
 description: One-page generation-time priority list for agents drafting practical prose; the operational companion to the pre-publish quick-checklist.
+date: 2026-05-12
+status: active
 category: documentation
 author: Joshua Levy (github.com/jlevy) with agent assistance
 ---
@@ -60,7 +62,7 @@ The order matters. When two priorities conflict, the earlier one wins.
    more citations, more caveats, more structure, more words does not make a document
    better; it makes it more compliant.
    Cut anything that advances no purpose.
-   (E3 Concision; rubric §Notes “metrics are evidence, not quality”.)
+   (E3 Concision; rubric §Limits of Scores “metrics are evidence, not quality”.)
 
 7. **Apply fairness and robustness only when the task involves disputed or interpretive
    claims.** Skipping these on a reference doc or status note is not a failure; forcing

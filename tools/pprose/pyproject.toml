@@ -89,7 +89,9 @@ pprose = "pprose.cli:main"
 # https://github.com/ninoseki/uv-dynamic-versioning/
 
 [build-system]
-requires = ["hatchling", "uv-dynamic-versioning"]
+# Keep these exact pins in sync with build-requires.in. The hashed transitive closure in
+# build-constraints.txt is applied to repository, CI, and release builds.
+requires = ["hatchling==1.30.1", "uv-dynamic-versioning==0.14.0"]
 build-backend = "hatchling.build"
 
 [tool.hatch.version]
@@ -233,9 +235,3 @@ testpaths = [
 ]
 norecursedirs = []
 filterwarnings = []
-
-[tool.uv]
-# First-party cool-off exemption (see SUPPLY-CHAIN-SECURITY.md): admit flexdoc past the
-# contributor's global `exclude-newer` cutoff. Per-package + repo-scoped — it never
-# relaxes the cool-off for any other dependency. Remove once 0.2.0 ages out of the window.
-exclude-newer-package = { flexdoc = "2026-06-15" }

@@ -15,6 +15,7 @@
       "!**/_generated",
       "!**/vendor",
       "!**/*.min.js",
+      "!**/*.md",
       "!attic",
       "!tools/pprose/.venv",
       "!tools/pprose/dist"

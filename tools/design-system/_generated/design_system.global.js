@@ -1,5 +1,5 @@
 /* AUTO-GENERATED from tools/design-system/design-system.yaml — do not edit by hand.
-Regenerate with: uv run --script tools/design-system/generate.py */
+Regenerate with: make generate */
 
 (function () {
   const designSystem = Object.freeze({

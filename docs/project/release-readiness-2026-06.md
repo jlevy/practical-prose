@@ -2,13 +2,20 @@
 title: pprose First-Release Readiness Review (2026-06)
 description: A snapshot assessment of how well-organized pprose is for a first public release: what works, the ranked risks to clear, and what should become automated tests.
 date: 2026-06-02
-last_updated: 2026-06-09
-status: active
+last_updated: 2026-07-09
+status: archived
 ---
 # pprose First-Release Readiness Review (2026-06)
 
-Version: v0.1 (last update 2026-06-09; added status update)\
+Version: v0.2 (last update 2026-07-09; archived as a historical snapshot)\
 Joshua Levy (github.com/jlevy)
+
+> [!NOTE]
+> This is a historical June 2026 snapshot.
+> For current release-sensitive findings, use the
+> [July comprehensive project review](reviews/review-2026-07-09-comprehensive-project-review.md)
+> and the active [end-to-end testing runbook](e2e-testing.runbook.md).
+> Do not treat the ranked list below as current state.
 
 ## Purpose
 

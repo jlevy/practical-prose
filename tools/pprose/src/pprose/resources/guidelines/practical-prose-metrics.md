@@ -6,7 +6,7 @@ status: active
 ---
 # Practical Prose Metrics and Frontmatter
 
-Version: v0.1 (last update 2026-06-12)\
+Version: v0.1 (last update 2026-07-09)\
 Joshua Levy (github.com/jlevy) with agent assistance
 
 An operational appendix to the practical-prose system.
@@ -34,13 +34,13 @@ and **manual** denotes a human reviewer.
 | 1 | Suitability | Presence of explicit `purpose`, `audience`, `scope` fields (frontmatter); presence of recommendation/findings/milestones section by doc type | Can a target reader say what the doc is for after 30 seconds? | frontmatter check; manual skim test |
 | 2 | Scope | Presence of `scope` and optionally `out_of_scope` fields; count of headings outside declared scope | Does the body honor the declared boundary? | frontmatter check; manual |
 | 3 | Breadth | Count of relevant case classes addressed (out of a domain-specific expected set) | Are the obvious affected areas covered? | manual; SME |
-| 4 | Depth | Count of vague magnitude words (“rapid,” “large”) not paired with quantification; count of endpoints cited where a series exists | Is section depth proportional to section importance? | banned-register lint (`pprose metrics`); manual |
-| 5 | Clarity | Banned-register hits (count and examples; full common-doc-guidelines §4.2 list); pedantic-marker hits (canonicality declarations, word-choice justifications, reading-order instructions); vague-word hits; sentence length distribution; mean and p95 sentence length | Does prose read cleanly aloud; is the document free of self-referential pedantry? | `pprose metrics`; manual |
+| 4 | Depth | Count of vague magnitude words (“rapid,” “large”) not paired with quantification; count of endpoints cited where a series exists | Is section depth proportional to section importance? | manual; LLM-assist |
+| 5 | Clarity | Banned-register hits (count and examples; full common-doc-guidelines §4.2 list); pedantic-marker hits (canonicality declarations, word-choice justifications, reading-order instructions); vague-word hits; sentence length distribution; mean and p95 sentence length | Does prose read cleanly aloud; is the document free of self-referential pedantry? | `pprose metrics` (banned-register and pedantic-marker hits); manual for the rest |
 | 6 | Coherence | Paragraph length distribution; presence of stub transitions (“As shown above” without recap) | Does each paragraph have one job; do transitions bridge? | manual; LLM-assist |
 | 7 | Concision | Word count vs target by doc type; repeated n-gram count; low-information paragraph flag; replacement-history phrase hits (regex set: “previously named,” “formerly,” “under the new layout,” “removed,” etc.) | Does removing a section lose information; is replacement history absent outside history-genre exceptions? | `pprose metrics` words/paragraphs; manual cut test |
 | 8 | Organization | Heading-level skip count (h1→h3 without h2); generic-heading hits (“Overview,” “Background,” “Notes,” “Details”); table count and column densities; figure-caption presence; link-target stability (no commit-less URLs to mutable refs) | Are sections sequenced for the task; do tables earn their tabular shape; do headings cleave to subject contours? | `pprose metrics` headings/tables; manual |
 | 9 | Consistency | Acronym casing variance; dialect mixing; date-format variance; parallel-list violations; spaced em-dash count and em-dash density per 1000 words | Does the document follow the chosen style guide; are em dashes used sparingly and in American style? | linter; manual |
-| 10 | Formatting | Markdown lint pass/fail; frontmatter present and valid; footer present | Renders correctly across mediums? | flowmark / md-lint; `pprose metrics` footnote round-trip |
+| 10 | Formatting | Markdown lint pass/fail; frontmatter present and valid; footer present | Renders correctly across mediums? | flowmark / md-lint; `pprose metrics` footnote reference/definition counts |
 | 11 | Discipline | Rung-tag count (`[observed]`, `[judged]`, `[interpreted]`, `[implied]`) in audit/eval modes; multi-rung-per-sentence flag | Are observation, judgment, interpretation, and implication worked through in order, each higher rung supported by the prior? | `pprose metrics` bracket tags (audit mode); LLM-assist; manual |
 | 12 | Soundness | `[ASSUMING:]` tag count where assumptions are load-bearing; count of unbridged “signal → outcome” leaps | Are mechanisms named where causation is asserted; is counter-evidence engaged? | `pprose metrics` bracket tags; manual / SME |
 | 13 | Precision | Vague-countable hits (“several,” “various,” “many”); umbrella-term hits (“users,” “latency”) where domain sub-distinctions matter | Is the most specific term the audience can parse used throughout? | banned-register / linter extension; manual |
@@ -55,7 +55,9 @@ and **manual** denotes a human reviewer.
 Most rows have a deterministic component and a judgment component.
 The deterministic component runs in CI and catches regressions cheaply; the judgment
 component runs at review time and catches substantive failures the lint will never
-notice.
+notice. Where a row lists several quantitative metrics, `pprose metrics` computes only
+the subset named in the *Tooling Map* below; the rest are review-time checks (some are
+tracked for the planned `pprose lint`).
 
 **Note on J2 Fairness.** The opposing-vs-supporting paragraph count and depth-ratio
 metrics are review flags, not measures of fairness.
@@ -69,9 +71,12 @@ fair.
 
 - `pprose metrics`: the deterministic metrics command.
   Computes headings by depth, link counts (external/internal, by markdown form),
-  footnote references and definitions, bracket-tag counts and examples, bare URLs,
-  tables, code blocks, banned-register hits (Clarity Rule 4 by default; overridable),
-  word/sentence/paragraph/line counts, and page estimate.
+  footnote references and definitions, bracket-tag counts and examples (ALL-CAPS forms
+  like `[VERIFIED]`, colon-suffixed forms like `[ASSUMING: ...]` counted by their
+  mnemonic, and the four lowercase rung tags from guidelines R1.4), bare URLs, tables,
+  code blocks, banned-register hits (the common-doc-guidelines §4.2 list plus
+  `dominant`, an advocacy-register extension; override the whole list with
+  `--banned-words-file`), word/sentence/paragraph/line counts, and page estimate.
 - `pprose score`: LLM-based rubric scorer.
 - `pprose report`: creates, validates, and recomputes eval reports (combining metrics
   and scores).
@@ -93,6 +98,12 @@ For practical-prose documents (the artifacts being written and evaluated, not th
 reports themselves), the following frontmatter fields help agents apply the guidelines
 consistently. Required fields are minimum viable; recommended fields make the document
 agent-evaluable; optional fields apply when their condition is relevant.
+
+This repo’s own reference docs, shortcuts, and runbooks carry at least the required four
+fields. Repo-root operational files (README.md, TODO.md, SUPPLY-CHAIN-SECURITY.md,
+AGENTS.md) are exempt: GitHub renders README frontmatter as a literal table, and
+AGENTS.md is partly generated; those files carry a version byline or rely on git
+metadata instead.
 
 | Field | Status | Type | Meaning |
 | --- | --- | --- | --- |

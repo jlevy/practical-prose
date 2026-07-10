@@ -1,3 +1,9 @@
+---
+title: Writing Comprehensive Practical Guides
+description: Genre supplement extending the practical-prose guidelines for comprehensive practical guides, with applies-when conditions per guideline, the groundwork process, and voice guidance.
+date: 2026-06-10
+status: active
+---
 # Writing Comprehensive Practical Guides
 
 Version: v0.1 (last update 2026-06-09)\

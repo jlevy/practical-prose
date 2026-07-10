@@ -6,7 +6,7 @@ status: active
 ---
 # Practical Prose Rubric
 
-Version: v0.2 (rubric: `pp20v1`, last update 2026-06-12)\
+Version: v0.2 (rubric: `pp20v1`, last update 2026-07-09)\
 Joshua Levy (github.com/jlevy)
 
 A descriptive 1-5 rubric for assessing practical writing artifacts (articles, blog
@@ -892,7 +892,7 @@ penalize the document for them.
   anything that reads as a fact but is detached from a source or supporting logic (a
   fabricated statistic, an invented specific) counts here even when no source is cited.
   Multiple claims that the reviewer cannot corroborate or refute despite reasonable
-  effort, with no acknowledgement in the document that they are uncorroborated.
+  effort, with no acknowledgment in the document that they are uncorroborated.
 
 - **2:** Several claims overstate, paraphrase past the source, or cannot be corroborated
   at the asserted strength.
@@ -964,7 +964,7 @@ sections rather than words and paragraphs.
 - **4:** Score-5 mostly satisfied with one or two minor slips: a few sources or notes
   are a bit of a stretch (cited for completeness, or surfacing as digressions) but
   remain loosely relevant.
-  Background sections, when present, are signalled as background.
+  Background sections, when present, are signaled as background.
 
 - **5:** Every cited source and every line of reasoning is relevant to the document’s
   purpose; nothing can be removed without lowering the quality of the work.
@@ -1021,7 +1021,7 @@ and the document says why) is not.
   in numbers and the case against is anchored in scenarios (or vice versa) without
   explanation.
 - **3:** Multiple fairness failures: notable depth asymmetry between opposing positions
-  with no explanation, counterintuitive findings skewed without acknowledgement,
+  with no explanation, counterintuitive findings skewed without acknowledgment,
   falsification conditions absent or confused with confirmation conditions, or a risk
   inventory underweighted on multiple classes.
 - **4:** Score-5 mostly satisfied with one or two minor slips: opposing-case depth
@@ -1050,10 +1050,10 @@ Robustness asks the further question: granting the evidence and the framing, wou
   The document makes no interpretive judgments (a pure reference, a literal log).
 - **ERR:** Cannot assess (process failure; re-run the eval).
   Content missing.
-- **1:** Single interpretive lens applied without acknowledgement; alternative readings
+- **1:** Single interpretive lens applied without acknowledgment; alternative readings
   not considered; key claims presented as if the framing were obvious.
 - **2:** Alternative interpretation noted in passing but not engaged.
-  Claim would flip under a reasonable alternative lens; no acknowledgement.
+  Claim would flip under a reasonable alternative lens; no acknowledgment.
 - **3:** Multiple interpretive lenses surfaced but tested unevenly.
   Most-threatening alternative not engaged at the same depth as the chosen reading.
 - **4:** Score-5 mostly satisfied with one or two minor slips: most-threatening
@@ -1089,12 +1089,19 @@ Each pass has a different cognitive load and a different tool stack; the
 [practical-prose-eval-single.runbook.md](../runbooks/practical-prose-eval-single.runbook.md)
 operationalizes them.
 
-| Pass | Scope | Primary dimensions | Stack |
+The table is the canonical, complete assignment: every dimension belongs to exactly one
+pass (the pass with primary responsibility for scoring it; a defect that could be cited
+under two dimensions still follows the primary/secondary table above).
+The quick-checklist and the full-edit shortcut follow this mapping; the full-edit
+workflow additionally splits an Expression *editing* pass out of the read-through
+because it applies E1-E3 fixes rather than scoring them.
+
+| Pass | Scope | Dimensions | Stack |
 | --- | --- | --- | --- |
-| Lint | Surface defects | F1 Organization, F2 Consistency, F3 Formatting, E1 Clarity (banned-register and vague-word checks) | `pprose metrics`, linters, deterministic checks |
-| Claim audit | Every quantitative claim against its cited source | G1 Verifiability, G2 Factuality | Source lookups, calculation re-runs |
-| Reasoning audit | Mechanisms, assumptions, counter-evidence, alternative lenses | R1 Discipline, R2 Soundness, J2 Fairness, J3 Robustness | Subject-matter expert or fresh-context agent |
-| Purpose audit | Output shape vs task shape; scope; skim-recoverability | P1 Suitability, P2 Scope, P3 Breadth, P4 Depth | Reader simulation; subject-matter expert |
+| Lint | Surface defects | E1 Clarity (banned-register and vague-word checks), F1 Organization, F2 Consistency, F3 Formatting | `pprose metrics`, linters, deterministic checks |
+| Claim audit | Every material, verifiable claim against the best available evidence; every source on-task | G1 Verifiability, G2 Factuality, G3 Relevance | Source lookups, calculation re-runs |
+| Reasoning audit | Mechanisms, assumptions, counter-evidence, calibration, alternative lenses | R1 Discipline, R2 Soundness, R3 Precision, R4 Parsimony, J1 Calibration, J2 Fairness, J3 Robustness | Subject-matter expert or fresh-context agent |
+| Purpose audit | Output shape vs task shape; scope; skim-recoverability and flow | P1 Suitability, P2 Scope, P3 Breadth, P4 Depth, E2 Coherence, E3 Concision | Reader simulation; subject-matter expert |
 
 The pass separation is **required** for high-stakes documents (audits, decision memos,
 external research, security advisories), **recommended** for standard internal docs, and
@@ -1140,7 +1147,7 @@ Cross-references to the guidelines:
 These are diagnostic prompts for evaluators, not new rules for writers; the rules they
 invoke live in the guidelines.
 
-## Notes
+## Limits of Scores
 
 - **Metrics are evidence, not quality.** Quantitative metrics and rubric scores can
   reveal risks, but no metric is a substitute for reader value, factual support, and

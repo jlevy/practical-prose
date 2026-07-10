@@ -1,21 +1,14 @@
 #!/usr/bin/env python3
-# /// script
-# requires-python = ">=3.11"
-# dependencies = [
-#   "pyyaml==6.0.3",
-#   "pydantic==2.13.4",
-# ]
-# ///
 """CLI: validate ``design-system.yaml`` and emit derivative JS / CSS / Python.
 
 Run with::
 
-    uv run --script tools/design-system/generate.py
+    make generate
 
 Or, to verify that generated files are up-to-date without rewriting them
 (useful for pre-commit / CI)::
 
-    uv run --script tools/design-system/generate.py --check
+    make generate-check
 
 Outputs (all under ``_generated/`` folders; never edit by hand):
     tools/design-system/_generated/design_system.js
@@ -71,7 +64,7 @@ GLOBAL_NAME = "PracticalProseDesignSystem"
 
 HEADER_NOTICE = (
     "AUTO-GENERATED from tools/design-system/design-system.yaml — do not edit by hand.\n"
-    "Regenerate with: uv run --script tools/design-system/generate.py"
+    "Regenerate with: make generate"
 )
 
 
@@ -446,7 +439,7 @@ def emit_py(resolved: dict) -> str:
         "\n"
         "Regenerate with::\n"
         "\n"
-        "    uv run python tools/design-system/generate.py\n"
+        "    make generate\n"
         '"""\n'
         "\n"
         "from __future__ import annotations\n"

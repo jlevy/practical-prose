@@ -1,6 +1,12 @@
+---
+title: Practical Prose Guidelines
+description: Prescriptive rules for practical documents across the 20 review dimensions in six groups; the authoring companion to the descriptive practical-prose-rubric.md.
+date: 2026-05-12
+status: active
+---
 # Practical Prose Guidelines
 
-Version: v0.2 (last update 2026-06-12)\
+Version: v0.2 (last update 2026-07-09)\
 Joshua Levy (github.com/jlevy) with agent assistance
 
 The *Practical Prose Guidelines* are prescriptive rules for practical documents such as
@@ -886,9 +892,9 @@ the audit.
 7. **Calibrated uncertainty satisfies Factuality; uncalibrated certainty fails it.**
    When a claim cannot be corroborated from available evidence, the document
    acknowledges this explicitly and states the basis on which the claim is made anyway.
-   A speculative claim labelled speculative, with its basis stated, is factually
-   correct. An unhedged claim made as if it were settled, where the evidence does not
-   settle it, is a Factuality defect, even if the claim happens to be true.
+   A speculative claim labeled speculative, with its basis stated, is factually correct.
+   An unhedged claim made as if it were settled, where the evidence does not settle it,
+   is a Factuality defect, even if the claim happens to be true.
 
 ### G3. Relevance
 
@@ -1085,9 +1091,9 @@ interpretive frame that a competent reader would dispute.
    precision than the underlying calibration supports.
    Ranges are more honest than point estimates without anchors.
 
-5. **Confirmation conditions labelled as falsification.** “If X happens, the claim
-   holds” is a confirmation condition; the falsification condition is “if not-X happens,
-   the claim fails.” The two are not interchangeable.
+5. **Confirmation conditions labeled as falsification.** “If X happens, the claim holds”
+   is a confirmation condition; the falsification condition is “if not-X happens, the
+   claim fails.” The two are not interchangeable.
 
 ## Pre-Publish Self-Audit
 
@@ -1108,8 +1114,9 @@ For a tight self-check before publishing, walk the six groups in order and ask:
   Mechanisms named where causation is asserted?
   Domain entities referred to by proper name; quantitative precision matches
   measurement? Load-bearing chains the minimum sufficient sound argument?
-- **Grounding (G1-G3):** Every quantitative claim source-traceable to a specific
-  citation (with stakes-appropriate strictness)?
+- **Grounding (G1-G3):** Every material, verifiable claim traceable to the best
+  available evidence (with stakes-appropriate strictness)?
+  Quantitative calculations re-run?
   Cited sources support the claim at the asserted strength?
   Sources and sections bear on the document’s purpose?
 - **Judgment (J1-J3):** Probability claims anchored in base rates?

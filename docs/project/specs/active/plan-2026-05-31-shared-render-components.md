@@ -212,8 +212,7 @@ EvalReport (Pydantic model — existing schema)
   │
   ▼  inliner.py concatenates assets into the final HTML string
   │
-  ▼  --format single (default)   →  one self-contained .html file
-  │  --format folder             →  HTML + sidecar assets/ for dev
+  ▼  one self-contained .html file
   │
   ▼  written to disk; --open launches the default browser
 ```

@@ -11,8 +11,9 @@ agent or contributor should read before adding or upgrading a dependency.
   old unless a documented exception below applies.
   Registries yank malicious versions within minutes to days, so waiting is nearly free.
 - **Lockfiles are committed; installs are frozen.** `uv.lock` and `package-lock.json`
-  are checked in. CI installs against them (`npm ci`; `uv sync` against the lock).
-  Never auto-update without reviewing the lockfile diff like a code diff.
+  are checked in. Routine Python commands ignore personal resolver config and use
+  `UV_LOCKED`; JS installs use `npm ci`. Never auto-update without reviewing the
+  lockfile diff like a code diff.
 - **No unpinned zero-install runners.** Every `uvx` / `npx` invocation pins an exact
   `@version` (see the `FLOWMARK_VERSION` pin in the [Makefile](Makefile) and the
   `--no-install` biome/lefthook calls in [lefthook.yml](lefthook.yml), which resolve the
@@ -27,8 +28,48 @@ agent or contributor should read before adding or upgrading a dependency.
 
 | Tool | Control in this repo |
 | --- | --- |
-| uv (Python, `tools/pprose`) | `uv.lock` committed; pins with cool-off comments; the contributor’s global `~/.config/uv/uv.toml` carries `exclude-newer`. |
+| uv (Python, `tools/pprose`) | `uv.lock` committed and **environment-neutral** (see below); routine commands use `UV_NO_CONFIG` + `UV_LOCKED`; CI and publish gate on `uv lock --check`; isolated build requirements have a separate hashed constraint set. |
 | npm (JS tooling, `tools/`) | `package-lock.json` committed; CI uses `npm ci`; cool-off enforced at upgrade time via `npm-check-updates --cooldown 14` and `npm view <pkg> time.<ver>`. |
+
+**The lockfile must stay environment-neutral.** A plain `uv lock` run under a global
+`exclude-newer` config embeds that machine’s resolution settings as an `[options]` block
+in `uv.lock`; any environment *without* those settings (CI, other contributors) then
+treats the lock as stale, and a plain `uv sync` silently re-resolves instead of
+installing what was reviewed.
+The root and package Makefiles, git hooks, CI, and publish workflow therefore ignore
+personal uv config and fail on lock drift.
+CI also rejects any `[options]` table.
+
+For a dependency change, use a two-pass lock:
+
+```bash
+cd tools/pprose
+uv lock --no-config --exclude-newer '14 days'
+# Review every selected-version and hash change here.
+uv lock --no-config
+```
+
+The first pass applies the 14-day gate to direct and transitive packages.
+It records the cutoff in a temporary `[options]` table.
+With the selected versions already locked, the second pass removes the resolver setting
+while preserving those selections.
+Review the second diff and confirm it removes only `[options]`; CI independently
+verifies the final lock is current and environment-neutral.
+
+**Build requirements are locked separately.** `uv build` resolves its isolated PEP 517
+environment independently of `uv.lock`, so `tools/pprose/build-requires.in` exact-pins
+the direct build tools and `build-constraints.txt` records their full transitive closure
+with hashes. Regenerate it under the same cool-off:
+
+```bash
+cd tools/pprose
+uv pip compile --no-config --exclude-newer '14 days' --generate-hashes \
+  --output-file build-constraints.txt build-requires.in
+```
+
+Keep the two direct pins synchronized with `[build-system].requires` in
+`pyproject.toml`. CI and publish pass the constraint file to `uv build` with
+`--require-hashes`.
 
 ## First-Party Exemption
 
@@ -49,19 +90,19 @@ This is a standing exemption, recorded here rather than re-approved per bump.
   `uvx --exclude-newer-package 'flowmark-rs=2026-06-02'`, which overrides the cool-off
   for this one package only and does not touch global uv config.
   Reviewed-by: Joshua Levy.
-- **`flexdoc==0.1.0`**: first-party (see above).
-  Published 2026-06-12; adopted 2026-06-13 while inside the 14-day window.
-  flexdoc is the document-layer subset extracted from `chopdiff` (`TextDoc` →
-  `FlexDoc`); pprose now depends on it directly and **drops `chopdiff`**, since
-  metrics.py used only the document model, not chopdiff’s diff/windowed-transform
-  machinery. Pinned exact in [tools/pprose/pyproject.toml](tools/pprose/pyproject.toml).
-  To let a contributor’s global uv `exclude-newer` admit it during resolution, the same
-  file carries a per-package, repo-scoped
-  `[tool.uv] exclude-newer-package = { flexdoc = … }`; it caps only flexdoc and never
-  relaxes the cool-off for any other dependency.
-  CI has no global cutoff and installs it from the committed `uv.lock`. Remove the
-  `exclude-newer-package` entry once 0.1.0 ages out of the window.
-  Reviewed-by: Joshua Levy.
+- **`flexdoc==0.2.0`**: first-party (see above).
+  Published 2026-06-14 (UTC); adopted the same day in PR #30, inside the 14-day window
+  (0.1.0 was adopted the same way on 2026-06-13). flexdoc is the document-layer subset
+  extracted from `chopdiff` (`TextDoc` → `FlexDoc`); pprose depends on it directly and
+  not on `chopdiff`, since metrics.py uses only the document model, not chopdiff’s
+  diff/windowed-transform machinery.
+  Pinned exact in [tools/pprose/pyproject.toml](tools/pprose/pyproject.toml).
+  The in-window `[tool.uv] exclude-newer-package` bridge was removed once 0.2.0 aged out
+  of the window (2026-06-28). For any future in-window first-party adoption, note the
+  value must be a full RFC 3339 timestamp (`{ pkg = "2026-06-15T00:00:00Z" }`): uv (as
+  of 0.8.17) rejects date-only values in `pyproject.toml` with only a warning and then
+  ignores the whole `[tool.uv]` table, so the bridge silently never applies.
+  CI installs from the committed `uv.lock`. Reviewed-by: Joshua Levy.
 
 ## Known Gap
 

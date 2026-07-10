@@ -1,3 +1,9 @@
+---
+title: Practical Prose Principles
+description: The seven principles (Purposeful, Truthful, Essential, Lucid, Verifiable, Maintainable, Humane) that ground the practical-prose guidelines, rubric, and dimensions.
+date: 2026-05-12
+status: active
+---
 # Practical Prose Principles
 
 Version: v0.1 (last update 2026-06-12)\

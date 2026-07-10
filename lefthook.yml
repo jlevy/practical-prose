@@ -33,7 +33,8 @@ pre-commit:
     design-system-generate:
       glob: "tools/design-system/**"
       run: |
-        uv run --script tools/design-system/generate.py
+        UV_NO_CONFIG=1 UV_LOCKED=1 UV_BUILD_CONSTRAINT=tools/pprose/build-constraints.txt \
+          uv run --no-sync --project tools/pprose python tools/design-system/generate.py
         git add tools/design-system/_generated/ \
                 tools/pprose/src/pprose/_generated/design_system.py
 
@@ -64,7 +65,8 @@ pre-commit:
       glob: "*.md"
       run: |
         make format
-        (cd tools/pprose && uv run python devtools/sync_resources.py)
+        (cd tools/pprose && UV_NO_CONFIG=1 UV_LOCKED=1 \
+          UV_BUILD_CONSTRAINT=build-constraints.txt uv run --no-sync python devtools/sync_resources.py)
         git add tools/pprose/src/pprose/resources/ skills/
       stage_fixed: true
 
@@ -72,8 +74,16 @@ pre-push:
   parallel: true
   commands:
     generate-check:
-      run: uv run --script tools/design-system/generate.py --check
+      run: >-
+        UV_NO_CONFIG=1 UV_LOCKED=1
+        UV_BUILD_CONSTRAINT=tools/pprose/build-constraints.txt
+        uv run --no-sync --project tools/pprose python tools/design-system/generate.py --check
     resources-sync-check:
-      run: cd tools/pprose && uv run python devtools/sync_resources.py --check
+      run: >-
+        cd tools/pprose && UV_NO_CONFIG=1 UV_LOCKED=1
+        UV_BUILD_CONSTRAINT=build-constraints.txt
+        uv run --no-sync python devtools/sync_resources.py --check
     tests:
-      run: cd tools/pprose && uv run pytest -q
+      run: >-
+        cd tools/pprose && UV_NO_CONFIG=1 UV_LOCKED=1
+        UV_BUILD_CONSTRAINT=build-constraints.txt uv run --no-sync pytest -q

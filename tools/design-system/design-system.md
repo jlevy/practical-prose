@@ -638,3 +638,7 @@ When proposing palette changes:
   — defines the group and dimension keys this palette binds to.
 - [`docs/project/specs/done/plan-2026-05-29-static-html-eval-report.md`](../../docs/project/specs/done/plan-2026-05-29-static-html-eval-report.md)
   — the shipped plan that consumes this system in the HTML renderer (`pprose render`).
+
+<!-- This document follows common-doc-guidelines.md.
+See github.com/jlevy/practical-prose and review guidelines before editing.
+-->

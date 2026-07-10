@@ -32,6 +32,7 @@ import asyncio
 import hashlib
 import os
 import sys
+from collections.abc import Callable
 from dataclasses import dataclass, field
 from importlib.metadata import PackageNotFoundError, version
 from pathlib import Path
@@ -108,6 +109,7 @@ GUIDELINES_PATH = _resolve_doc("practical-prose-guidelines")
 # Per-call execution budget.
 DEFAULT_MAX_TOKENS = 8192
 DEFAULT_TIMEOUT_S = 600.0  # 10 minutes — Q10 decision
+
 
 # Curated list of currently-recommended models, surfaced in --model help and via
 # `--list-models`. Sourced from llm-pricing/data/llms.yml (the canonical
@@ -730,13 +732,15 @@ async def score_batch(
     argv: list[str] | None,
     max_concurrent: int = 8,
     max_rps: float = 4.0,
+    after_success: Callable[[Path], None] | None = None,
 ) -> int:
     """Score N YAMLs in parallel via gather_limited.
 
     Prompt caching is shared across the calls (the rubric + guidelines block
     is byte-identical), so the first call writes the cache and subsequent
-    calls within ~5 min read it at ~0.1× the input cost. Order of completion
-    is unrelated to order of input; results are reported as docs finish.
+    calls within ~5 min read it at ~0.1× the input cost. Post-score hooks run
+    only after all scoring calls finish, so synchronous work such as rendering
+    does not occupy the async scoring concurrency slots.
     """
     if not yaml_paths:
         return 0
@@ -767,16 +771,26 @@ async def score_batch(
     )
 
     failures = 0
-    for path, rc in zip(yaml_paths, results, strict=True):
-        if isinstance(rc, BaseException):
+    for path, result in zip(yaml_paths, results, strict=True):
+        if isinstance(result, BaseException):
             failures += 1
-            print(f"FAIL [{path.name}]: {type(rc).__name__}: {rc}", file=sys.stderr)
-        elif rc != 0:
+            print(f"FAIL [{path.name}]: {type(result).__name__}: {result}", file=sys.stderr)
+        elif result != 0:
             failures += 1
             print(
                 f"FAIL [{path.name}]: alignment / parse failure (see stderr above)", file=sys.stderr
             )
         else:
+            if after_success is not None:
+                try:
+                    after_success(path)
+                except Exception as e:
+                    failures += 1
+                    print(
+                        f"FAIL [{path.name}]: scored OK but render failed: {type(e).__name__}: {e}",
+                        file=sys.stderr,
+                    )
+                    continue
             print(f"OK   [{path.name}]", file=sys.stderr)
 
     print(
@@ -794,9 +808,10 @@ def main(argv: list[str] | None = None) -> int:
             "across calls within ~5 minutes."
         ),
         epilog=(
-            "Cost note: scoring makes a real, paid API call. The default --model is the "
-            "flagship Opus; pass a cheaper alias (sonnet/haiku/gpt-mini/gemini-lite) for "
-            "smoke tests. API keys load from the environment and from .env then .env.local "
+            "Cost note: scoring makes a real, paid API call and --model is required. "
+            "The opus alias selects the flagship model; pass a cheaper alias "
+            "(sonnet/haiku/gpt-mini/gemini-lite) for smoke tests. API keys load from "
+            "the environment and from .env then .env.local "
             "auto-discovered up the cwd hierarchy and in $HOME (later files override "
             "earlier). Because of that autoload, `env -u ANTHROPIC_API_KEY pprose score` "
             "can still make a billable call if a reachable .env/.env.local defines the key; "
@@ -901,17 +916,26 @@ def main(argv: list[str] | None = None) -> int:
         default="interactive",
         help="Page-layout variant for --render-html (default: interactive).",
     )
-    parser.add_argument(
-        "--render-format",
-        choices=("single", "folder"),
-        default="single",
-        help="Output format for --render-html (default: single).",
-    )
     args = parser.parse_args(argv)
 
     if args.list_models:
         print(_format_suggested_models())
         return 0
+
+    # Validate render options before any paid model call, but not for --dry-run,
+    # which never scores or renders: a variant typo should not block printing the
+    # prompt.
+    if args.render_html and not args.dry_run:
+        from pprose.render_html.renderer import available_variants
+
+        variants = available_variants()
+        if args.render_variant not in variants:
+            available = ", ".join(variants) or "(none)"
+            print(
+                f"error: unknown render variant {args.render_variant!r}; available: {available}",
+                file=sys.stderr,
+            )
+            return 2
 
     _load_env_files()
 
@@ -986,17 +1010,11 @@ def main(argv: list[str] | None = None) -> int:
                 argv=argv,
                 max_concurrent=args.max_concurrent,
                 max_rps=args.max_rps,
+                after_success=(
+                    (lambda path: _render_after_score(path, args)) if args.render_html else None
+                ),
             )
         )
-        if args.render_html:
-            # Render every successfully written report. We treat the on-disk
-            # file as the source of truth — if scoring left it valid, render it.
-            for p in yaml_paths:
-                if p.is_file():
-                    try:
-                        _render_after_score(p, args)
-                    except Exception as e:
-                        print(f"warning: failed to render {p}: {e}", file=sys.stderr)
         return rc
 
     failures = 0
@@ -1014,14 +1032,24 @@ def main(argv: list[str] | None = None) -> int:
             failures += 1
             continue
         if args.render_html:
-            _render_after_score(out_path if out_path else yaml_path, args)
+            # Mirror batch semantics: a render failure after a successful (paid)
+            # scoring call is reported and reflected in the exit code, but does not
+            # abort the remaining reports; the .eval.md on disk is already valid.
+            target = out_path if out_path else yaml_path
+            try:
+                _render_after_score(target, args)
+            except Exception as e:
+                failures += 1
+                print(
+                    f"FAIL [{target.name}]: scored OK but render failed: {type(e).__name__}: {e}",
+                    file=sys.stderr,
+                )
     return 0 if failures == 0 else 1
 
 
 def _render_after_score(eval_md_path: Path, args) -> None:
     """Compose `pprose score` + `pprose render` — render the just-written report."""
     # Imported lazily so importing eval_score doesn't import Jinja2.
-    from pprose.render_html.inliner import write_folder_assets
     from pprose.render_html.renderer import RenderOpts, render_eval_report
 
     report = EvalReport.from_eval_md(eval_md_path)
@@ -1029,14 +1057,11 @@ def _render_after_score(eval_md_path: Path, args) -> None:
         page_size=args.render_page_size,
         variant=args.render_variant,
         pprose_version=_pprose_version(),
-        folder_mode=(args.render_format == "folder"),
     )
     html = render_eval_report(report, opts)
     out_html = _render_output_path(eval_md_path)
     out_html.parent.mkdir(parents=True, exist_ok=True)
     out_html.write_text(html, encoding="utf-8")
-    if opts.folder_mode:
-        write_folder_assets(out_html.parent)
     print(f"OK: wrote {out_html}", file=sys.stderr)
 
 

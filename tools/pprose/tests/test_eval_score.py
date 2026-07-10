@@ -760,8 +760,188 @@ def test_score_batch_isolates_one_failure(tmp_path: Path, monkeypatch, capsys):
     monkeypatch.setattr(eval_score, "call_scorer_async", fake_async)
     monkeypatch.setenv("ANTHROPIC_API_KEY", "sk-test-fake")
 
-    rc = main([str(s) for s in stubs] + ["--batch", "--model", "opus"])
+    rendered: list[Path] = []
+    monkeypatch.setattr(
+        eval_score,
+        "_render_after_score",
+        lambda path, _args: rendered.append(path),
+    )
+
+    rc = main([str(s) for s in stubs] + ["--batch", "--model", "opus", "--render-html"])
     err = capsys.readouterr().err
     assert rc == 1  # any failure -> overall exit 1
     assert "2/3 OK, 1 failed" in err  # the other two were isolated and succeeded
     assert f"FAIL [{bad.name}]" in err
+    assert set(rendered) == {stubs[0], stubs[2]}
+
+
+def test_score_batch_counts_render_failure(tmp_path: Path, monkeypatch, capsys):
+    """A requested batch render is part of success, not a warning-only side effect."""
+    from pprose import eval_score
+    from pprose.eval_score import CallResult
+
+    stub = _gemini_stub(tmp_path)
+    fake = CallResult(
+        output=_full_response(score=5, with_violation=False),
+        model_id="x",
+        cache_write_tokens=0,
+        cache_read_tokens=0,
+        input_tokens=1,
+        output_tokens=1,
+    )
+
+    async def fake_async(_artifact_block, *, model):
+        return fake
+
+    def fail_render(_path, _args):
+        raise OSError("render write failed")
+
+    monkeypatch.setattr(eval_score, "_load_env_files", lambda: None)
+    monkeypatch.setattr(eval_score, "call_scorer_async", fake_async)
+    monkeypatch.setattr(eval_score, "_render_after_score", fail_render)
+    monkeypatch.setenv("ANTHROPIC_API_KEY", "sk-test-fake")
+
+    rc = main([str(stub), "--batch", "--model", "opus", "--render-html"])
+    err = capsys.readouterr().err
+    assert rc == 1
+    # Distinguished from a scoring failure: the paid call succeeded and the
+    # .eval.md is already on disk; only the render hook failed.
+    assert "FAIL [stub.eval.md]: scored OK but render failed: OSError: render write failed" in err
+    assert "0/1 OK, 1 failed" in err
+    assert EvalReport.from_eval_md(stub).metadata.status == "complete"
+
+
+def test_score_batch_finishes_scoring_before_rendering(tmp_path: Path, monkeypatch, capsys):
+    """Synchronous rendering must not occupy an async scoring concurrency slot."""
+    from pprose import eval_score
+    from pprose.eval_report import main as report_main
+    from pprose.eval_score import CallResult
+
+    stubs = [tmp_path / "first.eval.md", tmp_path / "second.eval.md"]
+    for stub in stubs:
+        assert (
+            report_main(["from-metrics", str(FIXTURES / "all_headings.md"), "--out", str(stub)])
+            == 0
+        )
+
+    fake = CallResult(
+        output=_full_response(score=5, with_violation=False),
+        model_id="x",
+        cache_write_tokens=0,
+        cache_read_tokens=0,
+        input_tokens=1,
+        output_tokens=1,
+    )
+    completed_scores: list[str] = []
+
+    async def fake_async(artifact_block, *, model):
+        completed_scores.append(artifact_block)
+        return fake
+
+    score_counts_at_render: list[int] = []
+
+    def record_render(_path, _args):
+        score_counts_at_render.append(len(completed_scores))
+
+    monkeypatch.setattr(eval_score, "_load_env_files", lambda: None)
+    monkeypatch.setattr(eval_score, "call_scorer_async", fake_async)
+    monkeypatch.setattr(eval_score, "_render_after_score", record_render)
+    monkeypatch.setenv("ANTHROPIC_API_KEY", "sk-test-fake")
+
+    rc = main(
+        [
+            *(str(stub) for stub in stubs),
+            "--batch",
+            "--model",
+            "opus",
+            "--max-rps",
+            "100000",
+            "--render-html",
+        ]
+    )
+    capsys.readouterr()
+    assert rc == 0
+    assert score_counts_at_render == [2, 2]
+
+
+def test_score_non_batch_counts_render_failure_and_continues(tmp_path: Path, monkeypatch, capsys):
+    """A render failure must not skip later reports or return success."""
+    from pprose import eval_score
+
+    reports = [tmp_path / "first.eval.md", tmp_path / "second.eval.md"]
+    for report in reports:
+        report.write_text("stub\n", encoding="utf-8")
+
+    scored: list[Path] = []
+    rendered: list[Path] = []
+
+    def fake_score(path: Path, **_kwargs) -> int:
+        scored.append(path)
+        return 0
+
+    def fake_render(path: Path, _args) -> None:
+        rendered.append(path)
+        if path == reports[0]:
+            raise OSError("render write failed")
+
+    monkeypatch.setattr(eval_score, "_load_env_files", lambda: None)
+    monkeypatch.setattr(eval_score, "_score_one", fake_score)
+    monkeypatch.setattr(eval_score, "_render_after_score", fake_render)
+    monkeypatch.setenv("ANTHROPIC_API_KEY", "sk-test-fake")
+
+    rc = main([str(path) for path in reports] + ["--model", "opus", "--render-html"])
+    err = capsys.readouterr().err
+    assert rc == 1
+    assert scored == reports
+    assert rendered == reports
+    assert "FAIL [first.eval.md]: scored OK but render failed: OSError: render write failed" in err
+
+
+def test_dry_run_is_not_blocked_by_render_variant_typo(tmp_path: Path, monkeypatch, capsys):
+    """--dry-run never scores or renders, so a variant typo must not block it."""
+    from pprose import eval_score
+
+    stub = _gemini_stub(tmp_path)
+    monkeypatch.setattr(eval_score, "_load_env_files", lambda: None)
+
+    rc = main(
+        [
+            str(stub),
+            "--dry-run",
+            "--render-html",
+            "--render-variant",
+            "does-not-exist",
+        ]
+    )
+    out = capsys.readouterr().out
+    assert rc == 0
+    assert "Practical Writing Eval" in out  # the prompt was printed
+
+
+def test_render_variant_is_validated_before_paid_scoring(tmp_path: Path, monkeypatch, capsys):
+    """A render-option typo must fail before any model call is attempted."""
+    from pprose import eval_score
+
+    stub = _gemini_stub(tmp_path)
+
+    def unexpected_call(*_args, **_kwargs):
+        raise AssertionError("paid scorer must not run for an invalid render variant")
+
+    monkeypatch.setattr(eval_score, "_load_env_files", lambda: None)
+    monkeypatch.setattr(eval_score, "call_scorer", unexpected_call)
+    monkeypatch.setenv("ANTHROPIC_API_KEY", "sk-test-fake")
+
+    rc = main(
+        [
+            str(stub),
+            "--model",
+            "opus",
+            "--render-html",
+            "--render-variant",
+            "does-not-exist",
+        ]
+    )
+    err = capsys.readouterr().err
+    assert rc == 2
+    assert "unknown render variant 'does-not-exist'" in err
+    assert "interactive" in err

@@ -11,7 +11,7 @@ def test_bundled_resources_match_canonical():
     drift = sync_resources.check()
     assert not drift, (
         "bundled resources are out of sync with the canonical repo docs; "
-        "run `uv run python devtools/sync_resources.py`:\n  " + "\n  ".join(drift)
+        "run `make generate` from the repository root:\n  " + "\n  ".join(drift)
     )
 
 
@@ -25,6 +25,16 @@ def test_link_rewrite_bundled_targets_become_pprose_commands():
     # Filename label → the command replaces the whole link; prose label is kept.
     assert "`pprose guidelines practical-prose-rubric`" in out
     assert "the single-doc runbook (`pprose runbook practical-prose-eval-single`)" in out
+
+
+def test_link_rewrite_bundled_category_directory_becomes_bare_listing_command():
+    src = sync_resources.REPO_ROOT / "README.md"
+    out = sync_resources._rewrite_links(
+        "See the [runbooks](runbooks/) and [guidelines](docs/).",
+        src,
+    )
+    assert out == "See the `pprose runbook` and `pprose guidelines`."
+    assert "--list" not in out
 
 
 def test_link_rewrite_unbundled_targets_become_github_urls():

@@ -57,8 +57,29 @@ class TestP0_1_ProseExclusion:
 class TestP0_2_BracketTags:
     def test_bracket_tags_in_prose_counted(self):
         m = _measure("bracket_tags_in_code.md")
-        # Prose has [VERIFIED], [DERIVED], [UNVERIFIED] = 3 tags
-        assert m.bracket_tags == 3
+        # Prose has [VERIFIED], [DERIVED], [UNVERIFIED] = 3 plain caps tags,
+        # [ASSUMING: ...] and [DERIVED: ...] colon forms (counted by mnemonic),
+        # and the four rung tags [observed]/[judged]/[interpreted]/[implied] = 9 total
+        assert m.bracket_tags == 9
+
+    def test_colon_tags_counted_by_mnemonic(self):
+        m = _measure("bracket_tags_in_code.md")
+        # [ASSUMING: base rates hold] counts as its mnemonic, detail dropped
+        assert "ASSUMING" in m.bracket_tag_examples
+        assert not any(ex.startswith("ASSUMING:") for ex in m.bracket_tag_examples)
+
+    def test_colon_tag_detail_has_no_undocumented_length_cutoff(self, tmp_path: Path):
+        path = tmp_path / "long-tag.md"
+        path.write_text(f"[ASSUMING: {'x' * 300}]\n", encoding="utf-8")
+        assert pwm.measure(path).bracket_tags == 1
+
+    def test_rung_tags_counted_and_only_the_four(self):
+        m = _measure("bracket_tags_in_code.md")
+        for rung in ("observed", "judged", "interpreted", "implied"):
+            assert rung in m.bracket_tag_examples
+        # Mixed case and arbitrary lowercase bracket text are not tags
+        assert "Observed" not in m.bracket_tag_examples
+        assert "placeholder" not in m.bracket_tag_examples
 
     def test_bracket_tags_in_code_excluded(self):
         m = _measure("bracket_tags_in_code.md")
@@ -168,12 +189,16 @@ class TestP2_8_TablesAndCodeBlocks:
 
 class TestP2_10_WordsPerPage:
     def test_custom_words_per_page(self):
-        m250 = pwm.measure(FIXTURES / "frontmatter_and_code.md", words_per_page=250)
-        m300 = pwm.measure(FIXTURES / "frontmatter_and_code.md", words_per_page=300)
-        # Same words, different pages
-        assert m250.words == m300.words
-        if m250.words > 0:
-            assert m250.pages >= m300.pages
+        m10 = pwm.measure(FIXTURES / "frontmatter_and_code.md", words_per_page=10)
+        m20 = pwm.measure(FIXTURES / "frontmatter_and_code.md", words_per_page=20)
+        assert m10.words == m20.words
+        assert m10.pages == round(m10.words / 10, 1)
+        assert m20.pages == round(m20.words / 20, 1)
+        assert m10.pages > m20.pages
+
+        out = pwm.format_human(m10, words_per_page=10)
+        assert "Pages (10 wpp)" in out
+        assert "Pages (275 wpp)" not in out
 
 
 # ---------------------------------------------------------------------------
@@ -359,6 +384,8 @@ class TestOutputFormats:
         out = pwm.format_human(m)
         assert "Headings" in out
         assert "Bracket tags" in out
+        assert "confidence and inference-rung markers" in out
+        assert "ALL-CAPS bracket tags" not in out
         assert "bare URLs" in out
 
     def test_format_summary_table_runs(self):

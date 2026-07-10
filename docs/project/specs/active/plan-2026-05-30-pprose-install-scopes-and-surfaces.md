@@ -14,6 +14,13 @@ checks, format stamps).
 Phase 2 items have partially landed since (`pprose about` and `pprose skill` overview
 shipped); remaining Phase 2 doc moves are deferred.
 
+> [!NOTE]
+> The Phase 2 listing examples below are historical design notes.
+> The later
+> [CLI listing plan](../done/plan-2026-06-11-cli-snappiness-color-and-listing.md)
+> removed `--list`: use bare category commands such as `pprose guidelines` or the
+> top-level `pprose list` for the current interface.
+
 ## Overview
 
 Replace the current `pprose install` argument shape with a two-axis design:
@@ -602,9 +609,9 @@ All locked in the “Locked decisions” section above before implementation beg
   §6.7 ("Making the CLI available: global install vs.
   zero-install"). Run `tbd guidelines cli-agent-skill-patterns` to read.
 - flowmark `--surfaces` implementation at
-  [flowmark/src/flowmark/cli.py](/Users/levy/wrk/github/flowmark/src/flowmark/cli.py)
+  [flowmark/src/flowmark/cli.py](https://github.com/jlevy/flowmark/blob/main/src/flowmark/cli.py)
   and the surface vocabulary in
-  [flowmark/src/flowmark/skill.py](/Users/levy/wrk/github/flowmark/src/flowmark/skill.py).
+  [flowmark/src/flowmark/skill.py](https://github.com/jlevy/flowmark/blob/main/src/flowmark/skill.py).
 - git-config scope precedent: `git config` defaults to `--local` inside a repo and
   errors without a scope flag outside one.
 - Prior commit on this branch (`7437f44`): initial multi-surface install with format
