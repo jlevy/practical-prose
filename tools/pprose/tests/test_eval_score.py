@@ -835,3 +835,42 @@ def test_render_variant_is_validated_before_paid_scoring(tmp_path: Path, monkeyp
     assert rc == 2
     assert "unknown render variant 'does-not-exist'" in err
     assert "interactive" in err
+
+
+# ---------------------------------------------------------------------------
+# main CLI: --render-html failure handling in the non-batch loop
+# ---------------------------------------------------------------------------
+
+
+def test_main_render_failure_reported_without_aborting_remaining(
+    tmp_path: Path, capsys, monkeypatch
+):
+    """A render failure after a successful score fails the run but not the loop.
+
+    Mirrors batch semantics (after_success exceptions are counted as FAIL):
+    the remaining reports are still processed and the exit code is non-zero.
+    """
+    import pprose.eval_score as es
+
+    paths = []
+    for name in ("a.eval.md", "b.eval.md"):
+        p = tmp_path / name
+        p.write_text("stub", encoding="utf-8")
+        paths.append(p)
+
+    scored: list[str] = []
+    monkeypatch.setattr(es, "_score_one", lambda path, **kwargs: (scored.append(path.name), 0)[1])
+
+    def _boom(target, args):
+        raise RuntimeError("render exploded")
+
+    monkeypatch.setattr(es, "_render_after_score", _boom)
+    monkeypatch.setenv("ANTHROPIC_API_KEY", "test-key-not-used")
+
+    rc = es.main([str(paths[0]), str(paths[1]), "--model", "opus", "--render-html"])
+
+    assert rc == 1
+    assert scored == ["a.eval.md", "b.eval.md"]  # loop did not abort after the first failure
+    err = capsys.readouterr().err
+    assert "FAIL [a.eval.md]" in err and "render failed" in err
+    assert "FAIL [b.eval.md]" in err

@@ -1022,7 +1022,18 @@ def main(argv: list[str] | None = None) -> int:
             failures += 1
             continue
         if args.render_html:
-            _render_after_score(out_path if out_path else yaml_path, args)
+            # Mirror batch semantics: a render failure after a successful (paid)
+            # scoring call is reported and reflected in the exit code, but does not
+            # abort the remaining reports; the .eval.md on disk is already valid.
+            target = out_path if out_path else yaml_path
+            try:
+                _render_after_score(target, args)
+            except Exception as e:
+                failures += 1
+                print(
+                    f"FAIL [{target.name}]: scored OK but render failed: {type(e).__name__}: {e}",
+                    file=sys.stderr,
+                )
     return 0 if failures == 0 else 1
 
 
