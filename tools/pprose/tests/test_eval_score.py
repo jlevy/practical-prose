@@ -808,6 +808,39 @@ def test_score_batch_counts_render_failure(tmp_path: Path, monkeypatch, capsys):
     assert "0/1 OK, 1 failed" in err
 
 
+def test_score_non_batch_counts_render_failure_and_continues(tmp_path: Path, monkeypatch, capsys):
+    """A render failure must not skip later reports or return success."""
+    from pprose import eval_score
+
+    reports = [tmp_path / "first.eval.md", tmp_path / "second.eval.md"]
+    for report in reports:
+        report.write_text("stub\n", encoding="utf-8")
+
+    scored: list[Path] = []
+    rendered: list[Path] = []
+
+    def fake_score(path: Path, **_kwargs) -> int:
+        scored.append(path)
+        return 0
+
+    def fake_render(path: Path, _args) -> None:
+        rendered.append(path)
+        if path == reports[0]:
+            raise OSError("render write failed")
+
+    monkeypatch.setattr(eval_score, "_load_env_files", lambda: None)
+    monkeypatch.setattr(eval_score, "_score_one", fake_score)
+    monkeypatch.setattr(eval_score, "_render_after_score", fake_render)
+    monkeypatch.setenv("ANTHROPIC_API_KEY", "sk-test-fake")
+
+    rc = main([str(path) for path in reports] + ["--model", "opus", "--render-html"])
+    err = capsys.readouterr().err
+    assert rc == 1
+    assert scored == reports
+    assert rendered == reports
+    assert "FAIL [first.eval.md]: scored OK but render failed: OSError: render write failed" in err
+
+
 def test_render_variant_is_validated_before_paid_scoring(tmp_path: Path, monkeypatch, capsys):
     """A render-option typo must fail before any model call is attempted."""
     from pprose import eval_score
@@ -835,42 +868,3 @@ def test_render_variant_is_validated_before_paid_scoring(tmp_path: Path, monkeyp
     assert rc == 2
     assert "unknown render variant 'does-not-exist'" in err
     assert "interactive" in err
-
-
-# ---------------------------------------------------------------------------
-# main CLI: --render-html failure handling in the non-batch loop
-# ---------------------------------------------------------------------------
-
-
-def test_main_render_failure_reported_without_aborting_remaining(
-    tmp_path: Path, capsys, monkeypatch
-):
-    """A render failure after a successful score fails the run but not the loop.
-
-    Mirrors batch semantics (after_success exceptions are counted as FAIL):
-    the remaining reports are still processed and the exit code is non-zero.
-    """
-    import pprose.eval_score as es
-
-    paths = []
-    for name in ("a.eval.md", "b.eval.md"):
-        p = tmp_path / name
-        p.write_text("stub", encoding="utf-8")
-        paths.append(p)
-
-    scored: list[str] = []
-    monkeypatch.setattr(es, "_score_one", lambda path, **kwargs: (scored.append(path.name), 0)[1])
-
-    def _boom(target, args):
-        raise RuntimeError("render exploded")
-
-    monkeypatch.setattr(es, "_render_after_score", _boom)
-    monkeypatch.setenv("ANTHROPIC_API_KEY", "test-key-not-used")
-
-    rc = es.main([str(paths[0]), str(paths[1]), "--model", "opus", "--render-html"])
-
-    assert rc == 1
-    assert scored == ["a.eval.md", "b.eval.md"]  # loop did not abort after the first failure
-    err = capsys.readouterr().err
-    assert "FAIL [a.eval.md]" in err and "render failed" in err
-    assert "FAIL [b.eval.md]" in err
