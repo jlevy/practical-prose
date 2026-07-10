@@ -6,7 +6,7 @@ status: active
 ---
 # Practical Prose Metrics and Frontmatter
 
-Version: v0.1 (last update 2026-06-12)\
+Version: v0.1 (last update 2026-07-09)\
 Joshua Levy (github.com/jlevy) with agent assistance
 
 An operational appendix to the practical-prose system.
@@ -40,7 +40,7 @@ and **manual** denotes a human reviewer.
 | 7 | Concision | Word count vs target by doc type; repeated n-gram count; low-information paragraph flag; replacement-history phrase hits (regex set: “previously named,” “formerly,” “under the new layout,” “removed,” etc.) | Does removing a section lose information; is replacement history absent outside history-genre exceptions? | `pprose metrics` words/paragraphs; manual cut test |
 | 8 | Organization | Heading-level skip count (h1→h3 without h2); generic-heading hits (“Overview,” “Background,” “Notes,” “Details”); table count and column densities; figure-caption presence; link-target stability (no commit-less URLs to mutable refs) | Are sections sequenced for the task; do tables earn their tabular shape; do headings cleave to subject contours? | `pprose metrics` headings/tables; manual |
 | 9 | Consistency | Acronym casing variance; dialect mixing; date-format variance; parallel-list violations; spaced em-dash count and em-dash density per 1000 words | Does the document follow the chosen style guide; are em dashes used sparingly and in American style? | linter; manual |
-| 10 | Formatting | Markdown lint pass/fail; frontmatter present and valid; footer present | Renders correctly across mediums? | flowmark / md-lint; `pprose metrics` footnote round-trip |
+| 10 | Formatting | Markdown lint pass/fail; frontmatter present and valid; footer present | Renders correctly across mediums? | flowmark / md-lint; `pprose metrics` footnote reference/definition counts |
 | 11 | Discipline | Rung-tag count (`[observed]`, `[judged]`, `[interpreted]`, `[implied]`) in audit/eval modes; multi-rung-per-sentence flag | Are observation, judgment, interpretation, and implication worked through in order, each higher rung supported by the prior? | `pprose metrics` bracket tags (audit mode); LLM-assist; manual |
 | 12 | Soundness | `[ASSUMING:]` tag count where assumptions are load-bearing; count of unbridged “signal → outcome” leaps | Are mechanisms named where causation is asserted; is counter-evidence engaged? | `pprose metrics` bracket tags; manual / SME |
 | 13 | Precision | Vague-countable hits (“several,” “various,” “many”); umbrella-term hits (“users,” “latency”) where domain sub-distinctions matter | Is the most specific term the audience can parse used throughout? | banned-register / linter extension; manual |

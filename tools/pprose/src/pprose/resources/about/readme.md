@@ -263,7 +263,7 @@ Each layer answers a different question.
 | **Bibliography** | `pprose guidelines practical-prose-bibliography` | Where do these ideas come from: what works ground each tradition? |
 | **Metrics** | `pprose guidelines practical-prose-metrics` | Which quantitative metrics and qualitative checks map to which dimensions; recommended frontmatter schema. |
 | **Shortcut** | `pprose shortcut practical-prose-quick-checklist` | One-page pre-publish self-audit across the 20 dimensions. |
-| **Runbook** | `pprose runbook --list` | Operational steps for single-document evals and N-way comparisons. |
+| **Runbook** | `pprose runbook` | Operational steps for single-document evals and N-way comparisons. |
 
 The Common layer is the base substrate.
 `common-doc-guidelines.md` captures general organization, structure, style, and
@@ -290,7 +290,7 @@ system gets used in practice.
   `pprose guidelines practical-prose-rubric`.
 - **Running a pre-publish self-audit:**
   `pprose shortcut practical-prose-quick-checklist`.
-- **Running a formal eval:** the `pprose runbook --list` directory.
+- **Running a formal eval:** the `pprose runbook` directory.
 - **Understanding why a rule exists:** the corresponding principle in
   `pprose guidelines practical-prose-principles`, and the source
   tradition in `pprose guidelines practical-prose-bibliography`.
@@ -306,7 +306,7 @@ Agent Skills under [skills/](https://github.com/jlevy/practical-prose/tree/main/
 | Skill | Kind | Use When |
 | --- | --- | --- |
 | pprose-common-edit (`pprose skill pprose-common-edit`) | Apply | Tidy, clean up, conform, fix formatting/structure, or add the documentation footer. The basic, universal tier. |
-| pprose-copy-edit (`pprose skill pprose-copy-edit`) | Apply | Copy edit, proofread, polish, tighten, or line edit: language and formatting (Expression). Superset of common-edit. |
+| pprose-copy-edit (`pprose skill pprose-copy-edit`) | Apply | Copy edit, proofread, polish, tighten, or line edit: language and formatting (Expression and Form). Superset of common-edit. |
 | pprose-full-edit (`pprose skill pprose-full-edit`) | Apply | Deep edit across all 20 dimensions; also writes an editorial review (strengths, weaknesses, suggested fixes). Superset of copy-edit; covers audit-only review. |
 | pprose-review (`pprose skill pprose-review`) | Review | Review, critique, or get a tiered edit plan (what a common edit, copy edit, and full substantive pass would each change) without modifying the document and without scores. Read-only. |
 | pprose-eval (`pprose skill pprose-eval`) | Evaluate | Score, grade, rubric-check, or measure the quality of one document. |
@@ -345,10 +345,10 @@ console-script entry point are both `pprose`:
 - `pprose compare`: compare N eval reports across versions or variants.
 
 It also bundles the guidelines, shortcuts, runbooks, and rubric and serves them as
-reference subcommands (`pprose guidelines|shortcut|runbook|skill <name>`, `--list` to
-enumerate), so the skills work in any repo.
-Every artifact `pprose install` generates carries a `format=fNN surface=…` stamp, so
-re-running install is idempotent and a newer-format artifact is never clobbered by an
+reference subcommands (`pprose guidelines|shortcut|runbook <name>`; omit the name to
+list one kind, or use `pprose list` for the full inventory), so the skills work in any
+repo. Every artifact `pprose install` generates carries a `format=fNN surface=…` stamp,
+so re-running install is idempotent and a newer-format artifact is never clobbered by an
 older pprose. Each generated skill references pprose with a pinned, local-first
 invocation (`pprose` if on PATH, else `uvx pprose@<version>`—the trusted version that
 ran install—else a message telling the user to install uv or pprose).

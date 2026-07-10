@@ -6,7 +6,7 @@ status: active
 ---
 # Practical Prose Rubric
 
-Version: v0.2 (rubric: `pp20v1`, last update 2026-06-12)\
+Version: v0.2 (rubric: `pp20v1`, last update 2026-07-09)\
 Joshua Levy (github.com/jlevy)
 
 A descriptive 1-5 rubric for assessing practical writing artifacts (articles, blog
@@ -1099,7 +1099,7 @@ because it applies E1-E3 fixes rather than scoring them.
 | Pass | Scope | Dimensions | Stack |
 | --- | --- | --- | --- |
 | Lint | Surface defects | E1 Clarity (banned-register and vague-word checks), F1 Organization, F2 Consistency, F3 Formatting | `pprose metrics`, linters, deterministic checks |
-| Claim audit | Every quantitative claim against its cited source; every source on-task | G1 Verifiability, G2 Factuality, G3 Relevance | Source lookups, calculation re-runs |
+| Claim audit | Every material, verifiable claim against the best available evidence; every source on-task | G1 Verifiability, G2 Factuality, G3 Relevance | Source lookups, calculation re-runs |
 | Reasoning audit | Mechanisms, assumptions, counter-evidence, calibration, alternative lenses | R1 Discipline, R2 Soundness, R3 Precision, R4 Parsimony, J1 Calibration, J2 Fairness, J3 Robustness | Subject-matter expert or fresh-context agent |
 | Purpose audit | Output shape vs task shape; scope; skim-recoverability and flow | P1 Suitability, P2 Scope, P3 Breadth, P4 Depth, E2 Coherence, E3 Concision | Reader simulation; subject-matter expert |
 

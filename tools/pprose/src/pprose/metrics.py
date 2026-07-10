@@ -53,7 +53,8 @@ flowmark.split_sentences_regex through flexdoc.
 
 Known limitations:
   - HTML links (<a href="...">) are not counted — markdown-syntax links only.
-  - Bracket-tag matching is a heuristic (ALL-CAPS inside []), not a parser.
+  - Bracket-tag matching is a heuristic over the documented confidence-tag and
+    inference-rung forms, not a Markdown parser.
   - Banned-register matching is a literal word-boundary check; mentions and use
     are not distinguished (a doc that quotes "monumental" as an example of a banned
     word still gets a hit). Inspect the examples list to triage.
@@ -83,8 +84,8 @@ from flexdoc.docs import Link, LinkForm
 
 WORDS_PER_PAGE = 275
 
-# ALL-CAPS bracket-tag heuristic (e.g. [VERIFIED], [TBD]); a register marker, not a
-# Markdown construct, so it stays a regex run over the prose-only text.
+# Bracket tags are register markers, not Markdown constructs, so the documented forms
+# are matched over prose-only text.
 # Bracket tags come in two documented families (see practical-prose-guidelines.md):
 #   - ALL-CAPS confidence tags, with or without a colon-suffixed detail: [VERIFIED],
 #     [ASSUMING: rates hold], [DERIVED: 89.6 / 614.5 = 14.6%] (G1.4, R2.3). Counted by
@@ -92,7 +93,7 @@ WORDS_PER_PAGE = 275
 #   - The four lowercase ladder-of-inference rung tags from R1.4: [observed], [judged],
 #     [interpreted], [implied]. Other lowercase bracket text is not a tag.
 BRACKET_TAG_RE = re.compile(
-    r"\[([A-Z][A-Z0-9_ -]{1,30})(?::[^\]\n]{0,200})?\]"
+    r"\[([A-Z][A-Z0-9_ -]{1,30})(?::[^\]\n]*)?\]"
     r"|\[(observed|judged|interpreted|implied)\]"
 )
 
@@ -374,7 +375,7 @@ def measure(
     )
 
 
-def format_human(m: Metrics) -> str:
+def format_human(m: Metrics, *, words_per_page: int = WORDS_PER_PAGE) -> str:
     h = m.headings
     examples = ", ".join(f"[{x}]" for x in m.bracket_tag_examples) or "—"
     banned_examples = ", ".join(m.banned_register_examples) or "—"
@@ -387,7 +388,7 @@ def format_human(m: Metrics) -> str:
 Size:
   Words           {m.words:>8,}      Sentences       {m.sentences:>8,}
   Paragraphs      {m.paragraphs:>8,}      Lines           {m.lines:>8,}
-  Pages (275 wpp) {m.pages:>8.1f}
+  Pages ({words_per_page} wpp) {m.pages:>8.1f}
 
 Headings:
   h1  {h["h1"]:>4}    h2  {h["h2"]:>4}    h3  {h["h3"]:>4}
@@ -408,7 +409,7 @@ Footnotes:
   references      {m.footnote_references:>4}
   definitions     {m.footnote_definitions:>4}
 
-Bracket tags (ALL-CAPS bracket tags, e.g. [VERIFIED] — inspect examples to distinguish citations from markers):
+Bracket tags (confidence and inference-rung markers — inspect examples for context):
   count           {m.bracket_tags:>4}
   examples        {examples}
 
@@ -525,7 +526,7 @@ def main(argv: list[str] | None = None) -> int:
     elif args.format == "json":
         print(json.dumps([asdict(m) for m in metrics_list], indent=2))
     elif len(metrics_list) == 1:
-        print(format_human(metrics_list[0]))
+        print(format_human(metrics_list[0], words_per_page=args.words_per_page))
     else:
         print(format_summary_table(metrics_list))
 

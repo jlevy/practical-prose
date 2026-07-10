@@ -32,6 +32,7 @@ import asyncio
 import hashlib
 import os
 import sys
+from collections.abc import Callable
 from dataclasses import dataclass, field
 from importlib.metadata import PackageNotFoundError, version
 from pathlib import Path
@@ -703,6 +704,7 @@ async def _score_one_async(
     allow_misaligned: bool,
     argv: list[str] | None,
     quiet: bool = False,
+    after_success: Callable[[Path], None] | None = None,
 ) -> int:
     """Score a single YAML via the async SDK path. Used by score_batch."""
     if not yaml_path.is_file():
@@ -710,7 +712,7 @@ async def _score_one_async(
         return 1
     prep = _prepare_score(yaml_path, out=out)
     result = await call_scorer_async(prep.artifact_block, model=model)
-    return _apply_score(
+    rc = _apply_score(
         prep,
         result,
         model=model,
@@ -719,6 +721,9 @@ async def _score_one_async(
         argv=argv,
         quiet=quiet,
     )
+    if rc == 0 and after_success is not None:
+        after_success(prep.out_path)
+    return rc
 
 
 async def score_batch(
@@ -730,6 +735,7 @@ async def score_batch(
     argv: list[str] | None,
     max_concurrent: int = 8,
     max_rps: float = 4.0,
+    after_success: Callable[[Path], None] | None = None,
 ) -> int:
     """Score N YAMLs in parallel via gather_limited.
 
@@ -756,6 +762,7 @@ async def score_batch(
             allow_misaligned=allow_misaligned,
             argv=argv,
             quiet=True,
+            after_success=after_success,
         )
         for p in yaml_paths
     ]
@@ -794,9 +801,10 @@ def main(argv: list[str] | None = None) -> int:
             "across calls within ~5 minutes."
         ),
         epilog=(
-            "Cost note: scoring makes a real, paid API call. The default --model is the "
-            "flagship Opus; pass a cheaper alias (sonnet/haiku/gpt-mini/gemini-lite) for "
-            "smoke tests. API keys load from the environment and from .env then .env.local "
+            "Cost note: scoring makes a real, paid API call and --model is required. "
+            "The opus alias selects the flagship model; pass a cheaper alias "
+            "(sonnet/haiku/gpt-mini/gemini-lite) for smoke tests. API keys load from "
+            "the environment and from .env then .env.local "
             "auto-discovered up the cwd hierarchy and in $HOME (later files override "
             "earlier). Because of that autoload, `env -u ANTHROPIC_API_KEY pprose score` "
             "can still make a billable call if a reachable .env/.env.local defines the key; "
@@ -907,6 +915,18 @@ def main(argv: list[str] | None = None) -> int:
         print(_format_suggested_models())
         return 0
 
+    if args.render_html:
+        from pprose.render_html.renderer import available_variants
+
+        variants = available_variants()
+        if args.render_variant not in variants:
+            available = ", ".join(variants) or "(none)"
+            print(
+                f"error: unknown render variant {args.render_variant!r}; available: {available}",
+                file=sys.stderr,
+            )
+            return 2
+
     _load_env_files()
 
     yaml_paths = [Path(p) for p in args.yaml_paths]
@@ -980,17 +1000,11 @@ def main(argv: list[str] | None = None) -> int:
                 argv=argv,
                 max_concurrent=args.max_concurrent,
                 max_rps=args.max_rps,
+                after_success=(
+                    (lambda path: _render_after_score(path, args)) if args.render_html else None
+                ),
             )
         )
-        if args.render_html:
-            # Render every successfully written report. We treat the on-disk
-            # file as the source of truth — if scoring left it valid, render it.
-            for p in yaml_paths:
-                if p.is_file():
-                    try:
-                        _render_after_score(p, args)
-                    except Exception as e:
-                        print(f"warning: failed to render {p}: {e}", file=sys.stderr)
         return rc
 
     failures = 0

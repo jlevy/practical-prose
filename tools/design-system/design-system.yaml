@@ -6,7 +6,7 @@
 #   - tools/pprose/src/pprose/design_system_generated.py (Python palette dict)
 #
 # Edit this file, then run:
-#     uv run python tools/design-system/generate.py
+#     make generate
 #
 # Conventions (see design-system.md for the full rationale):
 #   - All colors are HSL.  HSL is the color primitive (3 components: h, s, l).

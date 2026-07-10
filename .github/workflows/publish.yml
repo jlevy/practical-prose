@@ -3,12 +3,13 @@ name: Publish to PyPI
 on:
   release:
     types: [published]
-  workflow_dispatch: # Enable manual trigger.
 
-# Install and build strictly from the committed lockfile (SUPPLY-CHAIN-SECURITY.md:
-# frozen installs); see the matching note in ci.yml.
+# Check and install strictly from committed, environment-neutral lock and constraint
+# files; see SUPPLY-CHAIN-SECURITY.md and the matching note in ci.yml.
 env:
-  UV_FROZEN: "1"
+  UV_NO_CONFIG: "1"
+  UV_LOCKED: "1"
+  UV_BUILD_CONSTRAINT: ${{ github.workspace }}/tools/pprose/build-constraints.txt
 
 jobs:
   build-and-publish:
@@ -24,13 +25,13 @@ jobs:
 
     steps:
       - name: Checkout (official GitHub action)
-        uses: actions/checkout@v6
+        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
         with:
           # Important for versioning plugins:
           fetch-depth: 0
 
       - name: Install uv (official Astral action)
-        uses: astral-sh/setup-uv@v7
+        uses: astral-sh/setup-uv@37802adc94f370d6bfd71619e3f0bf239e1f3b78 # v7.6.0
         with:
           version: "0.10.2"
           enable-cache: true
@@ -39,21 +40,31 @@ jobs:
       - name: Set up Python (using uv)
         run: uv python install
 
+      - name: Verify lockfile is up to date and environment-neutral
+        run: |
+          uv lock --check
+          if grep -Eq '^\[options(\.|\])' uv.lock; then
+            echo "uv.lock carries environment-specific [options] metadata"
+            exit 1
+          fi
+
       - name: Install all dependencies
         run: uv sync --all-extras
 
       # Fail fast if the release tag doesn't match the discovery pin baked into the
-      # committed skills (DISCOVERY_VERSION). Only meaningful for tag-driven releases;
-      # a manual workflow_dispatch run carries the publisher's own responsibility.
+      # committed skills (DISCOVERY_VERSION).
       - name: Verify release tag matches baked discovery pin
-        if: github.event_name == 'release'
-        run: uv run python devtools/check_release_version.py "${{ github.ref_name }}"
+        env:
+          RELEASE_TAG: ${{ github.ref_name }}
+        run: uv run python devtools/check_release_version.py "$RELEASE_TAG"
 
       - name: Run tests
         run: uv run pytest
 
       - name: Build package
-        run: uv build
+        run: >-
+          uv build --no-config --build-constraint build-constraints.txt
+          --require-hashes
 
       - name: Publish to PyPI
         run: uv publish --trusted-publishing always

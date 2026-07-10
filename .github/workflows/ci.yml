@@ -14,12 +14,13 @@ on:
 permissions:
   contents: read
 
-# Install strictly from the committed lockfile (SUPPLY-CHAIN-SECURITY.md: frozen
-# installs). Without this, `uv sync` silently re-resolves when the lockfile was
-# produced under resolution settings CI doesn't share (e.g. a contributor's global
-# `exclude-newer`), so CI would test freshly resolved deps instead of the lock.
+# Check and install strictly from committed, environment-neutral lock and constraint
+# files (SUPPLY-CHAIN-SECURITY.md). UV_NO_CONFIG keeps runner state out of resolution;
+# UV_LOCKED fails rather than changing a stale lock.
 env:
-  UV_FROZEN: "1"
+  UV_NO_CONFIG: "1"
+  UV_LOCKED: "1"
+  UV_BUILD_CONSTRAINT: ${{ github.workspace }}/tools/pprose/build-constraints.txt
 
 jobs:
   build:
@@ -69,14 +70,14 @@ jobs:
 
       # Staleness gate: fails if uv.lock no longer satisfies pyproject.toml, or if a
       # re-lock re-embedded environment-specific [options] (the lock must stay
-      # environment-neutral; see SUPPLY-CHAIN-SECURITY.md). `env -u`: UV_FROZEN maps
-      # to `uv lock --check-exists`, which conflicts with `--check`.
+      # environment-neutral; see SUPPLY-CHAIN-SECURITY.md).
       - name: Verify lockfile is up to date and environment-neutral
         run: |
-          env -u UV_FROZEN uv lock --check
-          if grep -q '^\[options\]' uv.lock; then
+          uv lock --check
+          if grep -Eq '^\[options(\.|\])' uv.lock; then
             echo "uv.lock carries an [options] block (environment-specific resolution"
-            echo "settings leaked into the lock); re-lock with: uv lock --no-config"
+            echo "settings leaked into the lock); use the two-pass procedure in"
+            echo "SUPPLY-CHAIN-SECURITY.md"
             exit 1
           fi
 
@@ -125,7 +126,7 @@ jobs:
         working-directory: tools/pprose
 
       - name: Verify design-system generated files are up to date
-        run: uv run --script tools/design-system/generate.py --check
+        run: uv run --no-sync --project tools/pprose python tools/design-system/generate.py --check
 
       - name: Lint design-system Python (top-level ruff.toml)
         run: |
@@ -160,14 +161,22 @@ jobs:
       - name: Set up Python
         run: uv python install
 
+      - name: Install locked project and build dependencies
+        run: uv sync --all-extras
+
       - name: Build sdist + wheel
         # Build into a clean out-dir so the glob can't match any stale wheel.
-        run: uv build --out-dir /tmp/dist
+        run: >-
+          uv build --no-config --build-constraint build-constraints.txt
+          --require-hashes --out-dir /tmp/dist
 
-      - name: Install the built wheel into a clean venv
+      - name: Create a clean venv with locked runtime dependencies
         run: |
-          uv venv /tmp/wheeltest --python 3.13
-          uv pip install --python /tmp/wheeltest /tmp/dist/pprose-*.whl
+          UV_PROJECT_ENVIRONMENT=/tmp/wheeltest \
+            uv sync --no-dev --no-install-project
+
+      - name: Install the built wheel without resolving dependencies
+        run: uv pip install --python /tmp/wheeltest --no-deps /tmp/dist/pprose-*.whl
 
       - name: Smoke-test the installed CLI (bundled resources resolve)
         run: |

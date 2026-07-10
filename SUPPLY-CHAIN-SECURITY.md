@@ -11,8 +11,9 @@ agent or contributor should read before adding or upgrading a dependency.
   old unless a documented exception below applies.
   Registries yank malicious versions within minutes to days, so waiting is nearly free.
 - **Lockfiles are committed; installs are frozen.** `uv.lock` and `package-lock.json`
-  are checked in. CI installs against them (`npm ci`; `uv sync` against the lock).
-  Never auto-update without reviewing the lockfile diff like a code diff.
+  are checked in. Routine Python commands ignore personal resolver config and use
+  `UV_LOCKED`; JS installs use `npm ci`. Never auto-update without reviewing the
+  lockfile diff like a code diff.
 - **No unpinned zero-install runners.** Every `uvx` / `npx` invocation pins an exact
   `@version` (see the `FLOWMARK_VERSION` pin in the [Makefile](Makefile) and the
   `--no-install` biome/lefthook calls in [lefthook.yml](lefthook.yml), which resolve the
@@ -27,18 +28,48 @@ agent or contributor should read before adding or upgrading a dependency.
 
 | Tool | Control in this repo |
 | --- | --- |
-| uv (Python, `tools/pprose`) | `uv.lock` committed and **environment-neutral** (see below); CI installs with `UV_FROZEN` and gates on `uv lock --check`; pins with cool-off comments; the contributor’s global `~/.config/uv/uv.toml` carries `exclude-newer`. |
+| uv (Python, `tools/pprose`) | `uv.lock` committed and **environment-neutral** (see below); routine commands use `UV_NO_CONFIG` + `UV_LOCKED`; CI and publish gate on `uv lock --check`; isolated build requirements have a separate hashed constraint set. |
 | npm (JS tooling, `tools/`) | `package-lock.json` committed; CI uses `npm ci`; cool-off enforced at upgrade time via `npm-check-updates --cooldown 14` and `npm view <pkg> time.<ver>`. |
 
-**The lockfile must stay environment-neutral.** A `uv lock` run under a global
+**The lockfile must stay environment-neutral.** A plain `uv lock` run under a global
 `exclude-newer` config embeds that machine’s resolution settings as an `[options]` block
 in `uv.lock`; any environment *without* those settings (CI, other contributors) then
 treats the lock as stale, and a plain `uv sync` silently re-resolves instead of
 installing what was reviewed.
-CI therefore installs with `UV_FROZEN` and fails if the lock is stale or carries an
-`[options]` block. When re-locking (dependency bumps), run `uv lock --no-config` so
-personal global settings stay out of the committed lock; the cool-off is enforced at
-upgrade time by the dated-pin review practice above, not by resolver config.
+The root and package Makefiles, git hooks, CI, and publish workflow therefore ignore
+personal uv config and fail on lock drift.
+CI also rejects any `[options]` table.
+
+For a dependency change, use a two-pass lock:
+
+```bash
+cd tools/pprose
+uv lock --no-config --exclude-newer '14 days'
+# Review every selected-version and hash change here.
+uv lock --no-config
+```
+
+The first pass applies the 14-day gate to direct and transitive packages.
+It records the cutoff in a temporary `[options]` table.
+With the selected versions already locked, the second pass removes the resolver setting
+while preserving those selections.
+Review the second diff and confirm it removes only `[options]`; CI independently
+verifies the final lock is current and environment-neutral.
+
+**Build requirements are locked separately.** `uv build` resolves its isolated PEP 517
+environment independently of `uv.lock`, so `tools/pprose/build-requires.in` exact-pins
+the direct build tools and `build-constraints.txt` records their full transitive closure
+with hashes. Regenerate it under the same cool-off:
+
+```bash
+cd tools/pprose
+uv pip compile --no-config --exclude-newer '14 days' --generate-hashes \
+  --output-file build-constraints.txt build-requires.in
+```
+
+Keep the two direct pins synchronized with `[build-system].requires` in
+`pyproject.toml`. CI and publish pass the constraint file to `uv build` with
+`--require-hashes`.
 
 ## First-Party Exemption
 
@@ -71,8 +102,7 @@ This is a standing exemption, recorded here rather than re-approved per bump.
   value must be a full RFC 3339 timestamp (`{ pkg = "2026-06-15T00:00:00Z" }`): uv (as
   of 0.8.17) rejects date-only values in `pyproject.toml` with only a warning and then
   ignores the whole `[tool.uv]` table, so the bridge silently never applies.
-  CI has no global cutoff and installs from the committed `uv.lock`. Reviewed-by: Joshua
-  Levy.
+  CI installs from the committed `uv.lock`. Reviewed-by: Joshua Levy.
 
 ## Known Gap
 

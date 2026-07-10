@@ -82,8 +82,9 @@ for pre-publish audit of an already-drafted doc.
 
 ## Grounding (G1-G3)
 
-- [ ] **G1 Verifiability:** Every quantitative claim source-traceable at the
-  stakes-appropriate bar?
+- [ ] **G1 Verifiability:** Every material, verifiable claim traceable to the best
+  available evidence at the stakes-appropriate bar?
+  Quantitative calculations re-run?
   Confidence tags paired with sources?
   For central claims, is what would invalidate them named (G1.6)?
 - [ ] **G2 Factuality:** Cited sources support the claim at the asserted strength?
@@ -111,9 +112,10 @@ broad pass:
 1. **Lint pass:** Cosmetic / deterministic: E1 banned-register and vague-word checks, F1
    Organization, F2 Consistency, F3 Formatting.
    Use `pprose metrics`.
-2. **Claim audit:** Every quantitative claim against its cited source; every source
-   on-task. G1 Verifiability, G2 Factuality, G3 Relevance.
-   Re-run calculations.
+2. **Claim audit:** Every material, verifiable claim against the best available
+   evidence; every source on-task.
+   G1 Verifiability, G2 Factuality, G3 Relevance.
+   Re-run quantitative calculations.
 3. **Reasoning audit:** Assumptions, mechanisms, counter-evidence, parsimony,
    calibration, alternative lenses.
    R1 Discipline, R2 Soundness, R3 Precision, R4 Parsimony, J1 Calibration, J2 Fairness,

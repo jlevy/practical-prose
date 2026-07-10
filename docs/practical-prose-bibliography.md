@@ -6,7 +6,7 @@ status: active
 ---
 # Practical Prose Bibliography
 
-Version: v0.1 (last update 2026-06-12)\
+Version: v0.1 (last update 2026-07-09)\
 Joshua Levy (github.com/jlevy), assembled with agent assistance
 
 While not exhaustive, this curated bibliography covers many notable past and present
@@ -504,13 +504,14 @@ this body of work into a checkable list.
   across 11 LLMs, 8 genres, and 4 decoding strategies.
   Finds nominalizations, that-clauses as subject, and past participial clauses among the
   most LLM-overused features, and that genre effects overwhelm author-type effects, so a
-  lexical tell list calibrated on one corpus mis-fires elsewhere.
+  lexical tell list calibrated on one corpus misfires elsewhere.
 - **Xia, Stańczak, and Roth, “Explaining Generalization of AI-Generated Text Detectors
   Through Linguistic Analysis”** (EACL 2026)[^xia-detector-generalization]. Benchmarks
-  detector generalization across 6 prompting strategies, 7 LLMs, and 4 domains; finds
-  passive-voice ratio and short-sentence ratio the most reliably cross-domain features.
-  With Rallapalli et al., the empirical case that structural patterns outlast vocabulary
-  lists (the split [ai-prose-corrections.md](ai-prose-corrections.md) is organized
+  detector generalization across 6 prompting strategies, 7 LLMs, and 4 domains.
+  Finds setting-dependent associations with features such as pronoun frequency and verb
+  tense; no single feature explains all generalization gaps.
+  With Rallapalli et al., it supports testing structural features alongside lexical
+  tells (the split [ai-prose-corrections.md](ai-prose-corrections.md) is organized
   around).
 
 **Style criticism and conceptual frames.**
@@ -1066,8 +1067,9 @@ practitioner rule sheets that would feed such a pack.
 
 [^xia-detector-generalization]: Xia, Yuxi, Kinga Stańczak, and Benjamin Roth.
     “Explaining Generalization of AI-Generated Text Detectors Through Linguistic
-    Analysis.” EACL 2026. arXiv preprint arXiv:2601.07974, January 12, 2026.
-    <https://arxiv.org/abs/2601.07974>.
+    Analysis.” *Proceedings of the 19th Conference of the European Chapter of the
+    Association for Computational Linguistics (Volume 1: Long Papers)*, 2026, pp.
+    6524–6546. <https://doi.org/10.18653/v1/2026.eacl-long.307>.
 
 [^chiang-blurry-jpeg]: Chiang, Ted. “ChatGPT Is a Blurry JPEG of the Web.”
     *The New Yorker*, February 9, 2023.

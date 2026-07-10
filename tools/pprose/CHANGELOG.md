@@ -5,29 +5,35 @@ The format loosely follows [Keep a Changelog](https://keepachangelog.com/), and 
 project aims to follow [semantic versioning](https://semver.org/). Versions are produced
 from git tags by dynamic versioning (see [docs/publishing.md](docs/publishing.md)).
 
+## [Unreleased]
+
 ## [0.2.0] - 2026-07-09
 
 ### Fixed
 
-- **`pprose score --render-html` worked again.** The composition path still called the
+- **`pprose score --render-html` works reliably.** The composition path still called the
   folder-mode API removed from `pprose render` in v0.1.0, so the flag crashed on every
   invocation before rendering anything.
-  It now renders the single-file page, and a regression test covers the score→render
-  composition.
+  It now renders the single-file page, validates variants before any paid model call,
+  renders only successfully scored batch items, and reports rendering failures through
+  the process exit code.
 - **`rubric_schema.yaml` re-aligned with the v0.2 guidelines.** Five dimension questions
   were stale (notably Factuality’s corroboration-driven wording and Verifiability’s “or
   explicit assumptions”), and G1 was missing rule 7 (“Links serve readers”), so a scorer
   citing G1.7 failed alignment validation.
-  A new sync test pins the schema’s questions and rule counts to the bundled guidelines
-  so the two cannot drift silently.
+  A new sync test pins the schema’s questions and ordered rule identities to the
+  guidelines, rubric, and README copies so they cannot drift silently.
 - Human metrics output labels the page estimate “wpp” (words per page), matching the
   compare and render surfaces; it previously said “wpm”.
+  Custom `--words-per-page` values are reflected in the label.
 - **Bracket-tag counting covers the documented tag conventions.** The metric matched
   only ALL-CAPS colon-less tags, so the guidelines’ own recommended forms were
   invisible: colon-suffixed confidence tags (`[ASSUMING: ...]`, `[DERIVED: ...]`,
   counted by their mnemonic) and the four lowercase ladder-of-inference rung tags
   (`[observed]`, `[judged]`, `[interpreted]`, `[implied]`) are now counted.
   Other lowercase or mixed-case bracket text is still not a tag.
+- Bundled links to guideline, shortcut, and runbook directories use the current bare
+  listing commands rather than the removed `--list` flag.
 
 ### Changed
 
@@ -74,14 +80,18 @@ from git tags by dynamic versioning (see [docs/publishing.md](docs/publishing.md
 - **Bundled docs: 2026-07 review pass.** All bundled reference docs and shortcuts now
   carry the recommended-schema required frontmatter (`title`, `description`, `date`,
   `status`); the metrics doc describes today’s `pprose metrics` capabilities exactly
-  (including the `dominant` banned-register extension and the ALL-CAPS-only bracket-tag
-  matcher); the rubric’s “Notes” section is renamed “Limits of Scores”; the bibliography
-  adds Rallapalli et al.
+  (including the `dominant` banned-register extension, colon-suffixed confidence tags,
+  and lowercase inference-rung tags); the rubric’s “Notes” section is renamed “Limits of
+  Scores”; the bibliography adds Rallapalli et al.
   (2026) and Xia, Stańczak, and Roth (EACL 2026) and corrects the write-good author;
   American-spelling normalization per F2.1.
 - **Packaging and CI hygiene.** Removed the expired `[tool.uv] exclude-newer-package`
-  flexdoc bridge (it also never parsed: uv requires a full RFC 3339 timestamp); CI and
-  publish workflows now install strictly from the committed lockfile via `UV_FROZEN`.
+  flexdoc bridge (it also never parsed on the affected uv version: the project setting
+  required a full RFC 3339 timestamp).
+  Routine development, CI, wheel-smoke, and publish installs now reject lock drift and
+  use the committed runtime lock.
+  Isolated builds use a reviewed, hash-locked build constraint set, including
+  `hatchling==1.30.1` and `uv-dynamic-versioning==0.14.0`.
 
 ## [0.1.1] - 2026-06-11
 
@@ -116,3 +126,7 @@ First public release.
 - Documentation: dual-license note (code MIT, bundled prose CC BY 4.0); dotenv-autoload
   and default-model cost note on `pprose score`; metrics-vs-eval-report lint-signal
   asymmetry note; corrected install flags and PyPI/trusted-publisher setup docs.
+
+<!-- This document follows common-doc-guidelines.md.
+See github.com/jlevy/practical-prose and review guidelines before editing.
+-->

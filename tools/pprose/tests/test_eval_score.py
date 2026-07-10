@@ -760,8 +760,78 @@ def test_score_batch_isolates_one_failure(tmp_path: Path, monkeypatch, capsys):
     monkeypatch.setattr(eval_score, "call_scorer_async", fake_async)
     monkeypatch.setenv("ANTHROPIC_API_KEY", "sk-test-fake")
 
-    rc = main([str(s) for s in stubs] + ["--batch", "--model", "opus"])
+    rendered: list[Path] = []
+    monkeypatch.setattr(
+        eval_score,
+        "_render_after_score",
+        lambda path, _args: rendered.append(path),
+    )
+
+    rc = main([str(s) for s in stubs] + ["--batch", "--model", "opus", "--render-html"])
     err = capsys.readouterr().err
     assert rc == 1  # any failure -> overall exit 1
     assert "2/3 OK, 1 failed" in err  # the other two were isolated and succeeded
     assert f"FAIL [{bad.name}]" in err
+    assert set(rendered) == {stubs[0], stubs[2]}
+
+
+def test_score_batch_counts_render_failure(tmp_path: Path, monkeypatch, capsys):
+    """A requested batch render is part of success, not a warning-only side effect."""
+    from pprose import eval_score
+    from pprose.eval_score import CallResult
+
+    stub = _gemini_stub(tmp_path)
+    fake = CallResult(
+        output=_full_response(score=5, with_violation=False),
+        model_id="x",
+        cache_write_tokens=0,
+        cache_read_tokens=0,
+        input_tokens=1,
+        output_tokens=1,
+    )
+
+    async def fake_async(_artifact_block, *, model):
+        return fake
+
+    def fail_render(_path, _args):
+        raise OSError("render write failed")
+
+    monkeypatch.setattr(eval_score, "_load_env_files", lambda: None)
+    monkeypatch.setattr(eval_score, "call_scorer_async", fake_async)
+    monkeypatch.setattr(eval_score, "_render_after_score", fail_render)
+    monkeypatch.setenv("ANTHROPIC_API_KEY", "sk-test-fake")
+
+    rc = main([str(stub), "--batch", "--model", "opus", "--render-html"])
+    err = capsys.readouterr().err
+    assert rc == 1
+    assert "OSError: render write failed" in err
+    assert "0/1 OK, 1 failed" in err
+
+
+def test_render_variant_is_validated_before_paid_scoring(tmp_path: Path, monkeypatch, capsys):
+    """A render-option typo must fail before any model call is attempted."""
+    from pprose import eval_score
+
+    stub = _gemini_stub(tmp_path)
+
+    def unexpected_call(*_args, **_kwargs):
+        raise AssertionError("paid scorer must not run for an invalid render variant")
+
+    monkeypatch.setattr(eval_score, "_load_env_files", lambda: None)
+    monkeypatch.setattr(eval_score, "call_scorer", unexpected_call)
+    monkeypatch.setenv("ANTHROPIC_API_KEY", "sk-test-fake")
+
+    rc = main(
+        [
+            str(stub),
+            "--model",
+            "opus",
+            "--render-html",
+            "--render-variant",
+            "does-not-exist",
+        ]
+    )
+    err = capsys.readouterr().err
+    assert rc == 2
+    assert "unknown render variant 'does-not-exist'" in err
+    assert "interactive" in err

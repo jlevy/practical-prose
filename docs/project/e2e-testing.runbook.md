@@ -2,12 +2,12 @@
 title: pprose End-to-End Manual Testing Runbook
 description: Manual end-to-end validation of every pprose surface before a release, covering only what unit, integration, and golden tests structurally cannot (real LLM calls, real uvx/PyPI installs, and visual judgment).
 date: 2026-06-02
-last_updated: 2026-06-02
+last_updated: 2026-07-09
 status: active
 ---
 # pprose End-to-End Manual Testing Runbook
 
-Version: v0.1 (last update 2026-06-02)\
+Version: v0.2 (last update 2026-07-09)\
 Joshua Levy (github.com/jlevy)
 
 ## Purpose
@@ -17,10 +17,10 @@ release, and gets final human sign-off on the results an automated test cannot j
 
 This runbook is the **residual manual layer**, not the primary safety net.
 The project covers as much as possible with automated unit, integration, and especially
-golden tests (`cd tools/pprose && uv run pytest`). This document deliberately covers
-only what those tests structurally **cannot**: behavior that needs a real LLM and a paid
-API key, a real `uvx`/PyPI network install, a browser and human visual judgment, or
-output shapes no test currently pins.
+golden tests (`make test`). This document deliberately covers only what those tests
+structurally **cannot**: behavior that needs a real LLM and a paid API key, a real
+`uvx`/PyPI network install, a browser and human visual judgment, or output shapes no
+test currently pins.
 Where a manual check here could become an automated test instead, it is flagged in
 [Candidates to automate](#candidates-to-automate); prefer adding the test.
 
@@ -30,7 +30,8 @@ Where a manual check here could become an automated test instead, it is flagged 
 
 ## What the Automated Tests Already Lock (Do Not Re-Test by Hand)
 
-`uv run pytest` (266+ tests) already covers, and these need **no** manual repetition:
+The automated test suite already covers the following, so these need **no** manual
+repetition:
 
 - **Metrics formulas** (`test_metrics.py`): prose exclusion, bracket tags, link/heading
   formulas, banned-register, plus a pinned golden YAML drift catcher.
@@ -50,16 +51,17 @@ Where a manual check here could become an automated test instead, it is flagged 
   repo docs.
 
 The manual pass below assumes those are green.
-Run `uv run pytest` first; if it is red, stop and fix that before manual testing.
+Run `make test` first; if it is red, stop and fix that before manual testing.
 
 ## Prerequisites
 
 - `pprose` available: either on `PATH`, or run package-local with
   `cd tools/pprose && uv run pprose <command>`. This runbook uses the `uv run` form.
-- Python toolchain installed (`cd tools/pprose && uv sync --all-extras`).
+- Python toolchain installed with `make install` from the repository root.
 - Node.js (for the rendered-JS parse test and any visual-regression work).
 - For Phase B: a provider key in the environment or an auto-loaded `.env` / `.env.local`
-  (`ANTHROPIC_API_KEY`, `OPENAI_API_KEY`, and `GOOGLE_API_KEY`). See the cost warning.
+  (`ANTHROPIC_API_KEY`, `OPENAI_API_KEY`, and either `GOOGLE_API_KEY` or
+  `GEMINI_API_KEY`). See the cost warning.
 - For Phase C: a real browser (test in **both** Chrome and Safari) with online and
   offline access (to exercise the CDN-font fallback).
 - For Phase E: a published pprose release on PyPI and a scratch directory.
@@ -67,6 +69,13 @@ Run `uv run pytest` first; if it is red, stop and fix that before manual testing
   `mkdir /tmp/pp-scratch && cd /tmp/pp-scratch && git init`.
 
 All commands below assume the repo root as the working directory unless shown otherwise.
+Run local uv commands with the same lock and configuration isolation as CI:
+
+```bash
+export UV_NO_CONFIG=1
+export UV_LOCKED=1
+export UV_BUILD_CONSTRAINT="$(pwd)/tools/pprose/build-constraints.txt"
+```
 
 ## Test Order
 
@@ -81,8 +90,9 @@ deterministic, offline core comes before the costly external surfaces:
 5. Phase E, zero-install and publish (real network/PyPI; only after a real release
    exists).
 
-Phase E is the **release gate**, not a routine step: most of it is impossible until
-`v0.1.0` is actually published (see [release risks](#release-risks-to-clear-first)).
+Phase E is the **release gate**, not a routine step: most of it is impossible until the
+candidate version is actually published (see
+[release risks](#release-risks-to-clear-first)).
 
 * * *
 
@@ -172,8 +182,9 @@ uv run pprose compare /tmp/smoke.eval.md tests/fixtures/rev1-net.eval.md --allow
 > hierarchy **and** `$HOME`, with later files overriding earlier.
 > So `pprose score` can make a real, billable call as soon as any reachable dotenv
 > defines the key; `env -u ANTHROPIC_API_KEY ...` does **not** prevent it.
-> The default model is the flagship Opus (most expensive).
-> Use a cheap alias and a tiny artifact for smoke tests.
+> `--model` is required; the `opus` alias selects the flagship model and is usually the
+> most expensive option.
+> Use a cheaper reviewed alias and a tiny artifact for smoke tests.
 
 ### B1. No-key smoke (free)
 
@@ -211,10 +222,9 @@ every sub-5 score has a matching `rule_finding` (alignment); `metadata` carries 
   Expect a batch header line, per-file `OK`/`FAIL`, a final `N/N OK, M failed` summary,
   the corrupt file failing **without** aborting the others, and exit 1.
 - **Other providers:** with the right key, `--model gpt` (and `--model gemini`).
-- **Gemini key-name gotcha:** `main()` requires `GOOGLE_API_KEY`, but environments
-  commonly set `GEMINI_API_KEY`. With only `GEMINI_API_KEY` set, `--model gemini` is
-  expected to fail the early guard with `GOOGLE_API_KEY not set`. This is a known UX bug
-  (see [release risks](#release-risks-to-clear-first)).
+- **Gemini key aliases:** `--model gemini` accepts either `GOOGLE_API_KEY` or
+  `GEMINI_API_KEY`; confirm both environment conventions in the provider smoke if that
+  integration changed since the last release.
 
 ### B4. Calibration drift
 
@@ -271,11 +281,6 @@ shared `bi-card` / `tip-panels` / `theme-toggle` render **identically** to the
 production page (the workbench-only surface-toggle is expected to differ).
 Divergence means a shared component drifted.
 
-> Note: `--format folder` currently emits HTML byte-identical to single mode and never
-> references the sidecar `assets/` it writes.
-> Treat folder output as suspect until that is fixed or removed (see
-> [release risks](#release-risks-to-clear-first)).
-
 * * *
 
 ## Phase D: Reference and Install (Local)
@@ -314,27 +319,32 @@ Confirm by eye:
 Only possible **after** a real release exists.
 See [release risks](#release-risks-to-clear-first) first.
 
-Before tagging, smoke-test the local wheel:
+Before tagging, smoke-test the local wheel against the committed runtime lock:
 
 ```bash
-cd tools/pprose && uv build
-uv venv /tmp/whl --python 3.13
-uv pip install --python /tmp/whl dist/pprose-*.whl
+make -C tools/pprose build
+cd tools/pprose
+rm -rf /tmp/whl
+UV_PROJECT_ENVIRONMENT=/tmp/whl uv sync --no-dev --no-install-project
+uv pip install --python /tmp/whl --no-deps dist/pprose-*.whl
 /tmp/whl/bin/pprose list                # bundled resources resolve from the wheel
 ```
 
-After `gh release create v0.1.0` and a successful `publish.yml` run, from a directory
-**outside** the repo:
+After creating the reviewed release tag and a successful `publish.yml` run, set the
+published version and test from a directory **outside** the repo:
 
 ```bash
-uvx pprose@0.1.0 --help
-uvx pprose@0.1.0 about
-uvx pprose@0.1.0 list
-cd /tmp/pp-scratch2 && git init && uvx pprose@0.1.0 install   # baked pin must resolve
+cd /tmp
+RELEASE_VERSION=X.Y.Z
+uvx "pprose@${RELEASE_VERSION}" --help
+uvx "pprose@${RELEASE_VERSION}" about
+uvx "pprose@${RELEASE_VERSION}" list
+mkdir -p /tmp/pp-scratch2
+cd /tmp/pp-scratch2 && git init && uvx "pprose@${RELEASE_VERSION}" install
 ```
 
-- [ ] The pin baked into generated files is the published version (not the `0.1.0`
-  `DISCOVERY_VERSION` fallback masking an unpublished release).
+- [ ] The pin baked into generated files is the published version, not an unpublished
+  `DISCOVERY_VERSION` fallback.
 - [ ] In a live Claude Code / Codex session in the scratch repo, the 6 pprose skills are
   invocable and the AGENTS.md block shows in context; triggering “score this doc” routes
   to `pprose-eval`.
@@ -343,7 +353,7 @@ cd /tmp/pp-scratch2 && git init && uvx pprose@0.1.0 install   # baked pin must r
 
 ## Final Human Sign-Off
 
-- [ ] `uv run pytest` green; `make lint-check` clean at the repo root.
+- [ ] `make test` green; `make lint-check` clean at the repo root.
 - [ ] Phase A deterministic checks pass (incl.
   the by-doc shape and draft-rejection UX).
 - [ ] Phase B: one real score validates `--complete`; caching observed; batch isolates
@@ -356,21 +366,20 @@ cd /tmp/pp-scratch2 && git init && uvx pprose@0.1.0 install   # baked pin must r
 
 ## Release Risks to Clear First
 
-These were surfaced by the readiness review and block or complicate a first release; see
-also [release-readiness-2026-06.md](release-readiness-2026-06.md) for the full ranked
-list:
+The current review is
+[review-2026-07-09-comprehensive-project-review.md](reviews/review-2026-07-09-comprehensive-project-review.md).
+Its release-sensitive items are:
 
-1. **No release tag exists**, so dynamic versioning yields `0.0.1.devNN+hash` and every
-   `uvx pprose@0.1.0` reference (AGENTS.md, `DISCOVERY_VERSION`, committed `skills/`)
-   cannot resolve until `v0.1.0` is published.
-   Publish `v0.1.0` first, or align `DISCOVERY_VERSION` to the real first tag and
-   re-render `skills/`.
-2. **Gemini key-name mismatch** (`GOOGLE_API_KEY` vs common `GEMINI_API_KEY`).
-3. **Root README documents removed install flags** (`--claude/--codex/--skip-*`).
-4. **`--format folder`** ships dead sidecar files.
-5. **`publishing.md` / `installation.md`** are unedited `OWNER/PROJECT` template stubs.
-6. **License metadata says MIT-only** though the wheel bundles CC-BY prose.
-7. No `pprose --version`, no CHANGELOG; `detect_kind()` swallows all exceptions.
+1. **The committed discovery pin must exist on PyPI.** At this review,
+   `DISCOVERY_VERSION` is `0.2.0` while PyPI still serves `0.1.1`. Publish the reviewed
+   `v0.2.0` tag, or deliberately re-pin and regenerate every discovery copy before
+   release.
+2. **Self-evaluation baselines are stale.** Regenerate the committed evals after the
+   documentation changes, then re-check calibration before treating their scores as a
+   current quality claim.
+3. **Visual and paid-provider behavior still needs human sign-off.** CI checks the
+   wheel, deterministic CLI, and render structure; it does not replace browser judgment
+   or a real provider call.
 
 ## Candidates to Automate
 
@@ -382,10 +391,8 @@ relying on the runbook:
 - Golden: `compare --format by-doc` (`render_per_doc_rollup`), the way unified+pairs is
   locked.
 - Golden: `--banned-words-file` end to end via CLI.
-- Integration: `compute-derived --in-place` idempotency; `compare` draft/misalignment
-  rejection on a committed draft fixture; `score --batch` partial-failure isolation via
-  the existing FunctionModel harness (no key); Gemini key-alias resolution.
-- CI: `uv build` + install-from-wheel smoke (catches data-file packaging regressions).
+- Integration: `compute-derived --in-place` idempotency and `compare` draft/misalignment
+  rejection on a committed draft fixture.
 - Visual-regression smoke (Playwright): one screenshot each of light / dark / print,
   including a sentinel (NA/ERR) fixture, to anchor the otherwise fully-manual visual
   contract.

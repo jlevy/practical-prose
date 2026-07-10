@@ -2,7 +2,7 @@
 
 Regenerate with::
 
-    uv run python tools/design-system/generate.py
+    make generate
 """
 
 from __future__ import annotations

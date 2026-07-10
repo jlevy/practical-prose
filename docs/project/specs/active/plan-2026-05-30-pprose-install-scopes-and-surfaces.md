@@ -14,6 +14,13 @@ checks, format stamps).
 Phase 2 items have partially landed since (`pprose about` and `pprose skill` overview
 shipped); remaining Phase 2 doc moves are deferred.
 
+> [!NOTE]
+> The Phase 2 listing examples below are historical design notes.
+> The later
+> [CLI listing plan](../done/plan-2026-06-11-cli-snappiness-color-and-listing.md)
+> removed `--list`: use bare category commands such as `pprose guidelines` or the
+> top-level `pprose list` for the current interface.
+
 ## Overview
 
 Replace the current `pprose install` argument shape with a two-axis design:

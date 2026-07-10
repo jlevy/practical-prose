@@ -53,9 +53,9 @@ adds the substantive dimensions and produces an editorial review.
    - **Reasoning audit:** R1-R4, J1 Calibration, J2 Fairness, J3 Robustness:
      assumptions, mechanisms, counter-evidence, parsimony, calibration, alternative
      lenses. *Flag.*
-   - **Claim audit:** G1 Verifiability, G2 Factuality, G3 Relevance: every quantitative
-     claim against its cited source; re-run calculations.
-     *Flag.*
+   - **Claim audit:** G1 Verifiability, G2 Factuality, G3 Relevance: every material,
+     verifiable claim against the best available evidence; re-run quantitative
+     calculations. *Flag.*
    - **Purpose audit:** P1-P4 (with E2 Coherence and E3 Concision covered in the
      Expression pass above): output shape vs.
      task, scope, skim-recoverability.

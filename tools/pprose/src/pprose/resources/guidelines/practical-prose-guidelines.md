@@ -6,7 +6,7 @@ status: active
 ---
 # Practical Prose Guidelines
 
-Version: v0.2 (last update 2026-06-12)\
+Version: v0.2 (last update 2026-07-09)\
 Joshua Levy (github.com/jlevy) with agent assistance
 
 The *Practical Prose Guidelines* are prescriptive rules for practical documents such as
@@ -1114,8 +1114,9 @@ For a tight self-check before publishing, walk the six groups in order and ask:
   Mechanisms named where causation is asserted?
   Domain entities referred to by proper name; quantitative precision matches
   measurement? Load-bearing chains the minimum sufficient sound argument?
-- **Grounding (G1-G3):** Every quantitative claim source-traceable to a specific
-  citation (with stakes-appropriate strictness)?
+- **Grounding (G1-G3):** Every material, verifiable claim traceable to the best
+  available evidence (with stakes-appropriate strictness)?
+  Quantitative calculations re-run?
   Cited sources support the claim at the asserted strength?
   Sources and sections bear on the document’s purpose?
 - **Judgment (J1-J3):** Probability claims anchored in base rates?
