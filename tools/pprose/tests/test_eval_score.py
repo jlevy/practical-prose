@@ -806,8 +806,62 @@ def test_score_batch_counts_render_failure(tmp_path: Path, monkeypatch, capsys):
     assert rc == 1
     # Distinguished from a scoring failure: the paid call succeeded and the
     # .eval.md is already on disk; only the render hook failed.
-    assert "scored OK but render failed: OSError: render write failed" in err
+    assert "FAIL [stub.eval.md]: scored OK but render failed: OSError: render write failed" in err
     assert "0/1 OK, 1 failed" in err
+    assert EvalReport.from_eval_md(stub).metadata.status == "complete"
+
+
+def test_score_batch_finishes_scoring_before_rendering(tmp_path: Path, monkeypatch, capsys):
+    """Synchronous rendering must not occupy an async scoring concurrency slot."""
+    from pprose import eval_score
+    from pprose.eval_report import main as report_main
+    from pprose.eval_score import CallResult
+
+    stubs = [tmp_path / "first.eval.md", tmp_path / "second.eval.md"]
+    for stub in stubs:
+        assert (
+            report_main(["from-metrics", str(FIXTURES / "all_headings.md"), "--out", str(stub)])
+            == 0
+        )
+
+    fake = CallResult(
+        output=_full_response(score=5, with_violation=False),
+        model_id="x",
+        cache_write_tokens=0,
+        cache_read_tokens=0,
+        input_tokens=1,
+        output_tokens=1,
+    )
+    completed_scores: list[str] = []
+
+    async def fake_async(artifact_block, *, model):
+        completed_scores.append(artifact_block)
+        return fake
+
+    score_counts_at_render: list[int] = []
+
+    def record_render(_path, _args):
+        score_counts_at_render.append(len(completed_scores))
+
+    monkeypatch.setattr(eval_score, "_load_env_files", lambda: None)
+    monkeypatch.setattr(eval_score, "call_scorer_async", fake_async)
+    monkeypatch.setattr(eval_score, "_render_after_score", record_render)
+    monkeypatch.setenv("ANTHROPIC_API_KEY", "sk-test-fake")
+
+    rc = main(
+        [
+            *(str(stub) for stub in stubs),
+            "--batch",
+            "--model",
+            "opus",
+            "--max-rps",
+            "100000",
+            "--render-html",
+        ]
+    )
+    capsys.readouterr()
+    assert rc == 0
+    assert score_counts_at_render == [2, 2]
 
 
 def test_score_non_batch_counts_render_failure_and_continues(tmp_path: Path, monkeypatch, capsys):
