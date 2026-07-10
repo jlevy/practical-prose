@@ -110,6 +110,11 @@ GUIDELINES_PATH = _resolve_doc("practical-prose-guidelines")
 DEFAULT_MAX_TOKENS = 8192
 DEFAULT_TIMEOUT_S = 600.0  # 10 minutes — Q10 decision
 
+
+class RenderAfterScoreError(RuntimeError):
+    """The post-scoring render hook failed; the scored .eval.md is already valid on disk."""
+
+
 # Curated list of currently-recommended models, surfaced in --model help and via
 # `--list-models`. Sourced from llm-pricing/data/llms.yml (the canonical
 # tracking file for tool-capable models). Aliases on the right resolve to the
@@ -722,7 +727,14 @@ async def _score_one_async(
         quiet=quiet,
     )
     if rc == 0 and after_success is not None:
-        after_success(prep.out_path)
+        # Run the (blocking) render hook off the event loop so in-flight scoring
+        # coroutines keep progressing, and tag its failures distinctly: scoring
+        # succeeded and the .eval.md is already valid on disk, so a render failure
+        # must not read as a scoring failure in the batch summary.
+        try:
+            await asyncio.to_thread(after_success, prep.out_path)
+        except Exception as e:
+            raise RenderAfterScoreError(f"{type(e).__name__}: {e}") from e
     return rc
 
 
@@ -775,7 +787,10 @@ async def score_batch(
 
     failures = 0
     for path, rc in zip(yaml_paths, results, strict=True):
-        if isinstance(rc, BaseException):
+        if isinstance(rc, RenderAfterScoreError):
+            failures += 1
+            print(f"FAIL [{path.name}]: scored OK but render failed: {rc}", file=sys.stderr)
+        elif isinstance(rc, BaseException):
             failures += 1
             print(f"FAIL [{path.name}]: {type(rc).__name__}: {rc}", file=sys.stderr)
         elif rc != 0:
@@ -915,7 +930,10 @@ def main(argv: list[str] | None = None) -> int:
         print(_format_suggested_models())
         return 0
 
-    if args.render_html:
+    # Validate render options before any paid model call, but not for --dry-run,
+    # which never scores or renders: a variant typo should not block printing the
+    # prompt.
+    if args.render_html and not args.dry_run:
         from pprose.render_html.renderer import available_variants
 
         variants = available_variants()

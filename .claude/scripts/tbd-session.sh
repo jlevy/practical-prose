@@ -10,10 +10,14 @@
 # Prefer common local bin locations.
 export PATH="$HOME/.local/bin:$HOME/bin:/usr/local/bin:$PATH"
 
-# Local-first: use tbd if it is already on PATH.
+# Local-first: use tbd if it is already on PATH. If it fails (for example, an
+# older install that cannot read this repo's .tbd config format), fall through
+# to the pinned runner instead of exiting with the failure.
 if command -v tbd &> /dev/null; then
-    tbd prime "$@"
-    exit $?
+    if tbd prime "$@"; then
+        exit 0
+    fi
+    echo "[tbd] local tbd failed (older than this repo's config format?); trying the pinned fallback." >&2
 fi
 
 # Pinned zero-install fallback. Never use an unpinned runner here.

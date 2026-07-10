@@ -804,7 +804,9 @@ def test_score_batch_counts_render_failure(tmp_path: Path, monkeypatch, capsys):
     rc = main([str(stub), "--batch", "--model", "opus", "--render-html"])
     err = capsys.readouterr().err
     assert rc == 1
-    assert "OSError: render write failed" in err
+    # Distinguished from a scoring failure: the paid call succeeded and the
+    # .eval.md is already on disk; only the render hook failed.
+    assert "scored OK but render failed: OSError: render write failed" in err
     assert "0/1 OK, 1 failed" in err
 
 
@@ -839,6 +841,27 @@ def test_score_non_batch_counts_render_failure_and_continues(tmp_path: Path, mon
     assert scored == reports
     assert rendered == reports
     assert "FAIL [first.eval.md]: scored OK but render failed: OSError: render write failed" in err
+
+
+def test_dry_run_is_not_blocked_by_render_variant_typo(tmp_path: Path, monkeypatch, capsys):
+    """--dry-run never scores or renders, so a variant typo must not block it."""
+    from pprose import eval_score
+
+    stub = _gemini_stub(tmp_path)
+    monkeypatch.setattr(eval_score, "_load_env_files", lambda: None)
+
+    rc = main(
+        [
+            str(stub),
+            "--dry-run",
+            "--render-html",
+            "--render-variant",
+            "does-not-exist",
+        ]
+    )
+    out = capsys.readouterr().out
+    assert rc == 0
+    assert "Practical Writing Eval" in out  # the prompt was printed
 
 
 def test_render_variant_is_validated_before_paid_scoring(tmp_path: Path, monkeypatch, capsys):
