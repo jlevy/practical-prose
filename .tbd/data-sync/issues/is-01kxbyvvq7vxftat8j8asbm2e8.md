@@ -3,13 +3,15 @@ type: is
 id: is-01kxbyvvq7vxftat8j8asbm2e8
 title: Audit v0.2.0 release readiness and upgrade tbd integration to v0.4.0
 kind: task
-status: open
+status: closed
 priority: 2
-version: 2
+version: 4
 labels: []
 dependencies: []
 created_at: 2026-07-12T20:03:58.822Z
-updated_at: 2026-07-12T20:09:49.426Z
+updated_at: 2026-07-12T20:29:09.792Z
+closed_at: 2026-07-12T20:29:09.792Z
+close_reason: Released pprose v0.2.0 from merged commit 2fc2b85 after green PR/main CI; upgraded tbd integration to 0.4.0 and flexdoc to 0.3.0, hardened the release process, and verified the published PyPI/uvx/scratch-install path.
 ---
 
 ## Notes
