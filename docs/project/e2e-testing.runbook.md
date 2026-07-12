@@ -364,22 +364,28 @@ cd /tmp/pp-scratch2 && git init && uvx "pprose@${RELEASE_VERSION}" install
 - [ ] Phase E (post-publish): `uvx pprose@<ver>` resolves and installs; a live agent
   ingests the skills.
 
-## Release Risks to Clear First
+## Release Gates and Quality Follow-Ups
 
 The current review is
 [review-2026-07-09-comprehensive-project-review.md](reviews/review-2026-07-09-comprehensive-project-review.md).
-Its release-sensitive items are:
+Its release-sensitive items fall into three different stages:
 
-1. **The committed discovery pin must exist on PyPI.** At this review,
-   `DISCOVERY_VERSION` is `0.2.0` while PyPI still serves `0.1.1`. Publish the reviewed
-   `v0.2.0` tag, or deliberately re-pin and regenerate every discovery copy before
-   release.
-2. **Self-evaluation baselines are stale.** Regenerate the committed evals after the
-   documentation changes, then re-check calibration before treating their scores as a
-   current quality claim.
-3. **Visual and paid-provider behavior still needs human sign-off.** CI checks the
-   wheel, deterministic CLI, and render structure; it does not replace browser judgment
-   or a real provider call.
+1. **Pre-publish gate: the tag, discovery pin, and generated skills must agree.** Run
+   `devtools/check_release_version.py` and the resource-sync tests before creating the
+   release. The publish workflow repeats both checks from the exact tagged commit.
+2. **Post-publish gate: the committed discovery pin must resolve from PyPI.** At this
+   review, `DISCOVERY_VERSION` is `0.2.0` while PyPI still serves `0.1.1`; publishing
+   the reviewed `v0.2.0` tag closes that gap.
+   Immediately verify the exact `uvx` version and a scratch-repo install before
+   announcing the release.
+3. **Quality evidence: self-evaluation baselines and manual provider/browser checks.**
+   The stale self-evals do not ship in the wheel and do not affect runtime behavior, but
+   regenerate them before citing their scores as current evidence.
+   CI checks the wheel, deterministic CLI, render structure, and bundled JavaScript
+   syntax; it does not replace a real paid-provider call or cross-browser interaction
+   and typography judgment.
+   Record any intentionally deferred manual check as release risk acceptance rather than
+   describing it as passed.
 
 ## Candidates to Automate
 

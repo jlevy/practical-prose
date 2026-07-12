@@ -1,11 +1,13 @@
 tbd_format: f06
-tbd_version: 0.3.0
+tbd_version: 0.4.0
 # tbd_upgrades: tbd versions that have run `tbd setup` in this repo (oldest first);
 # tbd_version above is the most recent. Informational; updated automatically by setup.
 tbd_upgrades:
   - version: 0.1.27
   - version: 0.3.0
     at: 2026-07-09T17:41:45.138Z
+  - version: 0.4.0
+    at: 2026-07-12T20:13:19.991Z
 display:
   id_prefix: pp
 sync:
@@ -34,6 +36,7 @@ docs_cache:
     shortcuts/system/skill-baseline.md: internal:shortcuts/system/skill-baseline.md
     shortcuts/system/skill-brief.md: internal:shortcuts/system/skill-brief.md
     shortcuts/system/skill-minimal.md: internal:shortcuts/system/skill-minimal.md
+    shortcuts/standard/address-pr-review.md: internal:shortcuts/standard/address-pr-review.md
     shortcuts/standard/agent-handoff.md: internal:shortcuts/standard/agent-handoff.md
     shortcuts/standard/checkout-third-party-repo.md: internal:shortcuts/standard/checkout-third-party-repo.md
     shortcuts/standard/code-cleanup-all.md: internal:shortcuts/standard/code-cleanup-all.md
@@ -53,6 +56,7 @@ docs_cache:
     shortcuts/standard/new-shortcut.md: internal:shortcuts/standard/new-shortcut.md
     shortcuts/standard/new-validation-plan.md: internal:shortcuts/standard/new-validation-plan.md
     shortcuts/standard/plan-implementation-with-beads.md: internal:shortcuts/standard/plan-implementation-with-beads.md
+    shortcuts/standard/pr-review-workflows.md: internal:shortcuts/standard/pr-review-workflows.md
     shortcuts/standard/precommit-process.md: internal:shortcuts/standard/precommit-process.md
     shortcuts/standard/review-code-python.md: internal:shortcuts/standard/review-code-python.md
     shortcuts/standard/review-code-typescript.md: internal:shortcuts/standard/review-code-typescript.md
