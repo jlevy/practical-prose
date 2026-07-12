@@ -388,7 +388,7 @@ wheels = [
 
 [[package]]
 name = "flexdoc"
-version = "0.2.0"
+version = "0.3.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "cydifflib" },
@@ -403,9 +403,9 @@ dependencies = [
     { name = "strif" },
     { name = "typing-extensions" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/56/b8/497125d79205f398157c19ab072f9ac807c0ca534ba1110b8bc6ecd3db9a/flexdoc-0.2.0.tar.gz", hash = "sha256:983266ca6976aeba6ced9eee4a6a87fc893284b13934fc28b1e00f91717eaa0d", size = 370769, upload-time = "2026-06-14T01:44:12.562Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/fb/9e/689c7e6a82ac47fb36035081c89d629c412f07d68a74f2e8d4c8ffc5134c/flexdoc-0.3.0.tar.gz", hash = "sha256:95cdad1551376de53c191c0694a7a8d4a1eb972fc1a2e16b4b4e2452ecc0abaa", size = 418927, upload-time = "2026-07-11T02:00:46.462Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/5b/17/dbed302eca5dda3209b9b612388e200d02a7209711b9f284139cedfc1f60/flexdoc-0.2.0-py3-none-any.whl", hash = "sha256:6ed6d0aa79ee9460004ea11323e0363c507a038b3e4d685812bfffa85c782c04", size = 86395, upload-time = "2026-06-14T01:44:11.431Z" },
+    { url = "https://files.pythonhosted.org/packages/a0/d0/9ae7b445da66b2c26a3a138377a0ed0dd973defe38696361081a97459307/flexdoc-0.3.0-py3-none-any.whl", hash = "sha256:a9688cbd74265982b961c85b43b509c89a033ec2a5dfadf6f5ee66841a6e5073", size = 90143, upload-time = "2026-07-11T02:00:45.169Z" },
 ]
 
 [[package]]
@@ -909,7 +909,7 @@ dev = [
 [package.metadata]
 requires-dist = [
     { name = "aiolimiter", specifier = ">=1.2" },
-    { name = "flexdoc", specifier = "==0.2.0" },
+    { name = "flexdoc", specifier = "==0.3.0" },
     { name = "flowmark", specifier = ">=0.7.1" },
     { name = "jinja2", specifier = ">=3.1" },
     { name = "pydantic", specifier = ">=2.0" },

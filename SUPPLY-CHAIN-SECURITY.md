@@ -90,19 +90,15 @@ This is a standing exemption, recorded here rather than re-approved per bump.
   `uvx --exclude-newer-package 'flowmark-rs=2026-06-02'`, which overrides the cool-off
   for this one package only and does not touch global uv config.
   Reviewed-by: Joshua Levy.
-- **`flexdoc==0.2.0`**: first-party (see above).
-  Published 2026-06-14 (UTC); adopted the same day in PR #30, inside the 14-day window
-  (0.1.0 was adopted the same way on 2026-06-13). flexdoc is the document-layer subset
-  extracted from `chopdiff` (`TextDoc` → `FlexDoc`); pprose depends on it directly and
-  not on `chopdiff`, since metrics.py uses only the document model, not chopdiff’s
-  diff/windowed-transform machinery.
-  Pinned exact in [tools/pprose/pyproject.toml](tools/pprose/pyproject.toml).
-  The in-window `[tool.uv] exclude-newer-package` bridge was removed once 0.2.0 aged out
-  of the window (2026-06-28). For any future in-window first-party adoption, note the
-  value must be a full RFC 3339 timestamp (`{ pkg = "2026-06-15T00:00:00Z" }`): uv (as
-  of 0.8.17) rejects date-only values in `pyproject.toml` with only a warning and then
-  ignores the whole `[tool.uv]` table, so the bridge silently never applies.
-  CI installs from the committed `uv.lock`. Reviewed-by: Joshua Levy.
+- **`flexdoc==0.3.0`**: first-party (see above).
+  Published 2026-07-11; adopted 2026-07-12 while inside the 14-day window after
+  verifying the published files against git tag `v0.3.0`. flexdoc is the document-layer
+  subset extracted from `chopdiff` (`TextDoc` → `FlexDoc`); pprose uses only its
+  document model, not chopdiff’s diff and windowed-transform machinery.
+  The dependency is exact-pinned in
+  [tools/pprose/pyproject.toml](tools/pprose/pyproject.toml), and the lock update uses a
+  one-package `--exclude-newer-package` override without relaxing the global cool-off.
+  Reviewed-by: Joshua Levy.
 
 ## Known Gap
 

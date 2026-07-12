@@ -48,7 +48,7 @@ dependencies = [
     # flexdoc is the document-layer subset extracted from chopdiff (TextDoc -> FlexDoc);
     # metrics.py uses only FlexDoc/TextUnit, so we depend on flexdoc and drop chopdiff
     # (no diff/windowed-transform machinery, smaller dependency footprint).
-    "flexdoc==0.2.0",
+    "flexdoc==0.3.0",
     # Formats generated Markdown (composed SKILL.md, the AGENTS.md block) so generation
     # is idempotent under the repo's flowmark pre-commit hook. Already resolved
     # transitively via flexdoc; declared directly since install.py imports it.
