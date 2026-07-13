@@ -60,19 +60,45 @@ Three key points:
 
 ### Quick Start
 
-Run the Practical Prose CLI in any repo with [uv](https://docs.astral.sh/uv/)—no install
-step required:
+Install the self-contained common documentation skill with the cross-agent
+[skills CLI](https://github.com/vercel-labs/skills):
 
 ```bash
-uvx pprose --help        # explore the commands
-uvx pprose install       # add the Agent Skills to the current repo
+npx skills add jlevy/practical-prose@pprose-common-edit
 ```
 
-The PyPI package and the command are both `pprose`. `pprose install` writes one
-`SKILL.md` per workflow into both `.agents/skills/` (Codex, Gemini CLI, and pi read
-these natively) and `.claude/skills/` (Claude Code mirror), and maintains a
-marker-bounded `pprose` block in `AGENTS.md` (preserving any other content).
-Re-running it is idempotent.
+Install the complete Practical Prose editing, review, evaluation, and comparison suite:
+
+```bash
+npx skills add jlevy/practical-prose
+```
+
+Project scope is the default.
+The installer detects agents and prompts only for choices it cannot infer; add `-g` for
+a user-wide install.
+Let agent targets, confirmation flags, and copy or symlink strategy remain installer
+concerns instead of encoding them into every command.
+
+For a committed project policy that keeps reminding Claude Code, Codex, and other agents
+to apply the documentation rules, run the zero-install `pprose` installer:
+
+```bash
+uvx pprose install --profile common-docs
+```
+
+Use `--profile practical-prose` for the complete suite, `--skill <name>` (repeatable)
+for an exact set, or `--global` for user-wide skills without project instruction files.
+Switching profiles removes deselected, pprose-owned generated skill directories and
+preserves unmarked user content.
+Project mode writes the portable and Claude skill surfaces, a managed `AGENTS.md` block,
+and a minimal `CLAUDE.md` bridge or block; re-running it is idempotent.
+
+The short interactive commands intentionally omit runner versions; the trusted
+first-party repository exemption lets these commands omit a Practical Prose ref too.
+Configure the 14-day release-age policy once in npm and uv, review the installer’s
+prompts and generated `skills-lock.json` content hash, and keep exact pins in CI, hooks,
+generated skill fallbacks, and other unattended automation.
+
 See [Agent Skills](#agent-skills) for the skill catalog and [Tooling](#tooling) for the
 CLI reference and install flags.
 
@@ -305,22 +331,27 @@ Agent Skills under [skills/](skills/). The eval skills use the
 
 | Skill | Kind | Use When |
 | --- | --- | --- |
-| [pprose-common-edit](skills/pprose-common-edit/SKILL.md) | Apply | Tidy, clean up, conform, fix formatting/structure, or add the documentation footer. The basic, universal tier. |
+| [pprose-common-edit](skills/pprose-common-edit/SKILL.md) | Apply | Create, edit, review, or reorganize durable Markdown under the common guidelines; tidy structure and formatting and keep the required footer. The self-contained universal tier. |
 | [pprose-copy-edit](skills/pprose-copy-edit/SKILL.md) | Apply | Copy edit, proofread, polish, tighten, or line edit: language and formatting (Expression and Form). Superset of common-edit. |
 | [pprose-full-edit](skills/pprose-full-edit/SKILL.md) | Apply | Deep edit across all 20 dimensions; also writes an editorial review (strengths, weaknesses, suggested fixes). Superset of copy-edit; covers audit-only review. |
 | [pprose-review](skills/pprose-review/SKILL.md) | Review | Review, critique, or get a tiered edit plan (what a common edit, copy edit, and full substantive pass would each change) without modifying the document and without scores. Read-only. |
 | [pprose-eval](skills/pprose-eval/SKILL.md) | Evaluate | Score, grade, rubric-check, or measure the quality of one document. |
 | [pprose-compare](skills/pprose-compare/SKILL.md) | Evaluate | Compare drafts, A/B versions, quality-diff documents, or pick a best variant. |
 
-Install paths:
+Install paths and selection:
 
-1. **Recommended:** let `pprose install` set up every supported surface in any repo (see
-   [Quick Start](#quick-start) for what it writes and the scope flags).
-2. Point the agent at *this* repo and let `AGENTS.md` route to the right skill: the
-   committed `skills/<name>/SKILL.md` files are version-pinned discovery copies that
-   work as a `npx skills add` / skills.sh landing page.
-3. If a Claude Code plugin marketplace entry exists, install that as a Claude-only
-   convenience.
+1. **Common documentation only:**
+   `npx skills add jlevy/practical-prose@pprose-common-edit`. This skill bundles
+   `common-doc-guidelines.md` and needs no `pprose` runtime.
+2. **Complete suite:** `npx skills add jlevy/practical-prose`. Repository-internal
+   workflow skills are hidden from public discovery, so the installer offers only the
+   six Practical Prose skills above.
+3. **Persistent project policy:** `uvx pprose install --profile common-docs` or
+   `--profile practical-prose`. Use repeatable `--skill <name>` flags for an exact
+   custom set. Switching selections removes only deselected pprose-generated skills.
+4. **User-wide skills:** add `-g` to either `npx skills add` command, or run
+   `uvx pprose install --global --profile <profile>`. Global installs omit always-on
+   project instruction files.
 
 The skills are intentionally small routers: each names the workflow once and points at
 `pprose <command>` / `pprose guidelines <name>` / `pprose shortcut <name>` rather than
@@ -347,16 +378,17 @@ console-script entry point are both `pprose`:
 It also bundles the guidelines, shortcuts, runbooks, and rubric and serves them as
 reference subcommands (`pprose guidelines|shortcut|runbook <name>`; omit the name to
 list one kind, or use `pprose list` for the full inventory), so the skills work in any
-repo. Every artifact `pprose install` generates carries a `format=fNN surface=…` stamp,
-so re-running install is idempotent and a newer-format artifact is never clobbered by an
+repo. Every managed artifact `pprose install` generates carries a `format=fNN` stamp, so
+re-running install is idempotent and a newer-format artifact is never clobbered by an
 older pprose. Each generated skill references pprose with a pinned, local-first
 invocation (`pprose` if on PATH, else `uvx pprose@<version>`—the trusted version that
 ran install—else a message telling the user to install uv or pprose).
 Scope installs with `--project` (the default inside a git repo) or `--global`, and
-select destinations with `--surfaces=portable,claude,agents-md`. New releases can add
-guidelines and skills; because installed skills pin the version that installed them, a
-repo picks up additions only when you upgrade and re-run install
-(`uvx pprose@latest install`, or `uv tool install --upgrade pprose && pprose install`).
+select destinations with `--surfaces=portable,claude,agents-md,claude-md`. Select a
+public skill set with `--profile`, or an exact custom set with repeatable `--skill`
+flags. New releases can add guidelines and skills; because installed skills pin the
+version that installed them, a repo picks up additions only when you upgrade and re-run
+install (`uvx pprose install`, or `uv tool upgrade pprose && pprose install`).
 Re-running refreshes the artifacts and the version pin they bake.
 
 Example eval pass (no install via [uv](https://docs.astral.sh/uv/); `score` needs

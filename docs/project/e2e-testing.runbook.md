@@ -299,18 +299,22 @@ Install into the scratch git repo, then re-run for idempotency:
 ```bash
 cd /tmp/pp-scratch
 ( cd /path/to/practical-prose/tools/pprose && uv run pprose install --dir /tmp/pp-scratch --auto )
-# expect 11 artifacts (5 portable + 5 claude + 1 agents-md), exit 0
+# expect 14 results (6 portable + 6 claude + agents-md + claude-md), exit 0
 ```
 
 Confirm by eye:
 
 - [ ] `.agents/skills/<name>/SKILL.md` and `.claude/skills/<name>/SKILL.md` exist and
-  are byte-identical; each has frontmatter, the `DO NOT EDIT ... format=f01` marker, and
-  a `uvx pprose@<pin>` bootstrap line.
-- [ ] `AGENTS.md` has a `BEGIN/END PPROSE INTEGRATION format=f01` block; re-running
-  install reports all `unchanged`.
+  are byte-identical; each has frontmatter and the `DO NOT EDIT ... format=f02` marker.
+  CLI-backed skills have a `uvx pprose@<pin>` bootstrap; `pprose-common-edit` instead
+  has `references/common-doc-guidelines.md` on both surfaces.
+- [ ] `AGENTS.md` has a `BEGIN/END PPROSE INTEGRATION format=f02` block, and `CLAUDE.md`
+  imports it with `@AGENTS.md` or contains a managed copy; re-running install reports
+  all `unchanged`.
 - [ ] Scope guards: `pprose install` refuses `$HOME` in project mode; explicit
-  `--global` writes under `$HOME` and drops `agents-md`.
+  `--global` writes under `$HOME` and drops `agents-md` and `claude-md`.
+- [ ] `--profile common-docs` installs only `pprose-common-edit` plus its reference;
+  repeatable `--skill` flags install exactly the named set.
 
 * * *
 

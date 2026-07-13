@@ -1,15 +1,17 @@
 ---
 name: pprose-common-edit
-description: Apply the common Markdown documentation guidelines to any document; modifies the doc. The basic, universal edit tier. Use when asked to tidy, clean up, conform, fix formatting/structure, or add the footer.
+description: Apply the common Markdown documentation guidelines and required footer to durable docs; modifies docs. Use whenever creating, editing, reviewing, or reorganizing Markdown, including READMEs, guides, specs, plans, runbooks, and agent instructions, unless the task is explicitly read-only. Also use when asked to tidy, clean up, conform, fix formatting or structure, or add the footer.
 ---
 # Common Edit
 
 This is the basic, universal edit tier (an apply skill: it may modify the target
-document). It applies only the common documentation guidelines (read them with
-`pprose guidelines common-doc-guidelines`): organization, structure, writing style,
-Markdown formatting, links, headings, lists, frontmatter, and footer. It is safe for
-almost any Markdown document, workflow, or repo, whether or not it is a Practical Prose
-artifact.
+documents).
+It applies the common documentation guidelines to almost any durable Markdown
+document, workflow, or repo, whether or not it is a Practical Prose artifact.
+
+Before acting, read the bundled
+[common-doc-guidelines.md](references/common-doc-guidelines.md) in full.
+The reference is part of this skill; the `pprose` CLI is not required.
 
 For a deeper language-and-formatting pass (the Expression and Form dimensions) use
 `pprose-copy-edit`; for a full all-dimension editorial pass use `pprose-full-edit`. Each
@@ -17,20 +19,25 @@ tier is a superset of the one before.
 
 ## Inputs
 
-- Path to one Markdown document.
+- Paths to one or more Markdown documents.
 - Optional scope note from the user, such as “format only” or “make all obvious fixes.”
 
 ## Steps
 
-1. Run `pprose guidelines common-doc-guidelines` and read it.
+1. Read `references/common-doc-guidelines.md` completely before editing.
 2. Inspect the target against organization, structure, writing style, Markdown
    formatting, links, headings, lists, frontmatter, and footer rules.
 3. Apply fixes directly to the document while preserving its intended content and voice.
-4. Ensure the required guideline footer is present when the document is part of this
-   repo’s durable documentation.
-5. Re-read the diff and check that no edit changed factual meaning.
+4. Ensure every governed document ends with exactly one guideline footer, unless the
+   guideline’s impracticality exception applies.
+5. Run the project’s configured Markdown formatter when one exists.
+6. Re-read the diff and check that no edit changed factual meaning.
 
 ## Output
 
 Report the changed file, the main issue classes fixed, and any rule you intentionally
 left alone.
+
+<!-- This document follows common-doc-guidelines.md.
+See github.com/jlevy/practical-prose and review guidelines before editing.
+-->

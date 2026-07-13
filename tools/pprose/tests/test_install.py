@@ -5,6 +5,7 @@ from __future__ import annotations
 from pathlib import Path
 
 import pytest
+import yaml
 
 from pprose import cli, install, resources
 
@@ -52,8 +53,8 @@ def test_generated_skills_are_flowmark_stable():
         return formatted == text.rstrip() + "\n"
 
     for name in resources.list_names("skills"):
-        composed = install.compose_skill(name, pin="0.1.0")
-        assert _is_stable(composed), f"compose_skill({name!r}) is not flowmark-stable"
+        for relative, content in install.compose_skill_files(name, pin="0.1.0").items():
+            assert _is_stable(content), f"compose_skill_files({name!r})[{relative}] is unstable"
 
     block = install.agents_md_block(pin="0.1.0")
     assert _is_stable(block), "agents_md_block() is not flowmark-stable"
@@ -146,6 +147,47 @@ def test_compose_skill_is_deterministic():
     assert a == b
 
 
+def test_common_docs_profile_selects_only_common_edit():
+    assert install.profile_skill_names(install.PROFILE_COMMON_DOCS) == ("pprose-common-edit",)
+    assert set(install.profile_skill_names(install.PROFILE_PRACTICAL_PROSE)) == set(
+        resources.list_names("skills")
+    )
+
+
+def test_common_edit_is_self_contained_and_runtime_free():
+    files = install.compose_skill_files("pprose-common-edit", pin="9.9.9")
+    assert set(files) == {
+        Path("SKILL.md"),
+        Path("references") / "common-doc-guidelines.md",
+    }
+    assert "uvx pprose@9.9.9" not in files[Path("SKILL.md")]
+    assert (
+        "# Common Documentation Guidelines"
+        in files[Path("references") / "common-doc-guidelines.md"]
+    )
+    skill = files[Path("SKILL.md")]
+    assert "creating, editing, reviewing, or reorganizing Markdown" in skill
+    assert "references/common-doc-guidelines.md" in skill
+    assert "exactly one guideline footer" in skill
+    assert skill.count("This document follows common-doc-guidelines.md.") == 1
+
+
+def test_agents_block_matches_the_selected_skill_set():
+    common = install.agents_md_block(
+        pin="9.9.9", skill_names=install.profile_skill_names(install.PROFILE_COMMON_DOCS)
+    )
+    assert "whenever creating, editing, reviewing, or reorganizing Markdown" in common
+    assert "pprose-common-edit" in common
+    assert "uvx pprose@9.9.9" not in common
+
+    full = install.agents_md_block(
+        pin="9.9.9",
+        skill_names=install.profile_skill_names(install.PROFILE_PRACTICAL_PROSE),
+    )
+    assert "pprose-common-edit" in full
+    assert "uvx pprose@9.9.9" in full
+
+
 # ─────────────────────────────────────────────────────────────────────────────
 # --surfaces flag parsing
 # ─────────────────────────────────────────────────────────────────────────────
@@ -155,6 +197,7 @@ def test_parse_surfaces_default_is_all():
     spec = install.parse_surfaces(None)
     assert spec.surfaces == install.ALL_INSTALL_SURFACES
     assert spec.agents_md_explicit is False
+    assert spec.claude_md_explicit is False
 
 
 def test_parse_surfaces_all_token_expands():
@@ -173,6 +216,12 @@ def test_parse_surfaces_tracks_explicit_agents_md():
     spec = install.parse_surfaces("agents-md")
     assert spec.surfaces == frozenset({install.SURFACE_AGENTS_MD})
     assert spec.agents_md_explicit is True
+
+
+def test_parse_surfaces_tracks_explicit_claude_md():
+    spec = install.parse_surfaces("claude-md")
+    assert spec.surfaces == frozenset({install.SURFACE_CLAUDE_MD})
+    assert spec.claude_md_explicit is True
 
 
 def test_parse_surfaces_empty_errors():
@@ -237,6 +286,23 @@ def test_global_and_dir_mutually_exclusive(home_tmp: Path, capsys: pytest.Captur
     assert "--global and --dir are mutually exclusive" in err
 
 
+def test_profile_and_skill_are_mutually_exclusive(
+    git_repo_tmp: Path, capsys: pytest.CaptureFixture[str]
+):
+    rc = install.install_main(
+        [
+            "--project",
+            "--dir",
+            str(git_repo_tmp),
+            "--profile=common-docs",
+            "--skill=pprose-eval",
+        ]
+    )
+    assert rc == 2
+    assert "--profile and --skill are mutually exclusive" in capsys.readouterr().err
+    assert not (git_repo_tmp / install.PORTABLE_SKILLS_DIR).exists()
+
+
 # ─────────────────────────────────────────────────────────────────────────────
 # --project mode
 # ─────────────────────────────────────────────────────────────────────────────
@@ -253,6 +319,94 @@ def test_project_explicit_in_repo_installs(git_repo_tmp: Path):
         p.parent.name for p in (git_repo_tmp / install.CLAUDE_SKILLS_DIR).glob("*/SKILL.md")
     } == skills
     assert (git_repo_tmp / "AGENTS.md").exists()
+
+
+def test_project_common_docs_profile_installs_only_common_edit(git_repo_tmp: Path):
+    rc = install.install_main(["--project", "--dir", str(git_repo_tmp), "--profile", "common-docs"])
+    assert rc == 0
+    for skills_dir in (install.PORTABLE_SKILLS_DIR, install.CLAUDE_SKILLS_DIR):
+        installed = {p.parent.name for p in (git_repo_tmp / skills_dir).glob("*/SKILL.md")}
+        assert installed == {"pprose-common-edit"}
+        reference = (
+            git_repo_tmp
+            / skills_dir
+            / "pprose-common-edit"
+            / "references"
+            / "common-doc-guidelines.md"
+        )
+        assert "# Common Documentation Guidelines" in reference.read_text(encoding="utf-8")
+    claude_md = (git_repo_tmp / "CLAUDE.md").read_text(encoding="utf-8")
+    assert claude_md.startswith("@AGENTS.md\n")
+    assert f"format={install.PPROSE_FORMAT}" in claude_md
+
+
+def test_project_repeatable_skill_flag_installs_exact_selection(git_repo_tmp: Path):
+    rc = install.install_main(
+        [
+            "--project",
+            "--dir",
+            str(git_repo_tmp),
+            "--skill",
+            "pprose-review",
+            "--skill",
+            "pprose-eval",
+        ]
+    )
+    assert rc == 0
+    installed = {
+        p.parent.name for p in (git_repo_tmp / install.PORTABLE_SKILLS_DIR).glob("*/SKILL.md")
+    }
+    assert installed == {"pprose-review", "pprose-eval"}
+
+
+def test_common_docs_profile_removes_other_generated_pprose_skills(git_repo_tmp: Path):
+    assert install.install_main(["--project", "--dir", str(git_repo_tmp)]) == 0
+    assert (
+        install.install_main(["--project", "--dir", str(git_repo_tmp), "--profile", "common-docs"])
+        == 0
+    )
+    for skills_dir in (install.PORTABLE_SKILLS_DIR, install.CLAUDE_SKILLS_DIR):
+        installed = {p.parent.name for p in (git_repo_tmp / skills_dir).glob("*/SKILL.md")}
+        assert installed == {"pprose-common-edit"}
+
+
+def test_profile_pruning_does_not_remove_newer_generated_skill(git_repo_tmp: Path):
+    target = git_repo_tmp / install.PORTABLE_SKILLS_DIR / "pprose-eval" / "SKILL.md"
+    target.parent.mkdir(parents=True)
+    newer_format = f"f{install._format_num() + 1:02d}"
+    sentinel = (
+        f"<!-- DO NOT EDIT: generated by `pprose install` (format={newer_format}) -->\n"
+        "newer-format content\n"
+    )
+    target.write_text(sentinel, encoding="utf-8")
+    rc = install.install_main(
+        [
+            "--project",
+            "--dir",
+            str(git_repo_tmp),
+            "--profile=common-docs",
+            "--surfaces=portable",
+        ]
+    )
+    assert rc == 1
+    assert target.read_text(encoding="utf-8") == sentinel
+
+
+def test_profile_pruning_preserves_unmarked_skill_content(git_repo_tmp: Path):
+    target = git_repo_tmp / install.PORTABLE_SKILLS_DIR / "pprose-eval" / "SKILL.md"
+    target.parent.mkdir(parents=True)
+    target.write_text("user-owned content\n", encoding="utf-8")
+    rc = install.install_main(
+        [
+            "--project",
+            "--dir",
+            str(git_repo_tmp),
+            "--profile=common-docs",
+            "--surfaces=portable",
+        ]
+    )
+    assert rc == 0
+    assert target.read_text(encoding="utf-8") == "user-owned content\n"
 
 
 def test_project_in_non_repo_errors_without_no_repo_check(
@@ -291,7 +445,10 @@ def test_project_writes_both_skill_surfaces_with_format_stamp(git_repo_tmp: Path
     ):
         text = skill_md.read_text(encoding="utf-8")
         assert f"format={install.PPROSE_FORMAT}" in text
-        assert f"uvx pprose@{pin}" in text
+        if skill_md.parent.name == install.COMMON_EDIT_SKILL:
+            assert f"uvx pprose@{pin}" not in text
+        else:
+            assert f"uvx pprose@{pin}" in text
         assert "surface=" not in text  # single namespace: no in-file surface tag
 
 
@@ -341,6 +498,30 @@ def test_project_forward_compat_guard_blocks_newer_format(git_repo_tmp: Path):
     rc = install.install_main(["--project", "--dir", str(git_repo_tmp), "--surfaces=claude"])
     assert rc == 1  # blocked-newer is reported as a non-zero exit
     assert target.read_text(encoding="utf-8") == sentinel  # untouched
+
+
+def test_forward_compat_guard_runs_before_any_surface_write(git_repo_tmp: Path):
+    target = git_repo_tmp / install.CLAUDE_SKILLS_DIR / "pprose-eval" / "SKILL.md"
+    target.parent.mkdir(parents=True)
+    newer_format = f"f{install._format_num() + 1:02d}"
+    target.write_text(
+        f"<!-- DO NOT EDIT: generated by `pprose install` (format={newer_format}) -->\n",
+        encoding="utf-8",
+    )
+    assert install.install_main(["--project", "--dir", str(git_repo_tmp)]) == 1
+    assert not (git_repo_tmp / install.PORTABLE_SKILLS_DIR).exists()
+    assert not (git_repo_tmp / "AGENTS.md").exists()
+
+
+def test_claude_bridge_forward_compat_guard_blocks_newer_format(git_repo_tmp: Path):
+    target = git_repo_tmp / "CLAUDE.md"
+    newer_format = f"f{install._format_num() + 1:02d}"
+    sentinel = f"@AGENTS.md\n\n<!-- generated by `pprose install` (format={newer_format}) -->\n"
+    target.write_text(sentinel, encoding="utf-8")
+    rc = install.install_main(["--project", "--dir", str(git_repo_tmp), "--profile=common-docs"])
+    assert rc == 1
+    assert target.read_text(encoding="utf-8") == sentinel
+    assert not (git_repo_tmp / install.PORTABLE_SKILLS_DIR).exists()
 
 
 def test_project_collapses_duplicate_agents_md_blocks(git_repo_tmp: Path):
@@ -395,6 +576,13 @@ def test_global_with_explicit_agents_md_errors(home_tmp: Path, capsys: pytest.Ca
     assert not (home_tmp / "AGENTS.md").exists()
 
 
+def test_global_with_explicit_claude_md_errors(home_tmp: Path, capsys: pytest.CaptureFixture[str]):
+    rc = install.install_main(["--global", "--surfaces=claude-md"])
+    assert rc == 2
+    assert "claude-md is not supported in --global mode" in capsys.readouterr().err
+    assert not (home_tmp / "CLAUDE.md").exists()
+
+
 def test_global_with_explicit_portable_only(home_tmp: Path):
     rc = install.install_main(["--global", "--surfaces=portable"])
     assert rc == 0
@@ -426,6 +614,43 @@ def test_project_surfaces_no_agents_md(git_repo_tmp: Path):
     assert not (git_repo_tmp / "AGENTS.md").exists()
 
 
+def test_project_claude_md_only_preserves_user_content(git_repo_tmp: Path):
+    claude_md = git_repo_tmp / "CLAUDE.md"
+    claude_md.write_text("# Claude\n\nUser instructions.\n", encoding="utf-8")
+    rc = install.install_main(
+        [
+            "--project",
+            "--dir",
+            str(git_repo_tmp),
+            "--surfaces=claude-md",
+            "--profile=common-docs",
+        ]
+    )
+    assert rc == 0
+    text = claude_md.read_text(encoding="utf-8")
+    assert "User instructions." in text
+    assert "pprose-common-edit" in text
+    assert not (git_repo_tmp / "AGENTS.md").exists()
+
+
+def test_project_claude_md_only_does_not_bridge_to_unmanaged_agents_md(
+    git_repo_tmp: Path,
+):
+    (git_repo_tmp / "AGENTS.md").write_text("# Project\n", encoding="utf-8")
+    rc = install.install_main(
+        [
+            "--project",
+            "--dir",
+            str(git_repo_tmp),
+            "--surfaces=claude-md",
+            "--profile=common-docs",
+        ]
+    )
+    assert rc == 0
+    text = (git_repo_tmp / "CLAUDE.md").read_text(encoding="utf-8")
+    assert "pprose-common-edit" in text
+
+
 def test_project_surfaces_bogus_errors(git_repo_tmp: Path, capsys: pytest.CaptureFixture[str]):
     rc = install.install_main(["--project", "--dir", str(git_repo_tmp), "--surfaces=bogus"])
     assert rc == 2
@@ -444,6 +669,7 @@ def test_pre_write_message_in_project_mode(git_repo_tmp: Path, capsys: pytest.Ca
     assert "(project mode) into:" in out
     assert str(git_repo_tmp.resolve()) in out
     assert "surfaces:" in out
+    assert "skills: pprose-common-edit, pprose-compare" in out
 
 
 def test_pre_write_message_in_global_mode(home_tmp: Path, capsys: pytest.CaptureFixture[str]):
@@ -479,10 +705,30 @@ def test_discovery_skills_match_committed_repo_root():
     `pprose install --pin DISCOVERY_VERSION` would render today."""
     repo_root = Path(__file__).resolve().parents[3]
     for name in resources.list_names("skills"):
-        committed = repo_root / "skills" / name / "SKILL.md"
-        rendered = install.compose_skill(name, pin=install.DISCOVERY_VERSION)
-        assert committed.is_file(), f"discovery copy missing: {committed}"
-        assert committed.read_text(encoding="utf-8") == rendered, (
-            f"discovery copy drift: {committed.relative_to(repo_root)}; "
-            f"run `make generate` from the repository root"
-        )
+        for relative, rendered in install.compose_skill_files(
+            name, pin=install.DISCOVERY_VERSION
+        ).items():
+            committed = repo_root / "skills" / name / relative
+            assert committed.is_file(), f"discovery copy missing: {committed}"
+            assert committed.read_text(encoding="utf-8") == rendered, (
+                f"discovery copy drift: {committed.relative_to(repo_root)}; "
+                f"run `make generate` from the repository root"
+            )
+
+
+def test_repo_workflow_skills_are_hidden_from_public_skill_discovery():
+    repo_root = Path(__file__).resolve().parents[3]
+    for surface in (Path(".agents") / "skills", Path(".claude") / "skills"):
+        for name in ("flowmark", "tbd"):
+            raw = (repo_root / surface / name / "SKILL.md").read_text(encoding="utf-8")
+            frontmatter, _ = install._split_frontmatter(raw)
+            metadata = yaml.safe_load(frontmatter)["metadata"]
+            assert metadata["internal"] is True
+
+
+def test_readme_leads_with_short_interactive_skill_commands():
+    repo_root = Path(__file__).resolve().parents[3]
+    readme = (repo_root / "README.md").read_text(encoding="utf-8")
+    assert "npx skills add jlevy/practical-prose@pprose-common-edit" in readme
+    assert "npx skills add jlevy/practical-prose\n" in readme
+    assert "npx --yes skills@" not in readme

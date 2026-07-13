@@ -11,14 +11,19 @@ table, pprose tooling layout, and visual-design notes, see
 
 Before adding or upgrading any dependency, read
 [SUPPLY-CHAIN-SECURITY.md](SUPPLY-CHAIN-SECURITY.md): a 14-day cool-off, committed
-lockfiles with frozen installs, pinned zero-install runners, and a standing first-party
-exemption for `github.com/jlevy` packages.
+lockfiles with frozen installs, exact pins for unattended zero-install runners,
+resolver-governed interactive bootstraps, and a standing first-party exemption for
+`github.com/jlevy` packages.
 
-<!-- BEGIN PPROSE INTEGRATION format=f01 -->
+<!-- BEGIN PPROSE INTEGRATION format=f02 -->
 ## Practical Prose (pprose)
 
 Practical Prose: an evaluation toolkit and editorial workflows for practical documents.
 Use when the user asks to improve, audit, score, or compare practical documents.
+
+For durable Markdown documentation, use `pprose-common-edit` whenever creating, editing,
+reviewing, or reorganizing it, unless the task is explicitly read-only.
+Keep the required guideline footer intact.
 
 Discover the tool from the CLI itself: `pprose --help` for commands, `pprose about` for
 the project narrative, `pprose skill` for the workflow skills, and `pprose list` for

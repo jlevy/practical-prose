@@ -2,7 +2,7 @@
 """Sync canonical repo docs into the packaged pprose resources, and render the
 committed discovery copies under `skills/` at the repo root.
 
-Two flows:
+Three flows:
 
 1.  Bundled resources (`docs/`, `shortcuts/`, `runbooks/` → `src/pprose/resources/`):
     the repo root holds the source of truth; this script copies the files into the
@@ -11,10 +11,16 @@ Two flows:
 2.  Discovery skills (`src/pprose/resources/skills/*.md` → `skills/<name>/SKILL.md`):
     the *in-package* skill bodies are the source of truth; this script renders each
     one through `pprose install`'s compose path with `DISCOVERY_VERSION` baked into
-    the bootstrap line, so the committed `skills/` directory at the repo root works
-    as a `npx skills add` / `skills.sh` landing page (an unpinned discovery copy
-    would silently re-resolve to the latest pprose on every run, bypassing the
-    14-day cool-off window — see cli-agent-skill-patterns §6.7).
+    CLI-backed bootstrap lines, so the committed `skills/` directory at the repo root
+    works as a `npx skills add` / `skills.sh` landing page (an unpinned discovery copy
+    would silently re-resolve to the latest pprose on every run, bypassing the 14-day
+    cool-off window — see cli-agent-skill-patterns §6.7). The common documentation
+    skill is runtime-free and carries its guideline under `references/` instead.
+
+3.  Repo workflow skills (`flowmark`, `tbd` under `.agents/skills/` and
+    `.claude/skills/`): retain their generated bodies but add
+    `metadata.internal: true` so public skill discovery does not offer this repo's
+    development tools alongside Practical Prose.
 
 Link policy (flow 1): the repo-root sources keep ordinary relative links, which
 work on GitHub; the bundled copies are read via `pprose <category> <name>` on
@@ -63,6 +69,12 @@ DIR_TO_COMMAND = {
 }
 
 _LINK_RE = re.compile(r"(!?)\[([^\]]*)\]\(([^)\s]+)\)")
+
+INTERNAL_REPO_SKILLS = tuple(
+    REPO_ROOT / surface / name / "SKILL.md"
+    for surface in (Path(".agents") / "skills", Path(".claude") / "skills")
+    for name in ("flowmark", "tbd")
+)
 
 
 def _command_for(rel: Path) -> str | None:
@@ -152,9 +164,32 @@ def _discovery_plan() -> dict[Path, str]:
 
     plan: dict[Path, str] = {}
     for name in resources.list_names("skills"):
-        rendered = install.compose_skill(name, pin=install.DISCOVERY_VERSION)
-        plan[REPO_ROOT / "skills" / name / "SKILL.md"] = rendered
+        for relative, rendered in install.compose_skill_files(
+            name, pin=install.DISCOVERY_VERSION
+        ).items():
+            plan[REPO_ROOT / "skills" / name / relative] = rendered
     return plan
+
+
+def _with_internal_metadata(text: str) -> str:
+    """Add the skills CLI's repo-internal discovery marker without reserializing YAML."""
+    if "\nmetadata:\n  internal: true\n" in text:
+        return text
+    end = text.find("\n---\n", len("---\n"))
+    if not text.startswith("---\n") or end < 0:
+        raise ValueError("repo workflow skill must have YAML frontmatter")
+    frontmatter = text[:end]
+    if "\nmetadata:" in frontmatter:
+        raise ValueError("repo workflow skill has metadata but is not marked internal")
+    return text[:end] + "\nmetadata:\n  internal: true" + text[end:]
+
+
+def _repo_workflow_plan() -> dict[Path, str]:
+    """Map generated repo workflow skills to their public-discovery-safe content."""
+    return {
+        path: _with_internal_metadata(path.read_text(encoding="utf-8"))
+        for path in INTERNAL_REPO_SKILLS
+    }
 
 
 def _expected_with_unmanaged() -> tuple[dict[Path, str], set[Path]]:
@@ -166,6 +201,7 @@ def _expected_with_unmanaged() -> tuple[dict[Path, str], set[Path]]:
     expected: dict[Path, str] = {}
     expected.update(_synced_plan())
     expected.update(_discovery_plan())
+    expected.update(_repo_workflow_plan())
     return expected, set()
 
 
