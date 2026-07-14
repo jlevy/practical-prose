@@ -341,7 +341,7 @@ Agent Skills under [skills/](https://github.com/jlevy/practical-prose/tree/main/
 | pprose-common-edit (`pprose skill pprose-common-edit`) | Apply | Create, edit, review, or reorganize durable Markdown under the common guidelines; tidy structure and formatting and keep the required footer. The self-contained universal tier. |
 | pprose-de-slop (`pprose skill pprose-de-slop`) | Apply | Remove AI-writing tells and formulaic LLM prose without changing meaning or installing a different voice. The self-contained focused tier. |
 | pprose-copy-edit (`pprose skill pprose-copy-edit`) | Apply | Copy edit, proofread, polish, tighten, or line edit: language and formatting (Expression and Form). Superset of common-edit and de-slop. |
-| pprose-full-edit (`pprose skill pprose-full-edit`) | Apply | Deep edit across all 20 dimensions; also writes an editorial review (strengths, weaknesses, suggested fixes). Superset of copy-edit; covers audit-only review. |
+| pprose-full-edit (`pprose skill pprose-full-edit`) | Apply | Deep edit across all 20 dimensions, including the de-slop pass; also writes an editorial review (strengths, weaknesses, suggested fixes). Superset of copy-edit; covers audit-only review. |
 | pprose-review (`pprose skill pprose-review`) | Review | Review, critique, or get a tiered edit plan (what a common edit, copy edit, and full substantive pass would each change) without modifying the document and without scores. Read-only. |
 | pprose-eval (`pprose skill pprose-eval`) | Evaluate | Score, grade, rubric-check, or measure the quality of one document. |
 | pprose-compare (`pprose skill pprose-compare`) | Evaluate | Compare drafts, A/B versions, quality-diff documents, or pick a best variant. |

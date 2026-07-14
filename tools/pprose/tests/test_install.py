@@ -193,6 +193,14 @@ def test_copy_edit_routes_to_the_de_slop_pass():
     assert "pprose shortcut shortcut-copy-edit" in skill
 
 
+def test_full_edit_includes_the_de_slop_pass():
+    skill = install.compose_skill("pprose-full-edit", pin="9.9.9")
+    assert "superset of `pprose-copy-edit`, including `pprose-de-slop`" in skill
+    assert "pprose guidelines ai-prose-corrections" in skill
+    shortcut = resources.read_doc("shortcuts", "shortcut-full-edit")
+    assert "common substrate + de-slop + Expression and Form" in shortcut
+
+
 def test_agents_block_matches_the_selected_skill_set():
     common = install.agents_md_block(
         pin="9.9.9", skill_names=install.profile_skill_names(install.PROFILE_COMMON_DOCS)

@@ -341,7 +341,7 @@ Agent Skills under [skills/](skills/). The eval skills use the
 | [pprose-common-edit](skills/pprose-common-edit/SKILL.md) | Apply | Create, edit, review, or reorganize durable Markdown under the common guidelines; tidy structure and formatting and keep the required footer. The self-contained universal tier. |
 | [pprose-de-slop](skills/pprose-de-slop/SKILL.md) | Apply | Remove AI-writing tells and formulaic LLM prose without changing meaning or installing a different voice. The self-contained focused tier. |
 | [pprose-copy-edit](skills/pprose-copy-edit/SKILL.md) | Apply | Copy edit, proofread, polish, tighten, or line edit: language and formatting (Expression and Form). Superset of common-edit and de-slop. |
-| [pprose-full-edit](skills/pprose-full-edit/SKILL.md) | Apply | Deep edit across all 20 dimensions; also writes an editorial review (strengths, weaknesses, suggested fixes). Superset of copy-edit; covers audit-only review. |
+| [pprose-full-edit](skills/pprose-full-edit/SKILL.md) | Apply | Deep edit across all 20 dimensions, including the de-slop pass; also writes an editorial review (strengths, weaknesses, suggested fixes). Superset of copy-edit; covers audit-only review. |
 | [pprose-review](skills/pprose-review/SKILL.md) | Review | Review, critique, or get a tiered edit plan (what a common edit, copy edit, and full substantive pass would each change) without modifying the document and without scores. Read-only. |
 | [pprose-eval](skills/pprose-eval/SKILL.md) | Evaluate | Score, grade, rubric-check, or measure the quality of one document. |
 | [pprose-compare](skills/pprose-compare/SKILL.md) | Evaluate | Compare drafts, A/B versions, quality-diff documents, or pick a best variant. |
