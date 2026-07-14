@@ -94,8 +94,12 @@ PATH, else `uvx pprose@<version>` (the version that ran install), else they tell
 user to install uv or pprose.
 The common documentation and de-slop skills are self-contained and bundle their
 guideline references.
-Pass `--surfaces=portable,claude,agents-md,claude-md` to select install destinations
+Pass `--surfaces=portable,claude,agents-md,claude-md` to select new install destinations
 within the chosen scope.
+The selected skill set is scope-wide, so later runs also reconcile every existing
+pprose-managed destination.
+An `agents-md` surface includes the portable skill tree, and `claude-md` includes the
+Claude skill tree, so policy never references an absent skill or bundled guideline.
 
 For local development before publication, run from the package workspace:
 

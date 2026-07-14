@@ -15,12 +15,13 @@ Outside an unambiguous project context (e.g. `$HOME`, `/tmp/scratch`, or any oth
 directory not inside a git repo), `--project` or `--global` must be passed explicitly
 — there's no silent default.
 
-The `--profile=common-docs|practical-prose` flag selects a public skill set; repeatable
-`--skill <name>` flags select an exact custom set. The
-`--surfaces=portable,claude,agents-md,claude-md` flag selects install destinations.
+The `--profile=common-docs|practical-prose` flag selects one scope-wide skill set;
+repeatable `--skill <name>` flags select an exact custom set. The
+`--surfaces=portable,claude,agents-md,claude-md` flag selects new install destinations.
 `portable` → `.agents/skills/`; `claude` → `.claude/skills/`; `agents-md` → marker
 block in `AGENTS.md`; `claude-md` → bridge or marker block in `CLAUDE.md` (instruction
-files are project mode only).
+files are project mode only). Existing pprose-managed destinations are always reconciled
+to the selected set, and instruction files bring along the skill tree they reference.
 
 Every generated artifact carries a `format=fNN` stamp so future pprose versions can
 detect and refresh older layouts, and refuse to clobber any artifact stamped with a
@@ -513,6 +514,57 @@ def _preflight_newer_formats(target_root: Path, surfaces: frozenset[str]) -> lis
     return blocked
 
 
+def _has_managed_skill_tree(skills_root: Path) -> bool:
+    """Whether a skill tree contains at least one pprose-generated skill."""
+    for name in resources.list_names("skills"):
+        existing = _existing_skill_format(skills_root / name / "SKILL.md")
+        if existing is not None and existing > 0:
+            return True
+    return False
+
+
+def _has_managed_instruction(path: Path) -> bool:
+    """Whether an instruction file contains a pprose block or Claude bridge."""
+    if not path.is_file():
+        return False
+    text = path.read_text(encoding="utf-8")
+    return AGENTS_BEGIN_PREFIX in text or _CLAUDE_BRIDGE_STAMP_RE.search(text) is not None
+
+
+def _resolve_install_surfaces(
+    target_root: Path,
+    requested: frozenset[str],
+    *,
+    project_mode: bool,
+) -> frozenset[str]:
+    """Return every surface that must be reconciled in this install.
+
+    `requested` controls which new destinations are created. Once pprose manages a
+    destination, later profile or exact-skill changes must reach it even when a narrower
+    `--surfaces` value is passed; otherwise different agents can silently use different
+    skill sets. Instruction surfaces also require the matching skill tree so their
+    always-on policy never names a skill or bundled reference that is absent.
+    """
+    surfaces = set(requested)
+    if _has_managed_skill_tree(target_root / PORTABLE_SKILLS_DIR):
+        surfaces.add(SURFACE_PORTABLE)
+    if _has_managed_skill_tree(target_root / CLAUDE_SKILLS_DIR):
+        surfaces.add(SURFACE_CLAUDE)
+
+    if project_mode:
+        if _has_managed_instruction(target_root / "AGENTS.md"):
+            surfaces.add(SURFACE_AGENTS_MD)
+        if _has_managed_instruction(target_root / "CLAUDE.md"):
+            surfaces.add(SURFACE_CLAUDE_MD)
+
+        if SURFACE_AGENTS_MD in surfaces:
+            surfaces.add(SURFACE_PORTABLE)
+        if SURFACE_CLAUDE_MD in surfaces:
+            surfaces.add(SURFACE_CLAUDE)
+
+    return frozenset(surfaces)
+
+
 def _write_atomic(path: Path, content: str) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     tmp = path.with_suffix(path.suffix + ".tmp")
@@ -728,7 +780,13 @@ Selection:
   --profile common-docs installs the runtime-free documentation policy.
   --profile practical-prose installs the complete suite and is the default.
   Repeat --skill for an exact custom set. Profiles and --skill are mutually exclusive.
-  Changing the set removes only deselected, pprose-generated skill directories.
+  The selected set is scope-wide. Changing it reconciles every existing
+  pprose-managed destination and removes only deselected, generated skill directories.
+
+Surfaces:
+  --surfaces controls which new destinations are created. Existing managed destinations
+  stay in sync. agents-md includes portable skills; claude-md includes Claude skills so
+  an instruction file never references an absent skill or bundled guideline.
 
 Cross-scope coexistence: project-scope skills shadow user-scope skills of the same
 name in modern agents (Codex documents this; Claude Code's two discovery paths
@@ -779,10 +837,12 @@ def install_main(argv: list[str] | None = None) -> int:
         default=None,
         metavar="LIST",
         help=(
-            "comma-separated subset of surfaces to install. "
+            "comma-separated subset of new surfaces to install; existing pprose-managed "
+            "surfaces are also reconciled. "
             "Values: portable (.agents/skills/), claude (.claude/skills/), "
             "agents-md (AGENTS.md block; project mode only), claude-md "
             "(CLAUDE.md bridge/block; project mode only), all (default if omitted). "
+            "Instruction surfaces include their matching skill tree. "
             "Example: --surfaces=portable,agents-md"
         ),
     )
@@ -916,6 +976,11 @@ def install_main(argv: list[str] | None = None) -> int:
         tuple(dict.fromkeys(args.skill))
         if args.skill
         else profile_skill_names(args.profile or DEFAULT_PROFILE)
+    )
+    selected = _resolve_install_surfaces(
+        target,
+        selected,
+        project_mode=scope == SCOPE_PROJECT,
     )
 
     # Pre-write target message — last thing printed before any filesystem writes,

@@ -395,12 +395,16 @@ older pprose. Each generated skill references pprose with a pinned, local-first
 invocation (`pprose` if on PATH, else `uvx pprose@<version>`—the trusted version that
 ran install—else a message telling the user to install uv or pprose).
 Scope installs with `--project` (the default inside a git repo) or `--global`, and
-select destinations with `--surfaces=portable,claude,agents-md,claude-md`. Select a
-public skill set with `--profile`, or an exact custom set with repeatable `--skill`
-flags. New releases can add guidelines and skills; because installed skills pin the
-version that installed them, a repo picks up additions only when you upgrade and re-run
-install (`uvx pprose install`, or `uv tool upgrade pprose && pprose install`).
-Re-running refreshes the artifacts and the version pin they bake.
+select new destinations with `--surfaces=portable,claude,agents-md,claude-md`. Existing
+pprose-managed destinations remain synchronized with the scope-wide skill set.
+Instruction surfaces include their required skill tree, so `AGENTS.md` or `CLAUDE.md`
+never points to an absent bundled reference.
+Select a public skill set with `--profile`, or an exact custom set with repeatable
+`--skill` flags.
+Installed skills pin the version that installed them, so a repo picks up
+new guidelines and skills only when you upgrade and re-run install
+(`uvx pprose install`, or `uv tool upgrade pprose && pprose install`). Re-running
+refreshes the artifacts and the version pin they bake.
 
 Example eval pass (no install via [uv](https://docs.astral.sh/uv/); `score` needs
 `--model` plus a provider API key):
