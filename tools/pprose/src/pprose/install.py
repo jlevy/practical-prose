@@ -47,7 +47,13 @@ from pprose import resources
 
 PACKAGE_NAME = "pprose"
 COMMON_EDIT_SKILL = "pprose-common-edit"
+DE_SLOP_SKILL = "pprose-de-slop"
 COMMON_GUIDELINES_REFERENCE = Path("references") / "common-doc-guidelines.md"
+AI_PROSE_REFERENCE = Path("references") / "ai-prose-corrections.md"
+RUNTIME_FREE_SKILL_REFERENCES = {
+    COMMON_EDIT_SKILL: (COMMON_GUIDELINES_REFERENCE, "common-doc-guidelines"),
+    DE_SLOP_SKILL: (AI_PROSE_REFERENCE, "ai-prose-corrections"),
+}
 
 # Single monotonically-increasing format version stamped onto every pprose-generated
 # artifact. Bump when the on-disk shape changes so a future pprose can upgrade older
@@ -285,13 +291,13 @@ def _bootstrap_line(pin: str) -> str:
 def compose_skill(name: str, pin: str | None = None) -> str:
     """Render a deterministic installable `SKILL.md` from its resource body.
 
-    CLI-backed skills include a pinned bootstrap. The common documentation skill is
-    runtime-free.
+    CLI-backed skills include a pinned bootstrap. Skills with bundled guideline
+    references are runtime-free.
     """
     pin = pin if pin is not None else pinned_version()
     fm, body = _split_frontmatter(resources.read_doc("skills", name))
     head = f"---\n{fm}\n---\n" if fm else ""
-    bootstrap = "" if name == COMMON_EDIT_SKILL else f"\n\n{_bootstrap_line(pin)}"
+    bootstrap = "" if name in RUNTIME_FREE_SKILL_REFERENCES else f"\n\n{_bootstrap_line(pin)}"
     composed = f"{head}{_skill_marker()}{bootstrap}\n\n{body}"
     return _flowmark(composed).rstrip() + "\n"
 
@@ -299,10 +305,9 @@ def compose_skill(name: str, pin: str | None = None) -> str:
 def compose_skill_files(name: str, pin: str | None = None) -> dict[Path, str]:
     """Render every file in an installable skill directory."""
     files = {Path("SKILL.md"): compose_skill(name, pin)}
-    if name == COMMON_EDIT_SKILL:
-        files[COMMON_GUIDELINES_REFERENCE] = (
-            _flowmark(resources.read_doc("guidelines", "common-doc-guidelines")).rstrip() + "\n"
-        )
+    if reference := RUNTIME_FREE_SKILL_REFERENCES.get(name):
+        path, guideline = reference
+        files[path] = _flowmark(resources.read_doc("guidelines", guideline)).rstrip() + "\n"
     return files
 
 
@@ -374,7 +379,10 @@ def agents_md_block(pin: str | None = None, skill_names: tuple[str, ...] | None 
         skill_names if skill_names is not None else profile_skill_names(PROFILE_PRACTICAL_PROSE)
     )
     has_common = COMMON_EDIT_SKILL in selected
+    has_de_slop = DE_SLOP_SKILL in selected
+    has_cli_skill = any(name not in RUNTIME_FREE_SKILL_REFERENCES for name in selected)
     common_only = selected == (COMMON_EDIT_SKILL,)
+    de_slop_only = selected == (DE_SLOP_SKILL,)
     # Authored as long lines; _flowmark applies the same semantic wrapping the
     # pre-commit hook would, so the block stays idempotent inside AGENTS.md.
     lines = [
@@ -390,6 +398,15 @@ def agents_md_block(pin: str | None = None, skill_names: tuple[str, ...] | None 
                 "read-only. Read its bundled `references/common-doc-guidelines.md` in "
                 "full, apply all applicable rules, and keep exactly one required footer "
                 "on every governed document.",
+            ]
+        )
+    elif de_slop_only:
+        lines.extend(
+            [
+                "Use `pprose-de-slop` when asked to remove AI-writing tells, formulaic "
+                "LLM prose, or machine-like phrasing. Read its bundled "
+                "`references/ai-prose-corrections.md` in full, apply contextual judgment "
+                "instead of a word blacklist, and preserve meaning, evidence, and voice.",
             ]
         )
     else:
@@ -410,17 +427,27 @@ def agents_md_block(pin: str | None = None, skill_names: tuple[str, ...] | None 
                     "",
                 ]
             )
-        lines.extend(
-            [
-                "Discover the tool from the CLI itself: `pprose --help` for commands, "
-                "`pprose about` for the project narrative, `pprose skill` for the workflow "
-                "skills, and `pprose list` for every on-demand guideline, shortcut, and "
-                "runbook (`pprose guidelines|shortcut|runbook <name>` prints one).",
-                "",
-                f"Run pprose as `pprose <command>` if on PATH, else `uvx pprose@{pin} "
-                "<command>` (zero-install via uv).",
-            ]
-        )
+        if has_de_slop:
+            lines.extend(
+                [
+                    "For AI-writing tells and formulaic LLM prose, use `pprose-de-slop`; "
+                    "apply its bundled catalog contextually and preserve meaning and voice.",
+                    "",
+                ]
+            )
+        if has_cli_skill:
+            lines.extend(
+                [
+                    "Discover the tool from the CLI itself: `pprose --help` for commands, "
+                    "`pprose about` for the project narrative, `pprose skill` for the "
+                    "workflow skills, and `pprose list` for every on-demand guideline, "
+                    "shortcut, and runbook (`pprose guidelines|shortcut|runbook <name>` "
+                    "prints one).",
+                    "",
+                    f"Run pprose as `pprose <command>` if on PATH, else `uvx pprose@{pin} "
+                    "<command>` (zero-install via uv).",
+                ]
+            )
     lines.extend(["", AGENTS_END_MARKER])
     block = "\n".join(lines)
     return _flowmark(block).rstrip()
@@ -663,17 +690,12 @@ def install(
 # ─────────────────────────────────────────────────────────────────────────────
 
 
-def _print_summary(results: list[InstallResult], pin: str) -> None:
+def _print_summary(results: list[InstallResult], pin: str, skill_names: tuple[str, ...]) -> None:
     if not results:
         print("\npprose install: no surfaces selected (nothing to do).")
         return
-    has_cli_skill = any(
-        r.skill
-        and r.skill != COMMON_EDIT_SKILL
-        and r.action in {"installed", "updated", "unchanged"}
-        for r in results
-    )
-    qualifier = f"CLI fallback pprose@{pin}" if has_cli_skill else "runtime-free common docs"
+    has_cli_skill = any(name not in RUNTIME_FREE_SKILL_REFERENCES for name in skill_names)
+    qualifier = f"CLI fallback pprose@{pin}" if has_cli_skill else "runtime-free skills"
     print(f"\npprose skill installation ({qualifier}):")
     counts: dict[str, int] = {}
     blocked: list[InstallResult] = []
@@ -909,7 +931,7 @@ def install_main(argv: list[str] | None = None) -> int:
         pin=pin,
         skill_names=selected_skills,
     )
-    _print_summary(results, pin)
+    _print_summary(results, pin, selected_skills)
 
     blocked = any(r.action == "blocked-newer" for r in results)
     return 1 if blocked else 0

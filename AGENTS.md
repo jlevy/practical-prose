@@ -25,6 +25,9 @@ For durable Markdown documentation, use `pprose-common-edit` whenever creating, 
 reviewing, or reorganizing it, unless the task is explicitly read-only.
 Keep the required guideline footer intact.
 
+For AI-writing tells and formulaic LLM prose, use `pprose-de-slop`; apply its bundled
+catalog contextually and preserve meaning and voice.
+
 Discover the tool from the CLI itself: `pprose --help` for commands, `pprose about` for
 the project narrative, `pprose skill` for the workflow skills, and `pprose list` for
 every on-demand guideline, shortcut, and runbook

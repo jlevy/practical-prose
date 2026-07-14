@@ -14,8 +14,8 @@ Three flows:
     CLI-backed bootstrap lines, so the committed `skills/` directory at the repo root
     works as a `npx skills add` / `skills.sh` landing page (an unpinned discovery copy
     would silently re-resolve to the latest pprose on every run, bypassing the 14-day
-    cool-off window — see cli-agent-skill-patterns §6.7). The common documentation
-    skill is runtime-free and carries its guideline under `references/` instead.
+    cool-off window — see cli-agent-skill-patterns §6.7). Self-contained skills are
+    runtime-free and carry their guidelines under `references/` instead.
 
 3.  Repo workflow skills (`flowmark`, `tbd` under `.agents/skills/` and
     `.claude/skills/`): retain their generated bodies but add

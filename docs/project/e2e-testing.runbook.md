@@ -299,22 +299,24 @@ Install into the scratch git repo, then re-run for idempotency:
 ```bash
 cd /tmp/pp-scratch
 ( cd /path/to/practical-prose/tools/pprose && uv run pprose install --dir /tmp/pp-scratch --auto )
-# expect 14 results (6 portable + 6 claude + agents-md + claude-md), exit 0
+# expect 16 results (7 portable + 7 claude + agents-md + claude-md), exit 0
 ```
 
 Confirm by eye:
 
 - [ ] `.agents/skills/<name>/SKILL.md` and `.claude/skills/<name>/SKILL.md` exist and
   are byte-identical; each has frontmatter and the `DO NOT EDIT ... format=f02` marker.
-  CLI-backed skills have a `uvx pprose@<pin>` bootstrap; `pprose-common-edit` instead
-  has `references/common-doc-guidelines.md` on both surfaces.
+  CLI-backed skills have a `uvx pprose@<pin>` bootstrap; `pprose-common-edit` and
+  `pprose-de-slop` instead have their bundled guideline under `references/` on both
+  surfaces.
 - [ ] `AGENTS.md` has a `BEGIN/END PPROSE INTEGRATION format=f02` block, and `CLAUDE.md`
   imports it with `@AGENTS.md` or contains a managed copy; re-running install reports
   all `unchanged`.
 - [ ] Scope guards: `pprose install` refuses `$HOME` in project mode; explicit
   `--global` writes under `$HOME` and drops `agents-md` and `claude-md`.
 - [ ] `--profile common-docs` installs only `pprose-common-edit` plus its reference;
-  repeatable `--skill` flags install exactly the named set.
+  repeatable `--skill` flags install exactly the named set, including a runtime-free
+  `pprose-de-slop` install.
 
 * * *
 
@@ -349,7 +351,7 @@ cd /tmp/pp-scratch2 && git init && uvx "pprose@${RELEASE_VERSION}" install
 
 - [ ] The pin baked into generated files is the published version, not an unpublished
   `DISCOVERY_VERSION` fallback.
-- [ ] In a live Claude Code / Codex session in the scratch repo, the 6 pprose skills are
+- [ ] In a live Claude Code / Codex session in the scratch repo, the 7 pprose skills are
   invocable and the AGENTS.md block shows in context; triggering “score this doc” routes
   to `pprose-eval`.
 

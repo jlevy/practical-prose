@@ -67,6 +67,13 @@ Install the self-contained common documentation skill with the cross-agent
 npx skills add jlevy/practical-prose@pprose-common-edit
 ```
 
+Install the focused, self-contained skill for removing AI-writing tells and formulaic
+LLM prose:
+
+```bash
+npx skills add jlevy/practical-prose@pprose-de-slop
+```
+
 Install the complete Practical Prose editing, review, evaluation, and comparison suite:
 
 ```bash
@@ -332,7 +339,8 @@ Agent Skills under [skills/](https://github.com/jlevy/practical-prose/tree/main/
 | Skill | Kind | Use When |
 | --- | --- | --- |
 | pprose-common-edit (`pprose skill pprose-common-edit`) | Apply | Create, edit, review, or reorganize durable Markdown under the common guidelines; tidy structure and formatting and keep the required footer. The self-contained universal tier. |
-| pprose-copy-edit (`pprose skill pprose-copy-edit`) | Apply | Copy edit, proofread, polish, tighten, or line edit: language and formatting (Expression and Form). Superset of common-edit. |
+| pprose-de-slop (`pprose skill pprose-de-slop`) | Apply | Remove AI-writing tells and formulaic LLM prose without changing meaning or installing a different voice. The self-contained focused tier. |
+| pprose-copy-edit (`pprose skill pprose-copy-edit`) | Apply | Copy edit, proofread, polish, tighten, or line edit: language and formatting (Expression and Form). Superset of common-edit and de-slop. |
 | pprose-full-edit (`pprose skill pprose-full-edit`) | Apply | Deep edit across all 20 dimensions; also writes an editorial review (strengths, weaknesses, suggested fixes). Superset of copy-edit; covers audit-only review. |
 | pprose-review (`pprose skill pprose-review`) | Review | Review, critique, or get a tiered edit plan (what a common edit, copy edit, and full substantive pass would each change) without modifying the document and without scores. Read-only. |
 | pprose-eval (`pprose skill pprose-eval`) | Evaluate | Score, grade, rubric-check, or measure the quality of one document. |
@@ -343,19 +351,22 @@ Install paths and selection:
 1. **Common documentation only:**
    `npx skills add jlevy/practical-prose@pprose-common-edit`. This skill bundles
    `common-doc-guidelines.md` and needs no `pprose` runtime.
-2. **Complete suite:** `npx skills add jlevy/practical-prose`. Repository-internal
+2. **AI-tell cleanup only:** `npx skills add jlevy/practical-prose@pprose-de-slop`. This
+   skill bundles `ai-prose-corrections.md` and needs no `pprose` runtime.
+3. **Complete suite:** `npx skills add jlevy/practical-prose`. Repository-internal
    workflow skills are hidden from public discovery, so the installer offers only the
-   six Practical Prose skills above.
-3. **Persistent project policy:** `uvx pprose install --profile common-docs` or
+   seven Practical Prose skills above.
+4. **Persistent project policy:** `uvx pprose install --profile common-docs` or
    `--profile practical-prose`. Use repeatable `--skill <name>` flags for an exact
    custom set. Switching selections removes only deselected pprose-generated skills.
-4. **User-wide skills:** add `-g` to either `npx skills add` command, or run
+5. **User-wide skills:** add `-g` to an `npx skills add` command, or run
    `uvx pprose install --global --profile <profile>`. Global installs omit always-on
    project instruction files.
 
-The skills are intentionally small routers: each names the workflow once and points at
-`pprose <command>` / `pprose guidelines <name>` / `pprose shortcut <name>` rather than
-duplicating that content.
+The skills are intentionally small.
+The common-edit and de-slop skills bundle their focused references; the broader workflow
+skills point at `pprose <command>` / `pprose guidelines <name>` /
+`pprose shortcut <name>` rather than duplicating that content.
 The `pprose` CLI bundles the guidelines, shortcuts, runbooks, and rubric inside its
 wheel, so an installed skill works in any repo with no other files present.
 

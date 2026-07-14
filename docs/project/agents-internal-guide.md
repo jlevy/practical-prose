@@ -23,6 +23,7 @@ this one.
 | User intent | Use | Source |
 | --- | --- | --- |
 | Apply the common Markdown documentation standards (basic, universal) | [pprose-common-edit](../../skills/pprose-common-edit/SKILL.md) | [common-doc-guidelines.md](../common-doc-guidelines.md) |
+| Remove AI-writing tells and formulaic LLM prose without changing meaning or voice | [pprose-de-slop](../../skills/pprose-de-slop/SKILL.md) | [ai-prose-corrections.md](../ai-prose-corrections.md) |
 | Copy edit for language and formatting (the Expression and Form dimensions) | [pprose-copy-edit](../../skills/pprose-copy-edit/SKILL.md) | [shortcut-copy-edit.md](../../shortcuts/shortcut-copy-edit.md) |
 | Full editorial pass across all 20 dimensions + editorial review (also covers audit-only review) | [pprose-full-edit](../../skills/pprose-full-edit/SKILL.md) | [shortcut-full-edit.md](../../shortcuts/shortcut-full-edit.md) |
 | Review one document and report tiered feedback (common-edit, copy-edit, and substantive layers) without editing or scoring | [pprose-review](../../skills/pprose-review/SKILL.md) | [shortcut-review.md](../../shortcuts/shortcut-review.md) |
@@ -76,7 +77,7 @@ in any repo without this source tree.
 (the complete suite remains the default), or with repeatable `--skill <name>` flags, and
 runs in one of two scopes:
 
-- `--project` (default when cwd is inside a git repo) writes the six Practical Prose
+- `--project` (default when cwd is inside a git repo) writes the seven Practical Prose
   skills into `<repo>/.agents/skills/` (Codex, Gemini CLI, pi) and
   `<repo>/.claude/skills/` (Claude Code), plus a marker-bounded `pprose` block in
   `<repo>/AGENTS.md` and a minimal `CLAUDE.md` bridge or managed block.
@@ -91,7 +92,8 @@ and a newer-format artifact is never clobbered by an older pprose.
 CLI-backed generated skills bake in a pinned, local-first invocation: `pprose` if on
 PATH, else `uvx pprose@<version>` (the version that ran install), else they tell the
 user to install uv or pprose.
-The common documentation skill is self-contained and bundles its guideline reference.
+The common documentation and de-slop skills are self-contained and bundle their
+guideline references.
 Pass `--surfaces=portable,claude,agents-md,claude-md` to select install destinations
 within the chosen scope.
 
