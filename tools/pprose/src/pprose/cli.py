@@ -88,7 +88,7 @@ COMMANDS: dict[str, CommandSpec] = {
         "Reference",
     ),
     "install": CommandSpec(
-        "Install Practical Prose skills (--project to a repo, --global for the user).",
+        "Install skill profiles or an exact skill set (project or user scope).",
         "pprose.install:install_main",
         "Setup",
     ),
@@ -125,7 +125,8 @@ def _print_help() -> None:
             f"`--color auto|always|never` to control styling.",
             "",
             "Getting started:",
-            f"  uvx {PROGRAM} install        # install skills into the current project",
+            f"  uvx {PROGRAM} install --profile common-docs  # standing documentation policy",
+            f"  uvx {PROGRAM} install        # complete suite in the current project",
             f"  {PROGRAM} about              # the Practical Prose project narrative",
             f"  {PROGRAM} skill              # workflow skills overview + routing pointers",
             f"  {PROGRAM} list               # all bundled guidelines, shortcuts, runbooks, skills",

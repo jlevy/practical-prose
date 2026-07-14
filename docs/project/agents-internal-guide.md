@@ -72,12 +72,14 @@ print one (omit the name to list that kind); `pprose skill <name>` and `pprose a
 The guidelines, shortcuts, runbooks, and rubric are bundled in the wheel, so these work
 in any repo without this source tree.
 
-**Setup**: `pprose install` runs in one of two scopes:
+**Setup**: `pprose install` selects skills with `--profile=common-docs|practical-prose`
+(the complete suite remains the default), or with repeatable `--skill <name>` flags, and
+runs in one of two scopes:
 
 - `--project` (default when cwd is inside a git repo) writes the six Practical Prose
   skills into `<repo>/.agents/skills/` (Codex, Gemini CLI, pi) and
   `<repo>/.claude/skills/` (Claude Code), plus a marker-bounded `pprose` block in
-  `<repo>/AGENTS.md`.
+  `<repo>/AGENTS.md` and a minimal `CLAUDE.md` bridge or managed block.
 - `--global` writes the skills into `~/.agents/skills/pprose-*/` and
   `~/.claude/skills/pprose-*/`, available across every project.
   The global AGENTS.md is left user-authored.
@@ -86,11 +88,12 @@ Outside an unambiguous project context (`$HOME`, a non-git directory), `--projec
 `--global` must be passed explicitly.
 Every generated artifact carries a `format=fNN` stamp; re-running install is idempotent
 and a newer-format artifact is never clobbered by an older pprose.
-Each generated skill bakes in a pinned, local-first invocation: `pprose` if on PATH,
-else `uvx pprose@<version>` (the version that ran install: a trusted pin, never an
-unpinned runner), else they tell the user to install uv or pprose.
-Pass `--surfaces=portable,claude,agents-md` to select install destinations within the
-chosen scope.
+CLI-backed generated skills bake in a pinned, local-first invocation: `pprose` if on
+PATH, else `uvx pprose@<version>` (the version that ran install), else they tell the
+user to install uv or pprose.
+The common documentation skill is self-contained and bundles its guideline reference.
+Pass `--surfaces=portable,claude,agents-md,claude-md` to select install destinations
+within the chosen scope.
 
 For local development before publication, run from the package workspace:
 

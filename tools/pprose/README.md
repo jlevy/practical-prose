@@ -36,15 +36,18 @@ pprose about                                       # the project narrative (bund
 pprose skill                                       # workflow skills overview + routing pointers
 pprose list                                        # every bundled guideline, shortcut, runbook, skill
 pprose guidelines <name>                           # print one style guide (no name lists them)
-pprose install                                     # install skills into the current project
-pprose install --global                            # install skills user-wide for every project
+pprose install --profile common-docs               # common documentation policy only
+pprose install --profile practical-prose           # complete suite (also the default)
+pprose install --skill pprose-review               # exact selection; repeat --skill as needed
+pprose install --global --profile common-docs      # user-wide skills, no instruction files
 ```
 
 `pprose install` runs in one of two **scopes**:
 
 - **Project** (`--project`, the default when cwd is inside a git repo) writes into
   `<repo>/.agents/skills/` (Codex, Gemini CLI, pi), `<repo>/.claude/skills/` (Claude
-  Code), and a marker-bounded block in `<repo>/AGENTS.md`.
+  Code), a marker-bounded block in `<repo>/AGENTS.md`, and a minimal `<repo>/CLAUDE.md`
+  bridge or managed block so Claude Code sees the standing policy.
 - **User-global** (`--global`) writes into `~/.agents/skills/pprose-*/` and
   `~/.claude/skills/pprose-*/`, making the skills available across every project.
   Skips `~/.codex/AGENTS.md` so the global instruction file stays user-authored.
@@ -52,22 +55,29 @@ pprose install --global                            # install skills user-wide fo
 Outside an unambiguous project context (`$HOME`, a non-git directory), `--project` or
 `--global` must be passed explicitly; there is no silent default.
 `$HOME` is always refused under `--project`; use `--global` for a user-wide install.
-Pass `--surfaces=portable,claude,agents-md` (or `--surfaces=all`, the default) to select
-install destinations within the chosen scope, or `--pin <version>` to override the
-version baked into the bootstrap line.
+Pass `--profile=common-docs|practical-prose` to select a public skill set, or repeat
+`--skill <name>` for an exact custom set.
+Pass `--surfaces=portable,claude,agents-md,claude-md` (or `--surfaces=all`, the default)
+to select destinations within the chosen scope, or `--pin <version>` to override the
+version baked into CLI-backed skill bootstrap lines.
+Changing the selection removes deselected skill directories only when they carry a
+pprose-generated format marker; unmarked user content and newer-format artifacts are
+preserved.
 
 Every generated artifact carries a `format=fNN` stamp; re-running install is idempotent,
 and a newer-format artifact is never clobbered by an older pprose.
-Each generated skill bakes in a pinned, local-first invocation (`pprose` if on PATH,
-else `uvx pprose@<version>`). Cross-scope coexistence is the supported pattern:
-project-scope skills shadow user-scope skills of the same name in modern agents.
+CLI-backed generated skills bake in a pinned, local-first invocation (`pprose` if on
+PATH, else `uvx pprose@<version>`). `pprose-common-edit` instead bundles its complete
+guideline reference and needs no runtime.
+Cross-scope coexistence is the supported pattern: project-scope skills shadow user-scope
+skills of the same name in modern agents.
 Run `pprose --help` or `pprose install --help` for full options.
 
 **Upgrading:** new releases can add guidelines, shortcuts, runbooks, and skills.
 Because installed skills pin the version that installed them, a repo picks up additions
-only after you upgrade pprose and re-run install (`uvx pprose@latest install`, or
-`uv tool install --upgrade pprose && pprose install`); re-running refreshes both the
-artifacts and the baked version pin.
+only after you upgrade pprose and re-run install (`uvx pprose install`, or
+`uv tool upgrade pprose && pprose install`); re-running refreshes both the artifacts and
+the baked version pin.
 
 `score` requires the API key for the chosen provider (`ANTHROPIC_API_KEY`,
 `OPENAI_API_KEY`, or `GOOGLE_API_KEY`); the package auto-loads `.env` and `.env.local`

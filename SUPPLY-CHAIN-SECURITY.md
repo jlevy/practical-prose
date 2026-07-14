@@ -14,10 +14,18 @@ agent or contributor should read before adding or upgrading a dependency.
   are checked in. Routine Python commands ignore personal resolver config and use
   `UV_LOCKED`; JS installs use `npm ci`. Never auto-update without reviewing the
   lockfile diff like a code diff.
-- **No unpinned zero-install runners.** Every `uvx` / `npx` invocation pins an exact
-  `@version` (see the `FLOWMARK_VERSION` pin in the [Makefile](Makefile) and the
-  `--no-install` biome/lefthook calls in [lefthook.yml](lefthook.yml), which resolve the
-  locked local binary rather than fetching latest).
+- **Centralize zero-install policy.** CI, hooks, generated agent instructions, and other
+  unattended `uvx` / `npx` invocations pin exact versions (see the `FLOWMARK_VERSION`
+  pin in the [Makefile](Makefile) and the `--no-install` biome/lefthook calls in
+  [lefthook.yml](lefthook.yml), which resolve locked local binaries).
+  Short, human-facing interactive bootstrap commands may omit the runner version when a
+  resolver-level 14-day gate is configured once in the user, agent, or CI environment
+  (`min-release-age=14` in `.npmrc` with a supporting npm version;
+  `exclude-newer = "14 days"` in `uv.toml` or `UV_EXCLUDE_NEWER="14 days"` for uv).
+  They may omit a repository ref only for a source covered by the first-party exemption
+  below. The interactive `skills` installer records the selected source and a computed
+  content hash in `skills-lock.json`; review that file and the prompted choices.
+  This exception does not apply to automation or generated skill fallbacks.
 - **Pin fresh-ish or sensitive deps exactly.** Runtime deps that need a specific version
   are pinned with a dated comment (see `pydantic-ai-slim` in
   [tools/pprose/pyproject.toml](tools/pprose/pyproject.toml)).
@@ -77,8 +85,11 @@ Packages **maintained by this repo’s author** (the `github.com/jlevy` org, e.g
 `flowmark` / `flowmark-rs`, `flexdoc`) are **exempt from the 14-day cool-off**. The
 trust basis the cool-off substitutes for is already satisfied: the source is
 author-controlled and auditable, and the published artifact is verified against its git
-tag. First-party deps are still **pinned to an exact version**, and any in-window
-override stays **surgical** (per-invocation, never relaxing the global cool-off).
+tag. First-party registry dependencies and unattended source fetches are still **pinned
+to an exact version**. A human-facing interactive skill bootstrap may follow the
+maintained repository’s default branch when its prompted source and generated content
+hash are reviewed. Any in-window resolver override stays **surgical** (per-invocation,
+never relaxing the global cool-off).
 
 This is a standing exemption, recorded here rather than re-approved per bump.
 
@@ -102,17 +113,24 @@ This is a standing exemption, recorded here rather than re-approved per bump.
 
 ## Known Gap
 
-- **npm lifecycle scripts are not globally blocked.** The headline control
-  (`ignore-scripts=true`) is not set because `lefthook`’s npm package relies on a
-  `postinstall` to fetch its binary, and npm has no clean per-package script allowlist
-  (unlike pnpm’s `allowBuilds`). The residual risk is bounded by the small, pinned,
-  lockfiled JS dependency set (`@biomejs/biome`, `lefthook`) and the cool-off.
-  Revisit by migrating the JS tooling to pnpm (`minimumReleaseAge` + `allowBuilds`) if
-  the dependency surface grows.
+- **npm lifecycle scripts are not yet allowlisted.** The repo cannot set
+  `ignore-scripts=true` because `lefthook` relies on a `postinstall` to fetch its
+  binary. Current npm releases provide `allow-scripts`, but the repo’s Node and npm CI
+  baseline predates that control.
+  The residual risk is bounded by the small, pinned, lockfile-backed JS dependency set
+  (`@biomejs/biome`, `lefthook`) and the cool-off.
+  Revisit by raising the npm baseline and configuring `allow-scripts`, or by migrating
+  to pnpm (`minimumReleaseAge` + `allowBuilds`), if the dependency surface grows.
 
 ## References
 
 - `tbd guidelines supply-chain-hardening`: the concise cross-ecosystem policy.
+- [npm configuration](https://docs.npmjs.com/cli/v11/using-npm/config/) for
+  `min-release-age`, `min-release-age-exclude`, and `allow-scripts`.
+- [uv dependency cooldowns](https://docs.astral.sh/uv/concepts/resolution/#dependency-cooldowns)
+  for duration-based `exclude-newer` policy.
+- [skills CLI](https://github.com/vercel-labs/skills) for interactive agent targeting,
+  installation scope, and lock metadata.
 - <https://github.com/jlevy/supply-chain-hardening>: full playbooks, audit script,
   incident watch list, and CI/publish-side hardening.
 
