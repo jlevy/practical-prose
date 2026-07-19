@@ -15,6 +15,28 @@ def test_bundled_resources_match_canonical():
     )
 
 
+def test_discovery_plan_composes_guidelines_from_synced_plan_not_disk():
+    """A single sync pass must be the fixed point when docs/ change.
+
+    Regression: composing bundled references from the on-disk wheel resources made
+    `make generate` need two runs to converge after a docs/ edit (the first run wrote
+    a stale guideline into skills/<name>/references/).
+    """
+    synced = sync_resources._synced_plan()
+    key = sync_resources.RESOURCES / "guidelines" / "ai-prose-corrections.md"
+    marker = "Sentinel sentence proving composition reads the synced plan."
+    synced[key] = synced[key].rstrip() + "\n\n" + marker + "\n"
+    plan = sync_resources._discovery_plan(synced)
+    ref = (
+        sync_resources.REPO_ROOT
+        / "skills"
+        / "pprose-de-slop"
+        / "references"
+        / "ai-prose-corrections.md"
+    )
+    assert marker in plan[ref]
+
+
 def test_link_rewrite_bundled_targets_become_pprose_commands():
     src = sync_resources.REPO_ROOT / "shortcuts" / "example.md"
     text = (

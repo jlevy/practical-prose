@@ -38,6 +38,7 @@ import argparse
 import re
 import shutil
 import sys
+from collections.abc import Callable
 from importlib.metadata import PackageNotFoundError, version
 from pathlib import Path
 from typing import NamedTuple
@@ -303,12 +304,27 @@ def compose_skill(name: str, pin: str | None = None) -> str:
     return _flowmark(composed).rstrip() + "\n"
 
 
-def compose_skill_files(name: str, pin: str | None = None) -> dict[Path, str]:
-    """Render every file in an installable skill directory."""
+def compose_skill_files(
+    name: str,
+    pin: str | None = None,
+    guideline_text: Callable[[str], str] | None = None,
+) -> dict[Path, str]:
+    """Render every file in an installable skill directory.
+
+    `guideline_text` overrides where a runtime-free skill's bundled guideline body is
+    read from (guideline name → markdown). Install-time callers omit it and read the
+    wheel resources; `devtools/sync_resources.py` passes the same-run synced content so
+    a single sync pass cannot bake a stale guideline into a bundled reference.
+    """
     files = {Path("SKILL.md"): compose_skill(name, pin)}
     if reference := RUNTIME_FREE_SKILL_REFERENCES.get(name):
         path, guideline = reference
-        files[path] = _flowmark(resources.read_doc("guidelines", guideline)).rstrip() + "\n"
+        text = (
+            guideline_text(guideline)
+            if guideline_text is not None
+            else resources.read_doc("guidelines", guideline)
+        )
+        files[path] = _flowmark(text).rstrip() + "\n"
     return files
 
 
