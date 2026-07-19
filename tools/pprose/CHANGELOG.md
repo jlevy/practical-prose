@@ -7,6 +7,69 @@ from git tags by dynamic versioning (see [docs/publishing.md](docs/publishing.md
 
 ## [Unreleased]
 
+## [0.3.0] - 2026-07-19
+
+### Added
+
+- **`pprose-de-slop` skill.** A focused apply skill that removes documented AI-writing
+  tells and formulaic LLM prose while preserving meaning, evidence, claim strength, and
+  voice. It applies the bundled `ai-prose-corrections` catalog contextually, refuses
+  detector evasion and manufactured “human” quirks (no fake typos, anecdotes, or
+  contractions-for-cover), and sits explicitly in the edit ladder: common-edit, then
+  de-slop, then copy-edit, then full-edit (the deeper passes include it).
+  Self-contained: the skill bundles its guideline reference, so
+  `npx skills add jlevy/practical-prose@pprose-de-slop` needs no Python, uv, or pprose
+  runtime.
+- **Cross-agent zero-install skill profiles.** `pprose install` gains
+  `--profile=common-docs|practical-prose` (the complete suite remains the default),
+  repeatable exact `--skill` selection, and
+  `--surfaces=portable,claude,agents-md,claude-md`. The selected skill set is
+  scope-wide: later runs reconcile every existing pprose-managed destination, prune
+  pprose-generated skills safely, and manage marker-bounded `AGENTS.md` and `CLAUDE.md`
+  policy blocks. `pprose-common-edit` is likewise self-contained, and clean cross-agent
+  installs work via the skills CLI (`npx skills add jlevy/practical-prose[@skill]`).
+
+### Changed
+
+- **De-slop applies by default.** The generated `AGENTS.md` policy blocks (and this
+  repo’s root `AGENTS.md`) direct agents to apply AI-slop reduction whenever prose is
+  drafted or edited, not only on request.
+  The deeper `pprose-copy-edit` and `pprose-full-edit` passes include the de-slop pass
+  and remain opt-in.
+- **`ai-prose-corrections` catalog v0.3.** Expanded from a survey of documented AI-slop
+  tells (Wikipedia’s *Signs of AI writing*, the Kobak et al.
+  and Juzek & Ward excess-vocabulary studies, and community complaint patterns): new
+  sections for inflated significance, copula avoidance, vague attribution, canned
+  conclusions, chat-artifact leakage, boilerplate openers, audience flattery, and
+  scaffolding that restates; new attention flags (hedge stacking, structure density,
+  elegant variation); extended hollow-verb, importance-adjective, and stock-metaphor
+  vocabulary; four new coverage-table rows; and drafting directive 7 (“End when the
+  content ends”). The `ai-prose-checklist` digest is synced to the catalog.
+- Repo-only `flowmark` and `tbd` workflow skills are marked internal so public skill
+  discovery offers only the Practical Prose suite.
+
+### Fixed
+
+- **Installer profiles reconcile across surfaces.** Instruction surfaces bring along the
+  skill tree they reference, so installed `AGENTS.md` / `CLAUDE.md` policy never points
+  at an absent skill or bundled guideline.
+- **Single-pass resource sync.** `make generate` now converges in one run when `docs/`
+  change: discovery-skill bundled references are composed from the same-run synced plan
+  instead of stale on-disk wheel copies (regression-tested).
+
+### Documentation
+
+- **Clear upgrade path.** The Upgrading notes (README and
+  [docs/installation.md](docs/installation.md)) now spell out the per-scope re-run
+  (`uvx pprose@latest install`, or
+  `uv tool install --upgrade pprose && pprose install`), what reconciliation refreshes
+  (artifacts, baked pins, managed `AGENTS.md` / `CLAUDE.md` blocks), that skills new in
+  a release are added and deselected generated skills are pruned safely, and that
+  skills-CLI installs refresh by re-running
+  `npx skills add jlevy/practical-prose[@skill]`. Verified against a live
+  `0.2.0 → 0.3.0` project upgrade (f01 artifacts upgrade in place to f02; no stale pins
+  remain).
+
 ## [0.2.0] - 2026-07-12
 
 ### Fixed

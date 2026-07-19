@@ -30,7 +30,8 @@ uvx pprose --help
 New pprose releases can add guidelines, shortcuts, runbooks, and skills.
 Skills installed in a repo by `pprose install` bake in the version that installed them
 (`uvx pprose@<version>`), so a repo keeps serving that release’s bundled docs until you
-upgrade and re-run install:
+upgrade and re-run install in each installed scope (each project repo, and once for
+`--global`):
 
 ```shell
 uvx pprose@latest install                          # zero-install
@@ -38,8 +39,15 @@ uvx pprose@latest install                          # zero-install
 uv tool install --upgrade pprose && pprose install
 ```
 
-Re-running install is idempotent: it refreshes the generated artifacts and the version
-pin they bake, and a newer-format artifact is never clobbered by an older pprose.
+Re-running install is idempotent and reconciles the whole scope: it refreshes every
+pprose-managed artifact and the version pin it bakes, updates the managed `AGENTS.md`
+and `CLAUDE.md` blocks, adds skills that are new in the release (for example,
+`pprose-de-slop` in v0.3.0), and prunes deselected generated skills only when they carry
+a pprose format marker.
+Artifact formats are stamped (`format=fNN`) and upgraded in place; a newer-format
+artifact is never clobbered by an older pprose.
+Skills installed with the skills CLI are refreshed the same way they were installed:
+re-run `npx skills add jlevy/practical-prose[@skill]`.
 
 <!-- This document follows common-doc-guidelines.md.
 See github.com/jlevy/practical-prose and review guidelines before editing.

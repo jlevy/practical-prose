@@ -408,9 +408,9 @@ never points to an absent bundled reference.
 Select a public skill set with `--profile`, or an exact custom set with repeatable
 `--skill` flags.
 Installed skills pin the version that installed them, so a repo picks up
-new guidelines and skills only when you upgrade and re-run install
-(`uvx pprose install`, or `uv tool upgrade pprose && pprose install`). Re-running
-refreshes the artifacts and the version pin they bake.
+new guidelines and skills only when you upgrade and re-run install in each installed
+scope (`uvx pprose@latest install`, or `uv tool upgrade pprose && pprose install`).
+Re-running refreshes the artifacts and the version pin they bake.
 
 Example eval pass (no install via [uv](https://docs.astral.sh/uv/); `score` needs
 `--model` plus a provider API key):

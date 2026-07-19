@@ -76,9 +76,13 @@ Run `pprose --help` or `pprose install --help` for full options.
 
 **Upgrading:** new releases can add guidelines, shortcuts, runbooks, and skills.
 Because installed skills pin the version that installed them, a repo picks up additions
-only after you upgrade pprose and re-run install (`uvx pprose install`, or
-`uv tool upgrade pprose && pprose install`); re-running refreshes both the artifacts and
-the baked version pin.
+only after you upgrade pprose and re-run install in each installed scope
+(`uvx pprose@latest install`, or `uv tool upgrade pprose && pprose install`); re-running
+reconciles the scope: artifacts and baked pins refresh, skills new in the release are
+added, and deselected generated skills are pruned safely.
+Skills added via the skills CLI refresh by re-running
+`npx skills add jlevy/practical-prose[@skill]`. See
+[installation.md](docs/installation.md) for the full upgrade notes.
 
 `score` requires the API key for the chosen provider (`ANTHROPIC_API_KEY`,
 `OPENAI_API_KEY`, or `GOOGLE_API_KEY`); the package auto-loads `.env` and `.env.local`
