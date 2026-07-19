@@ -6,7 +6,7 @@ status: active
 ---
 # AI-Prose Corrections
 
-Version: v0.2 (last update 2026-06-12)\
+Version: v0.3 (last update 2026-07-19)\
 Joshua Levy (github.com/jlevy) with agent assistance.
 Several structural patterns adapted from Hardik Pandya’s *stop-slop* (MIT,
 github.com/hardikpandya/stop-slop), with moderation noted below.
@@ -17,13 +17,15 @@ The reference catalog of LLM-register tells paired with the correction practical
 should reach for instead.
 Binding under F2.6 of `pprose guidelines practical-prose-guidelines`.
 
-The catalog has two parts:
+The catalog has three parts:
 
 - **Lexical catalog:** vocabulary, transitions, and phrases that are regex-encodable; a
   grep pass over a finished draft catches them.
 - **Structural patterns:** failures of sentence and paragraph shape (false agency,
   negative listing, fragmentation) that require parsing or judgment to detect, not
   string matching.
+- **Attention flags:** constructions that are legitimate in moderation and become a tell
+  only at density.
 
 For a compact digest to load into a drafting context, use
 `pprose shortcut ai-prose-checklist`; this document is the full reference behind it,
@@ -92,6 +94,9 @@ Each compresses one or more catalog sections below.
    paragraph endings repeated more than once, and three-item lists used by reflex.
 6. **Trust the reader.** Skip softening, permission-granting (*and that’s okay*), and
    hand-holding. State facts; let readers draw conclusions.
+7. **End when the content ends.** No template conclusions that restate the document, no
+   forward-looking closers with no forecast in them (*only time will tell*), and no
+   assistant artifacts (*I hope this helps*): a document is not a chat turn.
 
 ## Lexical Catalog
 
@@ -108,10 +113,12 @@ than in the training corpus.
   topic rather than to do anything.
   **Correction:** name the actual operation: *analyze*, *measure*, *audit*, *list*,
   *compare*.
-- *harness*, *leverage*, *utilize*: generic action verbs in place of the specific verb.
-  **Correction:** *use*, *apply*, *deploy*, *combine*, or *call* almost always beats
-  *utilize*. *Leverage* is legitimate in finance and engineering when something specific
-  is being amplified; non-load-bearing elsewhere.
+- *harness*, *leverage*, *utilize*, *foster*, *facilitate*, *enhance*, *bolster*,
+  *elevate*, *streamline* (as verbs): generic action verbs in place of the specific
+  verb. **Correction:** *use*, *apply*, *deploy*, *combine*, or *call* almost always
+  beats *utilize*; for *enhance* and kin, name what changed and by how much.
+  *Leverage* is legitimate in finance and engineering when something specific is being
+  amplified; non-load-bearing elsewhere.
 - *robust*: legitimate in engineering when paired with the named failure mode it
   survives (*robust to packet loss*, *robust to adversarial inputs*). **Correction:**
   when generic, name the failure mode the system survives, or cut.
@@ -129,6 +136,16 @@ than in the training corpus.
 - *game-changer*, *cutting-edge*, *state-of-the-art*: marketing-register magnitude
   claims. **Correction:** *state-of-the-art* with a benchmark, dataset, and citation is
   load-bearing in ML papers; without those, filler.
+- *crucial*, *pivotal*, *vital*, *essential*, *key* (as reflexive importance markers):
+  assert weight without evidence and dilute with repetition.
+  **Correction:** state what depends on the thing; if nothing does, cut the adjective.
+- *intricate*, *meticulous*, *nuanced*, *multifaceted*, *invaluable*, *plethora*,
+  *myriad*: academic-polish words with measured post-ChatGPT frequency spikes (Kobak et
+  al. again). **Correction:** the plain word (*complex*, *careful*, *many*) or the
+  specific property.
+- *tapestry*, *cornerstone*, *beacon*, *treasure trove* (as stock metaphors): decorative
+  nouns that gesture at richness instead of naming it.
+  **Correction:** name the parts, the dependency, or the find.
 
 **Exception:** domain terms of art override.
 *Robust authentication* with a stated threat model and *state-of-the-art* with a
@@ -151,6 +168,11 @@ or when the sentence they introduce restates rather than advances.
   **Correction:** rewrite the prior sentence; do not append a paraphrase.
 - *It goes without saying*, *Needless to say*: assert something obvious then say it.
   **Correction:** cut.
+- *It is important to note that*, *It’s worth noting that*, *It should be noted that*:
+  importance announced instead of shown; among the most-cited LLM filler frames.
+  **Correction:** delete the frame and state the point.
+  If the note genuinely restricts a claim, name the restriction in its own sentence.
+  (Mirrors E1.2’s cut-unnecessary-qualifiers rule.)
 - *To put this in perspective*, *What makes this particularly interesting is*, *The
   implications here are*, *This raises the question*: meta-commentary on what the
   document is about to say.
@@ -170,6 +192,11 @@ Cut on sight.
 - *The truth is*, *The uncomfortable truth is*, *Let me be clear*
 - *It turns out* (when nothing was investigated)
 - *I’ll be honest*, *Can we talk about*
+- *In today’s fast-paced/digital/modern world*, *In an era where…*, *Now more than
+  ever*, *In the ever-evolving landscape of…*, *When it comes to [topic]*: portable
+  scene-setting that fits any topic and therefore locates none.
+  (The AI-flavored variants, *In the age of AI* and kin, are under AI-Marketing
+  Register.)
 
 **Correction:** delete the opener; the sentence that follows is the content.
 
@@ -192,6 +219,10 @@ Always cut.
   **Correction:** drop the framing and state the claim directly.
   If the claim is genuinely underdiscussed, cite the absence (a search return, a survey
   of the field) rather than asserting it.
+- *Whether you’re a seasoned expert or just starting out*, *no matter your skill level*:
+  audience-flattering setups that claim universal fit instead of naming the
+  prerequisite. **Correction:** name who the document is for and what it assumes
+  (cross-references P2 Scope).
 
 ### AI-Marketing Register
 
@@ -212,6 +243,90 @@ descriptive or analytical.
 - *Solutions*, *offerings* (as nouns): bare product-copy nouns.
   **Correction:** use the specific term (*library*, *service*, *workflow*, *contract*,
   *recommendation*).
+
+### Inflated Significance
+
+Formulas that assert importance instead of demonstrating it; Wikipedia’s *Signs of AI
+writing* catalog treats this register as its most prominent cluster.
+The §4.2 banned list catches single-word overclaim; these are the multi-word shapes.
+
+- *stands as a testament to*, *serves as a testament to*, *is a testament to*:
+  significance by declaration.
+  **Correction:** state what the thing shows and the evidence that it shows it.
+- *plays a vital/crucial/pivotal role in [shaping]*, *underscores/highlights the
+  importance of*, *cannot be overstated*: importance asserted, never measured.
+  **Correction:** name the dependency or consequence; if none can be named, the
+  importance was decorative.
+- *watershed moment*, *key turning point*, *enduring legacy*, *lasting impact*, *deeply
+  rooted*, *rich cultural heritage*: magnitude-of-history claims without history.
+  **Correction:** name the date, the change, and who changed course because of it.
+- Trailing participial glaze: *…, highlighting the importance of X*, *…, underscoring
+  Y*, *…, reflecting Z*, *…, ensuring W*: a clause of unearned significance appended to
+  a factual sentence. **Correction:** end the sentence at the fact, or promote the
+  participle to a claim with an actor and evidence.
+
+### Copula Avoidance
+
+Verbose substitutes for *is* and *has*; one of the highest-confidence lexical tells in
+community catalogs.
+
+- *serves as*, *stands as*, *functions as*, *acts as*, *represents* (where *is* fits).
+- *boasts*, *features*, *offers*, *showcases* (where *has* fits).
+
+**Correction:** write *is* and *has*. The plain copula is not weak writing; the
+substitute adds syllables, not information.
+**Exception:** the literal senses are fine: *serves as* when something fills a role it
+was not built for (*the spreadsheet serves as the team’s database*), *features* in a
+changelog.
+
+### Vague Attribution
+
+Authority invoked without a source.
+(Sourcing depth is governed by G1 Verifiability; this entry is the register tell.)
+
+- *Experts say*, *Industry reports suggest*, *Studies show*, *Observers have noted*,
+  *Some critics argue*, *It is widely regarded as*.
+
+**Correction:** name the expert, the report, or the study, with a pointer the reader can
+check, or restate the claim as your own judgment and own it.
+An authority that can’t be named isn’t evidence.
+
+### Canned Conclusions
+
+Endings produced by template rather than by the content running out.
+
+- *In conclusion*, *In summary*, *To summarize*, *Overall*, *Ultimately* followed by
+  restatement: a summary of what the reader just read.
+  **Correction:** end on the last point of substance.
+  A conclusion earns its place by adding something: a decision, an implication, a next
+  action.
+- *The future looks bright*, *Only time will tell*, *It remains to be seen*, *Exciting
+  times ahead*, *The possibilities are endless*: forward-looking closers with no
+  forecast in them. **Correction:** state the open question and who or what resolves it,
+  or cut.
+- Reflexive *Key Takeaways* / *Final Thoughts* sections that parrot the body.
+  **Correction:** delete, or make the recap do work the reader will reuse (a decision
+  table, a checklist).
+  **Exception:** long reference documents legitimately end with reference material; the
+  tell is a recap of a document short enough to skim.
+
+### Chat-Artifact Leakage
+
+Fragments of the assistant conversation left in the document.
+Cut on sight, and treat any hit as evidence the surrounding text was pasted unedited,
+which warrants a closer audit of the whole passage.
+
+- Assistant framing: *Certainly!*, *Great question*, *I hope this helps*, *Let me know
+  if…*, *Would you like me to…*, *Here’s a revised version…*.
+- Self-identification and disclaimers: *As an AI language model…*, *As of my last
+  knowledge update…*, refusal fragments (*I cannot provide…*).
+- Unfilled placeholders: *[insert company name]*, *[Your Name]*,
+  *[add specific details]*.
+- Stray model markup: citation tokens (*oaicite*, *turn0search…*, *[cite: 1]*), Markdown
+  syntax in a non-Markdown medium.
+
+**Correction:** delete the artifact, then re-read the passage it came from against the
+rest of this catalog.
 
 ### Self-Negating Parallel Structure
 
@@ -324,6 +439,19 @@ Announcing difficulty or significance rather than demonstrating it.
 **Correction:** show the difficulty (the failed attempts, the constraint, the cost) and
 let the reader conclude it is hard.
 
+### Scaffolding That Restates
+
+The five-paragraph-essay reflex: an introduction that previews the sections, a summary
+at the end of each section, a conclusion that restates the introduction, a heading for
+every paragraph.
+
+**Correction:** structure should organize content, not repeat it.
+Delete previews and recaps that duplicate adjacent text; merge headings that govern a
+single short paragraph.
+**Exception:** skim structure in long documents is a virtue (common-doc §2 requires it);
+the tell is scaffolding that *restates* rather than *organizes*. A table of contents
+earns its place; a paragraph repeating the section above it does not.
+
 ## Attention Flags
 
 Legitimate constructions that mark AI register at high density.
@@ -344,6 +472,17 @@ Flag, inspect, keep what carries information.
   template.
 - **Questions answered immediately:** a question the next sentence answers was
   decoration; either let it breathe or state the answer directly.
+- **Hedge stacking:** *may*, *might*, *could*, *potentially*, *perhaps* are each
+  legitimate; several per paragraph is calibration-free mush.
+  One hedge per claim, sized to the actual uncertainty (J1.6 governs calibration).
+- **Structure density:** bullets, bold, emoji, and headings are formatting tools, and
+  each is an AI tell at reflex density: connected reasoning fragmented into bullets,
+  bold scattered mid-paragraph, emoji decorating headings, a heading per paragraph.
+  Formatting conventions are governed by common-doc §5 and F3.4; the flag here is
+  density without function.
+- **Elegant variation:** rotating synonyms for one referent (*the tool*, *the utility*,
+  *the solution* in one passage) to avoid repetition.
+  Practical prose repeats the term (F2.2); varied names read as varied things.
 
 ## Coverage by Existing Rules
 
@@ -359,6 +498,10 @@ AI failure modes governed by rules outside this file:
 | Backwards-history pollution (*previously named X*, *removed Y*) | E3.5 |
 | Uncalibrated hedging (*possibly*, *might*) on strong evidence | J1.6 |
 | Padding bibliographies for performative rigor | G3.5 |
+| Bold, list, heading, and emphasis conventions | common-doc §5; F3.4 |
+| Both-sides balance that never lands on a position | J1.6, J2 |
+| Redundant restatement across a document | E3 |
+| Fabricated or broken citations, dead links, wrong DOIs | G1, G2 |
 
 ## Sources and Credit
 
@@ -366,8 +509,9 @@ AI failure modes governed by rules outside this file:
   dramatic-fragmentation, rhetorical-setup, and narrator-from-a-distance categories
   originate there, adapted here with genre carve-outs and with absolutist rules (kill
   all adverbs, no em dashes, no Wh- openers) moderated into attention flags.
-- **Wikipedia, *Signs of AI writing*** (CC-BY-SA-4.0): corroborating community-curated
-  catalog.
+- **Wikipedia, *Signs of AI writing*** (CC-BY-SA-4.0): community-curated catalog; the
+  inflated-significance, copula-avoidance, vague-attribution, canned-conclusion, and
+  chat-artifact categories draw on it.
 - The empirical case for structural over lexical rules: Rallapalli et al.
   (2026) and Xia, Stańczak, and Roth (EACL 2026) in
   `pprose guidelines practical-prose-bibliography`.

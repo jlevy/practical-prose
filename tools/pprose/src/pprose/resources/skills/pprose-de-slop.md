@@ -1,6 +1,6 @@
 ---
 name: pprose-de-slop
-description: Remove AI-writing tells and formulaic LLM prose while preserving meaning and voice; modifies the target. Use when asked to de-slop, de-slopify, humanize, remove AI tells, make writing sound less AI-generated or less machine-like, or fix hollow emphasis, canned transitions, false agency, negative parallelism, dramatic fragments, generic conclusions, marketing register, and reflexive three-item lists.
+description: Remove AI-writing tells and formulaic LLM prose while preserving meaning and voice; modifies the target. Use when asked to de-slop, de-slopify, humanize, remove AI tells, or make writing sound less AI-generated or less machine-like; also use, unprompted, when text being written, edited, or reviewed reads machine-generated (an AI-heavy draft, pasted chatbot output). Fixes hollow emphasis, canned transitions and conclusions, boilerplate openers, inflated significance, false agency, negative parallelism, dramatic fragments, marketing register, chat-artifact leakage, and reflexive three-item lists.
 ---
 # Remove AI-Writing Tells
 
@@ -11,8 +11,13 @@ It may modify the target document.
 Before acting, read the bundled
 [ai-prose-corrections.md](references/ai-prose-corrections.md) in full.
 The reference is part of this skill; the `pprose` CLI is not required.
-For a broader language-and-formatting pass that includes this audit, use
-`pprose-copy-edit`.
+
+In the edit ladder this skill sits between `pprose-common-edit` (the universal
+structure-and-formatting tier) and `pprose-copy-edit`; both `pprose-copy-edit` and
+`pprose-full-edit` include this audit.
+Apply de-slop wherever prose is drafted or edited, not only on request; load the
+reference’s Drafting Directives while writing new text.
+Reserve the broader tiers for when a fuller edit is wanted.
 
 This skill improves prose quality.
 It does not promise detector evasion, hide authorship, or manufacture signs of human

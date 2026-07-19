@@ -346,6 +346,12 @@ Agent Skills under [skills/](skills/). The eval skills use the
 | [pprose-eval](skills/pprose-eval/SKILL.md) | Evaluate | Score, grade, rubric-check, or measure the quality of one document. |
 | [pprose-compare](skills/pprose-compare/SKILL.md) | Evaluate | Compare drafts, A/B versions, quality-diff documents, or pick a best variant. |
 
+The apply tiers form a ladder: common-edit is the universal substrate, de-slop is the
+focused AI-tell pass that sits between it and copy-edit, and copy-edit and full-edit
+each fold in everything below them.
+Apply the common-edit and de-slop passes routinely whenever touching durable prose;
+reach for copy-edit and full-edit when the task calls for a deeper editorial pass.
+
 Install paths and selection:
 
 1. **Common documentation only:**

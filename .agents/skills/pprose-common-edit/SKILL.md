@@ -15,9 +15,11 @@ Before acting, read the bundled
 [common-doc-guidelines.md](references/common-doc-guidelines.md) in full.
 The reference is part of this skill; the `pprose` CLI is not required.
 
-For a deeper language-and-formatting pass (the Expression and Form dimensions) use
-`pprose-copy-edit`; for a full all-dimension editorial pass use `pprose-full-edit`. Each
-tier is a superset of the one before.
+For focused removal of AI-writing tells use `pprose-de-slop`; for a deeper
+language-and-formatting pass (the Expression and Form dimensions, including the de-slop
+audit) use `pprose-copy-edit`; for a full all-dimension editorial pass use
+`pprose-full-edit`. Each tier is a superset of the one before, with `pprose-de-slop`
+folded in from copy-edit up.
 
 ## Inputs
 

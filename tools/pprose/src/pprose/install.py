@@ -404,10 +404,11 @@ def agents_md_block(pin: str | None = None, skill_names: tuple[str, ...] | None 
     elif de_slop_only:
         lines.extend(
             [
-                "Use `pprose-de-slop` when asked to remove AI-writing tells, formulaic "
-                "LLM prose, or machine-like phrasing. Read its bundled "
-                "`references/ai-prose-corrections.md` in full, apply contextual judgment "
-                "instead of a word blacklist, and preserve meaning, evidence, and voice.",
+                "Use `pprose-de-slop` whenever prose is drafted or edited, and when "
+                "asked to remove AI-writing tells, formulaic LLM prose, or machine-like "
+                "phrasing. Read its bundled `references/ai-prose-corrections.md` in "
+                "full, apply contextual judgment instead of a word blacklist, and "
+                "preserve meaning, evidence, and voice.",
             ]
         )
     else:
@@ -431,8 +432,10 @@ def agents_md_block(pin: str | None = None, skill_names: tuple[str, ...] | None 
         if has_de_slop:
             lines.extend(
                 [
-                    "For AI-writing tells and formulaic LLM prose, use `pprose-de-slop`; "
-                    "apply its bundled catalog contextually and preserve meaning and voice.",
+                    "Apply AI-slop reduction whenever drafting or editing prose, not "
+                    "only on request: use `pprose-de-slop` to remove AI-writing tells "
+                    "and formulaic LLM prose, applying its bundled catalog contextually "
+                    "and preserving meaning and voice.",
                     "",
                 ]
             )
