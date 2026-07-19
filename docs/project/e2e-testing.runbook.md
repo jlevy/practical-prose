@@ -380,8 +380,8 @@ Its release-sensitive items fall into three different stages:
    `devtools/check_release_version.py` and the resource-sync tests before creating the
    release. The publish workflow repeats both checks from the exact tagged commit.
 2. **Post-publish gate: the committed discovery pin must resolve from PyPI.** At this
-   review, `DISCOVERY_VERSION` is `0.2.0` while PyPI still serves `0.1.1`; publishing
-   the reviewed `v0.2.0` tag closes that gap.
+   writing, `DISCOVERY_VERSION` is `0.3.0` while PyPI still serves `0.2.0`; publishing
+   the reviewed `v0.3.0` tag closes that gap.
    Immediately verify the exact `uvx` version and a scratch-repo install before
    announcing the release.
 3. **Quality evidence: self-evaluation baselines and manual provider/browser checks.**

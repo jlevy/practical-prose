@@ -68,7 +68,7 @@ PPROSE_FORMAT = "f02"
 # the committed discovery copies under `skills/` at the repo root (`make generate`).
 # Enforced at release time: `devtools/check_release_version.py` (run from publish.yml)
 # fails the publish unless this equals the release tag.
-DISCOVERY_VERSION = "0.2.0"
+DISCOVERY_VERSION = "0.3.0"
 
 # Install scopes.
 SCOPE_PROJECT = "project"
