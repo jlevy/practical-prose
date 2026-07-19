@@ -28,8 +28,8 @@ The catalog has three parts:
   only at density.
 
 For a compact digest to load into a drafting context, use
-`pprose shortcut ai-prose-checklist`; this document is the full
-reference behind it, with exceptions, evidence, and corrections per entry.
+`pprose shortcut ai-prose-checklist`; this document is the full reference behind it,
+with exceptions, evidence, and corrections per entry.
 
 The common-doc-guidelines §4.2 banned-register list catches *overclaim*; E1, E2, and F2
 in the practical-prose guidelines catch *meta-commentary*. This file catches *hollow*,
@@ -46,9 +46,8 @@ Supporting evidence is in the *Critique of AI-Authored Prose* section of
 
 ## Use in Practice
 
-1. **Drafting.** Load the `pprose shortcut ai-prose-checklist`
-   digest (or the drafting directives below) into the writing context before any tell
-   appears on the page.
+1. **Drafting.** Load the `pprose shortcut ai-prose-checklist` digest (or the drafting
+   directives below) into the writing context before any tell appears on the page.
 2. **Lint-time check.** A grep pass over the lexical catalog is the cheapest first
    audit.
 3. **Edit-time judgment.** A reviewer or model pass over the structural patterns.
@@ -177,9 +176,8 @@ or when the sentence they introduce restates rather than advances.
 - *To put this in perspective*, *What makes this particularly interesting is*, *The
   implications here are*, *This raises the question*: meta-commentary on what the
   document is about to say.
-  (Cross-references E1.3 in
-  `pprose guidelines practical-prose-guidelines`.) **Correction:** state
-  the perspective, the interest, or the implication directly.
+  (Cross-references E1.3 in `pprose guidelines practical-prose-guidelines`.)
+  **Correction:** state the perspective, the interest, or the implication directly.
 - *That said*, *With that said*, *Having said that*: throat-clearing before a
   qualification. **Correction:** often the prior claim was overconfident and the *That
   said* sentence is the actual claim.
@@ -334,8 +332,8 @@ rest of this catalog.
 
 *This isn’t X. This is Y.* *Not X. Y.* *Less X, more Y.* *Forget X. This is Y.*
 
-One of the highest-frequency AI tells in 2025–2026, governed by
-E1.5 in practical-prose-guidelines.md (`pprose guidelines practical-prose-guidelines`) (*Earn
+One of the highest-frequency AI tells in 2025–2026, governed by E1.5 in
+practical-prose-guidelines.md (`pprose guidelines practical-prose-guidelines`) (*Earn
 rhetorical force; cut symmetry-for-its-own-sake*).
 
 **Correction:** if the X-half names a position no one actually holds, drop the X-half
@@ -520,17 +518,16 @@ AI failure modes governed by rules outside this file:
 
 ## Related Docs
 
-- `pprose shortcut ai-prose-checklist`: the compact digest of
-  this catalog for loading into a drafting context.
-- `pprose guidelines common-doc-guidelines`: §4.2 holds the
-  extravagant-register list.
+- `pprose shortcut ai-prose-checklist`: the compact digest of this catalog for loading
+  into a drafting context.
+- `pprose guidelines common-doc-guidelines`: §4.2 holds the extravagant-register list.
   The lists here are additive.
-- `pprose guidelines practical-prose-guidelines`: E1.4 (earned
-  register), E1.5 (cut symmetry-for-its-own-sake), F2.6 (domain conventions are
-  binding), F2.7 (em-dash conventions).
-- `pprose guidelines practical-prose-bibliography`: the *Critique of
-  AI-Authored Prose* section lists sources on AI register, vocabulary fingerprints, the
-  editorial response to LLM output, and open-source tools.
+- `pprose guidelines practical-prose-guidelines`: E1.4 (earned register), E1.5 (cut
+  symmetry-for-its-own-sake), F2.6 (domain conventions are binding), F2.7 (em-dash
+  conventions).
+- `pprose guidelines practical-prose-bibliography`: the *Critique of AI-Authored Prose*
+  section lists sources on AI register, vocabulary fingerprints, the editorial response
+  to LLM output, and open-source tools.
 
 <!-- This document follows common-doc-guidelines.md.
 See github.com/jlevy/practical-prose and review guidelines before editing.

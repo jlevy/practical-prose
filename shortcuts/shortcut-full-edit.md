@@ -10,8 +10,8 @@ author: Joshua Levy (github.com/jlevy) with agent assistance
 
 The deepest edit tier: a systematic pass across all six groups and 20 dimensions of
 `pprose guidelines practical-prose-guidelines`. A superset of the
-`pprose shortcut shortcut-copy-edit` (common substrate + Expression and Form); full-edit
-adds the substantive dimensions and produces an editorial review.
+`pprose shortcut shortcut-copy-edit` (common substrate + de-slop + Expression and Form);
+full-edit adds the substantive dimensions and produces an editorial review.
 
 ## What It Produces
 

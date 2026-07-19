@@ -14,8 +14,11 @@ Three flows:
     CLI-backed bootstrap lines, so the committed `skills/` directory at the repo root
     works as a `npx skills add` / `skills.sh` landing page (an unpinned discovery copy
     would silently re-resolve to the latest pprose on every run, bypassing the 14-day
-    cool-off window — see cli-agent-skill-patterns §6.7). The common documentation
-    skill is runtime-free and carries its guideline under `references/` instead.
+    cool-off window — see cli-agent-skill-patterns §6.7). Self-contained skills are
+    runtime-free and carry their guidelines under `references/` instead; those
+    references are composed from flow 1's in-memory plan, not the on-disk wheel
+    copies, so one sync pass converges even when `docs/` changed (see
+    `_discovery_plan`).
 
 3.  Repo workflow skills (`flowmark`, `tbd` under `.agents/skills/` and
     `.claude/skills/`): retain their generated bodies but add
@@ -156,16 +159,29 @@ def _synced_plan() -> dict[Path, str]:
     return plan
 
 
-def _discovery_plan() -> dict[Path, str]:
-    """Map every repo-root discovery skill path to its expected content."""
+def _discovery_plan(synced: dict[Path, str]) -> dict[Path, str]:
+    """Map every repo-root discovery skill path to its expected content.
+
+    Bundled guideline references are composed from `synced` (the in-memory guideline
+    content just planned from the repo root), NOT from the on-disk wheel resources.
+    Reading the disk here once made a single `make generate` bake stale guideline
+    content into `skills/<name>/references/` whenever `docs/` changed in the same run
+    (two passes were needed to converge). Composing from the plan makes one pass the
+    fixed point, and lets `check()` report true expectations even while the wheel
+    copies are stale. A runtime-free skill whose guideline is not a synced doc fails
+    loudly here (KeyError) rather than silently composing from stale disk.
+    """
     # Imported here to avoid a circular dep at module-load time (install.py imports
     # from `pprose.resources`, which only loads its category dirs lazily).
     from pprose import install, resources
 
+    def guideline_text(name: str) -> str:
+        return synced[RESOURCES / "guidelines" / f"{name}.md"]
+
     plan: dict[Path, str] = {}
     for name in resources.list_names("skills"):
         for relative, rendered in install.compose_skill_files(
-            name, pin=install.DISCOVERY_VERSION
+            name, pin=install.DISCOVERY_VERSION, guideline_text=guideline_text
         ).items():
             plan[REPO_ROOT / "skills" / name / relative] = rendered
     return plan
@@ -199,8 +215,9 @@ def _expected_with_unmanaged() -> tuple[dict[Path, str], set[Path]]:
     "stale wheel resource" from "stale discovery skill" in the future.
     """
     expected: dict[Path, str] = {}
-    expected.update(_synced_plan())
-    expected.update(_discovery_plan())
+    synced = _synced_plan()
+    expected.update(synced)
+    expected.update(_discovery_plan(synced))
     expected.update(_repo_workflow_plan())
     return expected, set()
 

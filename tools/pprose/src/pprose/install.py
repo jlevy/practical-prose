@@ -15,12 +15,13 @@ Outside an unambiguous project context (e.g. `$HOME`, `/tmp/scratch`, or any oth
 directory not inside a git repo), `--project` or `--global` must be passed explicitly
 — there's no silent default.
 
-The `--profile=common-docs|practical-prose` flag selects a public skill set; repeatable
-`--skill <name>` flags select an exact custom set. The
-`--surfaces=portable,claude,agents-md,claude-md` flag selects install destinations.
+The `--profile=common-docs|practical-prose` flag selects one scope-wide skill set;
+repeatable `--skill <name>` flags select an exact custom set. The
+`--surfaces=portable,claude,agents-md,claude-md` flag selects new install destinations.
 `portable` → `.agents/skills/`; `claude` → `.claude/skills/`; `agents-md` → marker
 block in `AGENTS.md`; `claude-md` → bridge or marker block in `CLAUDE.md` (instruction
-files are project mode only).
+files are project mode only). Existing pprose-managed destinations are always reconciled
+to the selected set, and instruction files bring along the skill tree they reference.
 
 Every generated artifact carries a `format=fNN` stamp so future pprose versions can
 detect and refresh older layouts, and refuse to clobber any artifact stamped with a
@@ -37,6 +38,7 @@ import argparse
 import re
 import shutil
 import sys
+from collections.abc import Callable
 from importlib.metadata import PackageNotFoundError, version
 from pathlib import Path
 from typing import NamedTuple
@@ -47,7 +49,13 @@ from pprose import resources
 
 PACKAGE_NAME = "pprose"
 COMMON_EDIT_SKILL = "pprose-common-edit"
+DE_SLOP_SKILL = "pprose-de-slop"
 COMMON_GUIDELINES_REFERENCE = Path("references") / "common-doc-guidelines.md"
+AI_PROSE_REFERENCE = Path("references") / "ai-prose-corrections.md"
+RUNTIME_FREE_SKILL_REFERENCES = {
+    COMMON_EDIT_SKILL: (COMMON_GUIDELINES_REFERENCE, "common-doc-guidelines"),
+    DE_SLOP_SKILL: (AI_PROSE_REFERENCE, "ai-prose-corrections"),
+}
 
 # Single monotonically-increasing format version stamped onto every pprose-generated
 # artifact. Bump when the on-disk shape changes so a future pprose can upgrade older
@@ -285,24 +293,38 @@ def _bootstrap_line(pin: str) -> str:
 def compose_skill(name: str, pin: str | None = None) -> str:
     """Render a deterministic installable `SKILL.md` from its resource body.
 
-    CLI-backed skills include a pinned bootstrap. The common documentation skill is
-    runtime-free.
+    CLI-backed skills include a pinned bootstrap. Skills with bundled guideline
+    references are runtime-free.
     """
     pin = pin if pin is not None else pinned_version()
     fm, body = _split_frontmatter(resources.read_doc("skills", name))
     head = f"---\n{fm}\n---\n" if fm else ""
-    bootstrap = "" if name == COMMON_EDIT_SKILL else f"\n\n{_bootstrap_line(pin)}"
+    bootstrap = "" if name in RUNTIME_FREE_SKILL_REFERENCES else f"\n\n{_bootstrap_line(pin)}"
     composed = f"{head}{_skill_marker()}{bootstrap}\n\n{body}"
     return _flowmark(composed).rstrip() + "\n"
 
 
-def compose_skill_files(name: str, pin: str | None = None) -> dict[Path, str]:
-    """Render every file in an installable skill directory."""
+def compose_skill_files(
+    name: str,
+    pin: str | None = None,
+    guideline_text: Callable[[str], str] | None = None,
+) -> dict[Path, str]:
+    """Render every file in an installable skill directory.
+
+    `guideline_text` overrides where a runtime-free skill's bundled guideline body is
+    read from (guideline name → markdown). Install-time callers omit it and read the
+    wheel resources; `devtools/sync_resources.py` passes the same-run synced content so
+    a single sync pass cannot bake a stale guideline into a bundled reference.
+    """
     files = {Path("SKILL.md"): compose_skill(name, pin)}
-    if name == COMMON_EDIT_SKILL:
-        files[COMMON_GUIDELINES_REFERENCE] = (
-            _flowmark(resources.read_doc("guidelines", "common-doc-guidelines")).rstrip() + "\n"
+    if reference := RUNTIME_FREE_SKILL_REFERENCES.get(name):
+        path, guideline = reference
+        text = (
+            guideline_text(guideline)
+            if guideline_text is not None
+            else resources.read_doc("guidelines", guideline)
         )
+        files[path] = _flowmark(text).rstrip() + "\n"
     return files
 
 
@@ -374,7 +396,10 @@ def agents_md_block(pin: str | None = None, skill_names: tuple[str, ...] | None 
         skill_names if skill_names is not None else profile_skill_names(PROFILE_PRACTICAL_PROSE)
     )
     has_common = COMMON_EDIT_SKILL in selected
+    has_de_slop = DE_SLOP_SKILL in selected
+    has_cli_skill = any(name not in RUNTIME_FREE_SKILL_REFERENCES for name in selected)
     common_only = selected == (COMMON_EDIT_SKILL,)
+    de_slop_only = selected == (DE_SLOP_SKILL,)
     # Authored as long lines; _flowmark applies the same semantic wrapping the
     # pre-commit hook would, so the block stays idempotent inside AGENTS.md.
     lines = [
@@ -390,6 +415,16 @@ def agents_md_block(pin: str | None = None, skill_names: tuple[str, ...] | None 
                 "read-only. Read its bundled `references/common-doc-guidelines.md` in "
                 "full, apply all applicable rules, and keep exactly one required footer "
                 "on every governed document.",
+            ]
+        )
+    elif de_slop_only:
+        lines.extend(
+            [
+                "Use `pprose-de-slop` whenever prose is drafted or edited, and when "
+                "asked to remove AI-writing tells, formulaic LLM prose, or machine-like "
+                "phrasing. Read its bundled `references/ai-prose-corrections.md` in "
+                "full, apply contextual judgment instead of a word blacklist, and "
+                "preserve meaning, evidence, and voice.",
             ]
         )
     else:
@@ -410,17 +445,29 @@ def agents_md_block(pin: str | None = None, skill_names: tuple[str, ...] | None 
                     "",
                 ]
             )
-        lines.extend(
-            [
-                "Discover the tool from the CLI itself: `pprose --help` for commands, "
-                "`pprose about` for the project narrative, `pprose skill` for the workflow "
-                "skills, and `pprose list` for every on-demand guideline, shortcut, and "
-                "runbook (`pprose guidelines|shortcut|runbook <name>` prints one).",
-                "",
-                f"Run pprose as `pprose <command>` if on PATH, else `uvx pprose@{pin} "
-                "<command>` (zero-install via uv).",
-            ]
-        )
+        if has_de_slop:
+            lines.extend(
+                [
+                    "Apply AI-slop reduction whenever drafting or editing prose, not "
+                    "only on request: use `pprose-de-slop` to remove AI-writing tells "
+                    "and formulaic LLM prose, applying its bundled catalog contextually "
+                    "and preserving meaning and voice.",
+                    "",
+                ]
+            )
+        if has_cli_skill:
+            lines.extend(
+                [
+                    "Discover the tool from the CLI itself: `pprose --help` for commands, "
+                    "`pprose about` for the project narrative, `pprose skill` for the "
+                    "workflow skills, and `pprose list` for every on-demand guideline, "
+                    "shortcut, and runbook (`pprose guidelines|shortcut|runbook <name>` "
+                    "prints one).",
+                    "",
+                    f"Run pprose as `pprose <command>` if on PATH, else `uvx pprose@{pin} "
+                    "<command>` (zero-install via uv).",
+                ]
+            )
     lines.extend(["", AGENTS_END_MARKER])
     block = "\n".join(lines)
     return _flowmark(block).rstrip()
@@ -484,6 +531,57 @@ def _preflight_newer_formats(target_root: Path, surfaces: frozenset[str]) -> lis
         if existing is not None and existing > _format_num():
             blocked.append(InstallResult(surface, None, path, "blocked-newer"))
     return blocked
+
+
+def _has_managed_skill_tree(skills_root: Path) -> bool:
+    """Whether a skill tree contains at least one pprose-generated skill."""
+    for name in resources.list_names("skills"):
+        existing = _existing_skill_format(skills_root / name / "SKILL.md")
+        if existing is not None and existing > 0:
+            return True
+    return False
+
+
+def _has_managed_instruction(path: Path) -> bool:
+    """Whether an instruction file contains a pprose block or Claude bridge."""
+    if not path.is_file():
+        return False
+    text = path.read_text(encoding="utf-8")
+    return AGENTS_BEGIN_PREFIX in text or _CLAUDE_BRIDGE_STAMP_RE.search(text) is not None
+
+
+def _resolve_install_surfaces(
+    target_root: Path,
+    requested: frozenset[str],
+    *,
+    project_mode: bool,
+) -> frozenset[str]:
+    """Return every surface that must be reconciled in this install.
+
+    `requested` controls which new destinations are created. Once pprose manages a
+    destination, later profile or exact-skill changes must reach it even when a narrower
+    `--surfaces` value is passed; otherwise different agents can silently use different
+    skill sets. Instruction surfaces also require the matching skill tree so their
+    always-on policy never names a skill or bundled reference that is absent.
+    """
+    surfaces = set(requested)
+    if _has_managed_skill_tree(target_root / PORTABLE_SKILLS_DIR):
+        surfaces.add(SURFACE_PORTABLE)
+    if _has_managed_skill_tree(target_root / CLAUDE_SKILLS_DIR):
+        surfaces.add(SURFACE_CLAUDE)
+
+    if project_mode:
+        if _has_managed_instruction(target_root / "AGENTS.md"):
+            surfaces.add(SURFACE_AGENTS_MD)
+        if _has_managed_instruction(target_root / "CLAUDE.md"):
+            surfaces.add(SURFACE_CLAUDE_MD)
+
+        if SURFACE_AGENTS_MD in surfaces:
+            surfaces.add(SURFACE_PORTABLE)
+        if SURFACE_CLAUDE_MD in surfaces:
+            surfaces.add(SURFACE_CLAUDE)
+
+    return frozenset(surfaces)
 
 
 def _write_atomic(path: Path, content: str) -> None:
@@ -663,17 +761,12 @@ def install(
 # ─────────────────────────────────────────────────────────────────────────────
 
 
-def _print_summary(results: list[InstallResult], pin: str) -> None:
+def _print_summary(results: list[InstallResult], pin: str, skill_names: tuple[str, ...]) -> None:
     if not results:
         print("\npprose install: no surfaces selected (nothing to do).")
         return
-    has_cli_skill = any(
-        r.skill
-        and r.skill != COMMON_EDIT_SKILL
-        and r.action in {"installed", "updated", "unchanged"}
-        for r in results
-    )
-    qualifier = f"CLI fallback pprose@{pin}" if has_cli_skill else "runtime-free common docs"
+    has_cli_skill = any(name not in RUNTIME_FREE_SKILL_REFERENCES for name in skill_names)
+    qualifier = f"CLI fallback pprose@{pin}" if has_cli_skill else "runtime-free skills"
     print(f"\npprose skill installation ({qualifier}):")
     counts: dict[str, int] = {}
     blocked: list[InstallResult] = []
@@ -706,7 +799,13 @@ Selection:
   --profile common-docs installs the runtime-free documentation policy.
   --profile practical-prose installs the complete suite and is the default.
   Repeat --skill for an exact custom set. Profiles and --skill are mutually exclusive.
-  Changing the set removes only deselected, pprose-generated skill directories.
+  The selected set is scope-wide. Changing it reconciles every existing
+  pprose-managed destination and removes only deselected, generated skill directories.
+
+Surfaces:
+  --surfaces controls which new destinations are created. Existing managed destinations
+  stay in sync. agents-md includes portable skills; claude-md includes Claude skills so
+  an instruction file never references an absent skill or bundled guideline.
 
 Cross-scope coexistence: project-scope skills shadow user-scope skills of the same
 name in modern agents (Codex documents this; Claude Code's two discovery paths
@@ -757,10 +856,12 @@ def install_main(argv: list[str] | None = None) -> int:
         default=None,
         metavar="LIST",
         help=(
-            "comma-separated subset of surfaces to install. "
+            "comma-separated subset of new surfaces to install; existing pprose-managed "
+            "surfaces are also reconciled. "
             "Values: portable (.agents/skills/), claude (.claude/skills/), "
             "agents-md (AGENTS.md block; project mode only), claude-md "
             "(CLAUDE.md bridge/block; project mode only), all (default if omitted). "
+            "Instruction surfaces include their matching skill tree. "
             "Example: --surfaces=portable,agents-md"
         ),
     )
@@ -895,6 +996,11 @@ def install_main(argv: list[str] | None = None) -> int:
         if args.skill
         else profile_skill_names(args.profile or DEFAULT_PROFILE)
     )
+    selected = _resolve_install_surfaces(
+        target,
+        selected,
+        project_mode=scope == SCOPE_PROJECT,
+    )
 
     # Pre-write target message — last thing printed before any filesystem writes,
     # so an interactive user can ctrl-c if the resolved target or surface list is wrong.
@@ -909,7 +1015,7 @@ def install_main(argv: list[str] | None = None) -> int:
         pin=pin,
         skill_names=selected_skills,
     )
-    _print_summary(results, pin)
+    _print_summary(results, pin, selected_skills)
 
     blocked = any(r.action == "blocked-newer" for r in results)
     return 1 if blocked else 0

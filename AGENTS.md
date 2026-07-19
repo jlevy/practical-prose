@@ -25,6 +25,12 @@ For durable Markdown documentation, use `pprose-common-edit` whenever creating, 
 reviewing, or reorganizing it, unless the task is explicitly read-only.
 Keep the required guideline footer intact.
 
+Apply AI-slop reduction whenever drafting or editing prose, not only on request: use
+`pprose-de-slop` to remove AI-writing tells and formulaic LLM prose, applying its
+bundled catalog contextually and preserving meaning and voice.
+Reserve the deeper `pprose-copy-edit` and `pprose-full-edit` passes (both include
+de-slop) for when a fuller edit is asked for.
+
 Discover the tool from the CLI itself: `pprose --help` for commands, `pprose about` for
 the project narrative, `pprose skill` for the workflow skills, and `pprose list` for
 every on-demand guideline, shortcut, and runbook

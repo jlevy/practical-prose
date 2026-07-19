@@ -12,7 +12,8 @@ A one-page priority list for agents drafting practical documents.
 Where the [quick-checklist](practical-prose-quick-checklist.md) is for pre-publish
 self-audit, this doc is for generation-time guidance: load it instead of the full
 guidelines (~1,200 lines) when generating, summarizing, or rewriting prose for a reader
-who will act on it.
+who will act on it. Pair it with [ai-prose-checklist.md](ai-prose-checklist.md), the
+register-level companion that suppresses LLM-writing tells while drafting.
 
 The eight priorities are the eight rules of
 [practical-prose-authoring-principles.md](../docs/practical-prose-authoring-principles.md),
@@ -90,6 +91,8 @@ Local rule compliance is in service of reader outcome, not the other way around.
 
 - [practical-prose-authoring-principles.md](../docs/practical-prose-authoring-principles.md):
   the same eight rules in their compact, unannotated form.
+- [ai-prose-checklist.md](ai-prose-checklist.md): drafting-time digest of the AI-prose
+  corrections; the LLM-register companion to this policy.
 - [practical-prose-quick-checklist.md](practical-prose-quick-checklist.md): pre-publish
   self-audit for the 20 dimensions.
 - [practical-prose-guidelines.md](../docs/practical-prose-guidelines.md): prescriptive

@@ -32,7 +32,8 @@ how much work each layer is and what needs their judgment.
 - **Tier 2, copy edit (language and formatting; no meaning change).** What a
   `pprose-copy-edit` pass would apply: the Expression and Form dimensions (E1-E3, F1-F3:
   clarity, coherence, concision, organization, consistency, formatting) of
-  `pprose guidelines practical-prose-guidelines`.
+  `pprose guidelines practical-prose-guidelines`, plus the LLM-register tells in
+  `pprose guidelines ai-prose-corrections` (the de-slop pass).
 - **Tier 3, full feedback (substantive; author judgment).** The judgment-bearing
   dimensions: Purpose (P1-P4), Reasoning (R1-R4), Grounding (G1-G3), and Judgment
   (J1-J3): anything that would change factual meaning, claim strength, scope, cited

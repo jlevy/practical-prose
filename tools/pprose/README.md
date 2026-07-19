@@ -38,6 +38,7 @@ pprose list                                        # every bundled guideline, sh
 pprose guidelines <name>                           # print one style guide (no name lists them)
 pprose install --profile common-docs               # common documentation policy only
 pprose install --profile practical-prose           # complete suite (also the default)
+pprose install --skill pprose-de-slop               # focused, runtime-free AI-tell cleanup
 pprose install --skill pprose-review               # exact selection; repeat --skill as needed
 pprose install --global --profile common-docs      # user-wide skills, no instruction files
 ```
@@ -67,8 +68,8 @@ preserved.
 Every generated artifact carries a `format=fNN` stamp; re-running install is idempotent,
 and a newer-format artifact is never clobbered by an older pprose.
 CLI-backed generated skills bake in a pinned, local-first invocation (`pprose` if on
-PATH, else `uvx pprose@<version>`). `pprose-common-edit` instead bundles its complete
-guideline reference and needs no runtime.
+PATH, else `uvx pprose@<version>`). `pprose-common-edit` and `pprose-de-slop` instead
+bundle their complete guideline references and need no runtime.
 Cross-scope coexistence is the supported pattern: project-scope skills shadow user-scope
 skills of the same name in modern agents.
 Run `pprose --help` or `pprose install --help` for full options.

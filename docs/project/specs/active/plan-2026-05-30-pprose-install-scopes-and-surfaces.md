@@ -99,8 +99,8 @@ pprose adopts the same vocabulary.
 ### Argument shape
 
 ```
-pprose install [SCOPE] [--surfaces=LIST] [--dir DIR] [--no-repo-check]
-               [--pin VERSION] [--auto]
+pprose install [SCOPE] [--surfaces=LIST] [--profile PROFILE | --skill NAME ...]
+               [--dir DIR] [--no-repo-check] [--pin VERSION] [--auto]
 ```
 
 `pprose install --print` is **removed**. Use `pprose skill <name>` to preview a single
@@ -126,7 +126,14 @@ Mutually exclusive: `--project` ↔ `--global`, and `--global` ↔ `--dir`.
 
 Values: `portable` (`.agents/skills/pprose-*/SKILL.md` — Codex, Gemini CLI, pi),
 `claude` (`.claude/skills/pprose-*/SKILL.md` — Claude Code), `agents-md` (marker block
-in `AGENTS.md`), `all` (alias for the full set).
+in `AGENTS.md`), `claude-md` (bridge or marker block in `CLAUDE.md`), `all` (alias for
+the full set).
+
+The flag selects new destinations, not independent scope-wide skill sets.
+Once pprose manages a destination, profile or exact-skill changes reconcile it even when
+a later command names a narrower surface set.
+`agents-md` includes `portable`, and `claude-md` includes `claude`, so persistent
+instructions always have the skills and bundled references they name.
 
 Empty or unknown tokens produce a clear error with the valid set.
 

@@ -1,14 +1,15 @@
 ---
 name: pprose-full-edit
-description: Full editorial pass over a practical document across all 20 Practical Prose dimensions; modifies the doc AND writes an editorial-review side document. A superset of pprose-copy-edit. Use when asked for a deep or full edit, an editorial review, a substantive edit, or a strengths-and-weaknesses review with suggested fixes.
+description: Full editorial pass over a practical document across all 20 Practical Prose dimensions; modifies the doc AND writes an editorial-review side document. A superset of pprose-copy-edit that includes the pprose-de-slop pass. Use when asked for a deep or full edit, an editorial review, a substantive edit, or a strengths-and-weaknesses review with suggested fixes.
 ---
 # Full Edit
 
 This is the deepest edit tier (an apply skill: it may modify the target document) and a
-**superset of `pprose-copy-edit`**. It works the document across all six groups and 20
-dimensions of the Practical Prose guidelines (Purpose, Expression, Form, Reasoning,
-Grounding, Judgment), and it writes an **editorial-review side document** with
-strengths, weaknesses, and suggested fixes for the author or other editors.
+**superset of `pprose-copy-edit`, including `pprose-de-slop`**. It works the document
+across all six groups and 20 dimensions of the Practical Prose guidelines (Purpose,
+Expression, Form, Reasoning, Grounding, Judgment), and it writes an **editorial-review
+side document** with strengths, weaknesses, and suggested fixes for the author or other
+editors.
 
 Apply-vs-flag: auto-apply the safe Expression and formatting fixes; **flag** substantive
 Purpose / Reasoning / Grounding / Judgment issues in the review rather than silently
@@ -24,8 +25,10 @@ rewriting: never change factual meaning, claim strength, scope, or citations.
 
 1. Run `pprose shortcut shortcut-full-edit`, the playbook, including the
    editorial-review structure.
-2. Follow it: per-group passes against `pprose guidelines practical-prose-guidelines`,
-   apply the safe fixes, flag the substantive ones, and write the editorial review.
+2. Follow it: run the lexical and structural de-slop passes from
+   `pprose guidelines ai-prose-corrections`, complete the remaining per-group passes
+   against `pprose guidelines practical-prose-guidelines`, apply the safe fixes, flag
+   the substantive ones, and write the editorial review.
 3. If the artifact is a comprehensive practical guide (a reference work helping readers
    navigate a complex topic), also audit against
    `pprose guidelines writing-practical-guides` (each guideline there carries an

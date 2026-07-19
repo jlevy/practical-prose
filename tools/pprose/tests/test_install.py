@@ -66,6 +66,7 @@ def test_resources_list_and_read():
     assert set(resources.list_names("skills")) >= {
         "pprose-common-edit",
         "pprose-copy-edit",
+        "pprose-de-slop",
         "pprose-full-edit",
         "pprose-eval",
         "pprose-compare",
@@ -172,6 +173,34 @@ def test_common_edit_is_self_contained_and_runtime_free():
     assert skill.count("This document follows common-doc-guidelines.md.") == 1
 
 
+def test_de_slop_is_self_contained_and_runtime_free():
+    files = install.compose_skill_files("pprose-de-slop", pin="9.9.9")
+    assert set(files) == {
+        Path("SKILL.md"),
+        Path("references") / "ai-prose-corrections.md",
+    }
+    skill = files[Path("SKILL.md")]
+    assert "uvx pprose@9.9.9" not in skill
+    assert "references/ai-prose-corrections.md" in skill
+    assert "Preserve factual meaning, claim strength, citations" in skill
+    assert "detector evasion" in skill
+    assert "# AI-Prose Corrections" in files[Path("references") / "ai-prose-corrections.md"]
+
+
+def test_copy_edit_routes_to_the_de_slop_pass():
+    skill = install.compose_skill("pprose-copy-edit", pin="9.9.9")
+    assert "superset of `pprose-common-edit` and `pprose-de-slop`" in skill
+    assert "pprose shortcut shortcut-copy-edit" in skill
+
+
+def test_full_edit_includes_the_de_slop_pass():
+    skill = install.compose_skill("pprose-full-edit", pin="9.9.9")
+    assert "superset of `pprose-copy-edit`, including `pprose-de-slop`" in skill
+    assert "pprose guidelines ai-prose-corrections" in skill
+    shortcut = resources.read_doc("shortcuts", "shortcut-full-edit")
+    assert "common substrate + de-slop + Expression and Form" in shortcut
+
+
 def test_agents_block_matches_the_selected_skill_set():
     common = install.agents_md_block(
         pin="9.9.9", skill_names=install.profile_skill_names(install.PROFILE_COMMON_DOCS)
@@ -186,6 +215,11 @@ def test_agents_block_matches_the_selected_skill_set():
     )
     assert "pprose-common-edit" in full
     assert "uvx pprose@9.9.9" in full
+
+    de_slop = install.agents_md_block(pin="9.9.9", skill_names=("pprose-de-slop",))
+    assert "pprose-de-slop" in de_slop
+    assert "AI-writing tells" in de_slop
+    assert "uvx pprose@9.9.9" not in de_slop
 
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -359,6 +393,24 @@ def test_project_repeatable_skill_flag_installs_exact_selection(git_repo_tmp: Pa
     assert installed == {"pprose-review", "pprose-eval"}
 
 
+def test_project_exact_de_slop_install_is_self_contained(git_repo_tmp: Path):
+    rc = install.install_main(
+        [
+            "--project",
+            "--dir",
+            str(git_repo_tmp),
+            "--skill",
+            "pprose-de-slop",
+        ]
+    )
+    assert rc == 0
+    for skills_dir in (install.PORTABLE_SKILLS_DIR, install.CLAUDE_SKILLS_DIR):
+        skill_dir = git_repo_tmp / skills_dir / "pprose-de-slop"
+        assert "uvx pprose@" not in (skill_dir / "SKILL.md").read_text(encoding="utf-8")
+        assert (skill_dir / "references" / "ai-prose-corrections.md").is_file()
+    assert "uvx pprose@" not in (git_repo_tmp / "AGENTS.md").read_text(encoding="utf-8")
+
+
 def test_common_docs_profile_removes_other_generated_pprose_skills(git_repo_tmp: Path):
     assert install.install_main(["--project", "--dir", str(git_repo_tmp)]) == 0
     assert (
@@ -368,6 +420,56 @@ def test_common_docs_profile_removes_other_generated_pprose_skills(git_repo_tmp:
     for skills_dir in (install.PORTABLE_SKILLS_DIR, install.CLAUDE_SKILLS_DIR):
         installed = {p.parent.name for p in (git_repo_tmp / skills_dir).glob("*/SKILL.md")}
         assert installed == {"pprose-common-edit"}
+
+
+def test_profile_change_reconciles_all_existing_managed_surfaces(git_repo_tmp: Path):
+    assert install.install_main(["--project", "--dir", str(git_repo_tmp)]) == 0
+    assert (
+        install.install_main(
+            [
+                "--project",
+                "--dir",
+                str(git_repo_tmp),
+                "--profile=common-docs",
+                "--surfaces=portable",
+            ]
+        )
+        == 0
+    )
+
+    for skills_dir in (install.PORTABLE_SKILLS_DIR, install.CLAUDE_SKILLS_DIR):
+        installed = {p.parent.name for p in (git_repo_tmp / skills_dir).glob("*/SKILL.md")}
+        assert installed == {"pprose-common-edit"}
+
+    agents = (git_repo_tmp / "AGENTS.md").read_text(encoding="utf-8")
+    assert "pprose-common-edit" in agents
+    assert "pprose-de-slop" not in agents
+    assert "uvx pprose@" not in agents
+
+
+def test_exact_skill_change_reconciles_all_existing_managed_surfaces(git_repo_tmp: Path):
+    assert install.install_main(["--project", "--dir", str(git_repo_tmp)]) == 0
+    assert (
+        install.install_main(
+            [
+                "--project",
+                "--dir",
+                str(git_repo_tmp),
+                "--skill=pprose-de-slop",
+                "--surfaces=claude",
+            ]
+        )
+        == 0
+    )
+
+    for skills_dir in (install.PORTABLE_SKILLS_DIR, install.CLAUDE_SKILLS_DIR):
+        installed = {p.parent.name for p in (git_repo_tmp / skills_dir).glob("*/SKILL.md")}
+        assert installed == {"pprose-de-slop"}
+
+    agents = (git_repo_tmp / "AGENTS.md").read_text(encoding="utf-8")
+    assert "pprose-de-slop" in agents
+    assert "pprose-common-edit" not in agents
+    assert "uvx pprose@" not in agents
 
 
 def test_profile_pruning_does_not_remove_newer_generated_skill(git_repo_tmp: Path):
@@ -390,6 +492,32 @@ def test_profile_pruning_does_not_remove_newer_generated_skill(git_repo_tmp: Pat
     )
     assert rc == 1
     assert target.read_text(encoding="utf-8") == sentinel
+
+
+def test_profile_change_preflights_omitted_managed_surfaces(git_repo_tmp: Path):
+    assert install.install_main(["--project", "--dir", str(git_repo_tmp)]) == 0
+    portable_eval = git_repo_tmp / install.PORTABLE_SKILLS_DIR / "pprose-eval" / "SKILL.md"
+    claude_eval = git_repo_tmp / install.CLAUDE_SKILLS_DIR / "pprose-eval" / "SKILL.md"
+    newer_format = f"f{install._format_num() + 1:02d}"
+    sentinel = (
+        f"<!-- DO NOT EDIT: generated by `pprose install` (format={newer_format}) -->\n"
+        "newer-format content\n"
+    )
+    claude_eval.write_text(sentinel, encoding="utf-8")
+
+    rc = install.install_main(
+        [
+            "--project",
+            "--dir",
+            str(git_repo_tmp),
+            "--profile=common-docs",
+            "--surfaces=portable",
+        ]
+    )
+
+    assert rc == 1
+    assert portable_eval.is_file()
+    assert claude_eval.read_text(encoding="utf-8") == sentinel
 
 
 def test_profile_pruning_preserves_unmarked_skill_content(git_repo_tmp: Path):
@@ -445,7 +573,7 @@ def test_project_writes_both_skill_surfaces_with_format_stamp(git_repo_tmp: Path
     ):
         text = skill_md.read_text(encoding="utf-8")
         assert f"format={install.PPROSE_FORMAT}" in text
-        if skill_md.parent.name == install.COMMON_EDIT_SKILL:
+        if skill_md.parent.name in install.RUNTIME_FREE_SKILL_REFERENCES:
             assert f"uvx pprose@{pin}" not in text
         else:
             assert f"uvx pprose@{pin}" in text
@@ -591,6 +719,16 @@ def test_global_with_explicit_portable_only(home_tmp: Path):
     assert not (home_tmp / "AGENTS.md").exists()
 
 
+def test_global_profile_change_reconciles_existing_managed_skill_surfaces(home_tmp: Path):
+    assert install.install_main(["--global"]) == 0
+    assert install.install_main(["--global", "--profile=common-docs", "--surfaces=portable"]) == 0
+
+    for skills_dir in (install.PORTABLE_SKILLS_DIR, install.CLAUDE_SKILLS_DIR):
+        installed = {p.parent.name for p in (home_tmp / skills_dir).glob("*/SKILL.md")}
+        assert installed == {"pprose-common-edit"}
+    assert not (home_tmp / "AGENTS.md").exists()
+
+
 # ─────────────────────────────────────────────────────────────────────────────
 # --surfaces filtering inside project mode
 # ─────────────────────────────────────────────────────────────────────────────
@@ -614,6 +752,31 @@ def test_project_surfaces_no_agents_md(git_repo_tmp: Path):
     assert not (git_repo_tmp / "AGENTS.md").exists()
 
 
+def test_agents_md_only_summary_reports_selected_cli_fallback(
+    git_repo_tmp: Path, capsys: pytest.CaptureFixture[str]
+):
+    rc = install.install_main(["--project", "--dir", str(git_repo_tmp), "--surfaces=agents-md"])
+    assert rc == 0
+    assert f"CLI fallback pprose@{install.pinned_version()}" in capsys.readouterr().out
+
+
+def test_common_docs_agents_md_installs_its_portable_skill_dependency(git_repo_tmp: Path):
+    rc = install.install_main(
+        [
+            "--project",
+            "--dir",
+            str(git_repo_tmp),
+            "--surfaces=agents-md",
+            "--profile=common-docs",
+        ]
+    )
+    assert rc == 0
+    skill_dir = git_repo_tmp / install.PORTABLE_SKILLS_DIR / "pprose-common-edit"
+    assert (skill_dir / "SKILL.md").is_file()
+    assert (skill_dir / "references" / "common-doc-guidelines.md").is_file()
+    assert not (git_repo_tmp / install.CLAUDE_SKILLS_DIR).exists()
+
+
 def test_project_claude_md_only_preserves_user_content(git_repo_tmp: Path):
     claude_md = git_repo_tmp / "CLAUDE.md"
     claude_md.write_text("# Claude\n\nUser instructions.\n", encoding="utf-8")
@@ -631,6 +794,9 @@ def test_project_claude_md_only_preserves_user_content(git_repo_tmp: Path):
     assert "User instructions." in text
     assert "pprose-common-edit" in text
     assert not (git_repo_tmp / "AGENTS.md").exists()
+    skill_dir = git_repo_tmp / install.CLAUDE_SKILLS_DIR / "pprose-common-edit"
+    assert (skill_dir / "SKILL.md").is_file()
+    assert (skill_dir / "references" / "common-doc-guidelines.md").is_file()
 
 
 def test_project_claude_md_only_does_not_bridge_to_unmanaged_agents_md(
@@ -730,5 +896,6 @@ def test_readme_leads_with_short_interactive_skill_commands():
     repo_root = Path(__file__).resolve().parents[3]
     readme = (repo_root / "README.md").read_text(encoding="utf-8")
     assert "npx skills add jlevy/practical-prose@pprose-common-edit" in readme
+    assert "npx skills add jlevy/practical-prose@pprose-de-slop" in readme
     assert "npx skills add jlevy/practical-prose\n" in readme
     assert "npx --yes skills@" not in readme
