@@ -13,10 +13,10 @@ if [[ "$command" == git\ push* ]] || [[ "$command" == *"&& git push"* ]] || [[ "
     # Same local-first, version-pinned fallback as tbd-session.sh, so the
     # reminder still fires when tbd is not on the hook's PATH.
     export PATH="$HOME/.local/bin:$HOME/bin:/usr/local/bin:$PATH"
-    if command -v tbd &> /dev/null && tbd closing; then
-      :
+    if command -v tbd &> /dev/null; then
+      tbd closing
     elif command -v npx &> /dev/null; then
-      npx --yes get-tbd@0.4.0 closing
+      npx --yes get-tbd@0.4.1 closing
     fi
   fi
 fi

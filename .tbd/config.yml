@@ -1,5 +1,5 @@
 tbd_format: f06
-tbd_version: 0.4.0
+tbd_version: 0.4.1
 # tbd_upgrades: tbd versions that have run `tbd setup` in this repo (oldest first);
 # tbd_version above is the most recent. Informational; updated automatically by setup.
 tbd_upgrades:
@@ -8,6 +8,8 @@ tbd_upgrades:
     at: 2026-07-09T17:41:45.138Z
   - version: 0.4.0
     at: 2026-07-12T20:13:19.991Z
+  - version: 0.4.1
+    at: 2026-07-19T18:54:53.658Z
 display:
   id_prefix: pp
 sync:
@@ -100,6 +102,9 @@ docs_cache:
     templates/plan-spec.md: internal:templates/plan-spec.md
     templates/qa-playbook.md: internal:templates/qa-playbook.md
     templates/research-brief.md: internal:templates/research-brief.md
+    references/agent-platform-integration.md: internal:references/agent-platform-integration.md
+    references/agent-skill-bundle-publication.md: internal:references/agent-skill-bundle-publication.md
+    references/agent-skill-distribution.md: internal:references/agent-skill-distribution.md
     references/docmap-format.md: internal:references/docmap-format.md
     references/docref-format.md: internal:references/docref-format.md
   lookup_path:
