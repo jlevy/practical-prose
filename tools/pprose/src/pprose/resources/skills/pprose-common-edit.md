@@ -29,16 +29,24 @@ folded in from copy-edit up.
 1. Read `references/common-doc-guidelines.md` completely before editing.
 2. Inspect the target against organization, structure, writing style, Markdown
    formatting, links, headings, lists, frontmatter, and footer rules.
-3. Apply fixes directly to the document while preserving its intended content and voice.
-4. Ensure every governed document ends with exactly one guideline footer, unless the
+3. Apply fixes directly to the document.
+   This is a correction pass, not a rewrite: fix objective errors such as grammar,
+   typos, punctuation, casing, Markdown mechanics, and broken links in place, and keep
+   the author’s wording, sentence structure, section order, and headings unless a rule
+   is unambiguously violated.
+4. When a guideline would require a broader change (rewording a passage, restructuring
+   sections, renaming or merging headings), do not apply it; record it as a suggestion
+   for the report instead.
+5. Ensure every governed document ends with exactly one guideline footer, unless the
    guideline’s impracticality exception applies.
-5. Run the project’s configured Markdown formatter when one exists.
-6. Re-read the diff and check that no edit changed factual meaning.
+6. Run the project’s configured Markdown formatter when one exists.
+7. Re-read the diff and check that no edit changed factual meaning or the author’s
+   voice.
 
 ## Output
 
-Report the changed file, the main issue classes fixed, and any rule you intentionally
-left alone.
+Report the changed file, the main issue classes fixed, the suggestions you did not
+apply, and any rule you intentionally left alone.
 
 <!-- This document follows common-doc-guidelines.md.
 See github.com/jlevy/practical-prose and review guidelines before editing.
