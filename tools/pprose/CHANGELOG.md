@@ -7,6 +7,20 @@ from git tags by dynamic versioning (see [docs/publishing.md](docs/publishing.md
 
 ## [Unreleased]
 
+## [0.3.1] - 2026-07-24
+
+### Fixed
+
+- **`pprose-common-edit` is bounded to a correction pass, not a rewrite.** Applying the
+  common edit tier in practice showed that “preserving its intended content and voice”
+  underspecified the edit scope: an agent could read “apply the guidelines” as license
+  to reword paragraphs and rename sections.
+  The skill now fixes objective errors (grammar, typos, punctuation, casing, Markdown
+  mechanics, broken links) in place, keeps the author’s wording, sentence structure,
+  section order, and headings unless a rule is unambiguously violated, and records
+  broader guideline-driven changes as suggestions in the report instead of applying
+  them.
+
 ## [0.3.0] - 2026-07-19
 
 ### Added
