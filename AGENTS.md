@@ -41,7 +41,7 @@ Run pprose as `pprose <command>` if on PATH, else `uvx pprose@0.3.1 <command>`
 
 <!-- END PPROSE INTEGRATION -->
 
-<!-- BEGIN TBD INTEGRATION format=f06 surface=agents-md -->
+<!-- BEGIN TBD INTEGRATION format=f07 surface=agents-md -->
 ## tbd
 
 This repository uses **tbd** for git-native issue tracking (beads), spec-driven
