@@ -60,45 +60,53 @@ Three key points:
 
 ### Quick Start
 
-Install the self-contained common documentation skill with the cross-agent
-[skills CLI](https://github.com/vercel-labs/skills):
+Install every skill once, for yourself, so they are available in every repo you work in:
+
+```bash
+uvx pprose install -g
+```
+
+That is the usual way to run Practical Prose.
+It writes only to your own agent directories (`~/.agents/skills/` and
+`~/.claude/skills/`) and touches no repository.
+Nothing becomes a standing rule anywhere: the skills wait until a task calls for them,
+so they add capability in other people’s repos without changing how those repos are
+written. Re-run the same command to upgrade.
+
+To make Practical Prose the committed policy of one repository — a rule its agents
+follow on every task, not just a capability they can reach for — install into the repo
+instead:
+
+```bash
+uvx pprose install          # complete suite
+uvx pprose install --profile common-docs   # just the documentation rules
+```
+
+Project mode is the default inside a git repo.
+Alongside the skills it writes a managed `AGENTS.md` block and a minimal `CLAUDE.md`
+bridge, which is what turns the skills into a standing instruction for Claude Code,
+Codex, and other agents.
+Both scopes are idempotent, and a project install shadows a global one of the same name,
+so running both is a supported pattern rather than a conflict.
+
+Use `--skill <name>` (repeatable) for an exact set; [Agent Skills](#agent-skills) lists
+them. Switching selections removes deselected, pprose-owned generated skill directories
+and preserves unmarked user content.
+
+The cross-agent [skills CLI](https://github.com/vercel-labs/skills) is an alternative
+route that needs no Python or uv, and installs the two self-contained skills without any
+`pprose` runtime:
 
 ```bash
 npx skills add jlevy/practical-prose@pprose-common-edit
-```
-
-Install the focused, self-contained skill for removing AI-writing tells and formulaic
-LLM prose:
-
-```bash
 npx skills add jlevy/practical-prose@pprose-de-slop
-```
-
-Install the complete Practical Prose editing, review, evaluation, and comparison suite:
-
-```bash
 npx skills add jlevy/practical-prose
 ```
 
-Project scope is the default.
-The installer detects agents and prompts only for choices it cannot infer; add `-g` for
-a user-wide install.
+It defaults to project scope, detects agents, and prompts only for choices it cannot
+infer; add `-g` there too for a user-wide install.
 Let agent targets, confirmation flags, and copy or symlink strategy remain installer
 concerns instead of encoding them into every command.
-
-For a committed project policy that keeps reminding Claude Code, Codex, and other agents
-to apply the documentation rules, run the zero-install `pprose` installer:
-
-```bash
-uvx pprose install --profile common-docs
-```
-
-Use `--profile practical-prose` for the complete suite, `--skill <name>` (repeatable)
-for an exact set, or `--global` for user-wide skills without project instruction files.
-Switching profiles removes deselected, pprose-owned generated skill directories and
-preserves unmarked user content.
-Project mode writes the portable and Claude skill surfaces, a managed `AGENTS.md` block,
-and a minimal `CLAUDE.md` bridge or block; re-running it is idempotent.
 
 The short interactive commands intentionally omit runner versions; the trusted
 first-party repository exemption lets these commands omit a Practical Prose ref too.
@@ -354,20 +362,23 @@ reach for copy-edit and full-edit when the task calls for a deeper editorial pas
 
 Install paths and selection:
 
-1. **Common documentation only:**
+1. **User-wide capability (the usual choice):** `uvx pprose install -g`. Writes the
+   skills to `~/.agents/skills/` and `~/.claude/skills/` and nothing else, so they are
+   available everywhere and impose no policy on any repo.
+   Add `-g` to an `npx skills add` command for the same scope through that installer.
+2. **Persistent project policy:** `uvx pprose install`, or `--profile common-docs` for
+   the documentation rules alone.
+   This is the scope that also writes the always-on `AGENTS.md` and `CLAUDE.md` blocks.
+   Use repeatable `--skill <name>` flags for an exact custom set.
+   Switching selections removes only deselected pprose-generated skills.
+3. **Common documentation only:**
    `npx skills add jlevy/practical-prose@pprose-common-edit`. This skill bundles
    `common-doc-guidelines.md` and needs no `pprose` runtime.
-2. **AI-tell cleanup only:** `npx skills add jlevy/practical-prose@pprose-de-slop`. This
+4. **AI-tell cleanup only:** `npx skills add jlevy/practical-prose@pprose-de-slop`. This
    skill bundles `ai-prose-corrections.md` and needs no `pprose` runtime.
-3. **Complete suite:** `npx skills add jlevy/practical-prose`. Repository-internal
-   workflow skills are hidden from public discovery, so the installer offers only the
-   seven Practical Prose skills above.
-4. **Persistent project policy:** `uvx pprose install --profile common-docs` or
-   `--profile practical-prose`. Use repeatable `--skill <name>` flags for an exact
-   custom set. Switching selections removes only deselected pprose-generated skills.
-5. **User-wide skills:** add `-g` to an `npx skills add` command, or run
-   `uvx pprose install --global --profile <profile>`. Global installs omit always-on
-   project instruction files.
+5. **Complete suite without a Python runtime:** `npx skills add jlevy/practical-prose`.
+   Repository-internal workflow skills are hidden from public discovery, so the
+   installer offers only the seven Practical Prose skills above.
 
 The skills are intentionally small.
 The common-edit and de-slop skills bundle their focused references; the broader workflow

@@ -843,13 +843,16 @@ def install_main(argv: list[str] | None = None) -> int:
     # `--project` and `--global` are mutually exclusive, but we check that manually
     # so the error message uses our own wording (and returns an exit code rather
     # than the SystemExit that add_mutually_exclusive_group raises).
+    # `-p` / `-g` mirror the skills CLI's `-g`, so the muscle memory carries over.
     parser.add_argument(
+        "-p",
         "--project",
         action="store_true",
         help="install project-locally (default when cwd is inside a git repo)",
     )
     # `dest='global_'` because `global` is a Python keyword.
     parser.add_argument(
+        "-g",
         "--global",
         action="store_true",
         dest="global_",

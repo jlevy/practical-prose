@@ -738,6 +738,25 @@ def test_global_writes_under_home_and_skips_agents_md(home_tmp: Path):
     assert not (home_tmp / "AGENTS.md").exists()
 
 
+def test_global_short_flag_matches_long_flag(home_tmp: Path):
+    """`-g` is the headline install; it must behave exactly like `--global`."""
+    assert install.install_main(["-g"]) == 0
+    for name in resources.list_names("skills"):
+        assert (home_tmp / install.PORTABLE_SKILLS_DIR / name / "SKILL.md").is_file()
+        assert (home_tmp / install.CLAUDE_SKILLS_DIR / name / "SKILL.md").is_file()
+    assert not (home_tmp / "AGENTS.md").exists()
+
+
+def test_project_short_flag_matches_long_flag(git_repo_tmp: Path):
+    assert install.install_main(["-p", "--dir", str(git_repo_tmp)]) == 0
+    assert (git_repo_tmp / "AGENTS.md").is_file()
+
+
+def test_short_scope_flags_are_still_mutually_exclusive(capsys: pytest.CaptureFixture[str]):
+    assert install.install_main(["-g", "-p"]) == 2
+    assert "mutually exclusive" in capsys.readouterr().err
+
+
 def test_global_drops_agents_md_silently_with_default_surfaces(home_tmp: Path):
     """--global with implicit --surfaces=all drops agents-md without an error."""
     rc = install.install_main(["--global"])
