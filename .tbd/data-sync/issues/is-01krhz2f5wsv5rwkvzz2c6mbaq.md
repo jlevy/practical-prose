@@ -3,9 +3,9 @@ type: is
 id: is-01krhz2f5wsv5rwkvzz2c6mbaq
 title: Run cross-agent skill validation
 kind: task
-status: open
+status: closed
 priority: 2
-version: 5
+version: 6
 spec_path: docs/project/specs/done/plan-2026-05-13-cross-agent-skills.md
 labels:
   - cross-agent-skills
@@ -13,7 +13,9 @@ labels:
 dependencies: []
 parent_id: is-01krhz0ckjzn0s26wggjjfays1
 created_at: 2026-05-14T00:44:32.827Z
-updated_at: 2026-06-11T16:21:46.189Z
+updated_at: 2026-08-15T05:51:02.794Z
+closed_at: 2026-08-15T05:51:02.794Z
+close_reason: "Cross-agent validation run against a clean wheel install (0.3.1.dev7+112ff1a) in an isolated HOME. Global install: 18 files, only under ~/.agents and ~/.claude, unrelated repo untouched, 4/4 relative links resolve, both self-contained skills runtime-free, 5 CLI-backed skills carry the 0.4.0 pin. All 13 'pprose guidelines|shortcut|runbook <name>' references from installed skills resolve. Deterministic pipeline end to end from an unrelated dir: metrics -> report from-metrics -> validate -> render (112KB page). score failure modes actionable (missing --model, missing API key). Upgrade 0.3.0->0.4.0 reconciles all pins, preserves user content, keeps one block, idempotent on re-run. Symlinked AGENTS.md/CLAUDE.md shared-entry pattern now works unmodified. Spec conformance codified as tests."
 ---
 Manually validate all five skills in Claude Code and Codex CLI: at least three natural-language activation phrasings per skill, end-to-end run on small sample docs, link integrity, and referenced uvx prose-eval commands. Record any trigger wording adjustments needed.
 
