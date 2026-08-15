@@ -1,6 +1,6 @@
 # TODO
 
-Snapshot of active work as of 2026-06-13. **Canonical tracking is tbd** (`tbd ready` for
+Snapshot of active work as of 2026-08-15. **Canonical tracking is tbd** (`tbd ready` for
 unblocked work, `tbd list` for everything); this file is a periodically refreshed
 orientation map, not a second tracker.
 Planning specs live in [docs/project/specs/active/](docs/project/specs/active/)
@@ -30,8 +30,12 @@ was consolidated here on 2026-06-11).
   (pp-f9na, pp-gib1), docs/tests (pp-nhhf).
 - **Visual-regression smoke for the eval page** (pp-5zgc) and **manual print
   verification** (pp-kmv5).
-- **Cross-agent skill validation** (pp-flf2, epic pp-mpo1): manual activation checks in
-  Claude Code and Codex CLI against the published package.
+- **Cross-agent skill validation**: the mechanical pass is done and now encoded as tests
+  (pp-flf2 closed in v0.4.0 — install shape, link integrity, resource-reference
+  resolution, upgrade reconciliation, spec conformance).
+  What remains under epic pp-mpo1 is the part tests cannot cover: live *activation*
+  checks in Claude Code and Codex CLI, confirming each skill loads on natural phrasings
+  and stays out of unrelated tasks.
 
 ## Tooling Debt
 
@@ -60,10 +64,18 @@ was consolidated here on 2026-06-11).
 
 ## Recently Shipped (Context)
 
-- v0.2.0 release prep merged to main (2026-06-13, PR #28; tag/PyPI release pending): CLI
-  revamp (lazy-import startup ~1.16s to ~56ms, auto-detected color, `pprose list`;
-  `--list` removed), chopdiff -> flexdoc 0.1.0 migration, and a v0.2 editorial pass
-  across the bundled guideline suite.
+- v0.4.0 prep (2026-08-15): repaired the zero-install bootstrap — 0.3.1 was prepped and
+  merged but never tagged, so every committed skill advertised an unresolvable
+  `uvx pprose@0.3.1`. Added a daily published-pin check so a forgotten release surfaces
+  within a day; fixed `pprose install` clobbering a symlinked `AGENTS.md` (pp-b7gy);
+  made the user-wide install the documented default path with `-g` / `-p` short flags;
+  closed the dogfooding drift in both repo skill surfaces and the repo’s own `AGENTS.md`
+  block; upgraded tbd to 0.6.5.
+- v0.3.0 on PyPI (2026-07-19): de-slop skill and cross-agent zero-install skill
+  profiles. (v0.3.1 was prepared 2026-07-24 but never tagged; its fix ships in v0.4.0.)
+- v0.2.0 on PyPI (2026-07-12): CLI revamp (lazy-import startup ~1.16s to ~56ms,
+  auto-detected color, `pprose list`; `--list` removed), chopdiff -> flexdoc 0.1.0
+  migration, and a v0.2 editorial pass across the bundled guideline suite.
 - v0.1.1 on PyPI (2026-06-11): writing-practical-guides genre supplement with skill
   routing, ai-prose consolidation, upgrade-path docs, slimmer wheel.
 - Post-release repo org (2026-06-11): single specs home under docs/project/specs/
