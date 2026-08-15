@@ -984,6 +984,56 @@ def test_portable_dogfood_skills_mirror_discovery_exactly():
             )
 
 
+SPEC_FRONTMATTER_KEYS = {
+    "name",
+    "description",
+    "license",
+    "compatibility",
+    "metadata",
+    "allowed-tools",
+}
+PACKAGE_RUNNERS = ("npx", "uvx", "pnpm", "bunx", "pipx")
+# Anthropic's documented ceiling; agents may silently truncate a longer description,
+# which would drop the activation half and quietly break triggering.
+MAX_DESCRIPTION_CHARS = 1024
+
+
+@pytest.mark.parametrize("name", resources.list_names("skills"))
+def test_discovery_skill_satisfies_the_agent_skills_spec(name: str):
+    """Publication-time validation of the directory installers actually consume.
+
+    `skills/` is the landing page for `npx skills add` and `gh skill install`, so a
+    malformed bundle here fails in other people's environments rather than in CI.
+    """
+    repo_root = Path(__file__).resolve().parents[3]
+    skill_md = repo_root / "skills" / name / "SKILL.md"
+    assert skill_md.is_file(), f"{name}: discovery copy is missing SKILL.md"
+
+    frontmatter, body = install._split_frontmatter(skill_md.read_text(encoding="utf-8"))
+    assert frontmatter, f"{name}: SKILL.md has no YAML frontmatter"
+    parsed = yaml.safe_load(frontmatter)
+
+    assert parsed.get("name") == name, f"{name}: frontmatter name must match its directory"
+    description = parsed.get("description", "")
+    assert description, f"{name}: frontmatter needs a description"
+    assert len(description) <= MAX_DESCRIPTION_CHARS, (
+        f"{name}: description is {len(description)} chars; agents may truncate past "
+        f"{MAX_DESCRIPTION_CHARS} and drop the activation conditions"
+    )
+    assert body.strip(), f"{name}: SKILL.md has no body"
+
+    unknown = set(parsed) - SPEC_FRONTMATTER_KEYS
+    assert not unknown, f"{name}: non-spec frontmatter keys {sorted(unknown)}"
+
+    # A pin in the body does not narrow a wildcard grant in frontmatter: pre-approving a
+    # package runner authorizes fetching and executing arbitrary packages.
+    allowed_tools = str(parsed.get("allowed-tools", ""))
+    for runner in PACKAGE_RUNNERS:
+        assert f"Bash({runner}:" not in allowed_tools, (
+            f"{name}: allowed-tools pre-approves the {runner} package runner"
+        )
+
+
 def test_repo_agents_md_advertises_the_current_discovery_pin():
     """This repo's own always-on block must not advertise a stale pprose version.
 
