@@ -932,6 +932,39 @@ def test_discovery_skills_match_committed_repo_root():
             )
 
 
+def test_claude_dogfood_skills_are_symlinks_into_discovery():
+    """This repo's Claude surface links into `skills/` rather than copying it.
+
+    Symlinks make drift impossible by construction, which is why the Claude surface
+    has no entry in `sync_resources`'s plan. A copy dropped here by a stray
+    `pprose install` would silently stop tracking `skills/` (pprose-review was in
+    exactly that state), so the convention is asserted rather than assumed.
+    """
+    repo_root = Path(__file__).resolve().parents[3]
+    claude_skills = repo_root / install.CLAUDE_SKILLS_DIR
+    for name in resources.list_names("skills"):
+        entry = claude_skills / name
+        assert entry.is_symlink(), f"{entry.relative_to(repo_root)} must be a symlink"
+        assert entry.readlink() == Path("../../skills") / name
+        assert (entry / "SKILL.md").is_file(), f"{name} symlink does not resolve"
+
+
+def test_portable_dogfood_skills_mirror_discovery_exactly():
+    """The portable surface holds real copies, so they must match `skills/` byte for byte."""
+    repo_root = Path(__file__).resolve().parents[3]
+    for name in resources.list_names("skills"):
+        source = repo_root / "skills" / name
+        mirror = repo_root / install.PORTABLE_SKILLS_DIR / name
+        for path in sorted(p for p in source.rglob("*") if p.is_file()):
+            relative = path.relative_to(source)
+            copy = mirror / relative
+            assert copy.is_file(), f"missing portable copy: {copy.relative_to(repo_root)}"
+            assert copy.read_text(encoding="utf-8") == path.read_text(encoding="utf-8"), (
+                f"portable copy drift: {copy.relative_to(repo_root)}; "
+                f"run `make generate` from the repository root"
+            )
+
+
 def test_repo_workflow_skills_are_hidden_from_public_skill_discovery():
     repo_root = Path(__file__).resolve().parents[3]
     for surface in (Path(".agents") / "skills", Path(".claude") / "skills"):
