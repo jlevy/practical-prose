@@ -585,6 +585,20 @@ def _resolve_install_surfaces(
 
 
 def _write_atomic(path: Path, content: str) -> None:
+    """Atomically write `content` to `path`, writing *through* a symlinked path.
+
+    `Path.replace` renames over the link itself, so a naive atomic write turns a
+    symlinked entry file into a regular file and orphans its target. Repos commonly
+    point `AGENTS.md` and `CLAUDE.md` at one shared entry document; silently forking
+    them is worse than either outcome the install intends. Resolving first keeps the
+    link and edits the file the repo actually reads.
+
+    The temp file is staged next to the resolved target so `replace` stays a
+    same-directory rename (atomic); staging beside the *link* could land on a
+    different filesystem.
+    """
+    if path.is_symlink():
+        path = path.resolve()
     path.parent.mkdir(parents=True, exist_ok=True)
     tmp = path.with_suffix(path.suffix + ".tmp")
     tmp.write_text(content, encoding="utf-8")

@@ -664,6 +664,56 @@ def test_project_collapses_duplicate_agents_md_blocks(git_repo_tmp: Path):
     assert "middle" in text and "tail" in text  # user content preserved
 
 
+def test_agents_md_symlink_is_written_through_to_its_target(git_repo_tmp: Path):
+    """A symlinked `AGENTS.md` keeps its link; the block lands in the target file.
+
+    Repos commonly point `AGENTS.md` (and `CLAUDE.md`) at one shared entry file.
+    Replacing the link with a regular file orphans the target and silently forks the
+    repo's agent instructions.
+    """
+    target = git_repo_tmp / "agents-overview.md"
+    target.write_text("# Overview\n\nshared entry content\n", encoding="utf-8")
+    agents = git_repo_tmp / "AGENTS.md"
+    agents.symlink_to(target.name)
+
+    assert install.install_main(["--project", "--dir", str(git_repo_tmp)]) == 0
+
+    assert agents.is_symlink(), "install replaced the symlink with a regular file"
+    assert agents.readlink() == Path(target.name)
+    text = target.read_text(encoding="utf-8")
+    assert install.AGENTS_BEGIN_PREFIX in text
+    assert "shared entry content" in text
+
+
+def test_agents_md_symlink_stays_idempotent_across_runs(git_repo_tmp: Path):
+    """Re-running against a symlinked entry file reports unchanged, not a rewrite."""
+    target = git_repo_tmp / "agents-overview.md"
+    target.write_text("# Overview\n", encoding="utf-8")
+    (git_repo_tmp / "AGENTS.md").symlink_to(target.name)
+
+    assert install.install_main(["--project", "--dir", str(git_repo_tmp)]) == 0
+    first = target.read_text(encoding="utf-8")
+    assert install.install_main(["--project", "--dir", str(git_repo_tmp)]) == 0
+
+    assert target.read_text(encoding="utf-8") == first
+    assert first.count(install.AGENTS_END_MARKER) == 1
+
+
+def test_claude_md_symlinked_to_agents_md_does_not_duplicate_the_block(git_repo_tmp: Path):
+    """`CLAUDE.md -> AGENTS.md` is one file; it must end up with exactly one block."""
+    agents = git_repo_tmp / "AGENTS.md"
+    agents.write_text("# Project\n", encoding="utf-8")
+    claude = git_repo_tmp / "CLAUDE.md"
+    claude.symlink_to(agents.name)
+
+    assert install.install_main(["--project", "--dir", str(git_repo_tmp)]) == 0
+
+    assert claude.is_symlink()
+    text = agents.read_text(encoding="utf-8")
+    assert text.count(install.AGENTS_END_MARKER) == 1
+    assert "# Project" in text
+
+
 def test_pin_override_is_baked_into_generated_skills(git_repo_tmp: Path):
     """`--pin` lets sync_resources.py render discovery copies deterministically."""
     rc = install.install_main(["--project", "--dir", str(git_repo_tmp), "--pin", "9.9.9"])
