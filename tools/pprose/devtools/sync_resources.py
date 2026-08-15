@@ -32,7 +32,9 @@ Three flows:
     (`.claude/skills/<name>`) instead uses relative symlinks into `skills/`, so it
     cannot drift by construction and needs no plan entry;
     `tests/test_install.py::test_claude_dogfood_skills_are_symlinks_into_discovery`
-    holds that convention in place.
+    holds that convention in place. The repo's own `AGENTS.md` pprose block is
+    refreshed here too, since otherwise only an `pprose install` run would update it
+    and its baked pin goes stale on every version bump.
 
 Link policy (flow 1): the repo-root sources keep ordinary relative links, which
 work on GitHub; the bundled copies are read via `pprose <category> <name>` on
@@ -221,6 +223,29 @@ def _repo_workflow_plan() -> dict[Path, str]:
     }
 
 
+def _dogfood_agents_md_plan() -> dict[Path, str]:
+    """Keep this repo's own `AGENTS.md` pprose block current.
+
+    Only `pprose install` writes that block, so it froze at whatever pin was current the
+    last time someone happened to run the installer here: after the tree moved to 0.4.0
+    the repo's own always-on instructions still told agents `uvx pprose@0.3.1`. Composing
+    it as part of the plan makes `make generate` refresh it and `make generate-check`
+    fail on drift, the same way the skill surfaces are handled.
+
+    Content outside the markers is byte-preserved. A repo with no block is left alone —
+    this flow refreshes an existing block, it does not install one.
+    """
+    from pprose import install
+
+    path = REPO_ROOT / "AGENTS.md"
+    if not path.is_file():
+        return {}
+    text = path.read_text(encoding="utf-8")
+    block = install.agents_md_block(pin=install.DISCOVERY_VERSION)
+    updated = install.replace_managed_block(text, block)
+    return {} if updated is None else {path: updated}
+
+
 def _dogfood_plan(discovery: dict[Path, str]) -> dict[Path, str]:
     """Mirror the generated discovery skills into this repo's portable agent surface.
 
@@ -248,6 +273,7 @@ def _expected_with_unmanaged() -> tuple[dict[Path, str], set[Path]]:
     expected.update(discovery)
     expected.update(_repo_workflow_plan())
     expected.update(_dogfood_plan(discovery))
+    expected.update(_dogfood_agents_md_plan())
     return expected, set()
 
 

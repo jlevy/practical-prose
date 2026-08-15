@@ -984,6 +984,31 @@ def test_portable_dogfood_skills_mirror_discovery_exactly():
             )
 
 
+def test_repo_agents_md_advertises_the_current_discovery_pin():
+    """This repo's own always-on block must not advertise a stale pprose version.
+
+    Only `pprose install` writes that block, so before it joined the sync plan it froze
+    at whatever pin was current the last time someone ran the installer here — it was
+    still telling agents `uvx pprose@0.3.1` after the tree had moved on.
+    """
+    repo_root = Path(__file__).resolve().parents[3]
+    text = (repo_root / "AGENTS.md").read_text(encoding="utf-8")
+    assert f"uvx pprose@{install.DISCOVERY_VERSION}" in text
+    assert text.count(install.AGENTS_END_MARKER) == 1
+
+
+def test_replace_managed_block_preserves_content_outside_markers():
+    block = f"{install.AGENTS_BEGIN_PREFIX} format=f02 -->\nnew\n{install.AGENTS_END_MARKER}"
+    stale = f"{install.AGENTS_BEGIN_PREFIX} format=f01 -->\nold\n{install.AGENTS_END_MARKER}"
+    text = f"# Head\n\n{stale}\n\ntail\n"
+    updated = install.replace_managed_block(text, block)
+    assert updated == f"# Head\n\n{block}\n\ntail\n"
+
+
+def test_replace_managed_block_returns_none_without_a_block():
+    assert install.replace_managed_block("# Just prose\n", "irrelevant") is None
+
+
 def test_repo_workflow_skills_are_hidden_from_public_skill_discovery():
     repo_root = Path(__file__).resolve().parents[3]
     for surface in (Path(".agents") / "skills", Path(".claude") / "skills"):
