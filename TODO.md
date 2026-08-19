@@ -1,6 +1,6 @@
 # TODO
 
-Snapshot of active work as of 2026-08-15. **Canonical tracking is tbd** (`tbd ready` for
+Snapshot of active work as of 2026-08-19. **Canonical tracking is tbd** (`tbd ready` for
 unblocked work, `tbd list` for everything); this file is a periodically refreshed
 orientation map, not a second tracker.
 Planning specs live in [docs/project/specs/active/](docs/project/specs/active/)
@@ -35,7 +35,11 @@ was consolidated here on 2026-06-11).
   resolution, upgrade reconciliation, spec conformance).
   What remains under epic pp-mpo1 is the part tests cannot cover: live *activation*
   checks in Claude Code and Codex CLI, confirming each skill loads on natural phrasings
-  and stays out of unrelated tasks.
+  and stays out of unrelated tasks (pp-lnv3, now testable against published v0.4.0).
+- **Windows symlink exposure** (pp-p6kd): the repo’s `.claude/skills/` entries are
+  relative symlinks, which is what makes that surface drift-free but does not survive a
+  Windows clone without `core.symlinks`. Affects contributors to this repo only;
+  installed users get real copies either way.
 
 ## Tooling Debt
 
@@ -64,13 +68,15 @@ was consolidated here on 2026-06-11).
 
 ## Recently Shipped (Context)
 
-- v0.4.0 prep (2026-08-15): repaired the zero-install bootstrap — 0.3.1 was prepped and
-  merged but never tagged, so every committed skill advertised an unresolvable
+- v0.4.0 on PyPI (2026-08-19): repaired the zero-install bootstrap — 0.3.1 was prepped
+  and merged but never tagged, so every committed skill advertised an unresolvable
   `uvx pprose@0.3.1`. Added a daily published-pin check so a forgotten release surfaces
   within a day; fixed `pprose install` clobbering a symlinked `AGENTS.md` (pp-b7gy);
   made the user-wide install the documented default path with `-g` / `-p` short flags;
   closed the dogfooding drift in both repo skill surfaces and the repo’s own `AGENTS.md`
-  block; upgraded tbd to 0.6.5.
+  block; upgraded tbd to 0.6.5 (which resolved pp-ed0p upstream).
+  `docs/publishing.md` is now four ordered phases with the failure mode stated, so the
+  prepare-but-never-tag gap cannot reopen silently.
 - v0.3.0 on PyPI (2026-07-19): de-slop skill and cross-agent zero-install skill
   profiles. (v0.3.1 was prepared 2026-07-24 but never tagged; its fix ships in v0.4.0.)
 - v0.2.0 on PyPI (2026-07-12): CLI revamp (lazy-import startup ~1.16s to ~56ms,
