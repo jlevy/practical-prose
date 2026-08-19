@@ -664,6 +664,56 @@ def test_project_collapses_duplicate_agents_md_blocks(git_repo_tmp: Path):
     assert "middle" in text and "tail" in text  # user content preserved
 
 
+def test_agents_md_symlink_is_written_through_to_its_target(git_repo_tmp: Path):
+    """A symlinked `AGENTS.md` keeps its link; the block lands in the target file.
+
+    Repos commonly point `AGENTS.md` (and `CLAUDE.md`) at one shared entry file.
+    Replacing the link with a regular file orphans the target and silently forks the
+    repo's agent instructions.
+    """
+    target = git_repo_tmp / "agents-overview.md"
+    target.write_text("# Overview\n\nshared entry content\n", encoding="utf-8")
+    agents = git_repo_tmp / "AGENTS.md"
+    agents.symlink_to(target.name)
+
+    assert install.install_main(["--project", "--dir", str(git_repo_tmp)]) == 0
+
+    assert agents.is_symlink(), "install replaced the symlink with a regular file"
+    assert agents.readlink() == Path(target.name)
+    text = target.read_text(encoding="utf-8")
+    assert install.AGENTS_BEGIN_PREFIX in text
+    assert "shared entry content" in text
+
+
+def test_agents_md_symlink_stays_idempotent_across_runs(git_repo_tmp: Path):
+    """Re-running against a symlinked entry file reports unchanged, not a rewrite."""
+    target = git_repo_tmp / "agents-overview.md"
+    target.write_text("# Overview\n", encoding="utf-8")
+    (git_repo_tmp / "AGENTS.md").symlink_to(target.name)
+
+    assert install.install_main(["--project", "--dir", str(git_repo_tmp)]) == 0
+    first = target.read_text(encoding="utf-8")
+    assert install.install_main(["--project", "--dir", str(git_repo_tmp)]) == 0
+
+    assert target.read_text(encoding="utf-8") == first
+    assert first.count(install.AGENTS_END_MARKER) == 1
+
+
+def test_claude_md_symlinked_to_agents_md_does_not_duplicate_the_block(git_repo_tmp: Path):
+    """`CLAUDE.md -> AGENTS.md` is one file; it must end up with exactly one block."""
+    agents = git_repo_tmp / "AGENTS.md"
+    agents.write_text("# Project\n", encoding="utf-8")
+    claude = git_repo_tmp / "CLAUDE.md"
+    claude.symlink_to(agents.name)
+
+    assert install.install_main(["--project", "--dir", str(git_repo_tmp)]) == 0
+
+    assert claude.is_symlink()
+    text = agents.read_text(encoding="utf-8")
+    assert text.count(install.AGENTS_END_MARKER) == 1
+    assert "# Project" in text
+
+
 def test_pin_override_is_baked_into_generated_skills(git_repo_tmp: Path):
     """`--pin` lets sync_resources.py render discovery copies deterministically."""
     rc = install.install_main(["--project", "--dir", str(git_repo_tmp), "--pin", "9.9.9"])
@@ -686,6 +736,25 @@ def test_global_writes_under_home_and_skips_agents_md(home_tmp: Path):
     assert (home_tmp / install.CLAUDE_SKILLS_DIR).exists()
     # Global mode must not write a global AGENTS.md.
     assert not (home_tmp / "AGENTS.md").exists()
+
+
+def test_global_short_flag_matches_long_flag(home_tmp: Path):
+    """`-g` is the headline install; it must behave exactly like `--global`."""
+    assert install.install_main(["-g"]) == 0
+    for name in resources.list_names("skills"):
+        assert (home_tmp / install.PORTABLE_SKILLS_DIR / name / "SKILL.md").is_file()
+        assert (home_tmp / install.CLAUDE_SKILLS_DIR / name / "SKILL.md").is_file()
+    assert not (home_tmp / "AGENTS.md").exists()
+
+
+def test_project_short_flag_matches_long_flag(git_repo_tmp: Path):
+    assert install.install_main(["-p", "--dir", str(git_repo_tmp)]) == 0
+    assert (git_repo_tmp / "AGENTS.md").is_file()
+
+
+def test_short_scope_flags_are_still_mutually_exclusive(capsys: pytest.CaptureFixture[str]):
+    assert install.install_main(["-g", "-p"]) == 2
+    assert "mutually exclusive" in capsys.readouterr().err
 
 
 def test_global_drops_agents_md_silently_with_default_surfaces(home_tmp: Path):
@@ -880,6 +949,114 @@ def test_discovery_skills_match_committed_repo_root():
                 f"discovery copy drift: {committed.relative_to(repo_root)}; "
                 f"run `make generate` from the repository root"
             )
+
+
+def test_claude_dogfood_skills_are_symlinks_into_discovery():
+    """This repo's Claude surface links into `skills/` rather than copying it.
+
+    Symlinks make drift impossible by construction, which is why the Claude surface
+    has no entry in `sync_resources`'s plan. A copy dropped here by a stray
+    `pprose install` would silently stop tracking `skills/` (pprose-review was in
+    exactly that state), so the convention is asserted rather than assumed.
+    """
+    repo_root = Path(__file__).resolve().parents[3]
+    claude_skills = repo_root / install.CLAUDE_SKILLS_DIR
+    for name in resources.list_names("skills"):
+        entry = claude_skills / name
+        assert entry.is_symlink(), f"{entry.relative_to(repo_root)} must be a symlink"
+        assert entry.readlink() == Path("../../skills") / name
+        assert (entry / "SKILL.md").is_file(), f"{name} symlink does not resolve"
+
+
+def test_portable_dogfood_skills_mirror_discovery_exactly():
+    """The portable surface holds real copies, so they must match `skills/` byte for byte."""
+    repo_root = Path(__file__).resolve().parents[3]
+    for name in resources.list_names("skills"):
+        source = repo_root / "skills" / name
+        mirror = repo_root / install.PORTABLE_SKILLS_DIR / name
+        for path in sorted(p for p in source.rglob("*") if p.is_file()):
+            relative = path.relative_to(source)
+            copy = mirror / relative
+            assert copy.is_file(), f"missing portable copy: {copy.relative_to(repo_root)}"
+            assert copy.read_text(encoding="utf-8") == path.read_text(encoding="utf-8"), (
+                f"portable copy drift: {copy.relative_to(repo_root)}; "
+                f"run `make generate` from the repository root"
+            )
+
+
+SPEC_FRONTMATTER_KEYS = {
+    "name",
+    "description",
+    "license",
+    "compatibility",
+    "metadata",
+    "allowed-tools",
+}
+PACKAGE_RUNNERS = ("npx", "uvx", "pnpm", "bunx", "pipx")
+# Anthropic's documented ceiling; agents may silently truncate a longer description,
+# which would drop the activation half and quietly break triggering.
+MAX_DESCRIPTION_CHARS = 1024
+
+
+@pytest.mark.parametrize("name", resources.list_names("skills"))
+def test_discovery_skill_satisfies_the_agent_skills_spec(name: str):
+    """Publication-time validation of the directory installers actually consume.
+
+    `skills/` is the landing page for `npx skills add` and `gh skill install`, so a
+    malformed bundle here fails in other people's environments rather than in CI.
+    """
+    repo_root = Path(__file__).resolve().parents[3]
+    skill_md = repo_root / "skills" / name / "SKILL.md"
+    assert skill_md.is_file(), f"{name}: discovery copy is missing SKILL.md"
+
+    frontmatter, body = install._split_frontmatter(skill_md.read_text(encoding="utf-8"))
+    assert frontmatter, f"{name}: SKILL.md has no YAML frontmatter"
+    parsed = yaml.safe_load(frontmatter)
+
+    assert parsed.get("name") == name, f"{name}: frontmatter name must match its directory"
+    description = parsed.get("description", "")
+    assert description, f"{name}: frontmatter needs a description"
+    assert len(description) <= MAX_DESCRIPTION_CHARS, (
+        f"{name}: description is {len(description)} chars; agents may truncate past "
+        f"{MAX_DESCRIPTION_CHARS} and drop the activation conditions"
+    )
+    assert body.strip(), f"{name}: SKILL.md has no body"
+
+    unknown = set(parsed) - SPEC_FRONTMATTER_KEYS
+    assert not unknown, f"{name}: non-spec frontmatter keys {sorted(unknown)}"
+
+    # A pin in the body does not narrow a wildcard grant in frontmatter: pre-approving a
+    # package runner authorizes fetching and executing arbitrary packages.
+    allowed_tools = str(parsed.get("allowed-tools", ""))
+    for runner in PACKAGE_RUNNERS:
+        assert f"Bash({runner}:" not in allowed_tools, (
+            f"{name}: allowed-tools pre-approves the {runner} package runner"
+        )
+
+
+def test_repo_agents_md_advertises_the_current_discovery_pin():
+    """This repo's own always-on block must not advertise a stale pprose version.
+
+    Only `pprose install` writes that block, so before it joined the sync plan it froze
+    at whatever pin was current the last time someone ran the installer here — it was
+    still telling agents `uvx pprose@0.3.1` after the tree had moved on.
+    """
+    repo_root = Path(__file__).resolve().parents[3]
+    text = (repo_root / "AGENTS.md").read_text(encoding="utf-8")
+    assert f"uvx pprose@{install.DISCOVERY_VERSION}" in text
+    assert text.count(install.AGENTS_END_MARKER) == 1
+
+
+def test_replace_managed_block_preserves_content_outside_markers():
+    block = f"{install.AGENTS_BEGIN_PREFIX} format=f02 -->\nnew\n{install.AGENTS_END_MARKER}"
+    stale = f"{install.AGENTS_BEGIN_PREFIX} format=f01 -->\nold\n{install.AGENTS_END_MARKER}"
+    text = f"# Head\n\n{stale}\n\ntail\n"
+    updated = install.replace_managed_block(text, block)
+    assert updated == f"# Head\n\n{block}\n\ntail\n"
+
+
+def test_replace_managed_block_returns_none_without_a_block():
+    assert install.replace_managed_block("# Just prose\n", "irrelevant") is None
 
 
 def test_repo_workflow_skills_are_hidden_from_public_skill_discovery():

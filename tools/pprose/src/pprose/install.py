@@ -66,9 +66,15 @@ PPROSE_FORMAT = "f02"
 # reports a PEP 440 dev/local segment that was never published to PyPI, so
 # `uvx pprose@<dev-pin>` won't resolve. Bump on each real PyPI release and re-render
 # the committed discovery copies under `skills/` at the repo root (`make generate`).
-# Enforced at release time: `devtools/check_release_version.py` (run from publish.yml)
-# fails the publish unless this equals the release tag.
-DISCOVERY_VERSION = "0.3.1"
+#
+# Two guards keep this honest, and both are needed:
+#   - `devtools/check_release_version.py` (publish.yml) fails the publish unless this
+#     equals the release tag, so a release cannot ship a mismatched bootstrap.
+#   - `devtools/check_discovery_pin_published.py` (discovery-pin.yml, daily) fails if
+#     this names a version PyPI does not have, so a bump that never got tagged cannot
+#     sit on main advertising an unresolvable `uvx pprose@<pin>`. 0.3.1 did exactly
+#     that until 0.4.0.
+DISCOVERY_VERSION = "0.4.0"
 
 # Install scopes.
 SCOPE_PROJECT = "project"
@@ -585,6 +591,20 @@ def _resolve_install_surfaces(
 
 
 def _write_atomic(path: Path, content: str) -> None:
+    """Atomically write `content` to `path`, writing *through* a symlinked path.
+
+    `Path.replace` renames over the link itself, so a naive atomic write turns a
+    symlinked entry file into a regular file and orphans its target. Repos commonly
+    point `AGENTS.md` and `CLAUDE.md` at one shared entry document; silently forking
+    them is worse than either outcome the install intends. Resolving first keeps the
+    link and edits the file the repo actually reads.
+
+    The temp file is staged next to the resolved target so `replace` stays a
+    same-directory rename (atomic); staging beside the *link* could land on a
+    different filesystem.
+    """
+    if path.is_symlink():
+        path = path.resolve()
     path.parent.mkdir(parents=True, exist_ok=True)
     tmp = path.with_suffix(path.suffix + ".tmp")
     tmp.write_text(content, encoding="utf-8")
@@ -638,6 +658,23 @@ def _remove_unselected_skill_dirs(
     return results
 
 
+def replace_managed_block(text: str, block: str) -> str | None:
+    """Swap every pprose block in `text` for `block`; None if `text` has no block.
+
+    Collapses duplicate or stale blocks to one, positioned where the first one was, and
+    byte-preserves everything outside the markers. Public so `devtools/sync_resources.py`
+    can compute the expected content of this repo's own `AGENTS.md` without duplicating
+    the marker arithmetic.
+    """
+    matches = list(_AGENTS_BLOCK_RE.finditer(text))
+    if not matches:
+        return None
+    head = text[: matches[0].start()]
+    tail_parts = [text[matches[i - 1].end() : matches[i].start()] for i in range(1, len(matches))]
+    tail_parts.append(text[matches[-1].end() :])
+    return head + block + "".join(tail_parts)
+
+
 def _update_agents_md(path: Path, block: str, surface: str = SURFACE_AGENTS_MD) -> InstallResult:
     """Insert or refresh the pprose block in `AGENTS.md`, preserving content outside markers.
 
@@ -659,13 +696,9 @@ def _update_agents_md(path: Path, block: str, surface: str = SURFACE_AGENTS_MD) 
             new_content = existing + sep + block + "\n"
     else:
         # Replace every existing block (collapses stale duplicates to one).
-        matches = list(_AGENTS_BLOCK_RE.finditer(existing))
-        head = existing[: matches[0].start()]
-        tail_parts = [
-            existing[matches[i - 1].end() : matches[i].start()] for i in range(1, len(matches))
-        ]
-        tail_parts.append(existing[matches[-1].end() :])
-        new_content = head + block + "".join(tail_parts)
+        replaced = replace_managed_block(existing, block)
+        assert replaced is not None  # guarded by the AGENTS_BEGIN_PREFIX branch above
+        new_content = replaced
 
     if existing == new_content:
         return InstallResult(surface, None, path, "unchanged")
@@ -829,13 +862,16 @@ def install_main(argv: list[str] | None = None) -> int:
     # `--project` and `--global` are mutually exclusive, but we check that manually
     # so the error message uses our own wording (and returns an exit code rather
     # than the SystemExit that add_mutually_exclusive_group raises).
+    # `-p` / `-g` mirror the skills CLI's `-g`, so the muscle memory carries over.
     parser.add_argument(
+        "-p",
         "--project",
         action="store_true",
         help="install project-locally (default when cwd is inside a git repo)",
     )
     # `dest='global_'` because `global` is a Python keyword.
     parser.add_argument(
+        "-g",
         "--global",
         action="store_true",
         dest="global_",

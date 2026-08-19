@@ -28,20 +28,18 @@ Keep the required guideline footer intact.
 Apply AI-slop reduction whenever drafting or editing prose, not only on request: use
 `pprose-de-slop` to remove AI-writing tells and formulaic LLM prose, applying its
 bundled catalog contextually and preserving meaning and voice.
-Reserve the deeper `pprose-copy-edit` and `pprose-full-edit` passes (both include
-de-slop) for when a fuller edit is asked for.
 
 Discover the tool from the CLI itself: `pprose --help` for commands, `pprose about` for
 the project narrative, `pprose skill` for the workflow skills, and `pprose list` for
 every on-demand guideline, shortcut, and runbook
 (`pprose guidelines|shortcut|runbook <name>` prints one).
 
-Run pprose as `pprose <command>` if on PATH, else `uvx pprose@0.3.1 <command>`
+Run pprose as `pprose <command>` if on PATH, else `uvx pprose@0.4.0 <command>`
 (zero-install via uv).
 
 <!-- END PPROSE INTEGRATION -->
 
-<!-- BEGIN TBD INTEGRATION format=f06 surface=agents-md -->
+<!-- BEGIN TBD INTEGRATION format=f07 surface=agents-md -->
 ## tbd
 
 This repository uses **tbd** for git-native issue tracking (beads), spec-driven

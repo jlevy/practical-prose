@@ -7,7 +7,63 @@ from git tags by dynamic versioning (see [docs/publishing.md](docs/publishing.md
 
 ## [Unreleased]
 
+## [0.4.0] - 2026-08-19
+
+### Fixed
+
+- **The zero-install bootstrap resolves again.** 0.3.1 was prepared and merged but never
+  tagged, so every skill committed under `skills/` told agents to run `uvx pprose@0.3.1`
+  — a version PyPI never received.
+  Anyone installing the skills without `pprose` already on `PATH` got a hard resolver
+  failure. The pin now names this release, and a daily `check_discovery_pin_published.py`
+  check fails if it ever again names a version that is not published.
+  It is deliberately not a pull-request gate: the release procedure legitimately leaves
+  `main` ahead of PyPI between the version bump and the tag.
+- **`pprose install` no longer breaks a symlinked `AGENTS.md`.** Writing atomically
+  renamed over the *link*, replacing a symlinked entry file with a regular file
+  containing only the pprose block and orphaning its target — silently forking the agent
+  instructions of any repo that points `AGENTS.md` and `CLAUDE.md` at one shared
+  document. The install now resolves the link and edits the file the repo actually reads.
+
+### Added
+
+- **`-g` and `-p` short flags** for `--global` and `--project`, matching the skills CLI.
+
+### Changed
+
+- **The user-wide install is now the documented default path.** Installing Practical
+  Prose once, for yourself, is the common case, but it was the hardest route to find:
+  the README led with project-scope commands and mentioned user scope only in an aside.
+  The Quick Start is now organized around the scope decision — user-wide capability
+  first, committed project policy second — and says outright what makes global scope
+  safe: it writes only to your own agent directories and no repository, so the skills
+  add capability in other people’s repos without imposing policy on them.
+  Project scope remains the deliberate opt-in that writes the always-on `AGENTS.md` and
+  `CLAUDE.md` blocks.
+
+### Internal
+
+- Both dogfooded skill surfaces are now drift-proof.
+  `.agents/skills/pprose-*` were unmanaged copies that nothing regenerated or compared,
+  so this repo could run instructions older than it publishes; they are now mirrored
+  from the generated discovery tree and checked by `make generate-check`.
+  `.claude/skills/pprose-review` was a real directory among six symlinks and is now a
+  symlink like its siblings.
+  Both invariants are asserted by tests.
+- Development tooling upgraded to tbd 0.6.5 under the standing first-party exemption.
+  This also resolved pp-ed0p: generated launchers now gate local-first selection on
+  actual `tbd_format` compatibility instead of merely finding a `tbd` on `PATH`.
+- `docs/publishing.md` is restructured into four ordered phases with the failure mode
+  spelled out. The old flat ten-step checklist gave equal weight to preparing the release
+  commit and to tagging it, which is precisely how v0.3.1 ended up merged and never
+  tagged. It now states that bumping the pin publishes a promise only the tag keeps,
+  marks phases 1-2 as unsafe to leave unfinished, documents both guards and what each
+  cannot prove, and adds a recovery procedure for a pin that was merged without a tag.
+
 ## [0.3.1] - 2026-07-24
+
+> Prepared and merged but never tagged, so this version was never published to PyPI. Its
+> fix ships in 0.4.0.
 
 ### Fixed
 

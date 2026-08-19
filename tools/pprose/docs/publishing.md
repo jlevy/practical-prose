@@ -73,11 +73,115 @@ for details.
 
 ### Publishing Subsequent Releases
 
-Follow this checklist for each new release.
+#### Why the Order Matters
 
-#### Pre-Release Checklist
+A release here is not just a tag.
+Four things must name the same version, produced by different mechanisms:
 
-1. **Use the exact current `main` commit:**
+| What | Where it comes from |
+| --- | --- |
+| The git tag | Created by you |
+| The PyPI artifact version | Derived from the tag at build time |
+| `install.DISCOVERY_VERSION` | A hand-edited constant in the source |
+| `uvx pprose@X` in every committed skill | Rendered from `DISCOVERY_VERSION` by `make generate` |
+
+`DISCOVERY_VERSION` exists because a skill must tell an agent how to run `pprose` when
+it is not on `PATH`, and the skill copies committed under `skills/` are rendered from a
+dev checkout whose own version (`0.3.1.dev10+2955f57`) was never published.
+So the rendering falls back to a hardcoded constant.
+
+That constant is a **promise that a release with this number will exist on PyPI**.
+Bumping it and merging publishes that promise to everyone who installs the skills.
+**Only the tag keeps it.** Until the tag exists and the publish succeeds, every skill on
+`main` instructs agents to run a command that fails:
+
+```shell
+$ uvx pprose@0.3.1 --version
+x No solution found: there is no version of pprose==0.3.1
+```
+
+This is not hypothetical.
+v0.3.1 was prepared and merged on 2026-07-24 and never tagged; the broken bootstrap sat
+on `main` until v0.4.0. **Phases 1 and 2 below are not safe to leave unfinished.** Start
+a release only when you can finish phase 3 in the same sitting.
+
+Two guards enforce different halves of this, and neither substitutes for the other:
+
+- `devtools/check_release_version.py` (run by `publish.yml`) fails the publish unless
+  the tag equals `DISCOVERY_VERSION`. This proves a release is self-consistent.
+  It cannot prove a release happened.
+- `devtools/check_discovery_pin_published.py` (run daily by `discovery-pin.yml`) fails
+  when `DISCOVERY_VERSION` names a version PyPI does not have.
+  This is what catches a forgotten tag — within a day, not a month.
+  It is deliberately not a pull-request gate, because phases 1-2 legitimately leave
+  `main` ahead of PyPI for the minutes until phase 3 completes.
+
+#### A Note on `gh` in Proxied Sessions
+
+In a remote or cloud session with `HTTPS_PROXY` set, `gh auth status` may report
+`The token in GH_TOKEN is invalid` for a perfectly valid token, because the proxy
+intercepts the GraphQL query it uses.
+Do not conclude the token is bad.
+Test egress, and if it is open, prefix `gh` commands to bypass the proxy for GitHub
+hosts only (`HTTPS_PROXY` stays set for everything else; TLS verification stays on).
+Run `tbd shortcut setup-github-cli` for the full decision rule and the verified recipe.
+
+#### Phase 1: Prepare the Release Commit
+
+Do this on a branch, not on `main`.
+
+1. **Determine the new version number:**
+
+   ```shell
+   gh release list --limit 1
+   ```
+
+   Use [semantic versioning](https://semver.org/):
+
+   - **Patch** (e.g., `v0.5.8` → `v0.5.9`): Bug fixes, minor changes
+
+   - **Minor** (e.g., `v0.5.9` → `v0.6.0`): New features, backward-compatible
+
+   - **Major** (e.g., `v0.6.0` → `v1.0.0`): Breaking changes
+
+2. **Bump the discovery pin to match the intended tag:**
+
+   Set `DISCOVERY_VERSION` in `src/pprose/install.py` to the new version (no leading
+   `v`), then re-render the committed discovery skills from the repo root:
+
+   ```shell
+   make generate
+   ```
+
+   This step is mandatory, and it is the step that starts the clock described above.
+
+3. **Update the CHANGELOG:**
+
+   Move the accumulated entries from `## [Unreleased]` into a new
+   `## [X.Y.Z] - YYYY-MM-DD` section in `CHANGELOG.md`.
+
+4. **Verify the release guard locally before merging:**
+
+   ```shell
+   env UV_NO_CONFIG=1 UV_LOCKED=1 \
+     UV_BUILD_CONSTRAINT="$(pwd)/tools/pprose/build-constraints.txt" \
+     uv run --project tools/pprose --no-sync python \
+     tools/pprose/devtools/check_release_version.py vX.Y.Z
+   # → "Release version check OK"
+   ```
+
+5. **Run the read-only release gates locally:**
+
+   ```shell
+   make install
+   make lint-check
+   make test
+   make -C tools/pprose build
+   ```
+
+#### Phase 2: Merge to `main`
+
+6. **Merge the release-prep branch**, then take the exact resulting commit:
 
    ```shell
    git fetch --tags --prune origin
@@ -91,125 +195,94 @@ Follow this checklist for each new release.
    Keep `RELEASE_COMMIT` in the same shell through release creation.
    It is the reviewed commit that the tag and release notes must describe.
 
-2. **Run the read-only release gates locally:**
-
-   ```shell
-   make install
-   make lint-check
-   make test
-   make -C tools/pprose build
-   ```
-
-3. **Confirm CI is passing:**
+7. **Confirm CI is passing on that exact commit:**
 
    ```shell
    gh run list --workflow=ci.yml --commit "$RELEASE_COMMIT" --limit 1
    ```
 
-   Or check the Actions tab on GitHub.
+   `main` now advertises a version that does not exist yet.
+   Continue to phase 3 without stopping.
 
-4. **Determine the new version number:**
+#### Phase 3: Tag and Publish
 
-   ```shell
-   # Check current/latest version:
-   gh release list --limit 1
-   ```
-
-   Use [semantic versioning](https://semver.org/):
-
-   - **Patch** (e.g., `v0.5.8` → `v0.5.9`): Bug fixes, minor changes
-
-   - **Minor** (e.g., `v0.5.9` → `v0.6.0`): New features, backward-compatible
-
-   - **Major** (e.g., `v0.6.0` → `v1.0.0`): Breaking changes
-
-5. **Update the CHANGELOG:**
-
-   Move the accumulated entries from `## [Unreleased]` into a new
-   `## [X.Y.Z] - YYYY-MM-DD` section in `CHANGELOG.md`.
-
-6. **Bump the discovery pin to match the tag:**
-
-   Set `DISCOVERY_VERSION` in `src/pprose/install.py` to the new version (no leading
-   `v`), then re-render the committed discovery skills from the repo root:
+8. **Review what is shipping:**
 
    ```shell
-   make generate
-   ```
-
-   This step is mandatory.
-   `devtools/check_release_version.py` (run by `publish.yml`) fails the publish unless
-   the release tag equals `DISCOVERY_VERSION`, and `tests/test_resources_sync.py` fails
-   if the committed `skills/` drift from it.
-   The pin backs the `uvx pprose@<version>` zero-install bootstrap, so it must point at
-   the version being published.
-
-7. **Verify the release guard locally before tagging:**
-
-   ```shell
-   env UV_NO_CONFIG=1 UV_LOCKED=1 \
-     UV_BUILD_CONSTRAINT="$(pwd)/tools/pprose/build-constraints.txt" \
-     uv run --project tools/pprose --no-sync python \
-     tools/pprose/devtools/check_release_version.py vX.Y.Z
-   # → "Release version check OK"
-   ```
-
-#### Create the Release
-
-8. **Generate release notes content:**
-
-   Review changes since the last release:
-
-   ```shell
-   # Get the last release tag:
    LAST_TAG=$(gh release list --limit 1 --json tagName -q '.[0].tagName')
-
-   # View commits since the last release on the exact candidate:
    git log "${LAST_TAG}..${RELEASE_COMMIT}" --oneline
-
-   # View full diff:
    git diff "${LAST_TAG}..${RELEASE_COMMIT}"
    ```
 
-9. **Create the release with `gh`:**
+9. **Create the release** (this creates the tag and triggers `publish.yml`):
 
    ```shell
    NEW_TAG="vX.Y.Z"  # Replace with actual version
-   LAST_TAG=$(gh release list --limit 1 --json tagName -q '.[0].tagName')
 
    gh release create "${NEW_TAG}" \
      --target "${RELEASE_COMMIT}" \
      --fail-on-no-commits \
      --title "${NEW_TAG}" \
-     --notes "$(cat <<'EOF'
-   ## What's Changed
-
-   [Summarize changes here--see format guide below]
-
-   **Full commit history**:
-   https://github.com/jlevy/practical-prose/compare/${LAST_TAG}...${NEW_TAG}
-   EOF
-   )"
+     --notes-file RELEASE-NOTES.md
    ```
 
-   Alternatively, use `--generate-notes` for GitHub’s auto-generated notes, or
-   `--notes-file FILENAME` to read from a file.
+   `--notes` with an inline heredoc and `--generate-notes` both work too; see
+   [Release Notes Format](#release-notes-format).
 
-10. **Verify the release published and installs successfully:**
+   If a session git broker refuses `refs/tags/*` pushes (it may, while accepting branch
+   pushes, and `git push --dry-run` misleadingly passes), create the tag through the API
+   instead and then create the release against it:
+
+   ```shell
+   gh api repos/jlevy/practical-prose/git/refs \
+     -f ref="refs/tags/${NEW_TAG}" -f sha="${RELEASE_COMMIT}"
+   ```
+
+#### Phase 4: Verify the Promise Is Kept
+
+10. **Watch the publish workflow and confirm the artifact is installable:**
 
     ```shell
-    # Wait for the release workflow and inspect its final result:
     PUBLISH_RUN=$(gh run list --workflow=publish.yml --commit "$RELEASE_COMMIT" \
       --limit 1 --json databaseId -q '.[0].databaseId')
     # The release event may take a few seconds to appear; rerun the assignment if empty.
     test -n "$PUBLISH_RUN"
     gh run watch "$PUBLISH_RUN" --exit-status
+    ```
 
-    # Verify the exact version from outside the source checkout:
+11. **Verify the exact version resolves from outside the source checkout.** This is the
+    check that would have caught the v0.3.1 failure, so do not skip it:
+
+    ```shell
     cd /tmp
     uvx "pprose@X.Y.Z" --version
     uvx "pprose@X.Y.Z" list
     ```
+
+    A brief `No solution found` immediately after publishing is usually PyPI index
+    propagation; retry for a minute or two before treating it as a failure.
+
+12. **Confirm the daily pin check is satisfied:**
+
+    ```shell
+    uv run --project tools/pprose --no-sync python \
+      tools/pprose/devtools/check_discovery_pin_published.py
+    # → "Discovery pin check OK: pprose X.Y.Z is published on PyPI"
+    ```
+
+#### Recovery: The Pin Was Merged but Never Tagged
+
+If `check_discovery_pin_published.py` fails — or `discovery-pin.yml` goes red — `main`
+is advertising an unpublished version and every zero-install bootstrap is broken.
+Two ways out:
+
+- **Finish the release** (preferred): confirm CI is green on `main`, then run phases 3
+  and 4 against the current `main` commit.
+  The pin is already correct; only the tag is missing.
+- **Retreat to a published version** (stopgap): set `DISCOVERY_VERSION` back to the
+  newest version actually on PyPI, run `make generate`, and merge.
+  This repairs the bootstrap immediately, at the cost of skills serving the older
+  release’s bundled docs until a real release ships.
 
 ### Release Notes Format
 
