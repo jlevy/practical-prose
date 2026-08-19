@@ -5,7 +5,7 @@ title: "Spec: Cross-agent Practical Prose skills"
 kind: epic
 status: open
 priority: 2
-version: 12
+version: 13
 spec_path: docs/project/specs/done/plan-2026-05-13-cross-agent-skills.md
 labels: []
 dependencies: []
@@ -20,6 +20,7 @@ child_order_hints:
   - is-01krhz27s9axj15pcwy0ccpt2d
   - is-01krhz2f5wsv5rwkvzz2c6mbaq
   - is-01krhz3gxh1scmhma34gzqjwvv
+  - is-01m0djwj0t1phrpvtqatdqv679
 created_at: 2026-05-14T00:43:24.654Z
-updated_at: 2026-06-11T16:21:45.771Z
+updated_at: 2026-08-19T18:00:13.082Z
 ---
