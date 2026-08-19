@@ -7,7 +7,7 @@ from git tags by dynamic versioning (see [docs/publishing.md](docs/publishing.md
 
 ## [Unreleased]
 
-## [0.4.0] - 2026-08-15
+## [0.4.0] - 2026-08-19
 
 ### Fixed
 
@@ -51,6 +51,14 @@ from git tags by dynamic versioning (see [docs/publishing.md](docs/publishing.md
   symlink like its siblings.
   Both invariants are asserted by tests.
 - Development tooling upgraded to tbd 0.6.5 under the standing first-party exemption.
+  This also resolved pp-ed0p: generated launchers now gate local-first selection on
+  actual `tbd_format` compatibility instead of merely finding a `tbd` on `PATH`.
+- `docs/publishing.md` is restructured into four ordered phases with the failure mode
+  spelled out. The old flat ten-step checklist gave equal weight to preparing the release
+  commit and to tagging it, which is precisely how v0.3.1 ended up merged and never
+  tagged. It now states that bumping the pin publishes a promise only the tag keeps,
+  marks phases 1-2 as unsafe to leave unfinished, documents both guards and what each
+  cannot prove, and adds a recovery procedure for a pin that was merged without a tag.
 
 ## [0.3.1] - 2026-07-24
 
