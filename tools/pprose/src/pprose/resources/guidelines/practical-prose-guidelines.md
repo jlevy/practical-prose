@@ -461,9 +461,14 @@ But when these elements are present, they should be well-arranged.
    The opposite failure is the oracular heading, specific-sounding but unreadable before
    its section: “Phase 1: Know What Is Held” tells a skimmer nothing; “Phase 1: Frontend
    JavaScript Inventory” names the contents.
-   Convention-defined names (“Introduction,” “Related Work,” “Installation”) are fine
-   where the genre and the document title supply the meaning; a bespoke abstraction
-   supplies none. (Cross-references common-doc-guidelines §3.3.)
+   The test is whether the document’s title and scope resolve the heading into contents.
+   “Introduction,” “Related Work,” and “Essential Concepts” pass once the work’s topic
+   is known: the scope says which concepts.
+   “Raising the Floor” fails even with the topic known; the metaphor gives the illusion
+   of content and names none.
+   An appropriately concrete heading is still best; the scope test says what is
+   acceptable, not what to aim for.
+   (Cross-references common-doc-guidelines §3.3.)
 
 ### F2. Consistency
 
