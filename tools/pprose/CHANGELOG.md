@@ -24,7 +24,11 @@ from git tags by dynamic versioning (see [docs/publishing.md](docs/publishing.md
   fragment (*The foundation.*) under dramatic fragmentation; *bedrock* and *foundation*
   on the stock-metaphor list; and drafting directive 8 (*Ground every claim in its
   subject*). Guideline F1.9 now also names the oracular heading (*Phase 1: Know What Is
-  Held* → *Phase 1: Frontend JavaScript Inventory*) as the opposite of the generic one.
+  Held* → *Phase 1: Frontend JavaScript Inventory*) as the opposite of the generic one,
+  states its scope-resolution test (*Essential Concepts* passes once the topic is known;
+  *Raising the Floor* fails even then), and bounds heading length: compact noun phrases
+  by default; assertion and teaser headings (*The Unexpected Lesson of the Fixed Table*)
+  run long and still withhold the contents.
 
 ## [0.4.0] - 2026-08-19
 

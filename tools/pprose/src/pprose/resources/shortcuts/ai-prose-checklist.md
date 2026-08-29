@@ -40,8 +40,8 @@ rule seems wrong for the genre, check the full catalog’s carve-outs before ove
 8. **Ground every claim in its subject.** No laws stated in abstractions (*Without X,
    there is no Y*); state the fact about the named system.
    No virtue adverbs (*built honestly*, *designed thoughtfully*); name the criterion or
-   cut. Headings name their content (*Frontend JavaScript Inventory*, not *Know What Is
-   Held*).
+   cut. Headings name their content, compactly (*Frontend JavaScript Inventory*; not
+   *Know What Is Held*, not *The Unexpected Lesson of the Fixed Table*).
 
 ## Words and Phrases to Cut or Replace
 

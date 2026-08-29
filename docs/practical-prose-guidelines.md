@@ -466,6 +466,13 @@ But when these elements are present, they should be well-arranged.
    is known: the scope says which concepts.
    “Raising the Floor” fails even with the topic known; the metaphor gives the illusion
    of content and names none.
+   Length follows the same test: the default is a compact noun phrase (“Layer 4:
+   Statistical Analysis”; “Limitations, Debt, and Duplication”), and extra words earn
+   their place only by telling the skimmer more about the contents (“Why the migration
+   is driven by compliance”). Assertion and teaser headings (“Adoption Is the
+   Load-Bearing Gap To Be Filled,” “The Unexpected Lesson of the Fixed Table”) run long
+   on register the prose rules already ban (the unfilled gap, the unnamed lesson); the
+   fix is shorter and more concrete: name the blockers, name the lesson.
    An appropriately concrete heading is still best; the scope test says what is
    acceptable, not what to aim for.
    (Cross-references common-doc-guidelines §3.3.)

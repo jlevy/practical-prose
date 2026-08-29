@@ -506,7 +506,9 @@ tell “no data arrived” from “the sensor reported zero,” so alerts built 
 both.* The same failure in a heading (*Phase 1: Know What Is Held*) reads as a riddle
 until the section is read; rename it in the section’s own nouns (*Phase 1: Frontend
 JavaScript Inventory*); F1.9 governs headings.
-**Exception:** a rule the reader will quote later (*make illegal states
+Its long form is the assertion or teaser heading (*The Unexpected Lesson of the Fixed
+Table*): length spent on drama, contents still withheld; the fix is shorter and more
+concrete. **Exception:** a rule the reader will quote later (*make illegal states
 unrepresentable*) earns aphorism form when the sections after it apply it to the case at
 hand; the tell is the aphorism with no application in sight.
 
