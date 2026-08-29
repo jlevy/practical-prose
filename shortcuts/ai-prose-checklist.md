@@ -37,6 +37,11 @@ rule seems wrong for the genre, check the full catalog’s carve-outs before ove
 7. **End when the content ends.** No conclusions that restate (*In conclusion*,
    *Overall*), no empty closers (*only time will tell*), no chat artifacts (*I hope this
    helps*).
+8. **Ground every claim in its subject.** No laws stated in abstractions (*Without X,
+   there is no Y*); state the fact about the named system.
+   No virtue adverbs (*built honestly*, *designed thoughtfully*); name the criterion or
+   cut. Headings name their content (*Frontend JavaScript Inventory*, not *Know What Is
+   Held*).
 
 ## Words and Phrases to Cut or Replace
 
@@ -54,6 +59,8 @@ rule seems wrong for the genre, check the full catalog’s carve-outs before ove
 - **Hollow justification:** *the gap it fills*, *the problem it solves*, *the role it
   plays*, *and for good reason*, *there’s a reason*, *that’s no accident* → name the
   gap, problem, or reason, or cut the clause.
+- **Virtue adverbs:** *built honestly*, *designed thoughtfully*, *engage authentically*,
+  *scale responsibly* → replace with the criterion, or cut.
 - **Copula avoidance:** *serves as*, *stands as*, *boasts*, *features* → write *is* and
   *has*.
 - **Vague attribution:** *experts say*, *studies show*, *industry reports suggest* →

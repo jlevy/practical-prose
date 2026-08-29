@@ -98,6 +98,11 @@ Each compresses one or more catalog sections below.
 7. **End when the content ends.** No template conclusions that restate the document, no
    forward-looking closers with no forecast in them (*only time will tell*), and no
    assistant artifacts (*I hope this helps*): a document is not a chat turn.
+8. **Ground every claim in its subject.** No laws stated entirely in abstractions
+   (*until a gap is distinguishable from an absence, nothing can be built honestly*);
+   state the fact about the named system.
+   No virtue adverbs (*built honestly*, *designed thoughtfully*): name the criterion or
+   cut. Headings name their content; no oracular headings (*Know What Is Held*).
 
 ## Lexical Catalog
 
@@ -144,9 +149,9 @@ than in the training corpus.
   *myriad*: academic-polish words with measured post-ChatGPT frequency spikes (Kobak et
   al. again). **Correction:** the plain word (*complex*, *careful*, *many*) or the
   specific property.
-- *tapestry*, *cornerstone*, *beacon*, *treasure trove* (as stock metaphors): decorative
-  nouns that gesture at richness instead of naming it.
-  **Correction:** name the parts, the dependency, or the find.
+- *tapestry*, *cornerstone*, *bedrock*, *foundation*, *beacon*, *treasure trove* (as
+  stock metaphors): decorative nouns that gesture at richness or importance instead of
+  naming it. **Correction:** name the parts, the dependency, or the find.
 
 **Exception:** domain terms of art override.
 *Robust authentication* with a stated threat model and *state-of-the-art* with a
@@ -301,6 +306,20 @@ instruction sends the reader to establish them (*before adopting a dependency,
 understand the problem it solves*). The tell is the phrase carrying the whole argument,
 with the gap, reason, or intent never named anywhere.
 
+### Virtue Adverbs
+
+A virtue-or-care adverb on a verb of making or doing: *built honestly*, *designed
+thoughtfully*, *engage authentically*, *scale responsibly*, *crafted with care*. The
+adverb awards the work a virtue without stating what the virtue requires; the test is
+whether the writer could say what *building dishonestly* would look like.
+(The emphasis use of *honestly*, *genuinely*, and kin is a density question under
+Attention Flags; the moral use is corrected on sight.)
+
+**Correction:** replace the adverb with its criterion (*handled honestly* → *the report
+includes the two failed runs*), or cut it.
+**Exception:** terms of art with defined content (*degrades gracefully*, *responsible
+disclosure*).
+
 ### Copula Avoidance
 
 Verbose substitutes for *is* and *has*; one of the highest-confidence lexical tells in
@@ -422,6 +441,8 @@ Sentence fragments deployed for manufactured profundity.
 - *This unlocks something.
   [Single word].*
 - Stacked staccato fragments: *X. And Y. And Z.*
+- Label fragments announcing the sentence that follows: *The foundation.* *The catch.*
+  *The result.* (a throat-clearing opener compressed to a fragment).
 
 **Correction:** complete sentences; trust content over presentation.
 **Exception:** an isolated fragment used once for genuine emphasis is a stylistic
@@ -464,6 +485,31 @@ Sentences that assert importance without naming the specific thing.
 **Correction:** replace with the specific reason, implication, or stake, or cut.
 (Cross-references E1.1 vague-magnitude rules.)
 
+### Abstract Aphorisms
+
+The scaled-up vague declarative: a general law stated entirely in abstractions, where a
+fact about the subject belongs.
+
+- *Until a gap is distinguishable from an absence, neither serving nor asking can be
+  built honestly.*
+- *Without alignment, there is no velocity.*
+
+The identifying test: an assertive sentence with no concrete referent (no named actor,
+artifact, quantity, or domain term), usually under a universal frame (*until*,
+*without*, *every*, *nothing*). Confirming ingredients: a label fragment in front (*The
+foundation.*), object-less gerunds as categories (*serving*, *asking*), a minted
+distinction between near-synonym abstractions (*a gap* vs.
+*an absence*), a virtue adverb sealing it (*honestly*).
+
+**Correction:** cut, or state the instance about the named system: *the dashboard can’t
+tell “no data arrived” from “the sensor reported zero,” so alerts built on it fire for
+both.* The same failure in a heading (*Phase 1: Know What Is Held*) reads as a riddle
+until the section is read; rename it in the section’s own nouns (*Phase 1: Frontend
+JavaScript Inventory*); F1.9 governs headings.
+**Exception:** a rule the reader will quote later (*make illegal states
+unrepresentable*) earns aphorism form when the sections after it apply it to the case at
+hand; the tell is the aphorism with no application in sight.
+
 ### Telling Instead of Showing
 
 Announcing difficulty or significance rather than demonstrating it.
@@ -497,7 +543,8 @@ Flag, inspect, keep what carries information.
   *deeply*, *truly*, *honestly*, *simply*, *actually*): empty emphasis when stacked;
   occasionally load-bearing.
   Test each occurrence; a density above roughly one per paragraph is a register problem,
-  not a word problem.
+  not a word problem. The moral-manner use (*built honestly*) is not a density question;
+  see Virtue Adverbs.
 - **Wh- sentence openers** (*What makes this hard is…*): fine occasionally; a crutch
   when repeated. *The constraint is…* or the named constraint itself is usually tighter.
 - **Three-item lists:** the rule-of-three is a reflex in AI register.

@@ -458,7 +458,12 @@ But when these elements are present, they should be well-arranged.
    eviction trade-offs” over “Notes.”
    Templates that prescribe generic headings should be filled in with subject-specific
    subheadings, not left as-is.
-   (Cross-references common-doc-guidelines §3.3.)
+   The opposite failure is the oracular heading, specific-sounding but unreadable before
+   its section: “Phase 1: Know What Is Held” tells a skimmer nothing; “Phase 1: Frontend
+   JavaScript Inventory” names the contents.
+   Convention-defined names (“Introduction,” “Related Work,” “Installation”) are fine
+   where the genre and the document title supply the meaning; a bespoke abstraction
+   supplies none. (Cross-references common-doc-guidelines §3.3.)
 
 ### F2. Consistency
 
