@@ -6,7 +6,7 @@ status: active
 ---
 # AI-Prose Corrections
 
-Version: v0.3 (last update 2026-07-19)\
+Version: v0.4 (last update 2026-08-29)\
 Joshua Levy (github.com/jlevy) with agent assistance.
 Several structural patterns adapted from Hardik Pandya’s *stop-slop* (MIT,
 github.com/hardikpandya/stop-slop), with moderation noted below.
@@ -87,7 +87,8 @@ Each compresses one or more catalog sections below.
 3. **Be specific or be silent.** No vague declaratives (*the implications are
    significant*); name the implication.
    No lazy extremes (*every*, *always*, *never*) doing the work a specific count or
-   example should do.
+   example should do. No justification by unnamed reason or need (*the gap it fills*,
+   *and for good reason*); give the reason or cut the clause.
 4. **Earn rhetorical force.** No symmetry-for-its-own-sake: binary contrasts, negative
    listings, and dramatic fragments must clarify a real distinction or be cut
    (cross-references E1.5).
@@ -266,6 +267,41 @@ The §4.2 banned list catches single-word overclaim; these are the multi-word sh
   Y*, *…, reflecting Z*, *…, ensuring W*: a clause of unearned significance appended to
   a factual sentence. **Correction:** end the sentence at the fact, or promote the
   participle to a claim with an actor and evidence.
+
+### Hollow Justification
+
+The sibling of Inflated Significance: there, importance is asserted and never measured;
+here, a justification is asserted and never given.
+The sentence commits to a reason, need, or intent existing, and stops.
+AI register attaches a motivating clause to everything it introduces, whether or not the
+motivation was ever named.
+Two shapes:
+
+- Need-noun relative clauses: *the gap it fills*, *the problem it solves*, *the need it
+  addresses*, *the role it plays*, *the purpose it serves*, *the value it adds*, *the
+  pain point it targets*, *the niche it occupies*. The identifying shape: a noun of need
+  or purpose, then a relative clause whose subject is the thing being justified and
+  whose verb satisfies the noun.
+  The clause restates its own head noun (in a sentence about a new workflow, *the gap*
+  is already the gap it fills), so it adds words and no information, and the bare
+  abstraction stands where the specifics should be.
+  **Correction:** cut the clause where context already identifies the need (*this run
+  demonstrated the gap it fills* → *this run demonstrated the gap*); name the need where
+  it doesn’t (*added because this run demonstrated the gap it fills* → *added because
+  this run showed nothing verified the deploy logs*).
+- Unnamed-reason assertions: *and for good reason*, *there’s a reason [X]*, *it’s the
+  default for a reason*, *that’s no accident*, *not a coincidence*, *this is by design*
+  (bare). Each commits to a reason or intent existing and withholds it.
+  **Correction:** state the reason (*teams default to SQLite here, and for good reason*
+  → *teams default to SQLite here: one file and no server to run*). If the next sentence
+  states it anyway, the phrase was a preview; delete the preview.
+  If no reason can be stated, the assertion was decoration.
+
+**Exception:** the same phrases are referential, not hollow, when the specifics appear
+in the passage (*the problem it solves is the forty-minute deploy*) or when an
+instruction sends the reader to establish them (*before adopting a dependency,
+understand the problem it solves*). The tell is the phrase carrying the whole argument,
+with the gap, reason, or intent never named anywhere.
 
 ### Copula Avoidance
 

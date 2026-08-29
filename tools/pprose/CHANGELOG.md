@@ -7,6 +7,16 @@ from git tags by dynamic versioning (see [docs/publishing.md](docs/publishing.md
 
 ## [Unreleased]
 
+### Added
+
+- **Hollow-justification tells join the AI-prose corrections catalog** (catalog v0.4). A
+  new lexical section covers justification asserted and never given, in two identifiable
+  shapes: need-noun relative clauses (*the gap it fills*, *the problem it solves*, *the
+  role it plays*) and unnamed-reason assertions (*and for good reason*, *there’s a
+  reason*, *that’s no accident*), each with corrections and a licensing exception for
+  referential use. The checklist digest, the drafting directives, and the
+  `pprose-de-slop` skill description pick the category up.
+
 ## [0.4.0] - 2026-08-19
 
 ### Fixed
