@@ -6,7 +6,7 @@ status: active
 ---
 # Practical Prose Guidelines
 
-Version: v0.2 (last update 2026-07-09)\
+Version: v0.3 (last update 2026-08-30)\
 Joshua Levy (github.com/jlevy) with agent assistance
 
 The *Practical Prose Guidelines* are prescriptive rules for practical documents such as

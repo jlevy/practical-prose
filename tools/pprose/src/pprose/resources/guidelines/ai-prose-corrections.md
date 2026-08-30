@@ -6,7 +6,7 @@ status: active
 ---
 # AI-Prose Corrections
 
-Version: v0.4 (last update 2026-08-29)\
+Version: v0.4 (last update 2026-08-30)\
 Joshua Levy (github.com/jlevy) with agent assistance.
 Several structural patterns adapted from Hardik Pandya’s *stop-slop* (MIT,
 github.com/hardikpandya/stop-slop), with moderation noted below.
