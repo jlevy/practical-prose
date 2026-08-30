@@ -7,6 +7,29 @@ from git tags by dynamic versioning (see [docs/publishing.md](docs/publishing.md
 
 ## [Unreleased]
 
+### Added
+
+- **Hollow-justification tells join the AI-prose corrections catalog** (catalog v0.4). A
+  new lexical section covers justification asserted and never given, in two identifiable
+  shapes: need-noun relative clauses (*the gap it fills*, *the problem it solves*, *the
+  role it plays*) and unnamed-reason assertions (*and for good reason*, *there’s a
+  reason*, *that’s no accident*), each with corrections and a licensing exception for
+  referential use. The checklist digest, the drafting directives, and the
+  `pprose-de-slop` skill description pick the category up.
+- **Abstract-aphorism, virtue-adverb, and oracular-heading tells** (same catalog v0.4):
+  a structural section for laws stated entirely in abstractions (*Until a gap is
+  distinguishable from an absence, neither serving nor asking can be built honestly*)
+  with a zero-concrete-referent test; a lexical section for virtue adverbs (*built
+  honestly*, *designed thoughtfully*) whose correction is the named criterion; the label
+  fragment (*The foundation.*) under dramatic fragmentation; *bedrock* and *foundation*
+  on the stock-metaphor list; and drafting directive 8 (*Ground every claim in its
+  subject*). Guideline F1.9 now also names the oracular heading (*Phase 1: Know What Is
+  Held* → *Phase 1: Frontend JavaScript Inventory*) as the opposite of the generic one,
+  states its scope-resolution test (*Essential Concepts* passes once the topic is known;
+  *Raising the Floor* fails even then), and bounds heading length: compact noun phrases
+  by default; assertion and teaser headings (*The Unexpected Lesson of the Fixed Table*)
+  run long and still withhold the contents.
+
 ## [0.4.0] - 2026-08-19
 
 ### Fixed

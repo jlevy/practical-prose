@@ -24,6 +24,8 @@ rule seems wrong for the genre, check the full catalog’s carve-outs before ove
 3. **Be specific or be silent.** No vague declaratives (*the implications are
    significant*); name the implication.
    No *every*/*always*/*never* where a count or example should be.
+   No *the gap it fills* / *and for good reason*; name the gap or the reason, or cut the
+   clause.
 4. **Earn rhetorical force.** No *“This isn’t X. This is Y.”* or *“Not X. Not Y. Z.”*
    unless X is a position a real reader holds.
    No fragment templates (*That’s it.
@@ -35,6 +37,11 @@ rule seems wrong for the genre, check the full catalog’s carve-outs before ove
 7. **End when the content ends.** No conclusions that restate (*In conclusion*,
    *Overall*), no empty closers (*only time will tell*), no chat artifacts (*I hope this
    helps*).
+8. **Ground every claim in its subject.** No laws stated in abstractions (*Without X,
+   there is no Y*); state the fact about the named system.
+   No virtue adverbs (*built honestly*, *designed thoughtfully*); name the criterion or
+   cut. Headings name their content, compactly (*Frontend JavaScript Inventory*; not
+   *Know What Is Held*, not *The Unexpected Lesson of the Fixed Table*).
 
 ## Words and Phrases to Cut or Replace
 
@@ -49,6 +56,11 @@ rule seems wrong for the genre, check the full catalog’s carve-outs before ove
 - **Inflated significance:** *a testament to*, *plays a pivotal role in shaping*,
   *underscores the importance of*, *cannot be overstated*, trailing *…, highlighting X*
   → state what depends on it, or cut.
+- **Hollow justification:** *the gap it fills*, *the problem it solves*, *the role it
+  plays*, *and for good reason*, *there’s a reason*, *that’s no accident* → name the
+  gap, problem, or reason, or cut the clause.
+- **Virtue adverbs:** *built honestly*, *designed thoughtfully*, *engage authentically*,
+  *scale responsibly* → replace with the criterion, or cut.
 - **Copula avoidance:** *serves as*, *stands as*, *boasts*, *features* → write *is* and
   *has*.
 - **Vague attribution:** *experts say*, *studies show*, *industry reports suggest* →
